@@ -70,27 +70,47 @@
 
     /*
      * Popular destinations — placeholder cards (see wiring note above).
+     *
+     * Six city photographs, matching the reviewed homepage strip. These are
+     * destination inspiration images only: no fare, room rate or availability
+     * is claimed, and no destination record is read or written.
      */
     $popularDestinations = [
         [
             'name' => 'Dubai',
             'country' => 'United Arab Emirates',
-            'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=70',
+            'tag' => 'City & shopping',
+            'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=70',
         ],
         [
             'name' => 'Singapore',
             'country' => 'Singapore',
-            'image' => 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=800&q=70',
+            'tag' => 'Skyline',
+            'image' => 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=900&q=70',
         ],
         [
             'name' => 'Bangkok',
             'country' => 'Thailand',
-            'image' => 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=800&q=70',
+            'tag' => 'Culture',
+            'image' => 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=900&q=70',
         ],
         [
             'name' => 'Maldives',
             'country' => 'Maldives',
-            'image' => 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=70',
+            'tag' => 'Island escape',
+            'image' => 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=70',
+        ],
+        [
+            'name' => 'Istanbul',
+            'country' => 'T\u00fcrkiye',
+            'tag' => 'Heritage',
+            'image' => 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=900&q=70',
+        ],
+        [
+            'name' => 'Bali',
+            'country' => 'Indonesia',
+            'tag' => 'Beach & temples',
+            'image' => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=70',
         ],
     ];
 
@@ -684,6 +704,9 @@
                             style="--egho-destination-image: url('{{ $destination['image'] }}')"
                         >
                             <span class="egho-destination-copy">
+                                <span class="egho-destination-tag">
+                                    {{ $destination['tag'] }}
+                                </span>
                                 <strong>{{ $destination['name'] }}</strong>
                                 <small>{{ $destination['country'] }}</small>
                             </span>

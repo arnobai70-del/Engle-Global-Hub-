@@ -91,8 +91,10 @@
                             <th scope="col">Image</th>
                             <th scope="col">Name</th>
                             <th scope="col">Country</th>
+                            <th scope="col">State</th>
+                            <th scope="col">City</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,18 +102,24 @@
                             [
                                 'name' => 'Sample destination one',
                                 'country' => 'Sample country',
+                                'state' => 'Sample state',
+                                'city' => 'Sample city',
                                 'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=240&q=70',
                                 'published' => true,
                             ],
                             [
                                 'name' => 'Sample destination two',
                                 'country' => 'Sample country',
+                                'state' => 'Sample state',
+                                'city' => 'Sample city',
                                 'image' => 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=240&q=70',
                                 'published' => true,
                             ],
                             [
                                 'name' => 'Sample destination three',
                                 'country' => 'Sample country',
+                                'state' => 'Sample state',
+                                'city' => 'Sample city',
                                 'image' => 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=240&q=70',
                                 'published' => false,
                             ],
@@ -128,27 +136,65 @@
                                     >
                                 </td>
                                 <td>
-                                    {{ $destination['name'] }}
-                                    <br>
-                                    <span class="egha-muted">Sample row</span>
+                                    <span class="egha-cell-title">
+                                        {{ $destination['name'] }}
+                                    </span>
+                                    <span class="egha-cell-sub">
+                                        {{ $destination['city'] }}
+                                    </span>
                                 </td>
                                 <td class="egha-muted">
                                     {{ $destination['country'] }}
                                 </td>
+                                <td class="egha-muted">
+                                    {{ $destination['state'] }}
+                                </td>
+                                <td class="egha-muted">
+                                    {{ $destination['city'] }}
+                                </td>
                                 <td>
+                                    {{--
+                                        The switch mirrors the published state.
+                                        It is disabled because no publish action
+                                        exists: nothing here writes a record.
+                                    --}}
                                     <span
                                         @class([
-                                            'egha-status',
-                                            'egha-status-on' => $destination['published'],
-                                            'egha-status-off' => ! $destination['published'],
+                                            'egha-switch',
+                                            'egha-switch-on' => $destination['published'],
                                         ])
                                     >
+                                        <span
+                                            class="egha-switch-track"
+                                            aria-hidden="true"
+                                        ></span>
                                         {{ $destination['published'] ? 'Published' : 'Hidden' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="egha-actions">
-                                        <span class="egha-muted">Sample row</span>
+                                    <div class="egha-row-actions">
+                                        <button
+                                            type="button"
+                                            class="egha-icon-btn is-edit"
+                                            disabled
+                                            aria-label="Edit sample destination"
+                                        >
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M4 20h4L18 10l-4-4L4 16z"/>
+                                                <path d="m14 6 4 4"/>
+                                            </svg>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="egha-icon-btn is-delete"
+                                            disabled
+                                            aria-label="Delete sample destination"
+                                        >
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M4 7h16M9 7V5h6v2M6 7l1 12h10l1-12"/>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

@@ -75,14 +75,33 @@
                 <div>
 
                     <section class="egho-contact-card" style="margin-bottom:20px">
+                        @php
+                            /*
+                             * Initials stand in for a profile photo because
+                             * this website does not store one, and the role
+                             * chip shows the assignment the account already
+                             * holds.
+                             */
+                            $accountRole = auth()->user()->getRoleNames()->first();
+                        @endphp
+
                         <div class="egho-account-id">
-                            <span class="egho-account-avatar">
+                            <span
+                                class="egho-account-avatar is-lg"
+                                aria-hidden="true"
+                            >
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </span>
 
-                            <div>
+                            <div class="egho-profile-copy">
                                 <strong>{{ auth()->user()->name }}</strong>
                                 <small>{{ auth()->user()->email }}</small>
+
+                                @if ($accountRole)
+                                    <span class="egho-profile-badge">
+                                        {{ str($accountRole)->headline() }}
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
