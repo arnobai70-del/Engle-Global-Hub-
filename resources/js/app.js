@@ -286,6 +286,14 @@ document.addEventListener('DOMContentLoaded', () => {
             'flight-segment-point'
         );
 
+        /*
+            Keep the provider's own timestamp on the element as well as the
+            formatted one on screen. The result time filters compare this
+            value, so a window can never disagree with what is displayed.
+        */
+        departure.dataset.departingAt =
+            segment?.departing_at || '';
+
         departure.append(
             createFlightElement(
                 'strong',
@@ -325,6 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'div',
             'flight-segment-point flight-segment-point-arrival'
         );
+
+        arrival.dataset.arrivingAt =
+            segment?.arriving_at || '';
 
         arrival.append(
             createFlightElement(
@@ -404,14 +415,46 @@ document.addEventListener('DOMContentLoaded', () => {
             slice?.duration
         );
 
+        /*
+            Stop count and the raw ISO duration are kept on the slice element
+            for the same reason as the segment timestamps: the filter rail
+            needs the provider's value, not one parsed back out of a display
+            string. `segments.length - 1` is the number of stops, which is how
+            the offer data represents a multi-segment slice.
+        */
+        const sliceSegments = Array.isArray(slice?.segments)
+            ? slice.segments.length
+            : 0;
+
+        const sliceStops = Math.max(sliceSegments - 1, 0);
+
+        section.dataset.stops = String(sliceStops);
+        section.dataset.duration = slice?.duration || '';
+
         if (duration) {
-            heading.append(
-                headingLeft,
+            const timing = createFlightElement(
+                'span',
+                'flight-slice-timing'
+            );
+
+            timing.append(
                 createFlightElement(
                     'span',
                     'flight-slice-duration',
                     duration
+                ),
+                createFlightElement(
+                    'span',
+                    'flight-slice-stops',
+                    sliceStops === 0
+                        ? 'Non-stop'
+                        : `${sliceStops} stop${sliceStops === 1 ? '' : 's'}`
                 )
+            );
+
+            heading.append(
+                headingLeft,
+                timing
             );
         } else {
             heading.append(headingLeft);

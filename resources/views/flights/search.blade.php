@@ -3,6 +3,38 @@
 @section('title', 'Search Flights')
 @section('body_class', 'dashboard-body egho-page-body')
 
+@php
+    /*
+     * Result-page assets.
+     *
+     * Both live in public/ rather than the Vite bundle so this screen can ship
+     * a change without rebuilding every other page. Like the theme stylesheets
+     * they carry no content hash, so the modification time is appended to the
+     * URL to keep a cached copy from outliving an update.
+     */
+    $flightAssets = [
+        'css' => 'css/egh-flight.css',
+        'js' => 'js/egh-flight-results.js',
+    ];
+
+    $flightAssetVersion = @filemtime(public_path($flightAssets['css']));
+    $flightScriptVersion = @filemtime(public_path($flightAssets['js']));
+@endphp
+
+@push('head')
+    <link
+        rel="stylesheet"
+        href="{{ asset($flightAssets['css']).($flightAssetVersion ? '?v='.$flightAssetVersion : '') }}"
+    >
+@endpush
+
+@push('scripts')
+    <script
+        src="{{ asset($flightAssets['js']).($flightScriptVersion ? '?v='.$flightScriptVersion : '') }}"
+        defer
+    ></script>
+@endpush
+
 @section('content')
 
 <main class="flight-container">
@@ -322,20 +354,78 @@
                 --}}
                 <div class="flight-results-shell">
 
+                    {{--
+                        Search summary.
+
+                        Rendered hidden and filled in by the result script from
+                        the search that was actually submitted, so it can never
+                        describe a search that did not run. It sits inside the
+                        form, so the modify control is a plain button rather
+                        than a submit control.
+                    --}}
+                    <div
+                        class="egho-flight-summary"
+                        data-flight-summary
+                        hidden
+                    >
+                        <div class="egho-flight-summary-route">
+                            <strong data-flight-summary-origin>&mdash;</strong>
+
+                            <span aria-hidden="true">&#8594;</span>
+
+                            <strong data-flight-summary-destination>&mdash;</strong>
+                        </div>
+
+                        <div class="egho-flight-summary-meta">
+                            <span data-flight-summary-dates>&mdash;</span>
+                            <span data-flight-summary-travellers>&mdash;</span>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="egho-flight-summary-modify"
+                            data-flight-summary-modify
+                        >
+                            Modify search
+                        </button>
+                    </div>
+
                     <div class="flight-results-toolbar">
-                        <span class="flight-results-toolbar-title">
-                            Compare fares
-                        </span>
+                        <div class="flight-results-toolbar-head">
+                            <strong class="flight-results-toolbar-title">
+                                Compare fares
+                            </strong>
+
+                            <span
+                                class="egho-flight-count"
+                                data-flight-count
+                                role="status"
+                                aria-live="polite"
+                                hidden
+                            ></span>
+                        </div>
 
                         <div class="flight-results-sort">
                             <span>Sort by</span>
 
                             <select
                                 class="egho-sort-select"
+                                data-flight-sort
                                 aria-label="Sort flight results"
                                 disabled
                             >
-                                <option>Cheapest (provider order)</option>
+                                <option value="provider" selected>
+                                    Provider order
+                                </option>
+                                <option value="cheapest">
+                                    Cheapest fare
+                                </option>
+                                <option value="shortest">
+                                    Shortest duration
+                                </option>
+                                <option value="earliest">
+                                    Earliest departure
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -343,77 +433,203 @@
                     <aside
                         class="egho-filter-card flight-results-rail"
                         aria-label="Result filters"
+                        data-flight-filters
                     >
-                        <div class="egho-filter-group">
-                            <h2>Price range</h2>
+                        {{--
+                            Every control ships disabled and is enabled by the
+                            result script once it has read the offers that came
+                            back, so a browser without JavaScript is never shown
+                            a filter that cannot do anything.
 
-                            <input
-                                class="egho-range"
-                                type="range"
-                                min="0"
-                                max="100"
-                                value="60"
-                                aria-label="Price range"
-                                disabled
-                            >
-
-                            <div class="egho-range-row">
-                                <span>Lowest fare</span>
-                                <span>Highest fare</span>
-                            </div>
-                        </div>
-
+                            Filtering happens in the browser over the options
+                            this search already returned. It never asks the
+                            provider for a different set of fares.
+                        --}}
                         <div class="egho-filter-group">
                             <h2>Stops</h2>
 
                             @foreach ([
-                                'Direct only',
-                                'Up to 1 stop',
-                                'Up to 2 stops',
-                            ] as $stopOption)
+                                ['value' => '0', 'label' => 'Non-stop'],
+                                ['value' => '1', 'label' => '1 stop'],
+                                ['value' => '2', 'label' => '2 or more stops'],
+                            ] as $stopFilter)
                                 <label class="egho-check">
-                                    <input type="checkbox" disabled>
-                                    <span>{{ $stopOption }}</span>
+                                    <input
+                                        type="checkbox"
+                                        value="{{ $stopFilter['value'] }}"
+                                        data-flight-stop-filter
+                                        disabled
+                                    >
+                                    <span>{{ $stopFilter['label'] }}</span>
                                 </label>
                             @endforeach
+
+                            <p class="egho-filter-help">
+                                Applies to every leg of an itinerary.
+                            </p>
                         </div>
 
                         <div class="egho-filter-group">
                             <h2>Airlines</h2>
 
-                            <p class="egho-filter-note">
-                                Carrier names shown in the results are the ones
-                                the provider actually returned.
-                            </p>
+                            <div
+                                class="egho-check-list"
+                                data-flight-airline-filters
+                            >
+                                <p class="egho-filter-note">
+                                    Carrier names appear here once a search has
+                                    returned options.
+                                </p>
+                            </div>
                         </div>
 
                         <div class="egho-filter-group">
-                            <h2>Departure &amp; arrival time</h2>
+                            <h2>Price range</h2>
 
-                            @foreach (['Departure time', 'Arrival time'] as $timeLabel)
-                                <label class="flight-filter-field">
-                                    <span>{{ $timeLabel }}</span>
+                            <label class="flight-filter-field">
+                                <span>Highest fare</span>
 
-                                    <select
-                                        aria-label="{{ $timeLabel }}"
-                                        disabled
-                                    >
-                                        <option>Any time</option>
-                                    </select>
-                                </label>
-                            @endforeach
+                                <input
+                                    class="egho-range"
+                                    type="range"
+                                    value="100"
+                                    data-flight-price-max
+                                    aria-label="Highest fare"
+                                    disabled
+                                >
+                            </label>
+
+                            <div class="egho-range-row">
+                                <span data-flight-price-min-label>&mdash;</span>
+                                <span data-flight-price-max-label>&mdash;</span>
+                            </div>
+
+                            <label class="flight-filter-field">
+                                <span>Lowest fare</span>
+
+                                <input
+                                    class="egho-range"
+                                    type="range"
+                                    value="0"
+                                    data-flight-price-min
+                                    aria-label="Lowest fare"
+                                    disabled
+                                >
+                            </label>
                         </div>
 
-                        <p class="egho-filter-note">
-                            The configured search provider returns fares in its
-                            own order and does not expose stop, carrier, price
-                            or time filtering, so these controls stay disabled.
-                            No fare is hidden or re-ordered by this page.
+                        <div class="egho-filter-group">
+                            <h2>Departure time</h2>
+
+                            <label class="flight-filter-field">
+                                <span>Earliest</span>
+
+                                <input
+                                    class="egho-range"
+                                    type="range"
+                                    min="0"
+                                    max="23"
+                                    value="0"
+                                    data-flight-departure-min
+                                    aria-label="Earliest departure hour"
+                                    disabled
+                                >
+                            </label>
+
+                            <label class="flight-filter-field">
+                                <span>Latest</span>
+
+                                <input
+                                    class="egho-range"
+                                    type="range"
+                                    min="0"
+                                    max="23"
+                                    value="23"
+                                    data-flight-departure-max
+                                    aria-label="Latest departure hour"
+                                    disabled
+                                >
+                            </label>
+
+                            <div class="egho-range-row">
+                                <span data-flight-departure-window>
+                                    Any time
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="egho-filter-group">
+                            <h2>Arrival time</h2>
+
+                            <label class="flight-filter-field">
+                                <span>Earliest</span>
+
+                                <input
+                                    class="egho-range"
+                                    type="range"
+                                    min="0"
+                                    max="23"
+                                    value="0"
+                                    data-flight-arrival-min
+                                    aria-label="Earliest arrival hour"
+                                    disabled
+                                >
+                            </label>
+
+                            <label class="flight-filter-field">
+                                <span>Latest</span>
+
+                                <input
+                                    class="egho-range"
+                                    type="range"
+                                    min="0"
+                                    max="23"
+                                    value="23"
+                                    data-flight-arrival-max
+                                    aria-label="Latest arrival hour"
+                                    disabled
+                                >
+                            </label>
+
+                            <div class="egho-range-row">
+                                <span data-flight-arrival-window>
+                                    Any time
+                                </span>
+                            </div>
+
+                            <p class="egho-filter-help">
+                                Departure and arrival windows apply to the first
+                                leg of an itinerary.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="egho-filter-reset"
+                            data-flight-filter-reset
+                            hidden
+                        >
+                            Reset filters
+                        </button>
+
+                        {{--
+                            Replaced with the active wording once the script has
+                            enabled the controls, so the note always describes
+                            the state the visitor is actually looking at.
+                        --}}
+                        <p
+                            class="egho-filter-note"
+                            data-flight-filter-note
+                        >
+                            These filters need JavaScript. The configured search
+                            provider does not expose stop, carrier, price or
+                            time filtering to this page, so while the controls
+                            are inactive no fare is hidden or re-ordered.
                         </p>
                     </aside>
 
                 <div
-                    class="flight-results"
+                    class="flight-results egho-flight-results"
                     data-flight-results data-flight-select-url="{{ route('flights.offers.select') }}" data-flight-traveler-validation-url="{{ route('flights.travelers.validate') }}"
                     data-flight-booking-draft-url="{{ route('flights.bookings.drafts.store') }}"
                     data-flight-booking-draft-review-url="{{ route('flights.bookings.drafts.review') }}"
