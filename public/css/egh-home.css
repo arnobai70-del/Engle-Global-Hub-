@@ -1,0 +1,1014 @@
+/*
+    Homepage sections.
+
+    Loaded only by `home.blade.php` (pushed into the `head` stack, so it also
+    lands after `egh-ota.css`). Everything here is scoped to the homepage's own
+    classes, and the shared components it reuses — the search card, the
+    assurance strip, the promotion cards, the service tiles and the destination
+    cards — keep the markup and behaviour `egh-ota.css` already styles.
+
+    Section order follows the approved panel:
+
+      hero -> search card -> assurances -> promotions -> Our Services
+      -> destinations -> service panels -> why choose -> customer comments
+      -> mobile app -> journey call to action
+
+    Where the panel shows something this application cannot back, the markup
+    says so instead of pretending (see the comments in `home.blade.php`).
+
+    Every font size stays at or above the 11px floor the theme sheets hold.
+*/
+
+/* ------------------------------------------------------------------ hero */
+
+/*
+    Flat eyebrow.
+
+    The panel's hero eyebrow is plain amber lettering rather than the pill the
+    rest of the site uses, so the pill chrome is removed here.
+*/
+.egho-hero .egho-hero-eyebrow {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--egho-amber);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+}
+
+.egho-hero-mark {
+    color: var(--egho-amber);
+}
+
+.egho-hero-copy {
+    max-width: 640px;
+}
+
+.egho-hero h1 {
+    margin-top: 16px;
+    font-size: clamp(32px, 4.4vw, 50px);
+    line-height: 1.1;
+}
+
+.egho-hero .egho-hero-accent {
+    color: var(--egho-amber);
+}
+
+.egho-hero-copy p {
+    max-width: 52ch;
+    font-size: 16.5px;
+}
+
+/*
+    Hero points.
+
+    The panel keeps three quiet trust lines under the headline. They stay
+    statements about this website rather than claims about partners or ratings.
+*/
+.egho-hero-points {
+    gap: 10px 12px;
+    margin-top: 24px;
+}
+
+.egho-hero-points li {
+    padding: 7px 14px 7px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 12.5px;
+}
+
+/*
+    Panel caption and aircraft.
+
+    Both are decorative: the caption repeats the panel's handwritten line and
+    the aircraft is drawn as an inline silhouette, so nothing here is a claim
+    and neither is announced to assistive technology.
+*/
+.egho-hero-aside {
+    position: absolute;
+    top: 22px;
+    right: 8px;
+    display: grid;
+    gap: 10px;
+    justify-items: end;
+    pointer-events: none;
+}
+
+.egho-hero-script {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    text-align: right;
+    transform: rotate(7deg);
+}
+
+.egho-hero-plane {
+    width: 190px;
+    height: auto;
+    opacity: 0.92;
+    fill: rgba(255, 255, 255, 0.9);
+}
+
+/* ----------------------------------------------------------- search card */
+
+/*
+    Travellers and cabin class share one field group, as in the panel.
+
+    The group is deliberately shaped exactly like a single `.egho-field`: an
+    11px uppercase label above a 48px control. Two controls share the group's
+    second row, so the search card's cells all end on the same line and the
+    search button lines up with the inputs instead of sitting below them.
+*/
+.egho-field-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px 8px;
+    min-width: 0;
+}
+
+.egho-field-group-label {
+    grid-column: 1 / -1;
+    color: var(--egho-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.egho-field-group select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 13px;
+    border: 1px solid var(--egho-line);
+    border-radius: 11px;
+    background: #fff;
+    color: var(--egho-navy);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.egho-field-group select:focus {
+    border-color: var(--egho-blue);
+    outline: 2px solid rgba(18, 86, 160, 0.16);
+}
+
+/*
+    The panel keeps the whole flight search on one line: origin pair, both
+    dates, travellers and class, and the button last. The site's own grid is
+    six columns with the pair and the button spanning two, which pushes the
+    button onto a second row, so the smaller five-column track is set here.
+*/
+.egho-search-grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1.15fr);
+    align-items: end;
+}
+
+.egho-field-pair,
+.egho-field-group,
+.egho-submit {
+    grid-column: auto;
+}
+
+.egho-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    max-width: none;
+}
+
+/* The comparison chip closes the card on its own row, as in the panel. */
+.egho-compare {
+    grid-column: 1 / -1;
+    margin-top: 2px;
+}
+
+/* The active search surface reads as the filled pill from the panel. */
+.egho-search-tab.is-active {
+    border-color: var(--egho-blue);
+    background: var(--egho-blue);
+    color: #fff;
+}
+
+.egho-search-tab.is-active svg {
+    stroke: #fff;
+}
+
+.egho-submit svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ------------------------------------------------------------ assurances */
+
+/*
+    Five statements about how this website behaves, in the panel's
+    five-across strip. None of them is a link or a rating claim.
+*/
+.egho-assurances {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.egho-assurances li {
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+}
+
+.egho-assurance-copy strong {
+    font-size: 13.5px;
+}
+
+/* ------------------------------------------------------------- promotions */
+
+.egho-promos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.egho-promo h2 {
+    font-size: 21px;
+}
+
+.egho-promo-list {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-promo-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.egho-promo-list span {
+    color: var(--egho-amber);
+    font-weight: 800;
+}
+
+.egho-promo-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+}
+
+.egho-promo-cta svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ----------------------------------------------------------- our services */
+
+/*
+    The panel's ten service tiles, five across two rows.
+
+    The tiles are the site's existing `.egho-tile` component, so a tile that
+    maps to a configured service carries that service's own status chip from
+    the travel service registry, and a tile for something this application does
+    not offer yet says so rather than linking nowhere.
+*/
+.egho-tiles {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.egho-tile {
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 96px;
+    padding: 16px;
+}
+
+.egho-tile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+}
+
+.egho-tile-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.egho-tile strong {
+    font-size: 14px;
+}
+
+.egho-tile small {
+    font-size: 12px;
+}
+
+.egho-tile-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    margin-top: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--egho-surface);
+    color: var(--egho-muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.egho-tile-status.is-live {
+    background: #e8f6ee;
+    color: #1d7a45;
+}
+
+.egho-tile-status.is-planned {
+    background: #fff4e2;
+    color: #8a5200;
+}
+
+/* -------------------------------------------------------- scrolling rails */
+
+/*
+    Destinations and customer comments share one rail: a horizontal scroller
+    with real previous/next buttons.
+
+    The buttons scroll the strip they belong to. They are hidden until the
+    page script confirms there is something to scroll, and they are never used
+    to page through invented content — only through the cards that are in the
+    markup.
+*/
+.egho-rail {
+    position: relative;
+}
+
+.egho-rail-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/*
+    `display: flex` would otherwise beat the `hidden` attribute the rail
+    controls are rendered with, so the attribute is honoured explicitly.
+*/
+.egho-rail-head[hidden] {
+    display: none;
+}
+
+.egho-rail-button {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--egho-line);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--egho-navy);
+    cursor: pointer;
+}
+
+.egho-rail-button:hover {
+    border-color: #cfe0f7;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-rail-button:disabled {
+    opacity: 0.42;
+    cursor: default;
+}
+
+.egho-rail-button svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/*
+    The destination strip is a scroller here rather than the six-across grid
+    `egh-ota.css` sets up, because the panel shows eight tiles with arrows.
+*/
+.egho-destinations.is-rail {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 3 * 14px) / 4);
+    gap: 14px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.egho-destinations.is-rail::-webkit-scrollbar {
+    display: none;
+}
+
+.egho-destinations.is-rail > * {
+    scroll-snap-align: start;
+}
+
+/* --------------------------------------------------------- service panels */
+
+/*
+    The panel's second row: visa services, work visa processing and holiday
+    packages, each with its own checklist and one action.
+*/
+.egho-panels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.egho-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 124px;
+    align-items: center;
+    gap: 16px;
+    padding: 22px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(11, 37, 69, 0.06);
+}
+
+.egho-panel.is-visa {
+    background: var(--egho-sky);
+    border-color: #cfe0f7;
+}
+
+.egho-panel h3 {
+    margin: 0;
+    color: var(--egho-navy);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+
+.egho-panel p {
+    margin: 7px 0 0;
+    color: var(--egho-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.egho-panel-list {
+    display: grid;
+    gap: 6px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-panel-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--egho-navy-soft);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.egho-panel-list span {
+    color: var(--egho-blue);
+    font-weight: 800;
+}
+
+.egho-panel-media {
+    width: 124px;
+    height: 124px;
+    border-radius: 16px;
+    background-color: var(--egho-navy);
+    background-image: var(--egho-panel-image, none);
+    background-size: cover;
+    background-position: center;
+}
+
+.egho-panel-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    margin-top: 14px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--egho-blue);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.egho-panel-cta:hover {
+    background: var(--egho-blue-dark, #0d4179);
+}
+
+.egho-panel-cta svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* A panel whose product does not exist yet carries a status chip, not a link. */
+.egho-panel-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    margin-top: 14px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #fff4e2;
+    color: #8a5200;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ------------------------------------------------------------ why choose */
+
+.egho-why {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-why li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.egho-why-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-why-icon svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-why strong {
+    display: block;
+    color: var(--egho-navy);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.egho-why small {
+    display: block;
+    margin-top: 4px;
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+/* ------------------------------------------------------ customer comments */
+
+/*
+    Sample comments.
+
+    The panel shows three customer quotes. This application holds no review
+    data, so these render only in the local development environment and the
+    section is badged as sample content.
+*/
+.egho-sample-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #fff4e2;
+    color: #8a5200;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/*
+    Comments use the same rail as the destination strip, three cards across,
+    so a narrow screen can page through them without inventing extra quotes.
+*/
+.egho-voices.is-rail {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 2 * 16px) / 3);
+    gap: 16px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.egho-voices.is-rail::-webkit-scrollbar {
+    display: none;
+}
+
+.egho-voices.is-rail > * {
+    scroll-snap-align: start;
+}
+
+.egho-voice {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-border, 14px);
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(11, 37, 69, 0.06);
+}
+
+.egho-voice p {
+    margin: 0;
+    color: var(--egho-navy-soft);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.egho-voice-person {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: auto;
+}
+
+.egho-voice-avatar {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+    font-size: 14px;
+    font-weight: 800;
+    flex: 0 0 auto;
+}
+
+.egho-voice-person strong {
+    display: block;
+    color: var(--egho-navy);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.egho-voice-person small {
+    display: block;
+    color: var(--egho-muted);
+    font-size: 12px;
+}
+
+/* ---------------------------------------------------------- mobile app */
+
+.egho-app {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 26px;
+    padding: 30px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    background: linear-gradient(120deg, #f2f7fe 0%, #ffffff 62%);
+}
+
+.egho-app h2 {
+    margin: 0;
+    color: var(--egho-navy);
+    font-size: clamp(20px, 2.2vw, 26px);
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.egho-app p {
+    margin: 8px 0 0;
+    color: var(--egho-muted);
+    font-size: 14px;
+}
+
+.egho-app-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-app-chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 5px 13px;
+    border: 1px solid var(--egho-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--egho-navy-soft);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.egho-app-chips svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: var(--egho-blue);
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/*
+    Store badges.
+
+    The panel shows Google Play and App Store badges. No mobile build is
+    published, so the badges are drawn here as status blocks that say exactly
+    that — no link, no store artwork.
+*/
+.egho-stores {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.egho-store {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 52px;
+    padding: 9px 18px;
+    border: 1px solid var(--egho-line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--egho-navy);
+}
+
+.egho-store svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    fill: var(--egho-blue);
+}
+
+.egho-store span {
+    display: grid;
+    line-height: 1.25;
+}
+
+.egho-store small {
+    color: var(--egho-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.egho-store strong {
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
+/* ------------------------------------------------- journey call to action */
+
+.egho-journey {
+    position: relative;
+    isolation: isolate;
+    padding: 44px 0;
+    color: #fff;
+    background-color: var(--egho-navy);
+    background-image: var(--egho-journey-image, none);
+    background-size: cover;
+    background-position: center;
+}
+
+.egho-journey::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        100deg,
+        rgba(8, 27, 55, 0.9) 0%,
+        rgba(8, 27, 55, 0.62) 100%
+    );
+}
+
+.egho-journey-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.egho-journey h2 {
+    margin: 0;
+    font-size: clamp(22px, 2.6vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.egho-journey p {
+    margin: 10px 0 0;
+    max-width: 52ch;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 14.5px;
+}
+
+.egho-journey-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 46px;
+    padding: 12px 26px;
+    border-radius: 999px;
+    background: var(--egho-amber);
+    color: #3d2200;
+    font-size: 14.5px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.egho-journey-cta:hover {
+    background: #ffb02e;
+}
+
+.egho-journey-cta svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ------------------------------------------------------------- responsive */
+
+@media (max-width: 1180px) {
+    .egho-assurances {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .egho-tiles {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .egho-destinations.is-rail {
+        grid-auto-columns: calc((100% - 2 * 14px) / 3);
+    }
+
+    .egho-why {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1180px) {
+    /*
+        Three search columns: the origin pair takes two of them and the
+        travellers-and-class group takes the third.
+    */
+    .egho-search-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .egho-field-pair {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 1024px) {
+    .egho-promos,
+    .egho-panels {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .egho-voices.is-rail {
+        grid-auto-columns: calc((100% - 16px) / 2);
+    }
+
+    .egho-hero-aside {
+        display: none;
+    }
+}
+
+@media (max-width: 860px) {
+    .egho-assurances {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /*
+        Two search columns. The origin pair still spans both, so the swap
+        control keeps its place between the two airport fields.
+    */
+    .egho-search-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .egho-field-pair {
+        grid-column: span 2;
+    }
+
+    .egho-field-group {
+        grid-column: span 2;
+    }
+
+    .egho-tiles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .egho-destinations.is-rail {
+        grid-auto-columns: calc((100% - 14px) / 2);
+    }
+
+    .egho-app {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 24px;
+    }
+}
+
+@media (max-width: 640px) {
+    .egho-assurances,
+    .egho-tiles,
+    .egho-why,
+    .egho-search-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .egho-field-pair,
+    .egho-field-group {
+        grid-column: span 1;
+    }
+
+    .egho-panel {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .egho-panel-media {
+        width: 100%;
+        height: 148px;
+        order: -1;
+    }
+
+    .egho-destinations.is-rail {
+        grid-auto-columns: 78%;
+    }
+
+    .egho-voices.is-rail {
+        grid-auto-columns: 84%;
+    }
+
+    .egho-field-group {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .egho-journey-inner {
+        align-items: flex-start;
+    }
+}

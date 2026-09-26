@@ -1,0 +1,394 @@
+/*
+    Public site chrome: top bar, header and footer.
+
+    Drawn from the approved homepage panel. This sheet is loaded after
+    `egh-ota.css`, so its rules win at equal specificity, and every selector
+    stays inside the `.egho-` namespace the public site already uses.
+
+    Two places where this website deliberately differs from the panel, both
+    because the panel promises something this application cannot honour:
+
+    - The panel's top bar shows a support phone number and an email address.
+      Contact details are never invented on this website, so those slots render
+      only when the `$siteContact` view composer actually supplies a value.
+      Without one the bar offers the support page, which is where the official
+      contact channels are published.
+    - The panel's quick links (Offers, Corporate, Agent Portal) have no page on
+      this website. The bar lists the destinations that exist instead of links
+      that would lead nowhere.
+
+    Every font size stays at or above the 11px floor the theme sheets hold.
+*/
+
+/* ---------------------------------------------------------------- top bar */
+
+.egho-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--egho-line);
+    color: var(--egho-navy);
+}
+
+.egho-topbar-inner {
+    min-height: 44px;
+    gap: 18px;
+}
+
+.egho-topbar-item {
+    color: rgba(11, 37, 69, 0.72);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+a.egho-topbar-item:hover {
+    color: var(--egho-blue);
+}
+
+/*
+    Icons in the white bar carry the brand blue, as in the panel. The footer
+    reuses `.egho-topbar-item`, so that colour is reversed further down.
+*/
+.egho-topbar-item svg {
+    stroke: var(--egho-blue);
+}
+
+.egho-topbar-item strong {
+    color: var(--egho-navy);
+    font-weight: 700;
+}
+
+.egho-topbar-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--egho-line);
+}
+
+/*
+    Locale and currency chips.
+
+    They stay non-interactive status chips: neither locale nor currency
+    switching is wired up, so they must not look like controls that would work.
+    The panel shows the same chevron affordance, which is why the chip keeps
+    its shape but not a pointer cursor.
+*/
+.egho-switch {
+    border: 1px solid var(--egho-line);
+    background: var(--egho-sky);
+    color: var(--egho-navy);
+    cursor: default;
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+.egho-switch:hover {
+    background: #dceafd;
+}
+
+/* Account controls are sized for a 44px bar rather than the taller header. */
+.egho-topbar .site-button {
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    min-height: 32px;
+    padding: 6px 15px;
+}
+
+.egho-topbar .egho-user-chip {
+    padding: 4px 12px 4px 4px;
+}
+
+.egho-topbar .egho-user-copy {
+    max-width: 130px;
+}
+
+/* ------------------------------------------------------------ main header */
+
+.egho-header {
+    border-bottom: 1px solid var(--egho-line);
+    box-shadow: 0 10px 26px rgba(11, 37, 69, 0.06);
+}
+
+.egho-header-inner {
+    min-height: 80px;
+    gap: 20px;
+}
+
+.egho-brand-mark {
+    width: 46px;
+    height: 46px;
+}
+
+/*
+    Pill navigation.
+
+    The panel's navigation is a row of icon pills with the current surface
+    filled in brand blue. Pills are still plain links: the markup gates every
+    one of them behind its own feature flag and permission, so a pill is only
+    present when its page is actually reachable.
+*/
+.egho-nav {
+    gap: 6px;
+    padding: 2px;
+}
+
+.egho-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--egho-navy);
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.egho-nav a svg {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-nav a:hover {
+    background: var(--egho-sky);
+    border-color: #cfe0f7;
+    color: var(--egho-blue);
+}
+
+.egho-nav a.is-active {
+    background: var(--egho-blue);
+    border-color: var(--egho-blue);
+    color: #fff;
+}
+
+.egho-nav-badge {
+    margin-left: 2px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--egho-amber);
+    color: #3d2200;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/*
+    "More" menu.
+
+    A `<details>` element rather than a scripted dropdown, so the links it
+    holds stay reachable with JavaScript switched off. The panel shows the same
+    grid icon button.
+*/
+.egho-nav-more {
+    position: relative;
+}
+
+.egho-nav-more > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--egho-navy);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+}
+
+.egho-nav-more > summary::-webkit-details-marker {
+    display: none;
+}
+
+.egho-nav-more > summary svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-nav-more > summary:hover,
+.egho-nav-more[open] > summary {
+    background: var(--egho-sky);
+    border-color: #cfe0f7;
+    color: var(--egho-blue);
+}
+
+.egho-nav-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 40;
+    display: grid;
+    gap: 2px;
+    min-width: 232px;
+    padding: 10px;
+    border: 1px solid var(--egho-line);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 22px 46px rgba(11, 37, 69, 0.18);
+}
+
+.egho-nav-menu a {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--egho-navy);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.egho-nav-menu a:hover {
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+/* ----------------------------------------------------------------- footer */
+
+.egho-footer-main {
+    grid-template-columns: 1.5fr 1fr 1.1fr 1fr 1.3fr;
+    gap: 30px;
+    padding: 52px 0 34px;
+}
+
+.egho-footer-brand {
+    font-size: 17px;
+}
+
+.egho-footer-desc {
+    max-width: 34ch;
+}
+
+/*
+    The footer bottom strip reuses the top bar's link class, so the dark ink
+    from the white bar is put back to light here.
+*/
+.egho-footer .egho-topbar-item {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 12.5px;
+}
+
+.egho-footer .egho-topbar-item:hover {
+    color: #fff;
+}
+
+.egho-footer-bottom {
+    padding: 18px 0 24px;
+}
+
+/*
+    Payment and security strip.
+
+    The panel shows card-brand marks under the footer. No payment provider is
+    configured for this website, so instead of claiming card brands this strip
+    states what is actually true right now.
+*/
+.egho-footer-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-footer-status li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 32px;
+    padding: 5px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.egho-footer-status svg {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ------------------------------------------------------------- responsive */
+
+@media (max-width: 1180px) {
+    .egho-footer-main {
+        grid-template-columns: 1.4fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .egho-nav a,
+    .egho-nav-more > summary {
+        padding: 7px 11px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 1024px) {
+    /*
+        Tablet and below: the top bar keeps the contact slots, the locale chips
+        and the account controls, and drops the secondary quick links, which
+        are all reachable from the More menu in the header.
+    */
+    .egho-topbar-group-toplinks {
+        display: none;
+    }
+}
+
+@media (max-width: 860px) {
+    .egho-header-inner {
+        min-height: 72px;
+    }
+
+    .egho-footer-main {
+        grid-template-columns: 1fr 1fr;
+        gap: 26px;
+    }
+}
+
+@media (max-width: 640px) {
+    .egho-topbar-inner {
+        min-height: 40px;
+    }
+
+    /* Locale and currency are status chips, so they are the first to go. */
+    .egho-topbar-group-locale {
+        display: none;
+    }
+
+    .egho-footer-main {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        padding: 38px 0 26px;
+    }
+
+    .egho-footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
