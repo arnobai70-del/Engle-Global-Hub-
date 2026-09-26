@@ -15,15 +15,15 @@
     @can('master-data.manage')
     <form id="currency-form" class="cur-form" data-url="{{ route('admin.master-data.currencies.store') }}">
         <div class="cur-two">
-            <input name="name" placeholder="Currency name" required maxlength="150">
-            <input name="code" placeholder="ISO code e.g. USD" required minlength="3" maxlength="3" pattern="[A-Z]{3}">
+            <input name="name" placeholder="Currency name" aria-label="Currency name" required maxlength="150">
+            <input name="code" placeholder="ISO code e.g. USD" aria-label="ISO currency code" required minlength="3" maxlength="3" pattern="[A-Z]{3}">
         </div>
         <div class="cur-two">
-            <input name="symbol" placeholder="Symbol (optional)" maxlength="16">
-            <input type="number" name="decimal_places" value="2" min="0" max="4" required>
+            <input name="symbol" placeholder="Symbol (optional)" aria-label="Symbol" maxlength="16">
+            <input type="number" name="decimal_places" aria-label="Decimal places" value="2" min="0" max="4" required>
         </div>
         <div class="cur-two">
-            <input type="number" name="sort_order" value="0" min="0" max="4294967295" required>
+            <input type="number" name="sort_order" aria-label="Sort order" value="0" min="0" max="4294967295" required>
             <label><input type="checkbox" name="is_active" checked> Active</label>
         </div>
         <button class="egh-button" type="submit">Add Currency</button>

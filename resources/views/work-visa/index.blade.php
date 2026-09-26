@@ -43,11 +43,15 @@
 
                 <div class="egho-contact-hero-media">
                     <img
-                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80"
+                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=85"
+                        srcset="
+                            https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=85 1x,
+                            https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=85 2x
+                        "
                         alt=""
                         loading="lazy"
-                        width="1200"
-                        height="800"
+                        width="1600"
+                        height="1067"
                     >
                 </div>
             </section>
@@ -145,32 +149,32 @@
                             [
                                 'name' => 'Canada',
                                 'note' => 'Sample destination',
-                                'image' => 'https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=800&q=80',
+                                'image' => 'https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=1000&q=85',
                             ],
                             [
                                 'name' => 'Australia',
                                 'note' => 'Sample destination',
-                                'image' => 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80',
+                                'image' => 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1000&q=85',
                             ],
                             [
                                 'name' => 'United Kingdom',
                                 'note' => 'Sample destination',
-                                'image' => 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80',
+                                'image' => 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1000&q=85',
                             ],
                             [
                                 'name' => 'Germany',
                                 'note' => 'Sample destination',
-                                'image' => 'https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=800&q=80',
+                                'image' => 'https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=1000&q=85',
                             ],
                             [
                                 'name' => 'United States',
                                 'note' => 'Sample destination',
-                                'image' => 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?auto=format&fit=crop&w=800&q=80',
+                                'image' => 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?auto=format&fit=crop&w=1000&q=85',
                             ],
                             [
                                 'name' => 'United Arab Emirates',
                                 'note' => 'Sample destination',
-                                'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
+                                'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=85',
                             ],
                         ] as $destination)
                             <article class="egho-country-tile">
@@ -179,8 +183,8 @@
                                     src="{{ $destination['image'] }}"
                                     alt=""
                                     loading="lazy"
-                                    width="800"
-                                    height="500"
+                                    width="1000"
+                                    height="625"
                                 >
                                 <div class="egho-country-tile-body">
                                     <strong>{{ $destination['name'] }}</strong>

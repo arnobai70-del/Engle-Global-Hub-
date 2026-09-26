@@ -211,11 +211,11 @@
 
                 <div class="egho-visa-media">
                     <img
-                        src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=1200&q=80"
+                        src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=1400&q=85"
                         alt=""
                         loading="lazy"
-                        width="1200"
-                        height="1500"
+                        width="1400"
+                        height="1750"
                     >
                 </div>
 

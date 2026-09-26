@@ -15,12 +15,12 @@
     @can('master-data.manage')
     <form id="category-form" class="cat-form" data-url="{{ route('admin.master-data.categories.store') }}">
         <div class="cat-two">
-            <input name="name" placeholder="Category name" required maxlength="150">
-            <input name="slug" placeholder="Slug e.g. flights" required maxlength="180">
+            <input name="name" placeholder="Category name" aria-label="Category name" required maxlength="150">
+            <input name="slug" placeholder="Slug e.g. flights" aria-label="Slug" required maxlength="180">
         </div>
-        <textarea name="description" placeholder="Description (optional)" maxlength="5000"></textarea>
+        <textarea name="description" placeholder="Description (optional)" aria-label="Description" maxlength="5000"></textarea>
         <div class="cat-two">
-            <input type="number" name="sort_order" value="0" min="0" max="4294967295" required>
+            <input type="number" name="sort_order" aria-label="Sort order" value="0" min="0" max="4294967295" required>
             <label><input type="checkbox" name="is_active" checked> Active</label>
         </div>
         <button class="egh-button" type="submit">Add Category</button>

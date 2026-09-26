@@ -15,12 +15,12 @@
     @can('master-data.manage')
     <form id="language-form" class="lng-form" data-url="{{ route('admin.master-data.languages.store') }}">
         <div class="lng-two">
-            <input name="name" placeholder="Language name" required maxlength="150">
-            <input name="code" placeholder="ISO code e.g. en" required minlength="2" maxlength="2" pattern="[a-z]{2}">
+            <input name="name" placeholder="Language name" aria-label="Language name" required maxlength="150">
+            <input name="code" placeholder="ISO code e.g. en" aria-label="ISO language code" required minlength="2" maxlength="2" pattern="[a-z]{2}">
         </div>
         <div class="lng-two">
-            <input name="native_name" placeholder="Native name (optional)" maxlength="150">
-            <input type="number" name="sort_order" value="0" min="0" max="4294967295" required>
+            <input name="native_name" placeholder="Native name (optional)" aria-label="Native name" maxlength="150">
+            <input type="number" name="sort_order" aria-label="Sort order" value="0" min="0" max="4294967295" required>
         </div>
         <label><input type="checkbox" name="is_active" checked> Active</label>
         <button class="egh-button" type="submit">Add Language</button>

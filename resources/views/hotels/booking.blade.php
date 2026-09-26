@@ -126,11 +126,11 @@
                         <div class="egho-summary-hotel">
                             <div class="egho-summary-thumb">
                                 <img
-                                    src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=300&q=80"
+                                    src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=85"
                                     alt=""
                                     loading="lazy"
-                                    width="300"
-                                    height="300"
+                                    width="400"
+                                    height="400"
                                 >
                             </div>
                             <div>
