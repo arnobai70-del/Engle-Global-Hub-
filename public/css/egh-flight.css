@@ -203,3 +203,408 @@
         margin-right: 0;
     }
 }
+
+/* ==========================================================================
+   FLIGHT BOOKING — TRAVELLER DETAILS (SCREEN 3)
+
+   Same page-scoped sheet as the result list above, loaded only by
+   resources/views/flights/search.blade.php, so nothing here can reach another
+   screen. The traveller step is built by the flight script into
+   [data-flight-results]; every class and field name it depends on is kept, and
+   these rules only re-shape what is already rendered:
+
+   - a two-column booking layout with the fare summary held beside the cards
+   - numbered, roomy traveller cards instead of one dense field row
+   - a summary panel that repeats the selected fare and the passenger counts
+
+   Every rule is prefixed with .egho-flight-results so it outranks the bundled
+   .flight-* defaults in the Vite stylesheet without editing that file.
+   ========================================================================== */
+
+.egho-flight-results .flight-traveler-review {
+    margin-top: 22px;
+    padding: 26px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    background: #fff;
+    box-shadow: 0 14px 38px rgba(11, 37, 69, 0.08);
+
+    /*
+       The bundled sheet hides overflow here. That would trap the fare summary
+       in a scroll container and stop it sticking, so the panel is allowed to
+       overflow instead.
+    */
+    overflow: visible;
+}
+
+/* ---------------------------------------------------------------- header */
+.egho-flight-results .flight-traveler-review-header {
+    padding: 0 0 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--egho-line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.egho-flight-results .flight-review-kicker {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: var(--egho-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.egho-flight-results .flight-traveler-review-header h3 {
+    margin: 0 0 6px;
+    color: var(--egho-navy);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.egho-flight-results .flight-traveler-review-header p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--egho-muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.egho-flight-results .flight-review-demo-warning {
+    padding: 12px 16px;
+    margin: 0 0 18px;
+    border: 1px solid #f3d59a;
+    border-left: 4px solid var(--egho-amber);
+    border-radius: 12px;
+    background: #fff8ea;
+    color: #8a5a06;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.55;
+}
+
+/* ------------------------------------------------------- two-column body */
+.egho-flight-results .flight-traveler-review-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 24px;
+    align-items: start;
+}
+
+.egho-flight-results .flight-traveler-review-main {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* ------------------------------------------------------------ fare panel */
+.egho-flight-results .flight-traveler-summary {
+    position: sticky;
+    top: 18px;
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid #cfdff5;
+    border-radius: 16px;
+    background: linear-gradient(180deg, var(--egho-sky) 0%, #f9fbff 100%);
+}
+
+.egho-flight-results .flight-traveler-summary h4 {
+    margin: 0;
+    color: var(--egho-navy);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.egho-flight-results .flight-traveler-summary .flight-selected-fare {
+    flex: initial;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--egho-navy);
+    text-align: left;
+}
+
+.egho-flight-results .flight-traveler-summary .flight-selected-fare span {
+    display: block;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.egho-flight-results .flight-traveler-summary .flight-selected-fare strong {
+    display: block;
+    margin-top: 6px;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.egho-flight-results .flight-traveler-summary .flight-passenger-summary {
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.egho-flight-results .flight-passenger-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 0;
+    padding: 9px 13px;
+    border: 1px solid #cfdff5;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--egho-navy);
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.egho-flight-results .flight-traveler-summary-note {
+    padding-top: 12px;
+    margin: 0;
+    border-top: 1px dashed #cfdff5;
+    color: var(--egho-muted);
+    font-size: 11.5px;
+    line-height: 1.6;
+}
+
+/* ---------------------------------------------------------- traveller cards */
+.egho-flight-results .flight-traveler-list {
+    padding: 0;
+    display: grid;
+    gap: 14px;
+}
+
+.egho-flight-results .flight-traveler-card {
+    padding: 18px;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(11, 37, 69, 0.05);
+}
+
+.egho-flight-results .flight-traveler-card-header {
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 1px dashed var(--egho-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.egho-flight-results .flight-traveler-card-header strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--egho-navy);
+    font-size: 14.5px;
+    font-weight: 800;
+}
+
+/* A short rule instead of a second "1" in front of an already numbered card. */
+.egho-flight-results .flight-traveler-card-header strong::before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    border-radius: 999px;
+    background: var(--egho-blue);
+}
+
+.egho-flight-results .flight-traveler-card-header span {
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.egho-flight-results .flight-traveler-fields {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px 14px;
+}
+
+.egho-flight-results .flight-traveler-field {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+}
+
+/*
+   Two label classes for one field row: the booking script writes
+   .flight-traveler-field-label for title, names and date of birth, and
+   .flight-traveler-label for gender, email and phone. Styling only one of
+   them leaves the other three labels on the older bundled type scale, so both
+   are named here and they stay identical.
+*/
+.egho-flight-results .flight-traveler-field-label,
+.egho-flight-results .flight-traveler-label {
+    display: block;
+    margin: 0;
+    color: var(--egho-muted);
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.egho-flight-results .flight-traveler-input {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--egho-line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--egho-text);
+    font: inherit;
+    font-size: 13.5px;
+}
+
+.egho-flight-results .flight-traveler-input:focus {
+    border-color: var(--egho-blue);
+    box-shadow: 0 0 0 3px rgba(18, 86, 160, 0.14);
+    outline: none;
+}
+
+.egho-flight-results .flight-traveler-input.is-invalid {
+    border-color: #d64545;
+    box-shadow: 0 0 0 3px rgba(214, 69, 69, 0.14);
+}
+
+/* ------------------------------------------------------- draft + actions */
+.egho-flight-results .flight-traveler-draft-notice {
+    margin: 0;
+    padding: 14px 16px;
+    display: grid;
+    gap: 5px;
+    border: 1px solid #cfdff5;
+    border-left: 4px solid var(--egho-blue);
+    border-radius: 12px;
+    background: var(--egho-sky);
+}
+
+.egho-flight-results .flight-traveler-draft-notice strong {
+    flex: initial;
+    color: var(--egho-navy);
+    font-size: 12.5px;
+    font-weight: 800;
+}
+
+.egho-flight-results .flight-traveler-draft-notice span {
+    color: var(--egho-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.egho-flight-results .flight-traveler-actions {
+    padding: 16px 0 0;
+    border-top: 1px solid var(--egho-line);
+    background: transparent;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.egho-flight-results .flight-traveler-actions > span {
+    max-width: 58ch;
+    color: var(--egho-muted);
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.egho-flight-results .flight-booking-continue {
+    flex: 0 0 auto;
+    min-height: 46px;
+    padding: 0 26px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: var(--egho-blue);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.egho-flight-results .flight-booking-continue:hover:not(:disabled) {
+    background: var(--egho-blue-dark);
+}
+
+.egho-flight-results .flight-booking-continue:focus-visible {
+    outline: 3px solid rgba(18, 86, 160, 0.35);
+    outline-offset: 2px;
+}
+
+.egho-flight-results .flight-booking-continue:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+.egho-flight-results .flight-traveler-validation-feedback {
+    padding: 12px 16px;
+    margin: 0;
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--egho-navy);
+    background: var(--egho-sky);
+}
+
+.egho-flight-results .flight-traveler-validation-feedback.is-error {
+    border: 1px solid #f0c2c2;
+    background: #fdeeee;
+    color: #9b2c2c;
+}
+
+.egho-flight-results .flight-traveler-validation-feedback.is-success {
+    border: 1px solid #b7e4c7;
+    background: #e7f7ec;
+    color: #1b7a3d;
+}
+
+/* ----------------------------------------------------------- small screens */
+@media (max-width: 980px) {
+    .egho-flight-results .flight-traveler-review-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /*
+       Once the panel sits above the cards there is nothing left to stick to,
+       and on the narrow layout it would only steal scroll space.
+    */
+    .egho-flight-results .flight-traveler-summary {
+        position: static;
+    }
+}
+
+@media (max-width: 720px) {
+    .egho-flight-results .flight-traveler-review {
+        padding: 18px;
+    }
+
+    .egho-flight-results .flight-traveler-fields {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .egho-flight-results .flight-booking-continue {
+        width: 100%;
+    }
+}
