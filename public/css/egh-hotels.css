@@ -1,0 +1,28 @@
+/* ==========================================================================
+   HOTEL SCREENS — SCREENS 5, 6 AND 7
+   Loaded only by resources/views/hotels/index.blade.php,
+   resources/views/hotels/rooms.blade.php and
+   resources/views/hotels/booking.blade.php, after the OTA theme, so nothing
+   in here can reach another page.
+
+   The hotel screens already inherit the shared `.egho-page-head` header and
+   the `.egho-steps` journey rail from the OTA theme. What this sheet adds is
+   the small amount of hotel-specific correction those screens need once each
+   one opens with a real page heading:
+
+   - the property panel on the room selection screen used to carry the page's
+     only <h1>. It is now an <h2>, because the screen has its own page heading,
+     and its type treatment is repeated here so the panel looks unchanged.
+   ========================================================================== */
+
+.egho-hotel-hero-copy h2 {
+    margin: 6px 0 6px;
+    font-size: 26px;
+    color: var(--egho-navy);
+}
+
+@media (max-width: 720px) {
+    .egho-hotel-hero-copy h2 {
+        font-size: 21px;
+    }
+}

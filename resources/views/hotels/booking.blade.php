@@ -9,10 +9,37 @@
 
 @section('body_class', 'egho-page-body')
 
+@php
+    /*
+     * Hotel screens carry their own stylesheet so a change here cannot reach
+     * another page. It has no content hash, so the modification time is
+     * appended to keep a cached copy from outliving an update.
+     */
+    $hotelCss = 'css/egh-hotels.css';
+    $hotelCssVersion = @filemtime(public_path($hotelCss));
+@endphp
+
+@push('head')
+    <link
+        rel="stylesheet"
+        href="{{ asset($hotelCss).($hotelCssVersion ? '?v='.$hotelCssVersion : '') }}"
+    >
+@endpush
+
 @section('content')
 
     <main class="egho-page">
         <div class="egho-shell">
+
+            <header class="egho-page-head">
+                <span class="egho-eyebrow">HOTEL BOOKING</span>
+                <h1>Guest details for your stay</h1>
+                <p>
+                    Where the room, the guest names and the contact details for
+                    a stay are confirmed before payment. No guest record and no
+                    booking can be created until a hotel provider is connected.
+                </p>
+            </header>
 
             <ol class="egho-steps" aria-label="Hotel booking steps">
                 @foreach ([

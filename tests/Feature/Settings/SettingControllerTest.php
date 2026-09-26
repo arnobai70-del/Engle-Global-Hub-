@@ -63,6 +63,21 @@ class SettingControllerTest extends TestCase
             ]);
     }
 
+    public function test_a_browser_visit_to_the_settings_url_opens_the_settings_screen(): void
+    {
+        $user = $this->createUserWithRole('admin');
+
+        /*
+         * The bare settings URL is the JSON listing's address, so an admin
+         * following a link to it used to get a page of raw JSON with no
+         * navigation at all. A request that is not asking for JSON now lands
+         * on the settings screen, while the JSON contract above is unchanged.
+         */
+        $this->actingAs($user)
+            ->get(route('admin.settings.index'))
+            ->assertRedirect(route('admin.settings.manage'));
+    }
+
     public function test_admin_cannot_update_settings(): void
     {
         $user = $this->createUserWithRole('admin');

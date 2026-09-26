@@ -14,6 +14,19 @@
     <main class="egho-page">
         <div class="egho-shell">
 
+            <header class="egho-page-head">
+                <span class="egho-eyebrow">WORK VISA APPLICATION</span>
+                <h1>Prepare a work visa application</h1>
+                <p>
+                    The visa category, document checklist and review steps an
+                    application needs, in the order they are worked through.
+                    Nothing is submitted from this page: no application, no
+                    uploaded document and no fee is created until a vetted
+                    immigration partner is connected. The final decision
+                    always belongs to the destination immigration authority.
+                </p>
+            </header>
+
             <ol class="egho-steps" aria-label="Work visa application steps">
                 @foreach ([
                     'Select Visa',

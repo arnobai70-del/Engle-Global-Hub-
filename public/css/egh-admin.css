@@ -670,3 +670,60 @@
     }
 }
 
+/* ==========================================================================
+   READABILITY FLOOR AND TAP TARGETS
+   --------------------------------------------------------------------------
+   The bundled admin sheet carries a run of 9px to 10px text: the nav section
+   titles, the page eyebrow, the breadcrumb's link and current page, the brand
+   tagline, and the header cells of the shared admin and settings tables. On a
+   laptop that is uncomfortable and on a tablet it is unreadable, so each is
+   raised to the 11px floor the rest of the site uses.
+
+   The selectors name each family instead of a blanket `table th`, so a table
+   that already sits at 11.5px keeps its size instead of being pulled down.
+   Everything is scoped to .admin-body and cannot reach another screen.
+   ========================================================================== */
+
+.admin-body .admin-nav-title,
+.admin-body .admin-brand-copy span,
+.admin-body .admin-page-eyebrow,
+.admin-body .admin-page-breadcrumb,
+.admin-body .admin-page-breadcrumb a,
+.admin-body .admin-page-breadcrumb strong {
+    font-size: 11px;
+}
+
+.admin-body .admin-page th,
+.admin-body .admin-data-table th,
+.admin-body .settings-table th {
+    font-size: 11px;
+}
+
+/* Status and type chips on the settings screen sit on the same floor. */
+.admin-body .settings-access-mode,
+.admin-body .settings-type-badge,
+.admin-body .settings-visibility-badge,
+.admin-body .settings-read-only-label {
+    font-size: 11px;
+}
+
+/* ------------------------------------------------------------- tap targets */
+/* Breadcrumbs and the phone menu button are controls, not labels. */
+.admin-body .admin-page-breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+}
+
+.admin-body .admin-menu-button {
+    min-width: 40px;
+    min-height: 40px;
+}
+
+/* Row actions in every admin table. */
+.admin-body .admin-action-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+}
+

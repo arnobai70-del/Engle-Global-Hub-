@@ -131,3 +131,37 @@ body.dashboard-body .dashboard-service-card-link {
     color: #1256a0;
     font-weight: 650;
 }
+
+/* ==========================================================================
+   READABILITY FLOOR
+   --------------------------------------------------------------------------
+   The bundled dashboard sheet sets a run of labels between 8px and 10px: the
+   welcome kicker, the verified-account note, the service card copy, the two
+   account-grid cells and the "Open Account" link. That is unreadable on a
+   phone, so each one is raised to the 11px floor the rest of the site uses.
+
+   Every rule stays scoped to body.dashboard-body, so it can only reach this
+   workspace, and every size here is larger than the bundled one it replaces.
+   ========================================================================== */
+
+body.dashboard-body .dashboard-kicker,
+body.dashboard-body .dashboard-verified small,
+body.dashboard-body .dashboard-service-card p,
+body.dashboard-body .dashboard-service-card small,
+body.dashboard-body .dashboard-quick-card small,
+body.dashboard-body .dashboard-account-grid span,
+body.dashboard-body .dashboard-account-grid strong,
+body.dashboard-body .verified-text,
+body.dashboard-body .dashboard-account-link {
+    font-size: 11px;
+}
+
+/*
+   "Open Account" is a control, not a label, so it also gets a real tap
+   target instead of the text-height hit area it had.
+*/
+body.dashboard-body .dashboard-account-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+}
