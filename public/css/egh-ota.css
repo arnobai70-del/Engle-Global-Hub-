@@ -1190,6 +1190,214 @@ a.egho-topbar-item:hover {
 }
 
 /* ==========================================================================
+   HOMEPAGE DESTINATION STRIP
+   Six-photograph strip matching the reviewed homepage layout: square tiles,
+   one destination photograph each, label over a soft scrim so the photograph
+   stays readable. Photographs come from the presentation array in the home
+   view; no fare, room rate or availability is claimed.
+   ========================================================================== */
+
+.egho-destinations {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.egho-destination {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    box-shadow: 0 12px 26px rgba(11, 37, 69, 0.16);
+}
+
+.egho-destination:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 38px rgba(11, 37, 69, 0.24);
+}
+
+.egho-destination::before {
+    background: linear-gradient(
+        180deg,
+        rgba(8, 28, 58, 0.34) 0%,
+        rgba(8, 28, 58, 0.04) 40%,
+        rgba(8, 28, 58, 0.9) 100%
+    );
+}
+
+.egho-destination-copy {
+    display: flex;
+    flex-direction: column;
+    padding: 13px;
+}
+
+.egho-destination-copy strong {
+    font-size: 15px;
+    letter-spacing: -0.01em;
+}
+
+.egho-destination-copy small {
+    font-size: 11.5px;
+    line-height: 1.35;
+}
+
+.egho-destination-tag {
+    order: -1;
+    align-self: flex-start;
+    margin-bottom: auto;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 1080px) {
+    .egho-destinations {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .egho-destinations {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+@media (max-width: 520px) {
+    .egho-destinations {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .egho-destination {
+        border-radius: 13px;
+    }
+
+    .egho-destination-copy {
+        padding: 10px;
+    }
+
+    .egho-destination-copy strong {
+        font-size: 13.5px;
+    }
+
+    .egho-destination-tag {
+        font-size: 9px;
+    }
+}
+
+/* ==========================================================================
+   ACCOUNT PROFILE HEADER
+   Larger initials avatar with a role chip, matching the reviewed profile
+   panel. Initials are used because this website does not store a profile
+   photo for an account.
+   ========================================================================== */
+
+.egho-account-avatar.is-lg {
+    width: 62px;
+    height: 62px;
+    font-size: 24px;
+}
+
+.egho-profile-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.egho-profile-copy strong {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--egho-navy);
+}
+
+.egho-profile-copy small {
+    color: var(--egho-muted);
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.egho-profile-badge {
+    align-self: flex-start;
+    margin-top: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--egho-sky);
+    border: 1px solid #cfe0f7;
+    color: var(--egho-blue);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   CONTACT MAP PANEL
+   Decorative city-grid canvas behind the published-location notice. It is a
+   drawn placeholder, not a map service: the panel still states that no office
+   location is configured, and no coordinates are implied.
+   ========================================================================== */
+
+.egho-map-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 20% 26%, #e2ecd4 0 17%, transparent 18%),
+        radial-gradient(circle at 78% 74%, #e2ecd4 0 14%, transparent 15%),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 44px,
+            #e4eef9 44px 46px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 36px,
+            #e4eef9 36px 38px
+        ),
+        linear-gradient(114deg, transparent 42%, #cfe0f3 42%, #cfe0f3 52%, transparent 52%),
+        #f4f8fd;
+}
+
+.egho-map-panel-copy {
+    position: relative;
+    z-index: 1;
+}
+
+.egho-map-canvas::after {
+    content: '';
+    position: absolute;
+    top: 34%;
+    left: 52%;
+    width: 16px;
+    height: 16px;
+    border-radius: 50% 50% 50% 2px;
+    transform: rotate(-45deg) translate(-50%, -50%);
+    background: var(--egho-blue);
+    box-shadow: 0 6px 14px rgba(18, 86, 160, 0.35);
+}
+
+@media (max-width: 520px) {
+    .egho-account-avatar.is-lg {
+        width: 52px;
+        height: 52px;
+        font-size: 20px;
+    }
+
+    .egho-profile-copy strong {
+        font-size: 15.5px;
+    }
+}
+
+/* ==========================================================================
    MODULE PAGES
    Hotel results/search, tour results/search, visa information, contact page.
    Same namespace rules as above: nothing here targets an existing class.

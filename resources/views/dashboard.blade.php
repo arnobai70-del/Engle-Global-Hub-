@@ -147,15 +147,51 @@
 
             <div class="egha-kpis">
                 @foreach ([
-                    ['label' => 'Total Bookings', 'value' => '1,245', 'note' => 'Sample figure'],
-                    ['label' => 'Active Users', 'value' => '350', 'note' => 'Sample figure'],
-                    ['label' => 'Pending Requests', 'value' => '85', 'note' => 'Sample figure'],
-                    ['label' => 'Flight Orders', 'value' => '2,180', 'note' => 'Sample figure'],
+                    [
+                        'label' => 'Bookings',
+                        'value' => '1,245',
+                        'note' => 'Sample figure',
+                        'tone' => 'blue',
+                        'icon' => '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+                    ],
+                    [
+                        'label' => 'Flights',
+                        'value' => '350',
+                        'note' => 'Sample figure',
+                        'tone' => 'green',
+                        'icon' => '<path d="M3 13.5 21 5l-3.5 8.5L21 19z"/><path d="M8.5 12.2 3 13.5"/>',
+                    ],
+                    [
+                        'label' => 'Hotels',
+                        'value' => '85',
+                        'note' => 'Sample figure',
+                        'tone' => 'amber',
+                        'icon' => '<path d="M3 20V9m0 6h18v5M3 9l9-5 9 5M9 15v-3h6v3"/>',
+                    ],
+                    [
+                        'label' => 'Searches',
+                        'value' => '2,180',
+                        'note' => 'Sample figure',
+                        'tone' => 'violet',
+                        'icon' => '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
+                    ],
                 ] as $kpi)
                     <article class="egha-kpi">
-                        <span>{{ $kpi['label'] }}</span>
-                        <strong>{{ $kpi['value'] }}</strong>
-                        <small>{{ $kpi['note'] }}</small>
+                        <span
+                            @class([
+                                'egha-kpi-icon',
+                                'egha-kpi-icon-'.$kpi['tone'],
+                            ])
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">{!! $kpi['icon'] !!}</svg>
+                        </span>
+
+                        <div class="egha-kpi-body">
+                            <span>{{ $kpi['label'] }}</span>
+                            <strong>{{ $kpi['value'] }}</strong>
+                            <small>{{ $kpi['note'] }}</small>
+                        </div>
                     </article>
                 @endforeach
             </div>
@@ -244,9 +280,9 @@
                         </thead>
                         <tbody>
                             @foreach ([
-                                ['ref' => 'Sample-0001', 'type' => 'Flight', 'destination' => 'Sample route', 'dates' => 'Sample dates', 'status' => 'Order Created', 'tone' => 'egha-status-on'],
-                                ['ref' => 'Sample-0002', 'type' => 'Flight', 'destination' => 'Sample route', 'dates' => 'Sample dates', 'status' => 'Order Processing', 'tone' => 'egha-status-off'],
-                                ['ref' => 'Sample-0003', 'type' => 'Hotel', 'destination' => 'Sample city', 'dates' => 'Sample dates', 'status' => 'Not connected', 'tone' => 'egha-status-off'],
+                                ['ref' => 'EGH-SAMPLE-0001', 'type' => 'Flight', 'destination' => 'Sample route', 'dates' => 'Sample dates', 'status' => 'Order Created', 'tone' => 'egha-status-on'],
+                                ['ref' => 'EGH-SAMPLE-0002', 'type' => 'Flight', 'destination' => 'Sample route', 'dates' => 'Sample dates', 'status' => 'Order Processing', 'tone' => 'egha-status-off'],
+                                ['ref' => 'EGH-SAMPLE-0003', 'type' => 'Hotel', 'destination' => 'Sample city', 'dates' => 'Sample dates', 'status' => 'Not connected', 'tone' => 'egha-status-off'],
                             ] as $row)
                                 <tr>
                                     <td>{{ $row['ref'] }}</td>

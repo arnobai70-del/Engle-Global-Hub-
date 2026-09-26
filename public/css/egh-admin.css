@@ -501,3 +501,172 @@
     border-radius: 9px;
 }
 
+/* ==========================================================================
+   MOCKUP DETAIL PASS
+   Dashboard KPI icon tiles, destination-row status switches and row action
+   buttons. Still `.egha-` scoped: nothing here touches the `.admin-*`
+   families or any per-page table system.
+   ========================================================================== */
+
+.egha-kpi {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.egha-kpi .egha-kpi-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    margin: 0;
+    border-radius: 13px;
+    color: #ffffff;
+    letter-spacing: 0;
+}
+
+.egha-kpi .egha-kpi-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egha-kpi .egha-kpi-icon-blue {
+    background: #1256a0;
+}
+
+.egha-kpi .egha-kpi-icon-green {
+    background: #147a4a;
+}
+
+.egha-kpi .egha-kpi-icon-amber {
+    background: #b77306;
+}
+
+.egha-kpi .egha-kpi-icon-violet {
+    background: #5b3fa8;
+}
+
+.egha-kpi .egha-kpi-body span {
+    margin-bottom: 4px;
+}
+
+/* ----------------------------------------------------- status switches */
+.egha-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--egha-muted);
+    white-space: nowrap;
+}
+
+.egha-switch-track {
+    position: relative;
+    flex: 0 0 auto;
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: #cfd9e6;
+}
+
+.egha-switch-track::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(11, 37, 69, 0.28);
+    transition: transform 0.18s ease;
+}
+
+.egha-switch-on .egha-switch-track {
+    background: #17a05c;
+}
+
+.egha-switch-on .egha-switch-track::after {
+    transform: translateX(18px);
+}
+
+.egha-switch-on {
+    color: #1c7a45;
+}
+
+/* --------------------------------------------------- row action buttons */
+.egha-row-actions {
+    display: inline-flex;
+    gap: 8px;
+}
+
+.egha-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--egha-line);
+    border-radius: 9px;
+    background: #ffffff;
+    color: var(--egha-muted);
+}
+
+.egha-icon-btn svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egha-icon-btn.is-edit {
+    border-color: #c9dcf5;
+    background: #eff5fd;
+    color: var(--egha-blue);
+}
+
+.egha-icon-btn.is-delete {
+    border-color: #f4cfcb;
+    background: #fdeceb;
+    color: #b42318;
+}
+
+.egha-icon-btn[disabled] {
+    opacity: 0.65;
+}
+
+/* ------------------------------------------------ destination row cells */
+.egha-cell-title {
+    display: block;
+    font-weight: 700;
+    color: var(--egha-navy);
+}
+
+.egha-cell-sub {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--egha-muted);
+}
+
+.egha-thumb {
+    width: 62px;
+    height: 44px;
+}
+
+@media (max-width: 760px) {
+    .egha-kpis {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+

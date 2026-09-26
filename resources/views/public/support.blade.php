@@ -81,7 +81,15 @@
 
                     <div class="egho-map-panel" role="img"
                          aria-label="Office location is not configured in this website yet">
-                        <div class="egho-map-panel-inner">
+                        {{--
+                            Drawn city-grid canvas, not a map service. It is
+                            decoration behind the notice below; the panel still
+                            states that no office location is configured and no
+                            coordinates are implied.
+                        --}}
+                        <span class="egho-map-canvas" aria-hidden="true"></span>
+
+                        <div class="egho-map-panel-inner egho-map-panel-copy">
                             <span class="egho-map-pin" aria-hidden="true">
                                 &#128205;
                             </span>
