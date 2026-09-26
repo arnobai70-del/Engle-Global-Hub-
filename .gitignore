@@ -16,3 +16,7 @@ Thumbs.db
 /.mcp.json
 /boost.json
 /.claude/
+
+# Local verification evidence (screenshots, video, logs) captured while
+# checking a screen by hand. Never part of the application.
+/verification/

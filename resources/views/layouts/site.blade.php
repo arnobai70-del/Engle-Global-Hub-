@@ -233,6 +233,32 @@
                         </a>
                     @endfeature
 
+                    {{--
+                        About and Contact.
+
+                        Contact points at the support page, which is where this
+                        website publishes its official contact channels. Both
+                        links follow their own feature visibility, so a page
+                        that is switched off is never linked to.
+                    --}}
+                    @feature('about')
+                        <a
+                            href="{{ route('about') }}"
+                            @class(['is-active' => request()->routeIs('about')])
+                        >
+                            About Us
+                        </a>
+                    @endfeature
+
+                    @feature('support')
+                        <a
+                            href="{{ route('support') }}"
+                            @class(['is-active' => request()->routeIs('support')])
+                        >
+                            Contact
+                        </a>
+                    @endfeature
+
                     @feature('bookings')
                         @can('flights.book')
                             <a
