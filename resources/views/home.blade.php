@@ -54,7 +54,17 @@
      * `auto=format` serves the smallest of WebP/AVIF/JPEG the browser
      * accepts, so the extra resolution does not cost the older formats.
      */
-    $heroImage = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=2560&q=85';
+    /*
+     * Hero photograph.
+     *
+     * The previous choice measured as a pale, near-greyscale frame (average
+     * rgb 163,170,176 at only 0.25 saturation), so once the legibility scrim
+     * sat on top the band read as a flat navy block instead of a photograph.
+     * This frame measures vivid and bright (0.47 saturation, 0.67 brightness,
+     * cyan-dominant), which is the open-sky look the reviewed layout uses.
+     * `w=2560` covers a full-bleed hero at high density.
+     */
+    $heroImage = 'https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?auto=format&fit=crop&w=2560&q=85';
 
     $promoBanners = [
         [

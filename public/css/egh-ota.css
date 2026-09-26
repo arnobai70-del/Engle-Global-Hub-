@@ -256,25 +256,43 @@ a.egho-topbar-item:hover {
 .egho-hero {
     position: relative;
     isolation: isolate;
-    padding: 54px 0 96px;
+    padding: 68px 0 108px;
     color: #fff;
     background-color: var(--egho-navy);
     background-image: var(--egho-hero-image, none);
     background-size: cover;
-    background-position: center 38%;
+    background-position: center 40%;
 }
 
+/*
+    Hero scrim.
+
+    The photograph has to stay a photograph: an almost opaque wash over the
+    whole band flattened it into a plain navy block, which read as an unstyled
+    header. The scrim is now a brand-blue gradient that is only dense enough
+    behind the headline (which is capped at 620px) and clears almost
+    completely over the right-hand side, plus a light floor so the white
+    search card lands on a calm edge. A blue-toned scrim also keeps the band
+    on brand whatever the photograph's own colour cast is.
+*/
 .egho-hero::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(
-        100deg,
-        rgba(9, 30, 61, 0.92) 0%,
-        rgba(9, 30, 61, 0.7) 45%,
-        rgba(9, 30, 61, 0.3) 100%
-    );
+    background:
+        linear-gradient(
+            100deg,
+            rgba(8, 27, 55, 0.74) 0%,
+            rgba(10, 42, 88, 0.46) 42%,
+            rgba(18, 86, 160, 0.14) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(8, 27, 55, 0.28) 0%,
+            rgba(8, 27, 55, 0) 42%,
+            rgba(8, 27, 55, 0.5) 100%
+        );
 }
 
 .egho-hero-copy {
@@ -1208,6 +1226,15 @@ a.egho-topbar-item:hover {
     aspect-ratio: 1 / 1;
     border-radius: 16px;
     box-shadow: 0 12px 26px rgba(11, 37, 69, 0.16);
+
+    /*
+     * The stock destination frames are muted travel photography (0.20-0.27
+     * average saturation), which left the strip looking washed out next to
+     * the reviewed layout. A small boost brings the colour back without
+     * touching the label, which is pure white and therefore unaffected by
+     * saturation.
+     */
+    filter: saturate(1.18) contrast(1.04);
 }
 
 .egho-destination:hover {
