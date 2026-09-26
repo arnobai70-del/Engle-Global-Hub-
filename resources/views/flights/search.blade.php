@@ -63,8 +63,16 @@
             </div>
         </section>
 
+        {{--
+            Journey rail.
+
+            The active step is moved by the page script as the visitor works
+            through the flow, so the rail always names the step that is on
+            screen instead of always saying Search. The first step is the
+            honest starting state for a page that has not searched yet.
+        --}}
         <section aria-label="Flight booking journey">
-            <ol class="egho-steps">
+            <ol class="egho-steps" data-flight-journey-steps>
                 @foreach ([
                     'Search',
                     'Select',
@@ -72,7 +80,10 @@
                     'Review',
                     'Confirmation',
                 ] as $step)
-                    <li @class(['is-active' => $loop->first])>{{ $step }}</li>
+                    <li
+                        @class(['is-active' => $loop->first])
+                        data-flight-step="{{ strtolower($step) }}"
+                    >{{ $step }}</li>
                 @endforeach
             </ol>
         </section>
