@@ -10,8 +10,8 @@
 )
 
 @section('content')
-    <div class="auth-heading">
-        <span class="auth-kicker">ACCOUNT RECOVERY</span>
+    <div class="egho-auth-head">
+        <span class="egho-eyebrow">ACCOUNT RECOVERY</span>
 
         <h2>Forgot Password</h2>
 
@@ -23,12 +23,12 @@
     <form
         method="POST"
         action="{{ route('password.email') }}"
-        class="auth-form"
+        class="egho-auth-form"
     >
         @csrf
 
-        <div class="form-group">
-            <label for="email">Email Address</label>
+        <label class="egho-field" for="email">
+            <span>Email Address</span>
 
             <input
                 id="email"
@@ -40,13 +40,13 @@
                 required
                 autofocus
             >
-        </div>
+        </label>
 
-        <button type="submit" class="auth-button">
+        <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
             Send Password Reset Link
         </button>
 
-        <p class="auth-footer-text">
+        <p class="egho-auth-alt">
             Remember your password?
 
             <a href="{{ route('login') }}">

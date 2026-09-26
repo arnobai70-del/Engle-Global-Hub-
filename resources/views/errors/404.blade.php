@@ -5,49 +5,53 @@
 
 @section('content')
 
-    <main class="public-page-container">
+    <main class="egho-error">
 
-        <section class="public-page-hero public-page-error">
-            <span class="public-page-kicker">
-                404
-            </span>
+        <div class="egho-shell">
 
-            <h1>
-                Page not found
-            </h1>
+            <section class="egho-error-card">
+                <span class="egho-error-code">
+                    404
+                </span>
 
-            <p>
-                The page you requested is not available. You can return home
-                or continue through the currently available account services.
-            </p>
+                <h1>
+                    Page not found
+                </h1>
 
-            <div class="public-page-actions">
-                <a
-                    href="{{ route('home') }}"
-                    class="site-button site-button-primary"
-                >
-                    Home
-                </a>
+                <p>
+                    The page you requested is not available. You can return home
+                    or continue through the currently available account services.
+                </p>
 
-                @auth
-                    @feature('dashboard')
-                        <a
-                            href="{{ route('dashboard') }}"
-                            class="site-button site-button-secondary"
-                        >
-                            Dashboard
-                        </a>
-                    @endfeature
-                @else
+                <div class="egho-error-actions">
                     <a
-                        href="{{ route('login') }}"
-                        class="site-button site-button-secondary"
+                        href="{{ route('home') }}"
+                        class="egho-btn egho-btn-primary"
                     >
-                        Login
+                        Home
                     </a>
-                @endauth
-            </div>
-        </section>
+
+                    @auth
+                        @feature('dashboard')
+                            <a
+                                href="{{ route('dashboard') }}"
+                                class="egho-btn egho-btn-ghost"
+                            >
+                                Dashboard
+                            </a>
+                        @endfeature
+                    @else
+                        <a
+                            href="{{ route('login') }}"
+                            class="egho-btn egho-btn-ghost"
+                        >
+                            Login
+                        </a>
+                    @endauth
+                </div>
+            </section>
+
+        </div>
 
     </main>
 

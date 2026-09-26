@@ -5,17 +5,17 @@
 @section('hero-description', 'Create your account and start planning your next journey.')
 
 @section('content')
-    <div class="auth-heading">
-        <span class="auth-kicker">GET STARTED</span>
+    <div class="egho-auth-head">
+        <span class="egho-eyebrow">GET STARTED</span>
         <h2>Create Account</h2>
         <p>Join us and start your journey.</p>
     </div>
 
-    <form method="POST" action="{{ route('register.store') }}" class="auth-form">
+    <form method="POST" action="{{ route('register.store') }}" class="egho-auth-form">
         @csrf
 
-        <div class="form-group">
-            <label for="name">Full Name</label>
+        <label class="egho-field" for="name">
+            <span>Full Name</span>
 
             <input
                 id="name"
@@ -27,10 +27,10 @@
                 required
                 autofocus
             >
-        </div>
+        </label>
 
-        <div class="form-group">
-            <label for="email">Email Address</label>
+        <label class="egho-field" for="email">
+            <span>Email Address</span>
 
             <input
                 id="email"
@@ -41,10 +41,10 @@
                 placeholder="you@example.com"
                 required
             >
-        </div>
+        </label>
 
-        <div class="form-group">
-            <label for="password">Password</label>
+        <label class="egho-field" for="password">
+            <span>Password</span>
 
             <input
                 id="password"
@@ -54,10 +54,10 @@
                 placeholder="Create a password"
                 required
             >
-        </div>
+        </label>
 
-        <div class="form-group">
-            <label for="password_confirmation">Confirm Password</label>
+        <label class="egho-field" for="password_confirmation">
+            <span>Confirm Password</span>
 
             <input
                 id="password_confirmation"
@@ -67,13 +67,13 @@
                 placeholder="Confirm your password"
                 required
             >
-        </div>
+        </label>
 
-        <button type="submit" class="auth-button">
+        <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
             Create Account
         </button>
 
-        <p class="auth-footer-text">
+        <p class="egho-auth-alt">
             Already have an account?
             <a href="{{ route('login') }}">Login</a>
         </p>

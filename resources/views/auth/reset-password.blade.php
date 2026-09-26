@@ -10,8 +10,8 @@
 )
 
 @section('content')
-    <div class="auth-heading">
-        <span class="auth-kicker">SECURE YOUR ACCOUNT</span>
+    <div class="egho-auth-head">
+        <span class="egho-eyebrow">SECURE YOUR ACCOUNT</span>
 
         <h2>Reset Password</h2>
 
@@ -23,7 +23,7 @@
     <form
         method="POST"
         action="{{ route('password.update') }}"
-        class="auth-form"
+        class="egho-auth-form"
     >
         @csrf
 
@@ -33,8 +33,8 @@
             value="{{ $request->route('token') }}"
         >
 
-        <div class="form-group">
-            <label for="email">Email Address</label>
+        <label class="egho-field" for="email">
+            <span>Email Address</span>
 
             <input
                 id="email"
@@ -46,10 +46,10 @@
                 required
                 autofocus
             >
-        </div>
+        </label>
 
-        <div class="form-group">
-            <label for="password">New Password</label>
+        <label class="egho-field" for="password">
+            <span>New Password</span>
 
             <input
                 id="password"
@@ -59,12 +59,10 @@
                 placeholder="Enter new password"
                 required
             >
-        </div>
+        </label>
 
-        <div class="form-group">
-            <label for="password_confirmation">
-                Confirm New Password
-            </label>
+        <label class="egho-field" for="password_confirmation">
+            <span>Confirm New Password</span>
 
             <input
                 id="password_confirmation"
@@ -74,13 +72,13 @@
                 placeholder="Confirm new password"
                 required
             >
-        </div>
+        </label>
 
-        <button type="submit" class="auth-button">
+        <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
             Reset Password
         </button>
 
-        <p class="auth-footer-text">
+        <p class="egho-auth-alt">
             Remember your password?
 
             <a href="{{ route('login') }}">

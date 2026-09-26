@@ -1,0 +1,133 @@
+/* ==========================================================================
+   EAGLE GLOBAL HUB - CUSTOMER WORKSPACE THEME
+   --------------------------------------------------------------------------
+   Loaded by layouts/site.blade.php after the OTA theme.
+
+   Scopes every rule to `body.dashboard-body`, so it only aligns the signed-in
+   customer dashboard with the approved navy/blue design. No other page, and
+   no existing `.dashboard-*`, `.service-*`, `.site-button` markup elsewhere,
+   is affected.
+   ========================================================================== */
+
+body.dashboard-body {
+    background: #f5f8fd;
+}
+
+/* ------------------------------------------------------------ welcome banner */
+body.dashboard-body .dashboard-welcome {
+    border-radius: 20px;
+    background:
+        radial-gradient(820px 380px at 88% 6%, rgba(18, 86, 160, 0.5), transparent 62%),
+        linear-gradient(140deg, #0b2545 0%, #123f74 62%, #0b2545 100%);
+    box-shadow: 0 18px 45px rgba(11, 37, 69, 0.16);
+}
+
+body.dashboard-body .dashboard-kicker {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+body.dashboard-body .dashboard-welcome h1 {
+    color: #ffffff;
+}
+
+body.dashboard-body .dashboard-welcome p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.dashboard-body .dashboard-verified,
+body.dashboard-body .verified-text {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+/* --------------------------------------------------------------- sections */
+body.dashboard-body .dashboard-section-heading h2 {
+    color: #0b2545;
+}
+
+body.dashboard-body .dashboard-section-heading p,
+body.dashboard-body .dashboard-section-heading span {
+    color: #5d7290;
+}
+
+/* ------------------------------------------------------------------ cards */
+body.dashboard-body .dashboard-service-card,
+body.dashboard-body .dashboard-quick-card,
+body.dashboard-body .dashboard-account-card {
+    border: 1px solid var(--egho-line);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 10px 28px rgba(11, 37, 69, 0.05);
+}
+
+body.dashboard-body .dashboard-service-card:hover,
+body.dashboard-body .dashboard-quick-card:hover {
+    border-color: #c6dcf5;
+    box-shadow: 0 14px 34px rgba(11, 37, 69, 0.09);
+}
+
+body.dashboard-body .dashboard-service-card h3,
+body.dashboard-body .dashboard-quick-card h3,
+body.dashboard-body .dashboard-account-card h2 {
+    color: #0b2545;
+}
+
+body.dashboard-body .dashboard-service-card p,
+body.dashboard-body .dashboard-quick-card p {
+    color: #5d7290;
+}
+
+body.dashboard-body .service-icon,
+body.dashboard-body .dashboard-quick-icon {
+    border-radius: 12px;
+    background: #eaf2fd;
+    color: #1256a0;
+}
+
+/* --------------------------------------------------------------- statuses */
+body.dashboard-body .service-status {
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+body.dashboard-body .service-status-live {
+    background: #e8f6ee;
+    border-color: #bfe6d0;
+    color: #1c7a45;
+}
+
+/* ---------------------------------------------------------------- actions */
+body.dashboard-body .site-button-primary {
+    border-radius: 10px;
+    background: #1256a0;
+    color: #ffffff;
+}
+
+body.dashboard-body .site-button-primary:hover {
+    background: #0b3c78;
+}
+
+body.dashboard-body .site-button-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+body.dashboard-body .site-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+body.dashboard-body .dashboard-service-card .site-button-secondary,
+body.dashboard-body .dashboard-quick-card .site-button-secondary,
+body.dashboard-body .dashboard-section .site-button-secondary {
+    border-color: var(--egho-line);
+    background: #ffffff;
+    color: #0b2545;
+}
+
+body.dashboard-body .dashboard-account-link,
+body.dashboard-body .dashboard-service-card-link {
+    color: #1256a0;
+    font-weight: 650;
+}
