@@ -37,6 +37,8 @@ final class RemainingScreensUiContractTest extends TestCase
         'css/egh-admin.css',
         'css/egh-flight.css',
         'css/egh-hotels.css',
+        'css/egh-chrome.css',
+        'css/egh-home.css',
     ];
 
     protected function setUp(): void
