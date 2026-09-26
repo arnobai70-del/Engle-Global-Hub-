@@ -1,0 +1,205 @@
+/* ==========================================================================
+   FLIGHT SEARCH RESULTS — SCREEN 2
+   Loaded only by resources/views/flights/search.blade.php, after the OTA
+   theme, and scoped to the flight result shell or to the `.egho-flight-`
+   prefix, so no other page can pick any of it up.
+
+   The offer cards themselves are rendered by the flight search script with
+   the existing `.flight-offer-*` classes. Nothing here renames them: these
+   rules only add the summary bar, the live count, the filter controls the
+   result script turns on, and the cheapest-fare tag.
+   ========================================================================== */
+
+/* ---------------------------------------------------- search summary bar */
+.flight-results-shell .egho-flight-summary {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: linear-gradient(120deg, var(--egho-navy) 0%, var(--egho-blue) 100%);
+    color: #fff;
+}
+
+/*
+   The bar ships hidden and is revealed by the result script from the search
+   that was actually submitted, so `[hidden]` has to beat the flex display.
+*/
+.flight-results-shell .egho-flight-summary[hidden] {
+    display: none;
+}
+
+.egho-flight-summary-route {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.egho-flight-summary-route span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+}
+
+.egho-flight-summary-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 16px;
+    margin-right: auto;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.egho-flight-summary-modify {
+    padding: 9px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.egho-flight-summary-modify:hover {
+    background: #fff;
+    color: var(--egho-blue);
+}
+
+.egho-flight-summary-modify:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------- toolbar count */
+.flight-results-toolbar-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+}
+
+.egho-flight-count {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.egho-flight-count[hidden] {
+    display: none;
+}
+
+/* --------------------------------------------------------- filter rail */
+.egho-filter-help {
+    margin: 8px 0 0;
+    color: var(--egho-muted);
+    font-size: 11.5px;
+    line-height: 1.5;
+}
+
+.egho-check-list {
+    display: grid;
+    gap: 2px;
+    max-height: 190px;
+    overflow-y: auto;
+}
+
+.egho-check-list .egho-filter-note {
+    margin: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+/*
+   Disabled has to look disabled: every control in this rail ships disabled
+   and is switched on by the result script once offers are on screen.
+*/
+.egho-filter-card .egho-check input:disabled,
+.egho-filter-card .egho-range:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.egho-filter-card .flight-filter-field {
+    margin-bottom: 8px;
+}
+
+.egho-filter-reset {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border: 1px solid var(--egho-line);
+    border-radius: 10px;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.egho-filter-reset[hidden] {
+    display: none;
+}
+
+/* ---------------------------------------------------------- offer rows */
+.egho-flight-results .flight-offer-card[hidden] {
+    display: none;
+}
+
+.egho-flight-results .flight-slice-timing {
+    text-align: right;
+}
+
+.egho-flight-results .flight-slice-stops {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.egho-flight-cheapest {
+    flex: 0 0 auto;
+    padding: 3px 10px;
+    border: 1px solid #b7e4c7;
+    border-radius: 999px;
+    background: #e7f7ec;
+    color: #1b7a3d;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.egho-flight-empty {
+    margin: 0;
+    padding: 18px 20px;
+    border: 1px dashed var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--egho-muted);
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+    .flight-results-shell .egho-flight-summary {
+        align-items: flex-start;
+    }
+
+    .egho-flight-summary-meta {
+        margin-right: 0;
+    }
+}
