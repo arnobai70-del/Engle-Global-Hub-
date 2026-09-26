@@ -13,6 +13,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Instrument Sans, built from the Vite font manifest. --}}
+    {{ Vite::fonts() }}
+
     {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
     <link rel="stylesheet" href="{{ asset('css/egh-ota.css') }}">
 
