@@ -9,8 +9,8 @@
 </x-admin.page-header>
 
 <form method="GET" class="egh-card agt-filter">
-    <input name="search" value="{{ $filters['search'] }}" placeholder="Name, email, company or registration">
-    <select name="status">
+    <input name="search" value="{{ $filters['search'] }}" placeholder="Name, email, company or registration" aria-label="Search agents">
+    <select name="status" aria-label="Status">
         <option value="">All statuses</option>
         @foreach($statuses as $status)
             <option value="{{ $status }}" @selected($filters['status'] === $status)>{{ ucfirst($status) }}</option>

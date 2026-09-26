@@ -24,6 +24,7 @@
             min="0"
             max="100"
             value="60"
+            aria-label="Price range"
             disabled
         >
         <div class="egho-range-row">

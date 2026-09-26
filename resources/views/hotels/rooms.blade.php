@@ -81,12 +81,22 @@
                 <section class="egho-hotel-hero">
                     <div class="egho-hotel-hero-media">
                         <span class="egho-sample-badge">Sample</span>
+                        {{--
+                            The hero spans the full content width, so it is
+                            the one placement that cannot be covered by a
+                            single high-density request: 1200px is the 1x
+                            variant and 2000px covers high-density displays.
+                        --}}
                         <img
-                            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80"
+                            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=85"
+                            srcset="
+                                https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=85 1x,
+                                https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=85 2x
+                            "
                             alt=""
                             loading="lazy"
-                            width="1200"
-                            height="800"
+                            width="1600"
+                            height="1067"
                         >
                     </div>
 
@@ -128,7 +138,7 @@
                         [
                             'name' => 'Sample Deluxe Room',
                             'summary' => 'Placeholder room description for layout review.',
-                            'image' => 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=900&q=80',
+                            'image' => 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1000&q=85',
                             'specs' => 'Sample king bed &middot; 2 adults &middot; city view',
                             'rate' => 'BDT 45,000',
                             'total' => 'BDT 43,650 including taxes',
@@ -136,7 +146,7 @@
                         [
                             'name' => 'Sample Ocean View Room',
                             'summary' => 'Placeholder room description for layout review.',
-                            'image' => 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=900&q=80',
+                            'image' => 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1000&q=85',
                             'specs' => 'Sample twin beds &middot; 2 adults &middot; ocean view',
                             'rate' => 'BDT 62,000',
                             'total' => 'BDT 60,140 including taxes',
@@ -144,7 +154,7 @@
                         [
                             'name' => 'Sample Family Suite',
                             'summary' => 'Placeholder room description for layout review.',
-                            'image' => 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=900&q=80',
+                            'image' => 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=85',
                             'specs' => 'Sample suite &middot; 4 adults &middot; lounge access',
                             'rate' => 'BDT 88,000',
                             'total' => 'BDT 85,360 including taxes',

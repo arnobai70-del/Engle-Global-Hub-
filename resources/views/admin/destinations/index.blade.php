@@ -104,7 +104,7 @@
                                 'country' => 'Sample country',
                                 'state' => 'Sample state',
                                 'city' => 'Sample city',
-                                'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=240&q=70',
+                                'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=400&q=85',
                                 'published' => true,
                             ],
                             [
@@ -112,7 +112,7 @@
                                 'country' => 'Sample country',
                                 'state' => 'Sample state',
                                 'city' => 'Sample city',
-                                'image' => 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=240&q=70',
+                                'image' => 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=400&q=85',
                                 'published' => true,
                             ],
                             [
@@ -120,7 +120,7 @@
                                 'country' => 'Sample country',
                                 'state' => 'Sample state',
                                 'city' => 'Sample city',
-                                'image' => 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=240&q=70',
+                                'image' => 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=400&q=85',
                                 'published' => false,
                             ],
                         ] as $destination)
@@ -131,8 +131,8 @@
                                         src="{{ $destination['image'] }}"
                                         alt=""
                                         loading="lazy"
-                                        width="240"
-                                        height="160"
+                                        width="400"
+                                        height="266"
                                     >
                                 </td>
                                 <td>

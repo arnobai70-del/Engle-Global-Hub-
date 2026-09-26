@@ -752,6 +752,7 @@ a.egho-topbar-item:hover {
     text-transform: uppercase;
 }
 
+.egho-promo h2,
 .egho-promo h3 {
     margin: 14px 0 0;
     font-size: 19px;

@@ -25,11 +25,15 @@
 
                 <div class="egho-contact-hero-media">
                     <img
-                        src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
+                        src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=85"
+                        srcset="
+                            https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=85 1x,
+                            https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1800&q=85 2x
+                        "
                         alt=""
                         loading="lazy"
-                        width="1200"
-                        height="800"
+                        width="1400"
+                        height="933"
                     >
                 </div>
             </section>

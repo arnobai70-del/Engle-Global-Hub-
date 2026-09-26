@@ -19,12 +19,12 @@
 
             @can('master-data.manage')
             <form id="country-form" class="md-form" data-url="{{ route('admin.master-data.countries.store') }}">
-                <input name="name" placeholder="Country name" required maxlength="150">
+                <input name="name" placeholder="Country name" aria-label="Country name" required maxlength="150">
                 <div class="md-two">
-                    <input name="iso2" placeholder="ISO2 e.g. BD" required maxlength="2">
-                    <input name="iso3" placeholder="ISO3 e.g. BGD" required maxlength="3">
+                    <input name="iso2" placeholder="ISO2 e.g. BD" aria-label="ISO country code (2 letters)" required maxlength="2">
+                    <input name="iso3" placeholder="ISO3 e.g. BGD" aria-label="ISO country code (3 letters)" required maxlength="3">
                 </div>
-                <input name="phone_code" placeholder="Phone code e.g. +880" maxlength="10">
+                <input name="phone_code" placeholder="Phone code e.g. +880" aria-label="Phone code" maxlength="10">
                 <label><input type="checkbox" name="is_active" checked> Active</label>
                 <button class="egh-button" type="submit">Add Country</button>
             </form>
@@ -73,16 +73,16 @@
 
             @can('master-data.manage')
             <form id="city-form" class="md-form" data-url="{{ route('admin.master-data.cities.store') }}">
-                <select name="country_id" required>
+                <select name="country_id" aria-label="Country" required>
                     <option value="">Select country</option>
                     @foreach($countries as $country)
                         <option value="{{ $country->id }}">{{ $country->name }} ({{ $country->iso2 }})</option>
                     @endforeach
                 </select>
-                <input name="name" placeholder="City name" required maxlength="150">
+                <input name="name" placeholder="City name" aria-label="City name" required maxlength="150">
                 <div class="md-two">
-                    <input name="code" placeholder="Code e.g. DAC" maxlength="3">
-                    <input name="timezone" placeholder="Timezone e.g. Asia/Dhaka" maxlength="64">
+                    <input name="code" placeholder="Code e.g. DAC" aria-label="City code" maxlength="3">
+                    <input name="timezone" placeholder="Timezone e.g. Asia/Dhaka" aria-label="Timezone" maxlength="64">
                 </div>
                 <label><input type="checkbox" name="is_active" checked> Active</label>
                 <button class="egh-button" type="submit">Add City</button>

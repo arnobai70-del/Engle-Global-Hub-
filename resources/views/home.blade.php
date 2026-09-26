@@ -45,7 +45,16 @@
      * destinations collection when the admin CRUD lands — no other change to
      * this view is required.
      */
-    $heroImage = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=70';
+    /*
+     * Photograph quality policy for this homepage.
+     *
+     * Every photograph is requested from Unsplash with `auto=format&q=85`
+     * and a width that is at least twice the widest CSS box it is painted
+     * into, so a high-density display still receives a pixel-dense image.
+     * `auto=format` serves the smallest of WebP/AVIF/JPEG the browser
+     * accepts, so the extra resolution does not cost the older formats.
+     */
+    $heroImage = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=2560&q=85';
 
     $promoBanners = [
         [
@@ -54,7 +63,7 @@
             'copy' => 'Compare fares across trusted airlines and continue to a secured booking flow.',
             'cta' => 'Search Flights',
             'feature' => 'flights',
-            'image' => 'https://images.unsplash.com/photo-1540339832862-474599807836?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1540339832862-474599807836?auto=format&fit=crop&w=1400&q=85',
             'class' => '',
         ],
         [
@@ -63,7 +72,7 @@
             'copy' => 'Stay options in one place, shown only when the hotel provider is configured.',
             'cta' => 'View Hotels',
             'feature' => 'hotels',
-            'image' => 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1400&q=85',
             'class' => '',
         ],
     ];
@@ -80,37 +89,37 @@
             'name' => 'Dubai',
             'country' => 'United Arab Emirates',
             'tag' => 'City & shopping',
-            'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=85',
         ],
         [
             'name' => 'Singapore',
             'country' => 'Singapore',
             'tag' => 'Skyline',
-            'image' => 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1000&q=85',
         ],
         [
             'name' => 'Bangkok',
             'country' => 'Thailand',
             'tag' => 'Culture',
-            'image' => 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1000&q=85',
         ],
         [
             'name' => 'Maldives',
             'country' => 'Maldives',
             'tag' => 'Island escape',
-            'image' => 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1000&q=85',
         ],
         [
             'name' => 'Istanbul',
             'country' => 'T\u00fcrkiye',
             'tag' => 'Heritage',
-            'image' => 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1000&q=85',
         ],
         [
             'name' => 'Bali',
             'country' => 'Indonesia',
             'tag' => 'Beach & temples',
-            'image' => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=70',
+            'image' => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=85',
         ],
     ];
 
@@ -604,7 +613,13 @@
                             >
                                 <span class="egho-promo-badge">{{ $promo['badge'] }}</span>
 
-                                <h3>{{ $promo['title'] }}</h3>
+                                {{--
+                                    Promo cards sit directly under the hero
+                                    h1 with no section heading of their own,
+                                    so they are h2. Using h3 here skipped a
+                                    heading level before the first section h2.
+                                --}}
+                                <h2>{{ $promo['title'] }}</h2>
 
                                 <p>{{ $promo['copy'] }}</p>
 
@@ -625,11 +640,11 @@
                     <div
                         id="work-visa"
                         class="egho-promo is-workvisa"
-                        style="--egho-promo-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=70')"
+                        style="--egho-promo-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=85')"
                     >
                         <span class="egho-promo-badge">Work Visa</span>
 
-                        <h3>Work Visa Processing</h3>
+                        <h2>Work Visa Processing</h2>
 
                         <p>
                             We handle the paperwork, you chase the dream —
