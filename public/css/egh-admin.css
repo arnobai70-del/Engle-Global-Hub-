@@ -1,0 +1,258 @@
+/* ==========================================================================
+   EAGLE GLOBAL HUB - ADMIN FRONTEND ADDITIONS (mockup aligned)
+   --------------------------------------------------------------------------
+   Loaded by layouts/admin.blade.php after the compiled application stylesheet.
+
+   Every rule is scoped to the `.egha-` namespace, so nothing here overrides the
+   existing `.admin-*`, `.egh-card`, `.md-table`, `.rpt-*` or per-page table
+   systems. Admin pages that keep their current classes are unchanged.
+   ========================================================================== */
+
+:root {
+    --egha-navy: #0b2545;
+    --egha-blue: #1256a0;
+    --egha-line: #dfe8f4;
+    --egha-muted: #5d7290;
+    --egha-sky: #eaf2fd;
+    --egha-surface: #f5f8fd;
+}
+
+/* ------------------------------------------------------------------- KPIs */
+.egha-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.egha-kpi {
+    background: #fff;
+    border: 1px solid var(--egha-line);
+    border-radius: 14px;
+    padding: 16px 18px;
+}
+
+.egha-kpi span {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--egha-muted);
+    margin-bottom: 8px;
+}
+
+.egha-kpi strong {
+    display: block;
+    font-size: 26px;
+    line-height: 1.1;
+    color: var(--egha-navy);
+}
+
+.egha-kpi small {
+    display: block;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--egha-muted);
+}
+
+/* ----------------------------------------------------------------- charts */
+.egha-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.egha-chart {
+    background: #fff;
+    border: 1px solid var(--egha-line);
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.egha-chart h3 {
+    margin: 0 0 14px;
+    font-size: 15px;
+    color: var(--egha-navy);
+}
+
+.egha-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 150px;
+    padding-top: 10px;
+    border-bottom: 1px solid var(--egha-line);
+}
+
+.egha-bar {
+    flex: 1 1 0;
+    min-width: 12px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #4d8ad6, var(--egha-blue));
+}
+
+.egha-bar-labels {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.egha-bar-labels span {
+    flex: 1 1 0;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--egha-muted);
+}
+
+.egha-chart svg {
+    display: block;
+    width: 100%;
+    height: 150px;
+}
+
+.egha-chart-note {
+    margin: 12px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--egha-muted);
+}
+
+/* ------------------------------------------------------- destinations page */
+.egha-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.egha-search {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.egha-search label {
+    display: grid;
+    gap: 6px;
+}
+
+.egha-search span {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--egha-muted);
+}
+
+.egha-search input {
+    min-height: 42px;
+    min-width: 240px;
+    padding: 9px 12px;
+    border: 1px solid var(--egha-line);
+    border-radius: 10px;
+    background: #f7f9fc;
+    color: var(--egha-muted);
+}
+
+.egha-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--egha-line);
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.egha-status-on {
+    background: #e8f6ee;
+    border-color: #bfe6d0;
+    color: #1c7a45;
+}
+
+.egha-status-off {
+    background: #f1f4f9;
+    color: var(--egha-muted);
+}
+
+.egha-thumb {
+    width: 54px;
+    height: 38px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--egha-line);
+    background: var(--egha-surface);
+}
+
+.egha-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.egha-table th,
+.egha-table td {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--egha-line);
+    vertical-align: middle;
+}
+
+.egha-table th {
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--egha-muted);
+    white-space: nowrap;
+}
+
+.egha-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.egha-table-wrap {
+    overflow-x: auto;
+}
+
+.egha-muted {
+    color: var(--egha-muted);
+}
+
+.egha-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.egha-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 0 0 16px;
+    padding: 13px 15px;
+    border: 1px solid #f4d9ad;
+    border-radius: 12px;
+    background: #fff8ec;
+    color: #7a4d05;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+    .egha-toolbar,
+    .egha-search {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .egha-search input {
+        min-width: 0;
+    }
+}

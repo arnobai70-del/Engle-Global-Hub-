@@ -13,8 +13,53 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
+    <link rel="stylesheet" href="{{ asset('css/egh-ota.css') }}">
+
     @stack('head')
 </head>
+
+@php
+    /*
+     * Public contact slots (top bar + footer).
+     *
+     * The approved mockup shows a phone number and an email address in the
+     * site chrome. No such details are configured for this website yet, and
+     * the project rule is that contact details are never fabricated — the
+     * /support page states this explicitly and is covered by tests.
+     *
+     * These slots therefore render ONLY when a value is actually supplied
+     * (for example by a future settings-backed view composer sharing
+     * `$siteContact`). Until then the chrome stays free of invented
+     * phone numbers and email addresses.
+     */
+    $siteContactPhone = $siteContact['phone'] ?? null;
+    $siteContactEmail = $siteContact['email'] ?? null;
+    $siteContactAddress = $siteContact['address'] ?? null;
+    $siteContactHours = $siteContact['hours'] ?? null;
+
+    $travelServices = $travelServices ?? [];
+
+    /*
+     * A travel service is only linked when the registry reports it as
+     * available AND the signed-in account holds its permission. This mirrors
+     * the existing navigation rule and keeps unconfigured or unauthorized
+     * services from producing dead or forbidden links.
+     */
+    $serviceLinkIsAllowed = static function (array $service): bool {
+        if (! ($service['available'] ?? false) || empty($service['route_name'])) {
+            return false;
+        }
+
+        $permission = $service['permission'] ?? null;
+
+        if ($permission === null) {
+            return true;
+        }
+
+        return auth()->check() && auth()->user()->can($permission);
+    };
+@endphp
 
 <body class="site-body @yield('body_class')">
 
@@ -22,30 +67,114 @@
         Skip to content
     </a>
 
-    <header class="site-header">
-        <div class="site-header-inner">
+    <header class="egho-header-shell">
 
-            <a href="{{ route('home') }}" class="site-brand">
-                <span class="site-brand-mark" aria-hidden="true">
-                    &#9992;
-                </span>
+        <div class="egho-topbar">
+            <div class="egho-shell egho-topbar-inner">
 
-                <span class="site-brand-copy">
-                    <strong>Eagle Global Hub LTD</strong>
-                    <small>Flights & Travel</small>
-                </span>
-            </a>
+                <div class="egho-topbar-group">
+                    @if ($siteContactPhone)
+                        <span class="egho-topbar-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>
+                            </svg>
+                            {{ $siteContactPhone }}
+                        </span>
+                    @endif
 
-            <nav class="site-nav" aria-label="Primary navigation">
+                    @if ($siteContactEmail)
+                        <a
+                            class="egho-topbar-item"
+                            href="mailto:{{ $siteContactEmail }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                <path d="m3.5 7 8.5 6 8.5-6"/>
+                            </svg>
+                            {{ $siteContactEmail }}
+                        </a>
+                    @endif
 
-                @auth
+                    @if (! $siteContactPhone && ! $siteContactEmail)
+                        <span class="egho-topbar-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 3 4.5 6.6v4.9c0 4.6 3.1 7.6 7.5 8.5 4.4-.9 7.5-3.9 7.5-8.5V6.6z"/>
+                                <path d="m9 12 2.2 2.2L15.5 10"/>
+                            </svg>
+                            Secure travel account &amp; booking steps
+                        </span>
+                    @endif
+                </div>
+
+                <div class="egho-topbar-group">
+                    {{--
+                        Currency and language selectors from the mockup. Currency
+                        switching and locale switching are not implemented yet, so
+                        these are presented as non-interactive status chips rather
+                        than controls that silently do nothing.
+                    --}}
+                    <span
+                        class="egho-switch"
+                        role="status"
+                        title="Currency switching is not enabled yet"
+                    >
+                        BDT
+                        <span class="egho-switch-chevron" aria-hidden="true">&#9662;</span>
+                    </span>
+
+                    <span
+                        class="egho-switch"
+                        role="status"
+                        title="Language switching is not enabled yet"
+                    >
+                        {{ strtoupper(app()->getLocale()) }}
+                        <span class="egho-switch-chevron" aria-hidden="true">&#9662;</span>
+                    </span>
+
+                    @auth
+                        @role('super-admin')
+                            <a
+                                class="egho-topbar-item"
+                                href="{{ route('admin.features.index') }}"
+                            >
+                                Feature Control
+                            </a>
+                        @endrole
+                    @endauth
+                </div>
+            </div>
+        </div>
+
+        <div class="egho-header">
+            <div class="egho-shell egho-header-inner">
+
+                <a href="{{ route('home') }}" class="egho-brand">
+                    <span class="egho-brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 3.6c.5-1.2-1.3-2.4-2.2-1.4L14.6 7 6.9 4.2a1 1 0 0 0-1.2.4L4 7.2a1 1 0 0 0 .5 1.5l6.2 1.9-2.9 3.3-2.6-.4a1 1 0 0 0-.9.3L3 15.4a1 1 0 0 0 .6 1.6l4.2 1.1 1.1 4.2a1 1 0 0 0 1.6.6l1.6-1.3a1 1 0 0 0 .3-.9l-.4-2.6 3.3-2.9 1.9 6.2a1 1 0 0 0 1.5.5l2.6-1.7a1 1 0 0 0 .4-1.2L18.9 13l4.8-4.2c.1-.1.2-.2.3-.3z"/>
+                        </svg>
+                    </span>
+
+                    <span class="egho-brand-copy">
+                        <strong>Eagle Global Hub</strong>
+                        <small>Travel &amp; Visa Services</small>
+                    </span>
+                </a>
+
+                <nav class="egho-nav" aria-label="Primary navigation">
+
+                    <a
+                        href="{{ route('home') }}"
+                        @class(['is-active' => request()->routeIs('home')])
+                    >
+                        Home
+                    </a>
+
                     @feature('flights')
                         @can('flights.search')
                             <a
                                 href="{{ route('flights.index') }}"
-                                @class([
-                                    'is-active' => request()->routeIs('flights.*')
-                                ])
+                                @class(['is-active' => request()->routeIs('flights.*')])
                             >
                                 Flights
                             </a>
@@ -62,32 +191,32 @@
                         @feature($serviceKey)
                             @if (
                                 $serviceKey !== 'flights' &&
-                                $service['available'] &&
-                                $service['permission']
+                                $serviceLinkIsAllowed($service)
                             )
-                                @can($service['permission'])
-                                    <a
-                                        href="{{ route($service['route_name']) }}"
-                                        @class([
-                                            'is-active' => request()->routeIs(
-                                                $serviceKey.'.*'
-                                            )
-                                        ])
-                                    >
-                                        {{ $service['label'] }}
-                                    </a>
-                                @endcan
+                                <a
+                                    href="{{ route($service['route_name']) }}"
+                                    @class(['is-active' => request()->routeIs($serviceKey.'.*')])
+                                >
+                                    {{ $service['label'] }}
+                                </a>
                             @endif
                         @endfeature
                     @endforeach
+
+                    @feature('visa')
+                        <a
+                            href="{{ route('work-visa.index') }}"
+                            @class(['is-active' => request()->routeIs('work-visa.*')])
+                        >
+                            Work Visa
+                        </a>
+                    @endfeature
 
                     @feature('bookings')
                         @can('flights.book')
                             <a
                                 href="{{ route('bookings.index') }}"
-                                @class([
-                                    'is-active' => request()->routeIs('bookings.*')
-                                ])
+                                @class(['is-active' => request()->routeIs('bookings.*')])
                             >
                                 My Bookings
                             </a>
@@ -100,116 +229,58 @@
                         @endcan
                     @endfeature
 
-                @else
-                    @feature('flights')
-                        <a href="{{ route('login') }}">
-                            Flights
-                        </a>
-                    @endfeature
+                </nav>
 
-                    @feature('bookings')
-                        <a href="{{ route('login') }}">
-                            My Bookings
-                        </a>
-                    @endfeature
+                <div class="egho-header-actions">
 
-                @endauth
+                    @auth
+                        @feature('account')
+                            <a
+                                href="{{ route('account.overview') }}"
+                                class="egho-user-chip"
+                                title="Open your account"
+                            >
+                                <span class="egho-user-avatar" aria-hidden="true">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </span>
 
-                @auth
-                    @feature('account')
+                                <span class="egho-user-copy">
+                                    <strong>{{ auth()->user()->name }}</strong>
+                                    <small>{{ auth()->user()->email }}</small>
+                                </span>
+                            </a>
+                        @endfeature
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="site-button site-button-ghost"
+                            >
+                                Logout
+                            </button>
+                        </form>
+                    @else
                         <a
-                            href="{{ route('account.overview') }}"
-                            @class([
-                                'is-active' => request()->routeIs([
-                                    'dashboard',
-                                    'account.*'
-                                ])
-                            ])
-                        >
-                            Manage
-                        </a>
-                    @endfeature
-                @else
-                    @feature('account')
-                        <a href="{{ route('login') }}">
-                            Manage
-                        </a>
-                    @endfeature
-                @endauth
-
-                @auth
-                    @role('super-admin')
-                        <a
-                            href="{{ route('admin.features.index') }}"
-                            @class([
-                                'is-active' => request()->routeIs('admin.features.*')
-                            ])
-                        >
-                            Feature Control
-                        </a>
-                    @endrole
-                @endauth
-
-                @feature('support')
-                    <a
-                        href="{{ route('support') }}"
-                        @class([
-                            'is-active' => request()->routeIs('support')
-                        ])
-                    >
-                        Support
-                    </a>
-                @endfeature
-
-            </nav>
-
-            <div class="site-actions">
-
-                @auth
-                    <div class="site-user">
-                        <span class="site-user-avatar">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </span>
-
-                        <span class="site-user-copy">
-                            <strong>
-                                {{ auth()->user()->name }}
-                            </strong>
-
-                            <small>
-                                {{ auth()->user()->email }}
-                            </small>
-                        </span>
-                    </div>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-
-                        <button
-                            type="submit"
+                            href="{{ route('login') }}"
                             class="site-button site-button-ghost"
                         >
-                            Logout
-                        </button>
-                    </form>
-                @else
-                    <a
-                        href="{{ route('login') }}"
-                        class="site-button site-button-ghost"
-                    >
-                        Login
-                    </a>
+                            Sign In
+                        </a>
 
-                    <a
-                        href="{{ route('register') }}"
-                        class="site-button site-button-primary"
-                    >
-                        Create Account
-                    </a>
-                @endauth
+                        <a
+                            href="{{ route('register') }}"
+                            class="site-button site-button-primary"
+                        >
+                            Create Account
+                        </a>
+                    @endauth
 
+                </div>
             </div>
         </div>
+
     </header>
 
     @if (
@@ -237,76 +308,176 @@
         @yield('content')
     </div>
 
-    <footer class="site-footer">
-        <div class="site-footer-inner">
+    <footer class="egho-footer">
+        <div class="egho-shell">
 
-            <div>
-                <a
-                    href="{{ route('home') }}"
-                    class="site-footer-brand"
-                >
-                    Eagle Global Hub LTD
-                </a>
+            <div class="egho-footer-main">
 
-                <p>
-                    A clear and secure flight-booking journey from search
-                    through booking status and confirmation.
-                </p>
-            </div>
+                <div>
+                    <a href="{{ route('home') }}" class="egho-footer-brand">
+                        <span aria-hidden="true">&#9992;</span>
+                        Eagle Global Hub LTD
+                    </a>
 
-            <div class="site-footer-links">
-                <a href="{{ route('home') }}">Home</a>
-                @feature('about')
-                    <a href="{{ route('about') }}">About</a>
-                @endfeature
-                @feature('support')
-                    <a href="{{ route('support') }}">Support</a>
-                @endfeature
-                <a href="{{ route('terms') }}">Terms</a>
+                    <p>
+                        A clear and secure travel journey — search, review,
+                        booking status and confirmation in one account.
+                    </p>
+                </div>
 
-                @auth
-                    @feature('dashboard')
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
-                    @endfeature
+                <div>
+                    <h3>Quick Links</h3>
 
-                    @foreach ($travelServices as $serviceKey => $service)
-                        @feature($serviceKey)
-                            @if (
-                                $serviceKey !== 'flights' &&
-                                $service['available'] &&
-                                $service['permission']
-                            )
-                                @can($service['permission'])
+                    <div class="egho-footer-list">
+                        <a href="{{ route('home') }}">Home</a>
+
+                        @feature('about')
+                            <a href="{{ route('about') }}">About</a>
+                        @endfeature
+
+                        @feature('support')
+                            <a href="{{ route('support') }}">Support</a>
+                        @endfeature
+
+                        <a href="{{ route('terms') }}">Terms</a>
+
+                        @auth
+                            @feature('account')
+                                <a href="{{ route('account.overview') }}">My Account</a>
+                            @endfeature
+
+                            @feature('dashboard')
+                                <a href="{{ route('dashboard') }}">Dashboard</a>
+                            @endfeature
+                        @else
+                            <a href="{{ route('login') }}">Login</a>
+                            <a href="{{ route('register') }}">Register</a>
+                        @endauth
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Services</h3>
+
+                    <div class="egho-footer-list">
+                        @feature('flights')
+                            @can('flights.search')
+                                <a href="{{ route('flights.index') }}">Flights</a>
+                            @endcan
+                        @endfeature
+
+                        @foreach ($travelServices as $serviceKey => $service)
+                            @feature($serviceKey)
+                                @if (
+                                    $serviceKey !== 'flights' &&
+                                    $serviceLinkIsAllowed($service)
+                                )
                                     <a href="{{ route($service['route_name']) }}">
                                         {{ $service['label'] }}
                                     </a>
-                                @endcan
-                            @endif
+                                @endif
+                            @endfeature
+                        @endforeach
+
+                        @feature('visa')
+                            <a href="{{ route('work-visa.index') }}">
+                                Work Visa
+                            </a>
                         @endfeature
-                    @endforeach
 
-                    @feature('flights')
-                        @can('flights.search')
-                            <a href="{{ route('flights.index') }}">Flights</a>
-                        @endcan
-                    @endfeature
+                        @feature('bookings')
+                            @can('flights.book')
+                                <a href="{{ route('bookings.index') }}">My Bookings</a>
+                            @endcan
+                        @endfeature
+                    </div>
+                </div>
 
-                    @feature('bookings')
-                        @can('flights.book')
-                            <a href="{{ route('bookings.index') }}">My Bookings</a>
-                        @endcan
-                    @endfeature
-                @else
-                    <a href="{{ route('login') }}">Login</a>
-                    <a href="{{ route('register') }}">Register</a>
-                @endauth
+                <div>
+                    <h3>Contact</h3>
+
+                    <ul class="egho-footer-contact">
+                        @if ($siteContactAddress)
+                            <li>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11z"/>
+                                    <circle cx="12" cy="10" r="2.6"/>
+                                </svg>
+                                <span>{{ $siteContactAddress }}</span>
+                            </li>
+                        @endif
+
+                        @if ($siteContactPhone)
+                            <li>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>
+                                </svg>
+                                <span>{{ $siteContactPhone }}</span>
+                            </li>
+                        @endif
+
+                        @if ($siteContactEmail)
+                            <li>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                    <path d="m3.5 7 8.5 6 8.5-6"/>
+                                </svg>
+                                <a href="mailto:{{ $siteContactEmail }}">{{ $siteContactEmail }}</a>
+                            </li>
+                        @endif
+
+                        @if ($siteContactHours)
+                            <li>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="8.5"/>
+                                    <path d="M12 7.5V12l3 2"/>
+                                </svg>
+                                <span>{{ $siteContactHours }}</span>
+                            </li>
+                        @endif
+
+                        @if (
+                            ! $siteContactAddress &&
+                            ! $siteContactPhone &&
+                            ! $siteContactEmail &&
+                            ! $siteContactHours
+                        )
+                            <li>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="8.5"/>
+                                    <path d="M12 8.5v.01M12 11.5v4"/>
+                                </svg>
+                                <span>
+                                    Official contact channels are not configured
+                                    for this website yet. Booking and status
+                                    questions are handled inside your account.
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </div>
+
             </div>
 
-            <small>
-                &copy; {{ now()->year }} Eagle Global Hub LTD.
-                Live supplier inventory and execution require verified
-                production configuration.
-            </small>
+            <div class="egho-footer-bottom">
+                <small>
+                    &copy; {{ now()->year }} Eagle Global Hub LTD.
+                    Live supplier inventory and execution require verified
+                    production configuration.
+                </small>
+
+                <div class="egho-topbar-group">
+                    <a href="{{ route('terms') }}" class="egho-topbar-item">
+                        Terms
+                    </a>
+
+                    @feature('support')
+                        <a href="{{ route('support') }}" class="egho-topbar-item">
+                            Support
+                        </a>
+                    @endfeature
+                </div>
+            </div>
 
         </div>
     </footer>

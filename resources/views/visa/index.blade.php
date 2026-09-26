@@ -7,183 +7,265 @@
     'Visa information services from Eagle Global Hub LTD.'
 )
 
+@section('body_class', 'egho-page-body')
+
 @section('content')
 
-    <main class="travel-module-page">
-        <header class="travel-module-header">
-            <span class="site-eyebrow">VISA SERVICES</span>
-            <h1>Review visa requirements for your trip</h1>
-            <p>
-                Check travel-document information from a configured source
-                using your passport nationality and actual journey details.
-                Approval and entry are never guaranteed.
-            </p>
-        </header>
+    <main class="egho-page">
+        <div class="egho-shell">
 
-        <ol
-            class="travel-module-steps travel-module-steps-seven"
-            aria-label="Visa information steps"
-        >
-            @foreach ([
-                'Trip details',
-                'Requirements',
-                'Application options',
-                'Documents',
-                'Review',
-                'Submission',
-                'Status',
-            ] as $step)
-                <li>{{ $step }}</li>
-            @endforeach
-        </ol>
+            <div class="egho-visa-grid">
 
-        @if (! $service['available'])
-            <section class="travel-unavailable" role="status">
-                <span class="travel-status-badge">Not Configured</span>
-                <h2>Visa information service is not configured</h2>
-                <p>
-                    Visa requirements will be available only after an approved
-                    information provider and its required server configuration
-                    are enabled.
-                </p>
-                <a
-                    href="{{ route('home') }}"
-                    class="site-button site-button-secondary"
-                >
-                    Back to travel services
-                </a>
-            </section>
-        @elseif ($countries->isEmpty())
-            <section class="travel-unavailable" role="status">
-                <span class="travel-status-badge">Unavailable</span>
-                <h2>Country information is unavailable</h2>
-                <p>
-                    Visa lookup cannot continue until the active country
-                    catalogue is available.
-                </p>
-            </section>
-        @else
-            <section class="travel-search-panel">
-                <div>
-                    <span class="site-eyebrow">REQUIREMENTS</span>
-                    <h2>Check your trip requirements</h2>
+                <section class="egho-visa-card">
+                    <span class="egho-eyebrow">VISA REQUIREMENTS</span>
+                    <h1>Check visa requirements for your next destination</h1>
+                    <p>
+                        Travel-document information comes from a configured
+                        source and uses your passport nationality and actual
+                        journey details.
+                        Approval and entry are never guaranteed.
+                    </p>
+
+                    @if (! $service['available'])
+                        <div class="egho-visa-primary-fields">
+                            <label class="egho-field">
+                                <span>
+                                    I am a citizen of
+                                    <small class="egho-field-help">Passport nationality</small>
+                                </span>
+                                <select disabled>
+                                    <option>Selected when the service is active</option>
+                                </select>
+                            </label>
+
+                            <label class="egho-field">
+                                <span>
+                                    I want to travel to
+                                    <small class="egho-field-help">Destination country</small>
+                                </span>
+                                <select disabled>
+                                    <option>Selected when the service is active</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="egho-notice" role="status" style="margin-top:18px">
+                            <span class="egho-notice-status">Not Configured</span>
+                            <h2>Visa information service is not configured</h2>
+                            <p>
+                                Visa requirements will be available only after
+                                an approved information provider and its
+                                required server configuration are enabled.
+                            </p>
+                            <div class="egho-actions">
+                                <a
+                                    href="{{ route('home') }}"
+                                    class="egho-btn egho-btn-ghost"
+                                >
+                                    Back to travel services
+                                </a>
+                            </div>
+                        </div>
+                    @elseif ($countries->isEmpty())
+                        <div class="egho-notice" role="status">
+                            <span class="egho-notice-status">Unavailable</span>
+                            <h2>Country information is unavailable</h2>
+                            <p>
+                                Visa lookup cannot continue until the active
+                                country catalogue is available.
+                            </p>
+                        </div>
+                    @else
+                        <form
+                            method="POST"
+                            action="{{ route('visa.requirements') }}"
+                        >
+                            @csrf
+
+                            <div class="egho-visa-primary-fields">
+                                <label class="egho-field">
+                                    <span>
+                                        I am a citizen of
+                                        <small class="egho-field-help">Passport nationality</small>
+                                    </span>
+                                    <select name="nationality" required>
+                                        <option value="">Select country</option>
+                                        @foreach ($countries as $country)
+                                            <option
+                                                value="{{ $country->iso3 }}"
+                                                @selected(
+                                                    old('nationality') === $country->iso3
+                                                )
+                                            >
+                                                {{ $country->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+
+                                <label class="egho-field">
+                                    <span>
+                                        I want to travel to
+                                        <small class="egho-field-help">Destination country</small>
+                                    </span>
+                                    <select
+                                        name="destination_country"
+                                        required
+                                    >
+                                        <option value="">Select country</option>
+                                        @foreach ($countries as $country)
+                                            <option
+                                                value="{{ $country->iso3 }}"
+                                                @selected(
+                                                    old('destination_country') === $country->iso3
+                                                )
+                                            >
+                                                {{ $country->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            </div>
+
+                            <div
+                                class="egho-visa-primary-fields"
+                                style="margin-top:14px"
+                            >
+                                <label class="egho-field">
+                                    <span>Origin country</span>
+                                    <select name="origin_country" required>
+                                        <option value="">Select country</option>
+                                        @foreach ($countries as $country)
+                                            <option
+                                                value="{{ $country->iso3 }}"
+                                                @selected(
+                                                    old('origin_country') === $country->iso3
+                                                )
+                                            >
+                                                {{ $country->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+
+                                <label class="egho-field">
+                                    <span>Departure date</span>
+                                    <input
+                                        type="date"
+                                        name="departure_date"
+                                        value="{{ old('departure_date') }}"
+                                        min="{{ now()->toDateString() }}"
+                                        required
+                                    >
+                                </label>
+
+                                <label class="egho-field">
+                                    <span>Departure time</span>
+                                    <input
+                                        type="time"
+                                        name="departure_time"
+                                        value="{{ old('departure_time') }}"
+                                        required
+                                    >
+                                </label>
+
+                                <label class="egho-field">
+                                    <span>Arrival date</span>
+                                    <input
+                                        type="date"
+                                        name="arrival_date"
+                                        value="{{ old('arrival_date') }}"
+                                        min="{{ now()->toDateString() }}"
+                                        required
+                                    >
+                                </label>
+
+                                <label class="egho-field">
+                                    <span>Arrival time</span>
+                                    <input
+                                        type="time"
+                                        name="arrival_time"
+                                        value="{{ old('arrival_time') }}"
+                                        required
+                                    >
+                                </label>
+                            </div>
+
+                            <div class="egho-actions" style="margin-top:18px">
+                                <button
+                                    type="submit"
+                                    class="egho-btn egho-btn-primary"
+                                >
+                                    Check Requirements
+                                </button>
+                            </div>
+                        </form>
+
+                        <p class="egho-filter-note">
+                            This service provides travel-requirement
+                            information only. It does not guarantee visa
+                            approval or admission at the border.
+                        </p>
+                    @endif
+                </section>
+
+                <div class="egho-visa-media">
+                    <img
+                        src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=1200&q=80"
+                        alt=""
+                        loading="lazy"
+                        width="1200"
+                        height="1500"
+                    >
                 </div>
 
-                <form
-                    method="POST"
-                    action="{{ route('visa.requirements') }}"
-                    class="travel-search-form-compact"
-                >
-                    @csrf
+            </div>
 
-                    <label class="travel-field">
-                        <span>Passport nationality</span>
-                        <select name="nationality" required>
-                            <option value="">Select country</option>
-                            @foreach ($countries as $country)
-                                <option
-                                    value="{{ $country->iso3 }}"
-                                    @selected(
-                                        old('nationality') === $country->iso3
-                                    )
-                                >
-                                    {{ $country->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Origin country</span>
-                        <select name="origin_country" required>
-                            <option value="">Select country</option>
-                            @foreach ($countries as $country)
-                                <option
-                                    value="{{ $country->iso3 }}"
-                                    @selected(
-                                        old('origin_country') === $country->iso3
-                                    )
-                                >
-                                    {{ $country->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Destination country</span>
-                        <select name="destination_country" required>
-                            <option value="">Select country</option>
-                            @foreach ($countries as $country)
-                                <option
-                                    value="{{ $country->iso3 }}"
-                                    @selected(
-                                        old('destination_country') === $country->iso3
-                                    )
-                                >
-                                    {{ $country->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Departure date</span>
-                        <input
-                            type="date"
-                            name="departure_date"
-                            value="{{ old('departure_date') }}"
-                            min="{{ now()->toDateString() }}"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Departure time</span>
-                        <input
-                            type="time"
-                            name="departure_time"
-                            value="{{ old('departure_time') }}"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Arrival date</span>
-                        <input
-                            type="date"
-                            name="arrival_date"
-                            value="{{ old('arrival_date') }}"
-                            min="{{ now()->toDateString() }}"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Arrival time</span>
-                        <input
-                            type="time"
-                            name="arrival_time"
-                            value="{{ old('arrival_time') }}"
-                            required
-                        >
-                    </label>
-
-                    <button
-                        type="submit"
-                        class="site-button site-button-primary"
-                    >
-                        Check Requirements
-                    </button>
-                </form>
-
-                <p>
-                    This service provides travel-requirement information only.
-                    It does not guarantee visa approval or admission at the
-                    border.
-                </p>
+            <section
+                class="egho-visa-types"
+                aria-label="Visa categories"
+            >
+                @foreach ([
+                    [
+                        'icon' => '&#127968;',
+                        'label' => 'Tourist Visa',
+                        'note' => 'Short visits, holidays and family trips.',
+                    ],
+                    [
+                        'icon' => '&#128188;',
+                        'label' => 'Business Visa',
+                        'note' => 'Meetings, conferences and trade visits.',
+                    ],
+                    [
+                        'icon' => '&#9992;',
+                        'label' => 'Transit Visa',
+                        'note' => 'Short layovers through a third country.',
+                    ],
+                    [
+                        'icon' => '&#127891;',
+                        'label' => 'Student Visa',
+                        'note' => 'Study and academic exchange programmes.',
+                    ],
+                    [
+                        'icon' => '&#128084;',
+                        'label' => 'Work Visa',
+                        'note' => 'Employment and employer-sponsored permits.',
+                    ],
+                ] as $category)
+                    <article class="egho-visa-type">
+                        <span aria-hidden="true">{{ $category['icon'] }}</span>
+                        <strong>{{ $category['label'] }}</strong>
+                        <small>{{ $category['note'] }}</small>
+                    </article>
+                @endforeach
             </section>
-        @endif
+
+            <p class="egho-filter-note">
+                Requirements can change. This information does not guarantee
+                approval, boarding, or admission.
+            </p>
+
+        </div>
     </main>
 
 @endsection

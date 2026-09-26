@@ -55,6 +55,23 @@ Route::view('/support', 'public.support')
 Route::view('/terms', 'public.terms')
     ->name('terms');
 
+/*
+ * Work visa pages.
+ *
+ * Presentation only. No work visa application, document upload, fee, payment,
+ * provider call or customer record is created from these views, and they hold
+ * no customer data, so they stay public and follow only the visa feature
+ * visibility. Both pages state plainly that work visa processing is not
+ * connected yet.
+ */
+Route::view('/work-visa', 'work-visa.index')
+    ->middleware('feature:visa')
+    ->name('work-visa.index');
+
+Route::view('/work-visa/apply', 'work-visa.apply')
+    ->middleware('feature:visa')
+    ->name('work-visa.apply');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')
@@ -76,6 +93,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/hotels/search', HotelSearchController::class)
         ->middleware(['feature:hotels', 'permission:hotels.search'])
         ->name('hotels.search');
+
+    /*
+     * Hotel booking steps.
+     *
+     * These two views are presentation only. No room inventory, guest record,
+     * booking, payment or supplier call is created from them: they render the
+     * approved layout and state plainly that the live steps are not connected
+     * yet. They stay behind the same guest / verification / permission
+     * middleware as every other customer hotel route.
+     */
+    Route::view('/hotels/rooms', 'hotels.rooms')
+        ->middleware(['feature:hotels', 'permission:hotels.search'])
+        ->name('hotels.rooms');
+
+    Route::view('/hotels/booking', 'hotels.booking')
+        ->middleware(['feature:hotels', 'permission:hotels.search'])
+        ->name('hotels.booking');
 
     Route::get('/tours', TourController::class)
         ->middleware(['feature:tours', 'permission:tours.search'])
@@ -740,3 +774,20 @@ Route::get(
         'permission:master-data.view',
     ])
     ->name('admin.master-data.manage');
+
+/*
+ * Destination content page.
+ *
+ * Presentation only: no destination, image, translation or publish state is
+ * stored yet, so the page reports that plainly instead of offering controls
+ * that cannot save anything. It follows the same admin role and permission
+ * middleware as the other catalogue pages.
+ */
+Route::view('/admin/destinations', 'admin.destinations.index')
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:master-data.view',
+    ])
+    ->name('admin.destinations.index');

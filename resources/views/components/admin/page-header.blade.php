@@ -53,6 +53,9 @@
         str_starts_with($routeName, 'admin.reports.')
             => 'reports',
 
+        str_starts_with($routeName, 'admin.destinations.')
+            => 'countries',
+
         str_starts_with($routeName, 'admin.system-logs.')
             => 'logs',
 

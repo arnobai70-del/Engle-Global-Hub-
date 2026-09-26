@@ -1,190 +1,303 @@
 @extends('layouts.site')
 
 @section('title', 'My Bookings')
-@section('body_class', 'bookings-body')
+@section('body_class', 'bookings-body egho-page-body')
 
 @section('content')
 
-    <main class="bookings-container">
+    @php
+        $activeTab = request()->query('tab', 'flights');
 
-        <section class="bookings-hero">
-            <div>
-                <span class="bookings-kicker">
-                    TRAVEL HISTORY
-                </span>
+        $tabs = [
+            'flights' => 'Flights',
+            'hotels' => 'Hotels',
+            'tours' => 'Tours',
+            'visa' => 'Visa',
+            'work-visa' => 'Work Visa',
+        ];
 
-                <h1>
-                    My Bookings
-                </h1>
+        if (! array_key_exists($activeTab, $tabs)) {
+            $activeTab = 'flights';
+        }
+    @endphp
 
+    <main class="egho-page">
+        <div class="egho-shell">
+
+            <header class="egho-page-head">
+                <span class="egho-eyebrow">TRAVEL HISTORY</span>
+                <h1>My Bookings</h1>
                 <p>
-                    Review flight booking attempts created from your account,
-                    including order and payment status from stored records.
+                    Review stored records created from your account, including
+                    order and payment status. Only records this website actually
+                    holds are listed.
                 </p>
-            </div>
+            </header>
 
-            @can('flights.search')
-                <a
-                    href="{{ route('flights.index') }}"
-                    class="site-button site-button-primary"
-                >
-                    Search Flights
-                </a>
-            @endcan
-        </section>
+            <ul class="egho-tabs" aria-label="Booking types">
+                <li @class(['egho-tab', 'is-active' => $activeTab === 'flights'])>
+                    <a href="{{ route('bookings.index') }}">Flights</a>
+                </li>
 
-        @if ($bookings->isEmpty())
-            <section class="bookings-empty">
-                <span aria-hidden="true">&#9992;</span>
+                @feature('hotels')
+                    <li @class(['egho-tab', 'is-active' => $activeTab === 'hotels'])>
+                        <a href="{{ route('bookings.index', ['tab' => 'hotels']) }}">
+                            Hotels
+                        </a>
+                    </li>
+                @endfeature
 
-                <h2>
-                    No flight bookings yet
-                </h2>
+                @feature('tours')
+                    <li @class(['egho-tab', 'is-active' => $activeTab === 'tours'])>
+                        <a href="{{ route('bookings.index', ['tab' => 'tours']) }}">
+                            Tours
+                        </a>
+                    </li>
+                @endfeature
 
-                <p>
-                    Your confirmed order attempts and payment status will
-                    appear here after you complete the secure flight booking
-                    flow.
-                </p>
+                @feature('visa')
+                    <li @class(['egho-tab', 'is-active' => $activeTab === 'visa'])>
+                        <a href="{{ route('bookings.index', ['tab' => 'visa']) }}">
+                            Visa
+                        </a>
+                    </li>
 
-                @can('flights.search')
-                    <a
-                        href="{{ route('flights.index') }}"
-                        class="site-button site-button-primary"
+                    <li @class(['egho-tab', 'is-active' => $activeTab === 'work-visa'])>
+                        <a href="{{ route('bookings.index', ['tab' => 'work-visa']) }}">
+                            Work Visa
+                        </a>
+                    </li>
+                @endfeature
+            </ul>
+
+            @if ($activeTab === 'flights')
+
+                @if ($bookings->isEmpty())
+                    <section class="egho-notice" role="status">
+                        <span class="egho-notice-status">
+                            No stored records
+                        </span>
+                        <h2>No flight bookings yet</h2>
+                        <p>
+                            Your confirmed order attempts and payment status will
+                            appear here after you complete the secure flight
+                            booking flow.
+                        </p>
+                        @can('flights.search')
+                            <div class="egho-actions">
+                                <a
+                                    href="{{ route('flights.index') }}"
+                                    class="egho-btn egho-btn-primary"
+                                >
+                                    Start Flight Search
+                                </a>
+                            </div>
+                        @endcan
+                    </section>
+                @else
+                    <section
+                        class="egho-bookings"
+                        aria-label="Flight booking list"
                     >
-                        Start Flight Search
-                    </a>
-                @endcan
-            </section>
-        @else
-            <section
-                class="bookings-list"
-                aria-label="Flight booking list"
-            >
-                @foreach ($bookings as $booking)
-                    @php
-                        $payment = $booking->paymentAttempt;
+                        @foreach ($bookings as $booking)
+                            @php
+                                $payment = $booking->paymentAttempt;
 
-                        $orderStatus = match ($booking->status) {
-                            \App\Models\FlightOrderAttempt::STATUS_CREATED => 'Order Created',
-                            \App\Models\FlightOrderAttempt::STATUS_FAILED => 'Order Failed',
-                            default => 'Order Processing',
-                        };
+                                $orderStatus = match ($booking->status) {
+                                    \App\Models\FlightOrderAttempt::STATUS_CREATED => 'Order Created',
+                                    \App\Models\FlightOrderAttempt::STATUS_FAILED => 'Order Failed',
+                                    default => 'Order Processing',
+                                };
 
-                        $paymentStatus = match ($payment?->status) {
-                            \App\Models\FlightOrderPaymentAttempt::STATUS_SUCCEEDED => 'Payment Succeeded',
-                            \App\Models\FlightOrderPaymentAttempt::STATUS_FAILED => 'Payment Failed',
-                            \App\Models\FlightOrderPaymentAttempt::STATUS_PROCESSING => 'Payment Processing',
-                            default => 'Payment Not Started',
-                        };
-                    @endphp
+                                $orderTone = match ($booking->status) {
+                                    \App\Models\FlightOrderAttempt::STATUS_CREATED => 'egho-status-ok',
+                                    \App\Models\FlightOrderAttempt::STATUS_FAILED => 'egho-status-bad',
+                                    default => 'egho-status-warn',
+                                };
 
-                    <article class="booking-card">
-                        <div class="booking-card-main">
-                            <span class="bookings-kicker">
-                                Flight Booking
-                            </span>
+                                $paymentStatus = match ($payment?->status) {
+                                    \App\Models\FlightOrderPaymentAttempt::STATUS_SUCCEEDED => 'Payment Succeeded',
+                                    \App\Models\FlightOrderPaymentAttempt::STATUS_FAILED => 'Payment Failed',
+                                    \App\Models\FlightOrderPaymentAttempt::STATUS_PROCESSING => 'Payment Processing',
+                                    default => 'Payment Not Started',
+                                };
 
-                            <h2>
-                                Booking #{{ $booking->id }}
-                            </h2>
+                                $paymentTone = match ($payment?->status) {
+                                    \App\Models\FlightOrderPaymentAttempt::STATUS_SUCCEEDED => 'egho-status-ok',
+                                    \App\Models\FlightOrderPaymentAttempt::STATUS_FAILED => 'egho-status-bad',
+                                    \App\Models\FlightOrderPaymentAttempt::STATUS_PROCESSING => 'egho-status-info',
+                                    default => 'egho-status-muted',
+                                };
+                            @endphp
 
-                            <dl class="booking-summary-grid">
-                                <div>
-                                    <dt>Order Status</dt>
-                                    <dd>
-                                        <span
-                                            @class([
-                                                'booking-status',
-                                                'booking-status-success' => $booking->status === \App\Models\FlightOrderAttempt::STATUS_CREATED,
-                                                'booking-status-danger' => $booking->status === \App\Models\FlightOrderAttempt::STATUS_FAILED,
-                                            ])
-                                        >
-                                            {{ $orderStatus }}
-                                        </span>
-                                    </dd>
+                            <article class="egho-booking">
+                                <div class="egho-booking-ref">
+                                    <strong>Booking #{{ $booking->id }}</strong>
+                                    <small>Flight booking</small>
                                 </div>
 
-                                <div>
-                                    <dt>Payment Status</dt>
-                                    <dd>
-                                        <span
-                                            @class([
-                                                'booking-status',
-                                                'booking-status-success' => $payment?->status === \App\Models\FlightOrderPaymentAttempt::STATUS_SUCCEEDED,
-                                                'booking-status-danger' => $payment?->status === \App\Models\FlightOrderPaymentAttempt::STATUS_FAILED,
-                                            ])
-                                        >
-                                            {{ $paymentStatus }}
-                                        </span>
-                                    </dd>
-                                </div>
-
-                                <div>
-                                    <dt>Created</dt>
-                                    <dd>
-                                        {{ $booking->created_at?->format('M j, Y g:i A') ?? 'Not available' }}
-                                    </dd>
-                                </div>
-
-                                <div>
-                                    <dt>Payment Amount</dt>
-                                    <dd>
+                                <div class="egho-booking-desc">
+                                    <strong>Flight order attempt</strong>
+                                    <small>
                                         @if ($payment)
                                             {{ $payment->currency }} {{ $payment->amount }}
+                                            &middot; stored payment record
                                         @else
-                                            Not available
+                                            No payment record stored yet
                                         @endif
-                                    </dd>
+                                    </small>
                                 </div>
-                            </dl>
-                        </div>
 
-                        <a
-                            href="{{ route('bookings.show', $booking) }}"
-                            class="booking-card-link"
+                                <div>
+                                    <span @class(['egho-status', $orderTone])>
+                                        {{ $orderStatus }}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <span @class(['egho-status', $paymentTone])>
+                                        {{ $paymentStatus }}
+                                    </span>
+                                </div>
+
+                                <div class="egho-booking-date">
+                                    {{ $booking->created_at?->format('M j, Y g:i A') ?? 'Not available' }}
+                                </div>
+
+                                <div class="egho-booking-action">
+                                    <a
+                                        href="{{ route('bookings.show', $booking) }}"
+                                        class="egho-btn egho-btn-ghost"
+                                    >
+                                        View Details
+                                    </a>
+                                </div>
+                            </article>
+                        @endforeach
+                    </section>
+
+                    @if ($bookings->hasPages())
+                        <nav
+                            class="booking-pagination"
+                            aria-label="Booking list pagination"
                         >
-                            View Details
-                        </a>
-                    </article>
-                @endforeach
-            </section>
+                            <p>
+                                Showing {{ $bookings->firstItem() }}&ndash;{{ $bookings->lastItem() }}
+                                of {{ $bookings->total() }} bookings
+                            </p>
 
-            @if ($bookings->hasPages())
-                <nav
-                    class="booking-pagination"
-                    aria-label="Booking list pagination"
-                >
+                            <div>
+                                @if ($bookings->onFirstPage())
+                                    <span aria-disabled="true">Previous</span>
+                                @else
+                                    <a href="{{ $bookings->previousPageUrl() }}" rel="prev">
+                                        Previous
+                                    </a>
+                                @endif
+
+                                <strong aria-current="page">
+                                    Page {{ $bookings->currentPage() }} of {{ $bookings->lastPage() }}
+                                </strong>
+
+                                @if ($bookings->hasMorePages())
+                                    <a href="{{ $bookings->nextPageUrl() }}" rel="next">
+                                        Next
+                                    </a>
+                                @else
+                                    <span aria-disabled="true">Next</span>
+                                @endif
+                            </div>
+                        </nav>
+                    @endif
+                @endif
+
+            @elseif ($activeTab === 'hotels')
+                <section class="egho-notice" role="status">
+                    <span class="egho-notice-status">Not Connected</span>
+                    <h2>No hotel bookings are stored yet</h2>
                     <p>
-                        Showing {{ $bookings->firstItem() }}&ndash;{{ $bookings->lastItem() }}
-                        of {{ $bookings->total() }} bookings
+                        Hotel booking is not connected to this website, so no
+                        hotel reservation records exist for your account. Hotel
+                        search and the room and guest steps are shown as layout
+                        previews only.
                     </p>
-
-                    <div>
-                        @if ($bookings->onFirstPage())
-                            <span aria-disabled="true">Previous</span>
-                        @else
-                            <a href="{{ $bookings->previousPageUrl() }}" rel="prev">
-                                Previous
+                    @feature('hotels')
+                        <div class="egho-actions">
+                            <a
+                                href="{{ route('hotels.index') }}"
+                                class="egho-btn egho-btn-ghost"
+                            >
+                                Open hotel search
                             </a>
-                        @endif
+                        </div>
+                    @endfeature
+                </section>
 
-                        <strong aria-current="page">
-                            Page {{ $bookings->currentPage() }} of {{ $bookings->lastPage() }}
-                        </strong>
-
-                        @if ($bookings->hasMorePages())
-                            <a href="{{ $bookings->nextPageUrl() }}" rel="next">
-                                Next
+            @elseif ($activeTab === 'tours')
+                <section class="egho-notice" role="status">
+                    <span class="egho-notice-status">Not Connected</span>
+                    <h2>No tour bookings are stored yet</h2>
+                    <p>
+                        Tour booking is not connected to this website, so no tour
+                        reservation records exist for your account. Tour search
+                        is shown as a layout preview only.
+                    </p>
+                    @feature('tours')
+                        <div class="egho-actions">
+                            <a
+                                href="{{ route('tours.index') }}"
+                                class="egho-btn egho-btn-ghost"
+                            >
+                                Open tour search
                             </a>
-                        @else
-                            <span aria-disabled="true">Next</span>
-                        @endif
-                    </div>
-                </nav>
+                        </div>
+                    @endfeature
+                </section>
+
+            @elseif ($activeTab === 'visa')
+                <section class="egho-notice" role="status">
+                    <span class="egho-notice-status">Not Connected</span>
+                    <h2>No visa applications are stored yet</h2>
+                    <p>
+                        Visa information is provided as a lookup only. No visa
+                        application, document or fee is recorded for your
+                        account, and this website cannot submit an application.
+                    </p>
+                    @feature('visa')
+                        <div class="egho-actions">
+                            <a
+                                href="{{ route('visa.index') }}"
+                                class="egho-btn egho-btn-ghost"
+                            >
+                                Check visa requirements
+                            </a>
+                        </div>
+                    @endfeature
+                </section>
+
+            @else
+                <section class="egho-notice" role="status">
+                    <span class="egho-notice-status">Not Connected</span>
+                    <h2>No work visa applications are stored yet</h2>
+                    <p>
+                        Work visa processing is not connected to this website. No
+                        application, document or fee is recorded for your
+                        account, and nothing can be submitted from here.
+                    </p>
+                    @feature('visa')
+                        <div class="egho-actions">
+                            <a
+                                href="{{ route('work-visa.index') }}"
+                                class="egho-btn egho-btn-ghost"
+                            >
+                                Open work visa processing
+                            </a>
+                        </div>
+                    @endfeature
+                </section>
             @endif
-        @endif
 
+        </div>
     </main>
 
 @endsection

@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', 'Search Flights')
-@section('body_class', 'dashboard-body')
+@section('body_class', 'dashboard-body egho-page-body')
 
 @section('content')
 
@@ -31,54 +31,17 @@
             </div>
         </section>
 
-        <section
-            class="flight-flow-guide"
-            aria-label="Flight booking journey"
-        >
-            <div class="flight-flow-intro">
-                <span class="flight-kicker">BOOKING JOURNEY</span>
-                <strong>Search to secure review</strong>
-                <small>
-                    Follow each step with fare and traveler details visible.
-                </small>
-            </div>
-
-            <ol class="flight-flow-steps">
-                <li>
-                    <span>01</span>
-
-                    <div>
-                        <strong>Search</strong>
-                        <small>Route and dates</small>
-                    </div>
-                </li>
-
-                <li>
-                    <span>02</span>
-
-                    <div>
-                        <strong>Compare</strong>
-                        <small>Flights and fares</small>
-                    </div>
-                </li>
-
-                <li>
-                    <span>03</span>
-
-                    <div>
-                        <strong>Travelers</strong>
-                        <small>Passenger details</small>
-                    </div>
-                </li>
-
-                <li>
-                    <span>04</span>
-
-                    <div>
-                        <strong>Review</strong>
-                        <small>Secure fare review</small>
-                    </div>
-                </li>
+        <section aria-label="Flight booking journey">
+            <ol class="egho-steps">
+                @foreach ([
+                    'Search',
+                    'Select',
+                    'Travellers',
+                    'Review',
+                    'Confirmation',
+                ] as $step)
+                    <li @class(['is-active' => $loop->first])>{{ $step }}</li>
+                @endforeach
             </ol>
         </section>
         <section class="flight-search-card">
@@ -344,6 +307,110 @@
                     hidden
                 ></div>
 
+                {{--
+                    Result chrome for the offer list.
+
+                    The offer list itself is rendered by the flight search
+                    script, so this toolbar and filter rail are static and are
+                    only revealed while results are on screen (see the
+                    `.flight-results-shell:has(...)` rules in the OTA theme).
+
+                    The configured search provider returns fares in its own
+                    order and exposes no stop, carrier, price or time filtering
+                    to this page, so every control stays disabled and the note
+                    says so. Nothing here hides or re-orders a fare.
+                --}}
+                <div class="flight-results-shell">
+
+                    <div class="flight-results-toolbar">
+                        <span class="flight-results-toolbar-title">
+                            Compare fares
+                        </span>
+
+                        <div class="flight-results-sort">
+                            <span>Sort by</span>
+
+                            <select
+                                class="egho-sort-select"
+                                aria-label="Sort flight results"
+                                disabled
+                            >
+                                <option>Cheapest (provider order)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <aside
+                        class="egho-filter-card flight-results-rail"
+                        aria-label="Result filters"
+                    >
+                        <div class="egho-filter-group">
+                            <h2>Price range</h2>
+
+                            <input
+                                class="egho-range"
+                                type="range"
+                                min="0"
+                                max="100"
+                                value="60"
+                                disabled
+                            >
+
+                            <div class="egho-range-row">
+                                <span>Lowest fare</span>
+                                <span>Highest fare</span>
+                            </div>
+                        </div>
+
+                        <div class="egho-filter-group">
+                            <h2>Stops</h2>
+
+                            @foreach ([
+                                'Direct only',
+                                'Up to 1 stop',
+                                'Up to 2 stops',
+                            ] as $stopOption)
+                                <label class="egho-check">
+                                    <input type="checkbox" disabled>
+                                    <span>{{ $stopOption }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <div class="egho-filter-group">
+                            <h2>Airlines</h2>
+
+                            <p class="egho-filter-note">
+                                Carrier names shown in the results are the ones
+                                the provider actually returned.
+                            </p>
+                        </div>
+
+                        <div class="egho-filter-group">
+                            <h2>Departure &amp; arrival time</h2>
+
+                            @foreach (['Departure time', 'Arrival time'] as $timeLabel)
+                                <label class="flight-filter-field">
+                                    <span>{{ $timeLabel }}</span>
+
+                                    <select
+                                        aria-label="{{ $timeLabel }}"
+                                        disabled
+                                    >
+                                        <option>Any time</option>
+                                    </select>
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <p class="egho-filter-note">
+                            The configured search provider returns fares in its
+                            own order and does not expose stop, carrier, price
+                            or time filtering, so these controls stay disabled.
+                            No fare is hidden or re-ordered by this page.
+                        </p>
+                    </aside>
+
                 <div
                     class="flight-results"
                     data-flight-results data-flight-select-url="{{ route('flights.offers.select') }}" data-flight-traveler-validation-url="{{ route('flights.travelers.validate') }}"
@@ -364,6 +431,8 @@
                     hidden
                 ></div>
 
+                </div>
+
                 <div class="flight-form-actions">
                     <a
                         href="{{ route('dashboard') }}"
@@ -382,6 +451,80 @@
                 </div>
             </form>
         </section>
+
+        {{--
+            Payment method availability.
+
+            Only the secure supplier balance payment used by the flight
+            payment step is actually connected. Wallet and bank transfer
+            options from the approved mockup are listed as unavailable rather
+            than shown as working choices.
+        --}}
+        @feature('payments')
+            <section
+                class="egho-panel flight-payment-methods"
+                aria-label="Payment methods"
+            >
+                <div class="egho-panel-head">
+                    <span class="egho-eyebrow">PAYMENT METHODS</span>
+                    <h2>How flight payment is collected</h2>
+                    <p>
+                        Only methods that are genuinely connected are offered.
+                        Everything else stays unavailable until its integration
+                        is enabled and verified.
+                    </p>
+                </div>
+
+                <ul class="egho-benefits">
+                    @foreach ([
+                        [
+                            'title' => 'Card / secure supplier balance',
+                            'note' => 'Taken in the secure flight payment step once an order attempt exists. The amount is always set server-side.',
+                            'available' => true,
+                        ],
+                        [
+                            'title' => 'bKash',
+                            'note' => 'Not connected. No mobile wallet payment can be taken.',
+                            'available' => false,
+                        ],
+                        [
+                            'title' => 'Nagad',
+                            'note' => 'Not connected. No mobile wallet payment can be taken.',
+                            'available' => false,
+                        ],
+                        [
+                            'title' => 'Bank transfer',
+                            'note' => 'Not connected. No bank transfer instruction exists yet.',
+                            'available' => false,
+                        ],
+                    ] as $method)
+                        <li class="egho-benefit">
+                            <span
+                                class="egho-benefit-icon"
+                                aria-hidden="true"
+                            >
+                                {{ $method['available'] ? '\u2713' : '\u2014' }}
+                            </span>
+
+                            <span>
+                                <strong>{{ $method['title'] }}</strong>
+                                <small>{{ $method['note'] }}</small>
+
+                                <span
+                                    @class([
+                                        'egho-status',
+                                        'egho-status-ok' => $method['available'],
+                                        'egho-status-muted' => ! $method['available'],
+                                    ])
+                                >
+                                    {{ $method['available'] ? 'Connected' : 'Not connected' }}
+                                </span>
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            </section>
+        @endfeature
 
         <section
             class="flight-info-grid"

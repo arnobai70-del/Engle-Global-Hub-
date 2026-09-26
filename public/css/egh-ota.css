@@ -1,0 +1,2794 @@
+/* ==========================================================================
+   EAGLE GLOBAL HUB - OTA FRONTEND THEME (mockup aligned)
+   --------------------------------------------------------------------------
+   Standalone stylesheet loaded by layouts/site.blade.php.
+
+   Every rule is scoped to the `.egho-` namespace, so this file never overrides
+   the existing `.site-*`, `.ota-*`, `.flight-*`, `.travel-*`, `.bookings-*`,
+   `.account-*`, `.dashboard-*` or `.admin-*` systems. Pages that still use
+   those classes keep their current styling untouched.
+
+   Colours/spacing are tuned to the approved UI mockup: navy chrome, blue
+   primary actions, white cards on a light surface, amber promo accents.
+   ========================================================================== */
+
+:root {
+    --egho-blue: #1256a0;
+    --egho-blue-dark: #0b3c78;
+    --egho-navy: #0b2545;
+    --egho-navy-soft: #123a6b;
+    --egho-sky: #eaf2fd;
+    --egho-line: #dfe8f4;
+    --egho-text: #0f2a4a;
+    --egho-muted: #5d7290;
+    --egho-amber: #f59e0b;
+    --egho-surface: #f5f8fd;
+    --egho-radius: 16px;
+    --egho-shadow: 0 18px 45px rgba(11, 37, 69, 0.14);
+    --egho-shell: 1200px;
+}
+
+.egho-shell {
+    width: 100%;
+    max-width: var(--egho-shell);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ---------------------------------------------------------------- topbar */
+.egho-topbar {
+    background: var(--egho-navy);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 12.5px;
+}
+
+.egho-topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 40px;
+}
+
+.egho-topbar-group {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.egho-topbar-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.egho-topbar-item svg {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+a.egho-topbar-item:hover {
+    color: #fff;
+}
+
+.egho-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.egho-switch:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.egho-switch-chevron {
+    font-size: 9px;
+    opacity: 0.8;
+}
+
+/* ----------------------------------------------------------- main header */
+.egho-header {
+    position: relative;
+    z-index: 30;
+    background: #fff;
+    border-bottom: 1px solid var(--egho-line);
+}
+
+.egho-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 76px;
+}
+
+.egho-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+    flex: 0 0 auto;
+}
+
+.egho-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(140deg, var(--egho-blue) 0%, var(--egho-navy) 100%);
+    color: #fff;
+    flex: 0 0 auto;
+}
+
+.egho-brand-mark svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.egho-brand-copy {
+    display: grid;
+    gap: 2px;
+    line-height: 1.15;
+}
+
+.egho-brand-copy strong {
+    color: var(--egho-navy);
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+
+.egho-brand-copy small {
+    color: var(--egho-muted);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.egho-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.egho-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.egho-nav a {
+    display: inline-block;
+    padding: 9px 12px;
+    border-radius: 10px;
+    color: var(--egho-navy-soft);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.egho-nav a:hover {
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-nav a.is-active {
+    color: var(--egho-blue);
+    background: var(--egho-sky);
+}
+
+.egho-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+}
+
+.egho-user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--egho-line);
+    border-radius: 999px;
+    background: #fff;
+}
+
+.egho-user-avatar {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+    font-size: 13px;
+    font-weight: 800;
+    flex: 0 0 auto;
+}
+
+.egho-user-copy {
+    display: grid;
+    line-height: 1.2;
+    max-width: 150px;
+}
+
+.egho-user-copy strong {
+    color: var(--egho-navy);
+    font-size: 12.5px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.egho-user-copy small {
+    color: var(--egho-muted);
+    font-size: 10.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ hero */
+.egho-hero {
+    position: relative;
+    isolation: isolate;
+    padding: 54px 0 96px;
+    color: #fff;
+    background-color: var(--egho-navy);
+    background-image: var(--egho-hero-image, none);
+    background-size: cover;
+    background-position: center 38%;
+}
+
+.egho-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        100deg,
+        rgba(9, 30, 61, 0.92) 0%,
+        rgba(9, 30, 61, 0.7) 45%,
+        rgba(9, 30, 61, 0.3) 100%
+    );
+}
+
+.egho-hero-copy {
+    max-width: 620px;
+}
+
+.egho-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.egho-hero h1 {
+    margin: 18px 0 0;
+    color: #fff;
+    font-size: clamp(30px, 4.2vw, 46px);
+    font-weight: 800;
+    line-height: 1.14;
+    letter-spacing: -0.6px;
+}
+
+.egho-hero-copy p {
+    margin: 14px 0 0;
+    max-width: 55ch;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.egho-hero-points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-hero-points li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.egho-hero-points span {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 11px;
+    flex: 0 0 auto;
+}
+
+/* ----------------------------------------------------------- search panel */
+.egho-search-wrap {
+    position: relative;
+    z-index: 10;
+    margin-top: -72px;
+}
+
+.egho-search-card {
+    padding: 18px 20px 20px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    background: #fff;
+    box-shadow: var(--egho-shadow);
+}
+
+.egho-search-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--egho-line);
+}
+
+.egho-search-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--egho-surface);
+    color: var(--egho-navy-soft);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.egho-search-tab:hover {
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-search-tab.is-active {
+    background: var(--egho-blue);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(18, 86, 160, 0.28);
+}
+
+.egho-search-tab svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-trip-type {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 14px;
+    padding: 0;
+    border: 0;
+}
+
+.egho-trip-type legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.egho-trip-type label {
+    position: relative;
+    cursor: pointer;
+}
+
+.egho-trip-type input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.egho-trip-type span {
+    display: inline-block;
+    padding: 7px 16px;
+    border: 1px solid var(--egho-line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--egho-navy-soft);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.egho-trip-type input:checked + span {
+    border-color: var(--egho-blue);
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-trip-type input:focus-visible + span {
+    outline: 2px solid var(--egho-blue);
+    outline-offset: 2px;
+}
+
+.egho-search-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.egho-field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.egho-field > span,
+.egho-field > label {
+    color: var(--egho-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.egho-field input,
+.egho-field select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 13px;
+    border: 1px solid var(--egho-line);
+    border-radius: 11px;
+    background: #fff;
+    color: var(--egho-text);
+    font: inherit;
+    font-size: 14px;
+}
+
+.egho-field input:focus,
+.egho-field select:focus {
+    border-color: var(--egho-blue);
+    outline: 2px solid rgba(18, 86, 160, 0.16);
+}
+
+.egho-field-help,
+.egho-field-error {
+    color: var(--egho-muted);
+    font-size: 11.5px;
+    font-weight: 500;
+}
+
+.egho-field-error {
+    color: #b42318;
+}
+
+.egho-submit {
+    grid-column: span 2;
+    justify-self: end;
+    width: 100%;
+    max-width: 260px;
+    min-height: 48px;
+    padding: 0 26px;
+    border: 0;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--egho-blue) 0%, var(--egho-blue-dark) 100%);
+    color: #fff;
+    font: inherit;
+    font-size: 14.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(18, 86, 160, 0.28);
+}
+
+.egho-submit:hover {
+    filter: brightness(1.06);
+}
+
+.egho-compare {
+    grid-column: span 4;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.egho-compare input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--egho-blue);
+}
+
+.egho-booking-flow {
+    display: grid;
+    grid-template-columns: 1.15fr repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--egho-line);
+}
+
+.egho-booking-flow > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.egho-booking-flow span {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+    font-size: 11.5px;
+    font-weight: 800;
+}
+
+.egho-booking-flow strong {
+    display: block;
+    color: var(--egho-navy);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.egho-booking-flow small {
+    display: block;
+    color: var(--egho-muted);
+    font-size: 11.5px;
+}
+
+/* -------------------------------------------------------------- sections */
+.egho-section {
+    padding: 46px 0;
+}
+
+.egho-section-tight {
+    padding: 30px 0 6px;
+}
+
+.egho-section-alt {
+    background: var(--egho-surface);
+}
+
+.egho-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.egho-section-head h2 {
+    margin: 0;
+    color: var(--egho-navy);
+    font-size: clamp(21px, 2.4vw, 27px);
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.egho-section-head p {
+    margin: 6px 0 0;
+    color: var(--egho-muted);
+    font-size: 14px;
+}
+
+.egho-eyebrow {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--egho-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.egho-section-link {
+    color: var(--egho-blue);
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.egho-section-link:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------------------------------------ quick tiles */
+.egho-tiles {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.egho-tile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+    text-decoration: none;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.egho-tile:hover {
+    transform: translateY(-3px);
+    border-color: rgba(18, 86, 160, 0.35);
+    box-shadow: 0 14px 30px rgba(11, 37, 69, 0.12);
+}
+
+.egho-tile-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-tile-icon svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-tile strong {
+    display: block;
+    color: var(--egho-navy);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.egho-tile small {
+    display: block;
+    margin-top: 2px;
+    color: var(--egho-muted);
+    font-size: 11.5px;
+}
+
+/* --------------------------------------------------------------- promos */
+.egho-promos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.egho-promo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 190px;
+    padding: 22px;
+    border-radius: var(--egho-radius);
+    overflow: hidden;
+    color: #fff;
+    background-color: var(--egho-navy);
+    background-image: var(--egho-promo-image, none);
+    background-size: cover;
+    background-position: center;
+    text-decoration: none;
+}
+
+.egho-promo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, rgba(8, 28, 58, 0.92) 0%, rgba(8, 28, 58, 0.45) 100%);
+}
+
+.egho-promo > * {
+    position: relative;
+    z-index: 1;
+}
+
+.egho-promo-badge {
+    align-self: flex-start;
+    margin-bottom: auto;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: var(--egho-amber);
+    color: #40220a;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.egho-promo h3 {
+    margin: 14px 0 0;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.egho-promo p {
+    margin: 7px 0 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.egho-promo-cta {
+    align-self: flex-start;
+    margin-top: 16px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--egho-blue-dark);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.egho-promo.is-workvisa .egho-promo-cta {
+    background: var(--egho-amber);
+    color: #40220a;
+}
+
+/* --------------------------------------------------------- destinations */
+.egho-destinations {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.egho-destination {
+    position: relative;
+    display: block;
+    min-height: 208px;
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: var(--egho-navy-soft);
+    background-image: var(--egho-destination-image, none);
+    background-size: cover;
+    background-position: center;
+    text-decoration: none;
+    box-shadow: 0 10px 24px rgba(11, 37, 69, 0.12);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.egho-destination:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 34px rgba(11, 37, 69, 0.2);
+}
+
+.egho-destination::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 28, 58, 0.05) 35%, rgba(8, 28, 58, 0.86) 100%);
+}
+
+.egho-destination-copy {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 1;
+    padding: 16px;
+    color: #fff;
+}
+
+.egho-destination-copy strong {
+    display: block;
+    font-size: 16.5px;
+    font-weight: 800;
+}
+
+.egho-destination-copy small {
+    display: block;
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.egho-destination-price {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+/* ------------------------------------------------------------- airlines */
+.egho-airlines {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    background: #fff;
+}
+
+.egho-airline {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.egho-airline:hover {
+    background: var(--egho-surface);
+}
+
+.egho-airline-mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--egho-line);
+    background: var(--egho-surface);
+    color: var(--egho-blue-dark);
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.egho-airline strong {
+    color: var(--egho-navy-soft);
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+/* ------------------------------------------------------------- services */
+.egho-services {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.egho-service {
+    padding: 18px;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.egho-service strong {
+    display: block;
+    color: var(--egho-navy);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.egho-service small {
+    display: block;
+    margin-top: 5px;
+    color: var(--egho-muted);
+    font-size: 12.5px;
+}
+
+.egho-service-status {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--egho-surface);
+    color: var(--egho-muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.egho-service.is-live .egho-service-status {
+    background: #e8f6ee;
+    color: #1d7a45;
+}
+
+.egho-service a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* --------------------------------------------------------------- footer */
+.egho-footer {
+    background: var(--egho-navy);
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.egho-footer-main {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 28px;
+    padding: 46px 0 30px;
+}
+
+.egho-footer h3 {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.egho-footer p {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.egho-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.egho-footer-brand span {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 15px;
+    flex: 0 0 auto;
+}
+
+.egho-footer-list {
+    display: grid;
+    gap: 9px;
+}
+
+.egho-footer-list a,
+.egho-footer-list span {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.egho-footer-list a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.egho-footer-contact {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-footer-contact li {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.egho-footer-contact svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    margin-top: 2px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 16px 0 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 12px;
+}
+
+.egho-footer-bottom small {
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 12px;
+}
+
+/* ------------------------------------------------------------ responsive */
+@media (max-width: 1100px) {
+    .egho-nav a {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .egho-tiles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .egho-search-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .egho-compare {
+        grid-column: 1 / -1;
+    }
+
+    .egho-submit {
+        grid-column: 1 / -1;
+        justify-self: stretch;
+        max-width: none;
+    }
+
+    .egho-destinations {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .egho-airlines,
+    .egho-services {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .egho-footer-main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .egho-header-inner {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 0;
+        min-height: 0;
+    }
+
+    .egho-nav {
+        order: 3;
+        width: 100%;
+        padding-bottom: 4px;
+    }
+
+    .egho-hero {
+        padding: 40px 0 84px;
+    }
+
+    .egho-promos {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-booking-flow {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .egho-user-copy {
+        display: none;
+    }
+}
+
+@media (max-width: 720px) {
+    .egho-topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 0;
+    }
+
+    .egho-search-wrap {
+        margin-top: -56px;
+    }
+
+    .egho-search-card {
+        padding: 16px;
+    }
+
+    .egho-search-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .egho-tiles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .egho-destinations,
+    .egho-airlines,
+    .egho-services {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .egho-section {
+        padding: 34px 0;
+    }
+
+    .egho-section-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 520px) {
+    .egho-search-grid,
+    .egho-tiles,
+    .egho-destinations,
+    .egho-airlines,
+    .egho-services,
+    .egho-footer-main,
+    .egho-booking-flow {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-hero h1 {
+        font-size: 28px;
+    }
+
+    .egho-brand-copy strong {
+        font-size: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .egho-tile,
+    .egho-destination {
+        transition: none;
+    }
+}
+
+/* ==========================================================================
+   MODULE PAGES
+   Hotel results/search, tour results/search, visa information, contact page.
+   Same namespace rules as above: nothing here targets an existing class.
+   ========================================================================== */
+
+.egho-page {
+    background: var(--egho-surface);
+    padding: 30px 0 60px;
+}
+
+.egho-page-head {
+    margin-bottom: 20px;
+}
+
+.egho-page-head h1 {
+    font-size: 30px;
+    line-height: 1.2;
+    margin: 6px 0 8px;
+    color: var(--egho-navy);
+}
+
+.egho-page-head p {
+    margin: 0;
+    max-width: 760px;
+    color: var(--egho-muted);
+    font-size: 15px;
+}
+
+/* ------------------------------------------------------------- step bar */
+.egho-steps {
+    counter-reset: egho-step;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 14px 18px;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+}
+
+.egho-steps li {
+    counter-increment: egho-step;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--egho-muted);
+}
+
+.egho-steps li::before {
+    content: counter(egho-step);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--egho-line);
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--egho-muted);
+}
+
+.egho-steps li.is-done::before {
+    background: var(--egho-sky);
+    border-color: #bcd6f3;
+    color: var(--egho-blue-dark);
+}
+
+.egho-steps li.is-active {
+    color: var(--egho-navy);
+    font-weight: 600;
+}
+
+.egho-steps li.is-active::before {
+    background: var(--egho-blue);
+    border-color: var(--egho-blue);
+    color: #fff;
+}
+
+/* --------------------------------------------------------- search panels */
+.egho-panel {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 22px;
+}
+
+.egho-panel-head {
+    margin-bottom: 16px;
+}
+
+.egho-panel-head h2 {
+    margin: 4px 0 6px;
+    font-size: 20px;
+    color: var(--egho-navy);
+}
+
+.egho-panel-head p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--egho-muted);
+}
+
+.egho-searchbar {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 0.9fr 0.8fr auto;
+    gap: 12px;
+    align-items: end;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 16px;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 30px rgba(11, 37, 69, 0.07);
+}
+
+.egho-search-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.egho-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+/* ------------------------------------------------------------ buttons */
+.egho-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.egho-btn-primary {
+    background: var(--egho-blue);
+    color: #fff;
+}
+
+.egho-btn-primary:hover {
+    background: var(--egho-blue-dark);
+}
+
+.egho-btn-ghost {
+    background: #fff;
+    border-color: var(--egho-line);
+    color: var(--egho-navy);
+}
+
+.egho-btn-ghost:hover {
+    border-color: #bcd6f3;
+}
+
+.egho-btn:disabled,
+.egho-btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.egho-chip-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--egho-blue);
+    text-decoration: none;
+}
+
+.egho-chip-link:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------------------------------- results layout */
+.egho-results-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.egho-filter-card {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 18px;
+}
+
+.egho-filter-group + .egho-filter-group {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--egho-line);
+}
+
+.egho-filter-group h2 {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--egho-muted);
+}
+
+.egho-check {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 0;
+    font-size: 14px;
+    color: var(--egho-text);
+}
+
+.egho-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--egho-blue);
+}
+
+.egho-range {
+    width: 100%;
+    accent-color: var(--egho-blue);
+}
+
+.egho-range-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--egho-muted);
+}
+
+.egho-filter-note {
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--egho-line);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--egho-muted);
+}
+
+.egho-results {
+    display: grid;
+    gap: 16px;
+}
+
+.egho-results-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.egho-results-head h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--egho-navy);
+}
+
+.egho-results-head small {
+    color: var(--egho-muted);
+    font-size: 13px;
+}
+
+/* ------------------------------------------------------- result cards */
+.egho-result-card {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr) 190px;
+    gap: 18px;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    overflow: hidden;
+}
+
+.egho-result-media {
+    position: relative;
+    min-height: 172px;
+    background: linear-gradient(135deg, var(--egho-navy), var(--egho-blue));
+}
+
+.egho-result-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 172px;
+    object-fit: cover;
+}
+
+.egho-result-media-glyph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 34px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.egho-result-body {
+    padding: 16px 0;
+    min-width: 0;
+}
+
+.egho-result-body h3 {
+    margin: 0 0 4px;
+    font-size: 17.5px;
+    color: var(--egho-navy);
+}
+
+.egho-result-location,
+.egho-result-summary {
+    margin: 0 0 8px;
+    font-size: 13.5px;
+    color: var(--egho-muted);
+}
+
+.egho-result-summary {
+    margin-bottom: 10px;
+}
+
+.egho-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--egho-amber);
+}
+
+.egho-rating em {
+    font-style: normal;
+    color: var(--egho-muted);
+}
+
+.egho-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.egho-tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--egho-sky);
+    color: var(--egho-blue-dark);
+}
+
+.egho-tag-muted {
+    background: #f1f4f9;
+    color: var(--egho-muted);
+}
+
+.egho-result-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    border-left: 1px solid var(--egho-line);
+    text-align: right;
+}
+
+.egho-result-price strong {
+    font-size: 20px;
+    color: var(--egho-navy);
+}
+
+.egho-result-price small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+}
+
+.egho-sample-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: rgba(245, 158, 11, 0.95);
+    color: #3b2405;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------- notices */
+.egho-notice {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 24px;
+}
+
+.egho-notice h2 {
+    margin: 14px 0 8px;
+    font-size: 20px;
+    color: var(--egho-navy);
+}
+
+.egho-notice p {
+    margin: 0 0 14px;
+    max-width: 700px;
+    color: var(--egho-muted);
+    font-size: 14.5px;
+}
+
+.egho-notice p:last-child {
+    margin-bottom: 0;
+}
+
+.egho-notice-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid #f4d9ad;
+    background: #fdf3e2;
+    color: #8a5a00;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.egho-notice-status-is-ready {
+    border-color: #bcd6f3;
+    background: var(--egho-sky);
+    color: var(--egho-blue-dark);
+}
+
+.egho-sample-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 20px 0 14px;
+    padding: 13px 15px;
+    border: 1px solid #f4d9ad;
+    border-radius: 12px;
+    background: #fff8ec;
+    color: #7a4d05;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.egho-sample-note strong {
+    color: #613d04;
+}
+
+/* ----------------------------------------------------------------- visa */
+.egho-visa-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+    gap: 22px;
+    align-items: stretch;
+}
+
+.egho-visa-card {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 26px;
+}
+
+.egho-visa-card h1 {
+    margin: 6px 0 10px;
+    font-size: 28px;
+    color: var(--egho-navy);
+}
+
+.egho-visa-card > p {
+    margin: 0 0 18px;
+    color: var(--egho-muted);
+    font-size: 14.5px;
+}
+
+.egho-visa-primary-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.egho-visa-media {
+    border-radius: var(--egho-radius);
+    overflow: hidden;
+    background: var(--egho-navy);
+    min-height: 280px;
+}
+
+.egho-visa-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    object-fit: cover;
+}
+
+.egho-visa-details {
+    margin-top: 18px;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 22px;
+}
+
+.egho-visa-details h2 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    color: var(--egho-navy);
+}
+
+.egho-visa-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+}
+
+.egho-visa-types {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.egho-visa-type {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+}
+
+.egho-visa-type span {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.egho-visa-type strong {
+    display: block;
+    font-size: 14px;
+    color: var(--egho-navy);
+    margin-bottom: 4px;
+}
+
+.egho-visa-type small {
+    display: block;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--egho-muted);
+}
+
+/* -------------------------------------------------------------- contact */
+.egho-contact-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 22px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.egho-contact-hero h1 {
+    margin: 6px 0 10px;
+    font-size: 30px;
+    color: var(--egho-navy);
+}
+
+.egho-contact-hero p {
+    margin: 0;
+    max-width: 620px;
+    color: var(--egho-muted);
+    font-size: 15px;
+}
+
+.egho-contact-hero-media {
+    border-radius: var(--egho-radius);
+    overflow: hidden;
+    min-height: 210px;
+    background: var(--egho-navy);
+}
+
+.egho-contact-hero-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 210px;
+    object-fit: cover;
+}
+
+.egho-contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.egho-contact-card {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 22px;
+}
+
+.egho-contact-card h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    color: var(--egho-navy);
+}
+
+.egho-contact-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--egho-line);
+}
+
+.egho-contact-row:last-of-type {
+    border-bottom: 0;
+}
+
+.egho-contact-icon {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--egho-sky);
+    color: var(--egho-blue-dark);
+    font-size: 16px;
+}
+
+.egho-contact-row strong {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--egho-muted);
+    margin-bottom: 3px;
+}
+
+.egho-contact-row span {
+    font-size: 14.5px;
+    color: var(--egho-text);
+}
+
+.egho-map-panel {
+    position: relative;
+    margin-top: 16px;
+    min-height: 190px;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    background-color: #eaf1fb;
+    background-image:
+        linear-gradient(#dbe7f6 1px, transparent 1px),
+        linear-gradient(90deg, #dbe7f6 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.egho-map-panel-inner {
+    max-width: 300px;
+    font-size: 13.5px;
+    color: var(--egho-muted);
+}
+
+.egho-map-pin {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    color: var(--egho-blue);
+    font-size: 18px;
+}
+
+.egho-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.egho-field-wide {
+    grid-column: 1 / -1;
+}
+
+.egho-textarea {
+    width: 100%;
+    min-height: 132px;
+    padding: 12px 14px;
+    border: 1px solid var(--egho-line);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14.5px;
+    color: var(--egho-text);
+    background: #fff;
+    resize: vertical;
+}
+
+.egho-textarea:disabled {
+    background: #f7f9fc;
+    color: var(--egho-muted);
+}
+
+.egho-field-help {
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 4px;
+}
+
+.egho-field input:disabled,
+.egho-field select:disabled,
+.egho-field input[readonly],
+.egho-field select[readonly] {
+    background: #f7f9fc;
+    color: var(--egho-muted);
+    cursor: not-allowed;
+}
+
+.egho-visa-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--egho-text);
+}
+
+.egho-visa-list li + li {
+    margin-top: 6px;
+}
+
+/* ------------------------------------------------- hotel room selection */
+.egho-hotel-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 20px;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.egho-hotel-hero-media {
+    position: relative;
+    min-height: 240px;
+    background: linear-gradient(135deg, var(--egho-navy), var(--egho-blue));
+}
+
+.egho-hotel-hero-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+    object-fit: cover;
+}
+
+.egho-hotel-hero-copy {
+    padding: 24px 24px 24px 0;
+}
+
+.egho-hotel-hero-copy h1 {
+    margin: 6px 0 6px;
+    font-size: 26px;
+    color: var(--egho-navy);
+}
+
+.egho-hotel-hero-copy p {
+    margin: 0 0 12px;
+    color: var(--egho-muted);
+    font-size: 14px;
+}
+
+.egho-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+    margin: 0 0 18px;
+    list-style: none;
+    border-bottom: 1px solid var(--egho-line);
+}
+
+.egho-tab {
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--egho-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+
+.egho-tab a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.egho-tab a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.egho-tab {
+    position: relative;
+}
+
+.egho-tab:hover {
+    color: var(--egho-blue-dark);
+}
+
+.egho-tab.is-active {
+    color: var(--egho-blue-dark);
+    border-bottom-color: var(--egho-blue);
+}
+
+.egho-room-card {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) 210px;
+    gap: 18px;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    overflow: hidden;
+}
+
+.egho-room-media {
+    position: relative;
+    min-height: 200px;
+    background: linear-gradient(135deg, var(--egho-navy), var(--egho-blue));
+}
+
+.egho-room-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    object-fit: cover;
+}
+
+.egho-room-body {
+    padding: 18px 0;
+    min-width: 0;
+}
+
+.egho-room-body h3 {
+    margin: 0 0 6px;
+    font-size: 17.5px;
+    color: var(--egho-navy);
+}
+
+.egho-room-body p {
+    margin: 0 0 10px;
+    font-size: 13.5px;
+    color: var(--egho-muted);
+}
+
+.egho-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--egho-text);
+}
+
+.egho-amenities span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.egho-room-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px;
+    border-left: 1px solid var(--egho-line);
+    text-align: right;
+}
+
+.egho-room-price strong {
+    font-size: 21px;
+    color: var(--egho-navy);
+}
+
+.egho-room-price small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+}
+
+/* ------------------------------------------------- hotel guest details */
+.egho-booking-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 20px;
+    align-items: start;
+}
+
+.egho-summary-card {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 20px;
+}
+
+.egho-summary-card h2 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    color: var(--egho-navy);
+}
+
+.egho-summary-hotel {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--egho-line);
+}
+
+.egho-summary-thumb {
+    flex: 0 0 auto;
+    width: 68px;
+    height: 68px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--egho-navy), var(--egho-blue));
+}
+
+.egho-summary-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.egho-summary-hotel strong {
+    display: block;
+    font-size: 15px;
+    color: var(--egho-navy);
+}
+
+.egho-summary-hotel small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+}
+
+.egho-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 14px;
+    color: var(--egho-text);
+}
+
+.egho-summary-row dt,
+.egho-summary-row span:first-child {
+    color: var(--egho-muted);
+}
+
+.egho-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--egho-line);
+}
+
+.egho-summary-total strong {
+    font-size: 20px;
+    color: var(--egho-navy);
+}
+
+.egho-summary-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.egho-summary-actions small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+/* ------------------------------------------------------------ bookings tab */
+.egho-bookings {
+    display: grid;
+    gap: 12px;
+}
+
+.egho-booking {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr) 150px 165px 150px 130px;
+    gap: 14px;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    padding: 14px 18px;
+}
+
+.egho-booking-ref strong {
+    display: block;
+    font-size: 14.5px;
+    color: var(--egho-navy);
+}
+
+.egho-booking-ref small,
+.egho-booking-date {
+    display: block;
+    color: var(--egho-muted);
+    font-size: 12.5px;
+}
+
+.egho-booking-desc strong {
+    display: block;
+    font-size: 14.5px;
+    color: var(--egho-navy);
+    margin-bottom: 3px;
+}
+
+.egho-booking-desc small {
+    color: var(--egho-muted);
+    font-size: 13px;
+}
+
+.egho-booking-action {
+    text-align: right;
+}
+
+.egho-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--egho-line);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.egho-status-ok {
+    background: #e8f6ee;
+    border-color: #bfe6d0;
+    color: #1c7a45;
+}
+
+.egho-status-warn {
+    background: #fdf3e2;
+    border-color: #f4d9ad;
+    color: #8a5a00;
+}
+
+.egho-status-bad {
+    background: #fdeceb;
+    border-color: #f6c9c5;
+    color: #b42318;
+}
+
+.egho-status-info {
+    background: var(--egho-sky);
+    border-color: #bcd6f3;
+    color: var(--egho-blue-dark);
+}
+
+.egho-status-muted {
+    background: #f1f4f9;
+    color: var(--egho-muted);
+}
+
+/* ----------------------------------------------------------- account page */
+.egho-account-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.egho-account-nav {
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: var(--egho-radius);
+    padding: 16px;
+}
+
+.egho-account-nav-title {
+    display: block;
+    margin: 4px 0 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--egho-muted);
+}
+
+.egho-account-nav a,
+.egho-account-nav span.egho-account-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--egho-text);
+    text-decoration: none;
+}
+
+.egho-account-nav a:hover {
+    background: var(--egho-sky);
+    color: var(--egho-blue-dark);
+}
+
+.egho-account-nav a.is-active {
+    background: var(--egho-sky);
+    color: var(--egho-blue-dark);
+}
+
+.egho-account-nav span.egho-account-nav-item {
+    color: var(--egho-muted);
+    font-weight: 500;
+    cursor: not-allowed;
+}
+
+.egho-account-nav small {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--egho-muted);
+}
+
+.egho-account-id {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.egho-account-avatar {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--egho-navy), var(--egho-blue));
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.egho-account-id strong {
+    display: block;
+    font-size: 16px;
+    color: var(--egho-navy);
+}
+
+.egho-account-id small {
+    display: block;
+    color: var(--egho-muted);
+    font-size: 13px;
+}
+
+/* --------------------------------------------------------- flight results */
+/*
+   The offer cards themselves are rendered by the flight search script with
+   the existing `.flight-offer-*` classes, so nothing here renames or replaces
+   them. These rules only add the mockup toolbar, filter rail and two-column
+   shell, and the shell reveals itself only while results are on screen.
+*/
+/*
+   Hidden until the offer list is on screen. `:has()` reads the results
+   container's own `hidden` state, which the flight search script controls, so
+   the toolbar and rail can never appear over an empty result area.
+*/
+.flight-results-toolbar,
+.flight-results-rail {
+    display: none;
+}
+
+.egho-page-body .flight-results-shell:has(.flight-results:not([hidden])) {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 14px;
+}
+
+.egho-page-body
+    .flight-results-shell:has(.flight-results:not([hidden]))
+    .flight-results-toolbar {
+    display: flex;
+    grid-column: 1 / -1;
+}
+
+.egho-page-body
+    .flight-results-shell:has(.flight-results:not([hidden]))
+    .flight-results-rail {
+    display: block;
+    position: sticky;
+    top: 92px;
+}
+
+.flight-results-toolbar {
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+}
+
+.flight-results-toolbar-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--egho-navy);
+}
+
+.flight-results-sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flight-results-sort > span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--egho-muted);
+}
+
+.egho-sort-select {
+    padding: 9px 12px;
+    border: 1px solid var(--egho-line);
+    border-radius: 10px;
+    background: #f7f9fc;
+    color: var(--egho-muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.flight-filter-field {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.flight-filter-field > span {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--egho-text);
+}
+
+.flight-filter-field select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--egho-line);
+    border-radius: 10px;
+    background: #f7f9fc;
+    color: var(--egho-muted);
+    font-size: 13px;
+}
+
+/*
+   Traveller step: the flow script already renders the traveller cards and a
+   selected-fare summary inside the review header, so this only lays that
+   header out as the mockup's form-plus-summary split. No generated markup or
+   status text is replaced.
+*/
+.egho-page-body .flight-traveler-review-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.egho-page-body .flight-selected-fare {
+    padding: 16px;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+    text-align: right;
+}
+
+@media (max-width: 900px) {
+    .egho-page-body .flight-traveler-review-header {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-page-body .flight-selected-fare {
+        text-align: left;
+    }
+}
+
+.flight-payment-methods {
+    margin-top: 22px;
+}
+
+.flight-payment-methods .egho-benefit span span.egho-status {
+    margin-top: 8px;
+}
+
+@media (max-width: 1024px) {
+    .egho-page-body .flight-results-shell:has(.flight-results:not([hidden])) {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-page-body
+        .flight-results-shell:has(.flight-results:not([hidden]))
+        .flight-results-rail {
+        position: static;
+    }
+}
+
+/* ------------------------------------------------------------- work visa */
+.egho-benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-benefit {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+.egho-benefit-icon {
+    color: var(--egho-blue);
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.egho-benefit strong {
+    display: block;
+    font-size: 14.5px;
+    color: var(--egho-navy);
+    margin-bottom: 3px;
+}
+
+.egho-benefit small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+.egho-country-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+}
+
+.egho-country-tile {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.egho-country-tile img {
+    display: block;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.egho-country-tile-body {
+    padding: 12px 14px;
+}
+
+.egho-country-tile-body strong {
+    display: block;
+    font-size: 14.5px;
+    color: var(--egho-navy);
+}
+
+.egho-country-tile-body small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+}
+
+.egho-radio-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 4px 0;
+}
+
+.egho-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--egho-text);
+}
+
+.egho-radio input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--egho-blue);
+}
+
+@media (max-width: 1024px) {
+    .egho-hotel-hero,
+    .egho-booking-layout,
+    .egho-account-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-booking {
+        grid-template-columns: 170px minmax(0, 1fr) 150px;
+    }
+
+    .egho-booking-date,
+    .egho-booking-action {
+        grid-column: 1 / -1;
+        text-align: left;
+    }
+
+    .egho-hotel-hero-copy {
+        padding: 0 20px 20px;
+    }
+
+    .egho-room-card {
+        grid-template-columns: 200px minmax(0, 1fr);
+    }
+
+    .egho-room-price {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        border-left: 0;
+        border-top: 1px solid var(--egho-line);
+    }
+}
+
+@media (max-width: 760px) {
+    .egho-room-card {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-room-media,
+    .egho-room-media img {
+        min-height: 180px;
+    }
+
+    .egho-room-body {
+        padding: 16px;
+    }
+
+    .egho-hotel-hero-copy h1 {
+        font-size: 22px;
+    }
+}
+
+.egho-form-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.egho-form-foot small {
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    max-width: 380px;
+    line-height: 1.5;
+}
+
+/* ----------------------------------------------------- module responsive */
+@media (max-width: 1024px) {
+    .egho-results-layout,
+    .egho-visa-grid,
+    .egho-contact-grid,
+    .egho-contact-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-result-card {
+        grid-template-columns: 180px minmax(0, 1fr);
+    }
+
+    .egho-result-price {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        border-left: 0;
+        border-top: 1px solid var(--egho-line);
+    }
+
+    .egho-visa-types {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .egho-searchbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .egho-searchbar .egho-actions {
+        grid-column: 1 / -1;
+    }
+
+    .egho-result-card {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-result-media,
+    .egho-result-media img {
+        min-height: 190px;
+    }
+
+    .egho-result-body {
+        padding: 16px;
+    }
+
+    .egho-visa-types {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .egho-page-head h1,
+    .egho-visa-card h1,
+    .egho-contact-hero h1 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 520px) {
+    .egho-searchbar,
+    .egho-visa-types,
+    .egho-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-page {
+        padding: 22px 0 46px;
+    }
+
+    .egho-steps {
+        gap: 8px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .egho-result-card,
+    .egho-btn {
+        transition: none;
+    }
+}

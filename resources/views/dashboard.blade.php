@@ -85,6 +85,195 @@
                 @endcan
             </div>
         </section>
+
+        <section class="egh-card">
+            <div class="admin-card-heading">
+                <div>
+                    <span class="admin-page-eyebrow">Reporting</span>
+                    <h2>Live figures are not connected</h2>
+                    <p>
+                        Booking counts, active users, revenue and pending work
+                        need reporting queries over stored records. Until those
+                        queries are enabled this dashboard shows no figures, so
+                        nothing on this page is presented as a real total.
+                    </p>
+                </div>
+            </div>
+
+            <p class="egha-chart-note">
+                Real totals are read from the read-only pages this dashboard
+                links to: bookings, reports and system logs.
+            </p>
+
+            <div class="egha-actions">
+                <a class="egh-button secondary" href="{{ route('admin.bookings.index') }}">
+                    Open bookings
+                </a>
+
+                @can('reports.view')
+                    <a class="egh-button secondary" href="{{ route('admin.reports.index') }}">
+                        Open reports
+                    </a>
+                @endcan
+
+                @can('system-logs.view')
+                    <a class="egh-button secondary" href="{{ route('admin.system-logs.index') }}">
+                        Open system logs
+                    </a>
+                @endcan
+            </div>
+        </section>
+
+        {{--
+            Layout preview only, local development only.
+
+            The KPI cards, the charts and the recent bookings rows are static
+            samples used to review the approved admin dashboard layout. They are
+            not measured figures and no admin decision should be based on them.
+
+            Wiring point: reporting queries supply the totals and series, and the
+            recent bookings table reads the same stored flight order attempts as
+            the bookings page.
+        --}}
+        @if (app()->environment('local'))
+            <div class="egha-note">
+                <span aria-hidden="true">&#9432;</span>
+                <span>
+                    <strong>Layout preview.</strong>
+                    Sample figures and sample rows that preview the dashboard
+                    layout. They are not real totals.
+                </span>
+            </div>
+
+            <div class="egha-kpis">
+                @foreach ([
+                    ['label' => 'Total Bookings', 'value' => '1,245', 'note' => 'Sample figure'],
+                    ['label' => 'Active Users', 'value' => '350', 'note' => 'Sample figure'],
+                    ['label' => 'Pending Requests', 'value' => '85', 'note' => 'Sample figure'],
+                    ['label' => 'Flight Orders', 'value' => '2,180', 'note' => 'Sample figure'],
+                ] as $kpi)
+                    <article class="egha-kpi">
+                        <span>{{ $kpi['label'] }}</span>
+                        <strong>{{ $kpi['value'] }}</strong>
+                        <small>{{ $kpi['note'] }}</small>
+                    </article>
+                @endforeach
+            </div>
+
+            <div class="egha-chart-grid">
+                <section class="egha-chart">
+                    <h3>Booking Overview</h3>
+
+                    <div class="egha-bars" aria-hidden="true">
+                        @foreach ([46, 68, 52, 81, 64, 90, 58, 74] as $height)
+                            <span
+                                class="egha-bar"
+                                style="height: {{ $height }}%"
+                            ></span>
+                        @endforeach
+                    </div>
+
+                    <div class="egha-bar-labels" aria-hidden="true">
+                        @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'] as $month)
+                            <span>{{ $month }}</span>
+                        @endforeach
+                    </div>
+
+                    <p class="egha-chart-note">
+                        Sample series. No real booking volume is measured here.
+                    </p>
+                </section>
+
+                <section class="egha-chart">
+                    <h3>Revenue Overview</h3>
+
+                    <svg
+                        viewBox="0 0 320 150"
+                        preserveAspectRatio="none"
+                        role="img"
+                        aria-label="Sample revenue trend line"
+                    >
+                        <polyline
+                            points="0,120 40,96 80,104 120,72 160,80 200,52 240,60 280,32 320,40"
+                            fill="none"
+                            stroke="#1256a0"
+                            stroke-width="3"
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                        />
+                        <polyline
+                            points="0,140 40,132 80,136 120,120 160,124 200,112 240,116 280,104 320,108"
+                            fill="none"
+                            stroke="#bcd6f3"
+                            stroke-width="2"
+                            stroke-dasharray="5 5"
+                        />
+                    </svg>
+
+                    <p class="egha-chart-note">
+                        Sample series. Payment totals are not connected yet.
+                    </p>
+                </section>
+            </div>
+
+            <div class="egh-card">
+                <div class="admin-card-heading">
+                    <div>
+                        <span class="admin-page-eyebrow">Preview rows</span>
+                        <h2>Recent Bookings</h2>
+                        <p>
+                            Sample rows that preview the table layout. Real
+                            persisted flight order attempts live on the bookings
+                            page.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="egha-table-wrap">
+                    <table class="egha-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Booking</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Destination</th>
+                                <th scope="col">Dates</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ([
+                                ['ref' => 'Sample-0001', 'type' => 'Flight', 'destination' => 'Sample route', 'dates' => 'Sample dates', 'status' => 'Order Created', 'tone' => 'egha-status-on'],
+                                ['ref' => 'Sample-0002', 'type' => 'Flight', 'destination' => 'Sample route', 'dates' => 'Sample dates', 'status' => 'Order Processing', 'tone' => 'egha-status-off'],
+                                ['ref' => 'Sample-0003', 'type' => 'Hotel', 'destination' => 'Sample city', 'dates' => 'Sample dates', 'status' => 'Not connected', 'tone' => 'egha-status-off'],
+                            ] as $row)
+                                <tr>
+                                    <td>{{ $row['ref'] }}</td>
+                                    <td class="egha-muted">Sample customer</td>
+                                    <td>{{ $row['type'] }}</td>
+                                    <td class="egha-muted">{{ $row['destination'] }}</td>
+                                    <td class="egha-muted">{{ $row['dates'] }}</td>
+                                    <td>
+                                        <span class="egha-status {{ $row['tone'] }}">
+                                            {{ $row['status'] }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a
+                                            class="egha-muted"
+                                            href="{{ route('admin.bookings.index') }}"
+                                        >
+                                            View bookings
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
     @else
 
     <main class="dashboard-container">
