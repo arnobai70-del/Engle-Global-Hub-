@@ -19,6 +19,7 @@ use App\Services\Visa\UnavailableVisaInformationProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as IlluminateView;
@@ -96,6 +97,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
+         * TLS terminates upstream of the application and the proxy forwards
+         * no X-Forwarded-Proto, so a request on the public https site still
+         * looks like plain http to Laravel. Every absolute asset() and
+         * route() URL would then be rendered as http:// inside an https
+         * page; browsers block those as mixed content, which is what leaves
+         * the site unstyled and its links unreachable. The configured public
+         * URL is the source of truth, so an https value pins the scheme.
+         * Local http development is unaffected.
+         */
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
         Blade::if(
             'feature',
             static function (string $key): bool {

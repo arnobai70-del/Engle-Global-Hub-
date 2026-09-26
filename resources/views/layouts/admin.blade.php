@@ -11,6 +11,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Instrument Sans, built from the Vite font manifest. --}}
+    {{ Vite::fonts() }}
+
     {{-- Additive mockup styling for the admin shell; scoped to `.egha-`. --}}
     <link rel="stylesheet" href="{{ asset('css/egh-admin.css') }}">
 
