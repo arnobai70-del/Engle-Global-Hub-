@@ -249,43 +249,6 @@
                 <div class="egho-shell">
                     <div class="egho-search-card">
 
-                        {{--
-                            Navigation pills, not ARIA tabs: each pill simply
-                            moves to another search surface, so tab semantics
-                            (aria-controls, roving focus) would be inaccurate.
-                        --}}
-                        <div class="egho-search-tabs" aria-label="Travel search">
-                            <span class="egho-search-tab is-active" aria-current="true">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M3 13.5 21 5l-3.5 8.5L21 19z"/>
-                                    <path d="M8.5 12.2 3 13.5"/>
-                                </svg>
-                                Flights
-                            </span>
-
-                            @foreach ($searchTabs as $tab)
-                                @feature($tab['key'])
-                                    @php $tabLink = $serviceLink($tab['key']); @endphp
-
-                                    @if ($tabLink)
-                                        <a
-                                            class="egho-search-tab"
-                                            href="{{ $tabLink }}"
-                                        >
-                                            {{ $tab['label'] }}
-                                        </a>
-                                    @else
-                                        <span
-                                            class="egho-search-tab"
-                                            title="{{ $tab['label'] }} search becomes available once the provider is configured"
-                                        >
-                                            {{ $tab['label'] }}
-                                        </span>
-                                    @endif
-                                @endfeature
-                            @endforeach
-                        </div>
-
                         <form
                             method="{{ $flightSearchMethod }}"
                             action="{{ $flightSearchAction }}"
@@ -302,60 +265,153 @@
                             <input type="hidden" name="children" value="0">
                             <input type="hidden" name="infants" value="0">
 
-                            <fieldset class="egho-trip-type">
-                                <legend>Trip type</legend>
+                            <div class="egho-search-head">
 
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="trip_type"
-                                        value="round_trip"
-                                        checked
-                                    >
-                                    <span>Round Trip</span>
-                                </label>
+                                {{--
+                                    Navigation pills, not ARIA tabs: each pill
+                                    simply moves to another search surface, so
+                                    tab semantics (aria-controls, roving focus)
+                                    would be inaccurate. The pills and the
+                                    trip-type chips share one row, which is the
+                                    arrangement the reviewed layout uses.
+                                --}}
+                                <div class="egho-search-tabs" aria-label="Travel search">
+                                    <span class="egho-search-tab is-active" aria-current="true">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M3 13.5 21 5l-3.5 8.5L21 19z"/>
+                                            <path d="M8.5 12.2 3 13.5"/>
+                                        </svg>
+                                        Flights
+                                    </span>
 
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="trip_type"
-                                        value="one_way"
-                                    >
-                                    <span>One Way</span>
-                                </label>
-                            </fieldset>
+                                    @foreach ($searchTabs as $tab)
+                                        @feature($tab['key'])
+                                            @php $tabLink = $serviceLink($tab['key']); @endphp
+
+                                            @if ($tabLink)
+                                                <a
+                                                    class="egho-search-tab"
+                                                    href="{{ $tabLink }}"
+                                                >
+                                                    {{ $tab['label'] }}
+                                                </a>
+                                            @else
+                                                <span
+                                                    class="egho-search-tab"
+                                                    title="{{ $tab['label'] }} search becomes available once the provider is configured"
+                                                >
+                                                    {{ $tab['label'] }}
+                                                </span>
+                                            @endif
+                                        @endfeature
+                                    @endforeach
+                                </div>
+
+                                {{--
+                                    Trip type.
+
+                                    Radios, not checkboxes: a search is either
+                                    round trip or one way, never both. Multi
+                                    city is deliberately absent — the search
+                                    endpoint takes a single origin and a single
+                                    destination, so a third option would be a
+                                    control the backend cannot honour.
+
+                                    These inputs stay inside the search form:
+                                    app.js reads them with a descendant query
+                                    on that form, so the trip type is submitted
+                                    with the rest of the search.
+                                --}}
+                                <fieldset class="egho-trip-type">
+                                    <legend>Trip type</legend>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="trip_type"
+                                            value="round_trip"
+                                            checked
+                                        >
+                                        <span>Round Trip</span>
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="trip_type"
+                                            value="one_way"
+                                        >
+                                        <span>One Way</span>
+                                    </label>
+                                </fieldset>
+
+                            </div>
 
                             <div class="egho-search-grid">
 
-                                <label class="egho-field">
-                                    <span>From</span>
-                                    <input
-                                        type="text"
-                                        name="origin"
-                                        maxlength="3"
-                                        minlength="3"
-                                        pattern="[A-Za-z]{3}"
-                                        placeholder="DAC"
-                                        autocomplete="off"
-                                        required
-                                        data-airport-code
-                                    >
-                                </label>
+                                {{--
+                                    The two airport fields share one panel so
+                                    the swap control can sit on the boundary
+                                    between them, as in the reviewed layout.
+                                    Both stay direct descendants of the search
+                                    form, so app.js and the form's own
+                                    submission see them unchanged.
+                                --}}
+                                <div class="egho-field-pair">
 
-                                <label class="egho-field">
-                                    <span>To</span>
-                                    <input
-                                        type="text"
-                                        name="destination"
-                                        maxlength="3"
-                                        minlength="3"
-                                        pattern="[A-Za-z]{3}"
-                                        placeholder="DXB"
-                                        autocomplete="off"
-                                        required
-                                        data-airport-code
+                                    <label class="egho-field">
+                                        <span>From</span>
+                                        <input
+                                            type="text"
+                                            name="origin"
+                                            maxlength="3"
+                                            minlength="3"
+                                            pattern="[A-Za-z]{3}"
+                                            placeholder="DAC"
+                                            autocomplete="off"
+                                            required
+                                            data-airport-code
+                                        >
+                                    </label>
+
+                                    {{--
+                                        Origin/destination swap.
+
+                                        Rendered `hidden` and revealed by the
+                                        script at the end of this view, so a
+                                        browser without JavaScript never shows
+                                        a control that would do nothing.
+                                    --}}
+                                    <button
+                                        type="button"
+                                        class="egho-swap"
+                                        data-flight-swap
+                                        aria-label="Swap origin and destination"
+                                        title="Swap origin and destination"
+                                        hidden
                                     >
-                                </label>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M4 8h15l-3-3"/>
+                                            <path d="M20 16H5l3 3"/>
+                                        </svg>
+                                    </button>
+
+                                    <label class="egho-field">
+                                        <span>To</span>
+                                        <input
+                                            type="text"
+                                            name="destination"
+                                            maxlength="3"
+                                            minlength="3"
+                                            pattern="[A-Za-z]{3}"
+                                            placeholder="DXB"
+                                            autocomplete="off"
+                                            required
+                                            data-airport-code
+                                        >
+                                    </label>
+
+                                </div>
 
                                 <label class="egho-field">
                                     <span>Departure</span>
@@ -496,6 +552,76 @@
                 </div>
             </section>
         @endfeature
+
+        {{-- ==================================================== ASSURANCES --}}
+        {{--
+            Three-item strip directly under the search card, matching the
+            reviewed layout.
+
+            Every line describes how this website actually behaves. No
+            rating, review count, discount or availability claim is made, and
+            none of these items is a link: there is nothing further to open.
+        --}}
+        <section class="egho-section egho-section-tight">
+            <div class="egho-shell">
+                <ul class="egho-assurances">
+
+                    <li>
+                        <span class="egho-assurance-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 8h15l-3-3"/>
+                                <path d="M20 16H5l3 3"/>
+                            </svg>
+                        </span>
+
+                        <span class="egho-assurance-copy">
+                            <strong>Compare fares in one place</strong>
+                            <small>
+                                Offers are compared and the fare is revalidated
+                                before you continue.
+                            </small>
+                        </span>
+                    </li>
+
+                    <li>
+                        <span class="egho-assurance-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3 4.5 6.6v4.9c0 4.6 3.1 7.6 7.5 8.5 4.4-.9 7.5-3.9 7.5-8.5V6.6z"/>
+                                <path d="m9 12 2.2 2.2L15.5 10"/>
+                            </svg>
+                        </span>
+
+                        <span class="egho-assurance-copy">
+                            <strong>Secure account &amp; booking steps</strong>
+                            <small>
+                                Search, travellers, review and payment status
+                                all stay inside one account.
+                            </small>
+                        </span>
+                    </li>
+
+                    <li>
+                        <span class="egho-assurance-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M9 6h10M9 12h10M9 18h10"/>
+                                <path d="m4 6 1.4 1.4L8 5"/>
+                                <path d="m4 12 1.4 1.4L8 11"/>
+                                <path d="m4 18 1.4 1.4L8 17"/>
+                            </svg>
+                        </span>
+
+                        <span class="egho-assurance-copy">
+                            <strong>Status you can check</strong>
+                            <small>
+                                A service is listed as available only when its
+                                provider is configured and enabled.
+                            </small>
+                        </span>
+                    </li>
+
+                </ul>
+            </div>
+        </section>
 
         {{-- ===================================================== QUICK TILES --}}
         <section class="egho-section egho-section-tight">
@@ -815,39 +941,59 @@
             </div>
         </section>
 
-        {{-- ===================================================== TRUST --}}
-        <section class="egho-section">
-            <div class="egho-shell">
-                <div class="egho-services">
-                    <article class="egho-service is-live">
-                        <strong>Secure &amp; Reliable</strong>
-                        <small>Protected account and booking steps</small>
-                    </article>
-
-                    @feature('bookings')
-                        <article class="egho-service is-live">
-                            <strong>Booking Updates</strong>
-                            <small>Review saved order and payment status</small>
-                        </article>
-                    @endfeature
-
-                    @feature('payments')
-                        <article class="egho-service is-live">
-                            <strong>Payment Checks</strong>
-                            <small>Status is reconciled before confirmation</small>
-                        </article>
-                    @endfeature
-
-                    @feature('support')
-                        <article class="egho-service is-live">
-                            <strong>Account Assistance</strong>
-                            <small>Current options are listed on Support</small>
-                        </article>
-                    @endfeature
-                </div>
-            </div>
-        </section>
-
     </main>
 
 @endsection
+
+@push('scripts')
+    <script>
+        /*
+         * Origin/destination swap on the homepage search card.
+         *
+         * Progressive enhancement: the control is marked `hidden` in the
+         * markup and is only revealed once this handler is attached, so no
+         * browser is ever shown a button that does nothing. Values are moved
+         * in place, and focus returns to the origin field, which is where a
+         * keyboard user continues from.
+         *
+         * The button's own form is used as the scope, so this works for both
+         * the signed-in search form and the signed-out form that leads to
+         * sign-in. Nothing here submits or validates: the form's existing
+         * behaviour is untouched.
+         */
+        (function () {
+            var init = function () {
+                var swap = document.querySelector('[data-flight-swap]');
+                var form = swap ? swap.form : null;
+
+                if (!swap || !form) {
+                    return;
+                }
+
+                var airports = form.querySelectorAll('[data-airport-code]');
+
+                if (airports.length < 2) {
+                    return;
+                }
+
+                swap.hidden = false;
+
+                swap.addEventListener('click', function () {
+                    var origin = airports[0];
+                    var destination = airports[1];
+                    var previousOrigin = origin.value;
+
+                    origin.value = destination.value;
+                    destination.value = previousOrigin;
+                    origin.focus();
+                });
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+@endpush

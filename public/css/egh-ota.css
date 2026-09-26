@@ -1201,6 +1201,287 @@ a.egho-topbar-item:hover {
     }
 }
 
+/* ==========================================================================
+   HOMEPAGE SEARCH ROW, SWAP CONTROL AND ASSURANCE STRIP
+   Additions for the reviewed homepage layout. Every selector stays inside the
+   `.egho-` namespace, so nothing here can reach the legacy site stylesheets.
+   ========================================================================== */
+
+/*
+    Search card head.
+
+    The Flights / Hotels / Tours / Visa pills and the trip-type chips share a
+    single row with the divider underneath it, which is the arrangement the
+    reviewed layout uses. The pills keep their own flex wrapping, so on a
+    narrow screen the chips drop to a second line inside the same head block
+    instead of colliding with them.
+*/
+.egho-search-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--egho-line);
+}
+
+.egho-search-head .egho-search-tabs {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.egho-search-head .egho-trip-type {
+    margin: 0;
+}
+
+/*
+    Checkbox affordance on each trip-type chip.
+
+    The mark is drawn from the pseudo element rather than a real control,
+    because the real control is the radio input the chip already wraps and
+    styling that would remove it from the accessibility tree.
+*/
+.egho-trip-type span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.egho-trip-type span::before {
+    content: '\2713';
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid rgba(11, 37, 69, 0.3);
+    border-radius: 4px;
+    background: #fff;
+    color: transparent;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.egho-trip-type input:checked + span::before {
+    border-color: var(--egho-blue);
+    background: var(--egho-blue);
+    color: #fff;
+}
+
+/*
+    Origin / destination pair.
+
+    The two airport fields sit in one panel spanning two search-grid columns,
+    with the swap control absolutely positioned on the boundary between them.
+    The button is removed from the grid flow, so the panel still lays out as
+    exactly two fields.
+*/
+.egho-field-pair {
+    position: relative;
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.egho-swap {
+    position: absolute;
+    left: 50%;
+    bottom: 9px;
+    transform: translateX(-50%);
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--egho-line);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--egho-blue);
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(11, 37, 69, 0.18);
+    transition: background 0.18s ease;
+}
+
+.egho-swap:hover {
+    background: var(--egho-sky);
+}
+
+.egho-swap:focus-visible {
+    outline: 2px solid var(--egho-blue);
+    outline-offset: 2px;
+}
+
+/* Still hidden when the script has not run. */
+.egho-swap[hidden] {
+    display: none;
+}
+
+/*
+    Only the glyph rotates on hover; the control's own transform is reserved
+    for centring it on the boundary between the two fields. Rotating the button
+    instead would have to be undone for every breakpoint that repositions it.
+*/
+.egho-swap svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.18s ease;
+}
+
+.egho-swap:hover svg {
+    transform: rotate(180deg);
+}
+
+/*
+    Assurance strip under the search card.
+
+    Three statements about how this website behaves. They carry no icon colour
+    coding and no link affordance, because none of them is a call to action.
+*/
+.egho-assurances {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.egho-assurances li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid var(--egho-line);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(11, 37, 69, 0.06);
+}
+
+.egho-assurance-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--egho-sky);
+    color: var(--egho-blue);
+}
+
+.egho-assurance-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.egho-assurance-copy strong {
+    display: block;
+    color: var(--egho-navy);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.egho-assurance-copy small {
+    display: block;
+    margin-top: 3px;
+    color: var(--egho-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+/*
+    Destination rail.
+
+    Six square photographs fit one row of the 1200px shell, so above 1080px
+    the strip stays a plain grid. Below that width they cannot fit, and
+    wrapping them produces a block of rows that no longer reads as a strip of
+    destinations — so the strip becomes a snapping horizontal rail instead.
+    No arrow control is added: there is no destination index for one to open,
+    and the rail is already complete on both a pointer and a thumb.
+*/
+@media (max-width: 1080px) {
+    .egho-destinations {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 12px;
+
+        /* Room for the tile shadow, which a scroll container would clip. */
+        padding: 6px 0 10px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .egho-destination {
+        flex: 0 0 210px;
+        scroll-snap-align: start;
+    }
+}
+
+@media (max-width: 900px) {
+    .egho-assurances {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 720px) {
+    .egho-search-head {
+        align-items: flex-start;
+    }
+
+    .egho-search-head .egho-trip-type {
+        width: 100%;
+    }
+
+    .egho-assurances li {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 520px) {
+    /*
+        Two 140px airport fields plus a swap control between them cannot sit
+        side by side on a phone without the control covering the fields, so
+        the pair stacks and the control moves to the trailing edge.
+    */
+    .egho-field-pair {
+        grid-template-columns: 1fr;
+    }
+
+    .egho-swap {
+        position: static;
+        transform: none;
+        justify-self: end;
+    }
+
+    .egho-destination {
+        flex: 0 0 152px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .egho-swap,
+    .egho-swap svg {
+        transition: none;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .egho-tile,
     .egho-destination {
