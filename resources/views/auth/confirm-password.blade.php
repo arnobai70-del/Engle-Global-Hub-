@@ -5,8 +5,8 @@
 @section('hero-description', 'Re-enter your password before continuing to a protected account action.')
 
 @section('content')
-    <div class="auth-heading">
-        <span class="auth-kicker">SECURITY CHECK</span>
+    <div class="egho-auth-head">
+        <span class="egho-eyebrow">SECURITY CHECK</span>
         <h2>Confirm Password</h2>
         <p>
             For your security, please confirm your password before continuing.
@@ -16,12 +16,12 @@
     <form
         method="POST"
         action="{{ route('password.confirm.store') }}"
-        class="auth-form"
+        class="egho-auth-form"
     >
         @csrf
 
-        <div class="form-group">
-            <label for="password">Password</label>
+        <label class="egho-field" for="password">
+            <span>Password</span>
 
             <input
                 id="password"
@@ -32,13 +32,13 @@
                 required
                 autofocus
             >
-        </div>
+        </label>
 
-        <button type="submit" class="auth-button">
+        <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
             Confirm Password
         </button>
 
-        <p class="auth-footer-text">
+        <p class="egho-auth-alt">
             <a href="{{ route('dashboard') }}">
                 Return to dashboard
             </a>

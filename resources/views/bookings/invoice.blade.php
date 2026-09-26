@@ -26,156 +26,160 @@
             : 'Recorded Amount';
     @endphp
 
-    <main class="bookings-container">
+    <main class="egho-page">
 
-        <section class="booking-detail-hero">
-            <div>
-                <span class="bookings-kicker">
-                    CUSTOMER PAYMENT DOCUMENT
-                </span>
+        <div class="egho-shell">
 
-                <h1>
-                    Booking invoice / payment record
-                </h1>
-
-                <p>
-                    A printable record based only on payment information stored
-                    for internal booking #{{ $booking->id }}.
-                </p>
-            </div>
-
-            <div class="booking-detail-actions">
-                <a
-                    href="{{ route('bookings.show', $booking) }}"
-                    class="site-button site-button-secondary"
-                >
-                    Back to Booking
-                </a>
-
-                <button
-                    type="button"
-                    class="site-button site-button-primary"
-                    onclick="window.print()"
-                >
-                    Print
-                </button>
-            </div>
-        </section>
-
-        <section class="booking-document">
-            <div class="booking-document-heading">
+            <section class="egho-record-hero">
                 <div>
-                    <span class="bookings-kicker">
-                        INVOICE / PAYMENT RECORD
+                    <span class="egho-eyebrow">
+                        CUSTOMER PAYMENT DOCUMENT
                     </span>
 
-                    <h2>
-                        Internal booking #{{ $booking->id }}
-                    </h2>
-                </div>
-
-                <strong>
-                    Eagle Global Hub LTD
-                </strong>
-            </div>
-
-            <dl class="booking-document-grid">
-                <div>
-                    <dt>Customer</dt>
-                    <dd>{{ auth()->user()->name }}</dd>
-                </div>
-
-                <div>
-                    <dt>Email</dt>
-                    <dd>{{ auth()->user()->email }}</dd>
-                </div>
-
-                <div>
-                    <dt>Internal Booking</dt>
-                    <dd>#{{ $booking->id }}</dd>
-                </div>
-
-                <div>
-                    <dt>Order Status</dt>
-                    <dd>{{ $orderStatus }}</dd>
-                </div>
-
-                <div>
-                    <dt>Booking Created</dt>
-                    <dd>{{ $booking->created_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Order Resolved</dt>
-                    <dd>{{ $booking->resolved_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Payment Record</dt>
-                    <dd>{{ $payment ? '#'.$payment->id : 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Payment Status</dt>
-                    <dd>{{ $paymentStatus }}</dd>
-                </div>
-
-                <div>
-                    <dt>{{ $amountLabel }}</dt>
-                    <dd>
-                        @if ($payment)
-                            {{ $payment->currency }} {{ $payment->amount }}
-                        @else
-                            Not available
-                        @endif
-                    </dd>
-                </div>
-
-                <div>
-                    <dt>Payment Created</dt>
-                    <dd>{{ $payment?->created_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Payment Resolved</dt>
-                    <dd>{{ $payment?->resolved_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-            </dl>
-
-            <div class="booking-note-grid">
-                <article>
-                    <h3>Stored payment data</h3>
+                    <h1>
+                        Booking invoice / payment record
+                    </h1>
 
                     <p>
-                        @if ($payment)
-                            This record reflects the stored payment amount and
-                            status shown above.
-                        @else
-                            No payment attempt is stored for this booking, so no
-                            invoice amount is available.
-                        @endif
+                        A printable record based only on payment information stored
+                        for internal booking #{{ $booking->id }}.
                     </p>
-                </article>
+                </div>
 
-                <article>
-                    <h3>Fare and tax detail</h3>
+                <div class="egho-record-actions egho-print-hide">
+                    <a
+                        href="{{ route('bookings.show', $booking) }}"
+                        class="egho-btn egho-btn-ghost"
+                    >
+                        Back to Booking
+                    </a>
 
-                    <p>
-                        A fare, tax and fee breakdown is not stored in this
-                        booking record and is therefore not shown here.
-                    </p>
-                </article>
+                    <button
+                        type="button"
+                        class="egho-btn egho-btn-primary"
+                        onclick="window.print()"
+                    >
+                        Print
+                    </button>
+                </div>
+            </section>
 
-                <article>
-                    <h3>Airline ticket</h3>
+            <section class="egho-document">
+                <div class="egho-document-head">
+                    <div>
+                        <span class="egho-eyebrow">
+                            INVOICE / PAYMENT RECORD
+                        </span>
 
-                    <p>
-                        This document is not an airline-issued e-ticket, ticket
-                        receipt or proof of travel.
-                    </p>
-                </article>
-            </div>
-        </section>
+                        <h2>
+                            Internal booking #{{ $booking->id }}
+                        </h2>
+                    </div>
+
+                    <strong>
+                        Eagle Global Hub LTD
+                    </strong>
+                </div>
+
+                <dl class="egho-document-grid">
+                    <div>
+                        <dt>Customer</dt>
+                        <dd>{{ auth()->user()->name }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Email</dt>
+                        <dd>{{ auth()->user()->email }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Internal Booking</dt>
+                        <dd>#{{ $booking->id }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Order Status</dt>
+                        <dd>{{ $orderStatus }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Booking Created</dt>
+                        <dd>{{ $booking->created_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Order Resolved</dt>
+                        <dd>{{ $booking->resolved_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Payment Record</dt>
+                        <dd>{{ $payment ? '#'.$payment->id : 'Not available' }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Payment Status</dt>
+                        <dd>{{ $paymentStatus }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>{{ $amountLabel }}</dt>
+                        <dd>
+                            @if ($payment)
+                                {{ $payment->currency }} {{ $payment->amount }}
+                            @else
+                                Not available
+                            @endif
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Payment Created</dt>
+                        <dd>{{ $payment?->created_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Payment Resolved</dt>
+                        <dd>{{ $payment?->resolved_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
+                    </div>
+                </dl>
+
+                <div class="egho-note-grid">
+                    <article>
+                        <h3>Stored payment data</h3>
+
+                        <p>
+                            @if ($payment)
+                                This record reflects the stored payment amount and
+                                status shown above.
+                            @else
+                                No payment attempt is stored for this booking, so no
+                                invoice amount is available.
+                            @endif
+                        </p>
+                    </article>
+
+                    <article>
+                        <h3>Fare and tax detail</h3>
+
+                        <p>
+                            A fare, tax and fee breakdown is not stored in this
+                            booking record and is therefore not shown here.
+                        </p>
+                    </article>
+
+                    <article>
+                        <h3>Airline ticket</h3>
+
+                        <p>
+                            This document is not an airline-issued e-ticket, ticket
+                            receipt or proof of travel.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+        </div>
 
     </main>
 

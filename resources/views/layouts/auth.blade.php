@@ -15,34 +15,39 @@
 
     {{-- Instrument Sans, built from the Vite font manifest. --}}
     {{ Vite::fonts() }}
+
+    {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
+    <link rel="stylesheet" href="{{ asset('css/egh-ota.css') }}">
 </head>
 
 <body class="auth-body">
 
-    <main class="auth-shell">
+    <main class="egho-auth">
 
-        <section class="auth-visual">
+        <section class="egho-auth-visual">
 
-            <div class="auth-visual-top">
-                <a href="{{ route('home') }}" class="auth-brand">
-                    <span class="auth-brand-icon" aria-hidden="true">
+            <div class="egho-auth-visual-top">
+
+                <a href="{{ route('home') }}" class="egho-auth-brand">
+                    <span class="egho-auth-brand-mark" aria-hidden="true">
                         &#9992;
                     </span>
 
-                    <span>
+                    <span class="egho-auth-brand-copy">
                         <strong>Eagle Global Hub LTD</strong>
-                        <small>Flights & Travel</small>
+                        <small>Flights &amp; Travel</small>
                     </span>
                 </a>
 
-                <a href="{{ route('home') }}" class="auth-home-link">
+                <a href="{{ route('home') }}" class="egho-auth-back">
                     Back to website
                 </a>
+
             </div>
 
-            <div class="auth-visual-content">
+            <div class="egho-auth-visual-body">
 
-                <span class="auth-eyebrow">
+                <span class="egho-eyebrow">
                     SECURE TRAVEL ACCOUNT
                 </span>
 
@@ -60,67 +65,54 @@
                     )
                 </p>
 
-                <div class="auth-trust-list">
+                <ul class="egho-auth-points">
 
-                    <div>
-                        <span aria-hidden="true">&#10003;</span>
+                    <li>
+                        <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
 
-                        <p>
+                        <span>
                             <strong>Verified account access</strong>
                             <small>
                                 Protected areas require authenticated and verified access.
                             </small>
-                        </p>
-                    </div>
+                        </span>
+                    </li>
 
-                    <div>
-                        <span aria-hidden="true">&#10003;</span>
+                    <li>
+                        <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
 
-                        <p>
+                        <span>
                             <strong>Clear booking flow</strong>
                             <small>
                                 Review important itinerary and booking states as you continue.
                             </small>
-                        </p>
-                    </div>
+                        </span>
+                    </li>
 
-                    <div>
-                        <span aria-hidden="true">&#10003;</span>
+                    <li>
+                        <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
 
-                        <p>
+                        <span>
                             <strong>Server-authoritative actions</strong>
                             <small>
                                 Sensitive booking and payment decisions remain server controlled.
                             </small>
-                        </p>
-                    </div>
+                        </span>
+                    </li>
 
-                </div>
+                </ul>
 
             </div>
 
-            <small class="auth-visual-footer">
+            <small class="egho-auth-visual-foot">
                 Eagle Global Hub LTD
             </small>
 
         </section>
 
-        <section class="auth-content">
+        <section class="egho-auth-panel">
 
-            <div class="auth-mobile-brand">
-                <a href="{{ route('home') }}">
-                    <span class="auth-brand-icon" aria-hidden="true">
-                        &#9992;
-                    </span>
-
-                    <span>
-                        <strong>Eagle Global Hub LTD</strong>
-                        <small>Flights & Travel</small>
-                    </span>
-                </a>
-            </div>
-
-            <div class="auth-card">
+            <div class="egho-auth-card">
 
                 @if ($errors->any())
                     <div
@@ -155,7 +147,7 @@
 
                 @yield('content')
 
-                <div class="auth-card-meta">
+                <div class="egho-auth-meta">
                     <span>Secure account access</span>
 
                     <a href="{{ route('home') }}">

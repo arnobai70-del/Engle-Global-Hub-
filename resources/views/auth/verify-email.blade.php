@@ -10,8 +10,8 @@
 )
 
 @section('content')
-    <div class="auth-heading">
-        <span class="auth-kicker">EMAIL VERIFICATION</span>
+    <div class="egho-auth-head">
+        <span class="egho-eyebrow">EMAIL VERIFICATION</span>
 
         <h2>Check Your Inbox</h2>
 
@@ -22,16 +22,16 @@
     </div>
 
     @if (session('status') === 'verification-link-sent')
-        <div class="auth-alert auth-alert-success">
+        <div class="auth-alert auth-alert-success" role="status">
             A new verification link has been sent to your email address.
         </div>
     @endif
 
-    <div class="auth-form">
+    <div class="egho-auth-form">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
 
-            <button type="submit" class="auth-button">
+            <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
                 Resend Verification Email
             </button>
         </form>
@@ -39,7 +39,7 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
 
-            <button type="submit" class="auth-secondary-button">
+            <button type="submit" class="egho-btn egho-btn-ghost egho-auth-submit">
                 Logout
             </button>
         </form>

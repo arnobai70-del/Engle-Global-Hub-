@@ -19,6 +19,9 @@
     {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
     <link rel="stylesheet" href="{{ asset('css/egh-ota.css') }}">
 
+    {{-- Signed-in customer workspace skin. Scoped to `body.dashboard-body`. --}}
+    <link rel="stylesheet" href="{{ asset('css/egh-workspace.css') }}">
+
     @stack('head')
 </head>
 

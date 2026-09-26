@@ -4,25 +4,37 @@
 @section('body_class', 'public-page-body')
 
 @section('content')
-    <main class="public-page-container">
-        <section
-            class="public-page-hero public-page-error"
-            aria-labelledby="feature-unavailable-title"
-        >
-            <span class="public-page-kicker">UNAVAILABLE</span>
 
-            <h1 id="feature-unavailable-title">Feature unavailable</h1>
+    <main class="egho-error">
 
-            <p>{{ $message }}</p>
+        <div class="egho-shell">
 
-            <div class="public-page-actions">
-                <a
-                    href="{{ route('home') }}"
-                    class="site-button site-button-primary"
-                >
-                    Return home
-                </a>
-            </div>
-        </section>
+            <section
+                class="egho-error-card"
+                aria-labelledby="feature-unavailable-title"
+            >
+                <span class="egho-error-code">
+                    UNAVAILABLE
+                </span>
+
+                <h1 id="feature-unavailable-title">
+                    Feature unavailable
+                </h1>
+
+                <p>{{ $message }}</p>
+
+                <div class="egho-error-actions">
+                    <a
+                        href="{{ route('home') }}"
+                        class="egho-btn egho-btn-primary"
+                    >
+                        Return home
+                    </a>
+                </div>
+            </section>
+
+        </div>
+
     </main>
+
 @endsection
