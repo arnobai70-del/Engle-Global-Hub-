@@ -1,0 +1,56 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Tests (PHP 8.5 / Node 22)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    env:
+      # Throwaway key for the public test suite only; never used outside CI.
+      APP_KEY: 'base64:FVwm6akkmHA2gCMM23avhg4D3XXXsjedD4+riCdCIl0='
+      APP_ENV: testing
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, fileinfo, gd, curl, openssl, tokenizer, xml, sqlite3, pdo_sqlite
+          ini-values: memory_limit=512M
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Run test suite
+        run: vendor/bin/phpunit --no-coverage
