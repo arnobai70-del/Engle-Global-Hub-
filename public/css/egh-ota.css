@@ -61,6 +61,12 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
+    /*
+       Tap target. The topbar links are text sized, which left them about 18px
+       tall on a phone. The minimum keeps them comfortable to hit without
+       changing the bar's own height.
+    */
+    min-height: 32px;
     color: inherit;
     text-decoration: none;
     white-space: nowrap;
@@ -100,7 +106,7 @@ a.egho-topbar-item:hover {
 }
 
 .egho-switch-chevron {
-    font-size: 9px;
+    font-size: 11px;
     opacity: 0.8;
 }
 
@@ -160,7 +166,7 @@ a.egho-topbar-item:hover {
 
 .egho-brand-copy small {
     color: var(--egho-muted);
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -246,7 +252,7 @@ a.egho-topbar-item:hover {
 
 .egho-user-copy small {
     color: var(--egho-muted);
-    font-size: 10.5px;
+    font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -650,6 +656,10 @@ a.egho-topbar-item:hover {
 }
 
 .egho-section-link {
+    display: inline-flex;
+    align-items: center;
+    /* Tap target: a section link is a standalone control, not prose. */
+    min-height: 32px;
     color: var(--egho-blue);
     font-size: 13.5px;
     font-weight: 700;
@@ -764,7 +774,7 @@ a.egho-topbar-item:hover {
     border-radius: 999px;
     background: var(--egho-amber);
     color: #40220a;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -957,6 +967,10 @@ a.egho-topbar-item:hover {
 }
 
 .egho-service a {
+    display: inline-flex;
+    align-items: center;
+    /* Tap target: this link is the card's own "open" control. */
+    min-height: 32px;
     color: inherit;
     text-decoration: none;
 }
@@ -1017,6 +1031,10 @@ a.egho-topbar-item:hover {
 
 .egho-footer-list a,
 .egho-footer-list span {
+    display: inline-flex;
+    align-items: center;
+    /* Tap target: the footer is the one place every phone user reaches. */
+    min-height: 32px;
     color: rgba(255, 255, 255, 0.8);
     font-size: 13px;
     text-decoration: none;
@@ -1276,7 +1294,7 @@ a.egho-topbar-item:hover {
     background: rgba(255, 255, 255, 0.24);
     border: 1px solid rgba(255, 255, 255, 0.32);
     color: #ffffff;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1314,7 +1332,7 @@ a.egho-topbar-item:hover {
     }
 
     .egho-destination-tag {
-        font-size: 9px;
+        font-size: 11px;
     }
 }
 
@@ -1822,7 +1840,7 @@ a.egho-topbar-item:hover {
     border-radius: 6px;
     background: rgba(245, 158, 11, 0.95);
     color: #3b2405;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;

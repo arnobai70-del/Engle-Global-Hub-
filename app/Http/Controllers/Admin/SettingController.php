@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\UpdateSettingRequest;
 use App\Models\Setting;
 use App\Services\SettingService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use JsonException;
@@ -21,9 +23,19 @@ class SettingController extends Controller
 
     /**
      * List all application settings.
+     *
+     * The settings screen itself lives at admin.settings.manage. This endpoint
+     * is the JSON listing behind it, so a browser that lands on the bare URL
+     * used to get raw JSON with no admin chrome and no way back. A request that
+     * is not asking for JSON is sent to the screen instead; JSON clients keep
+     * the payload they already expect.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse|RedirectResponse
     {
+        if (! $request->expectsJson()) {
+            return redirect()->route('admin.settings.manage');
+        }
+
         $settings = Setting::query()
             ->whereNotIn('group', self::RESERVED_GROUPS)
             ->orderBy('group')

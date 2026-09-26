@@ -9,10 +9,38 @@
 
 @section('body_class', 'egho-page-body')
 
+@php
+    /*
+     * Hotel screens carry their own stylesheet so a change here cannot reach
+     * another page. It has no content hash, so the modification time is
+     * appended to keep a cached copy from outliving an update.
+     */
+    $hotelCss = 'css/egh-hotels.css';
+    $hotelCssVersion = @filemtime(public_path($hotelCss));
+@endphp
+
+@push('head')
+    <link
+        rel="stylesheet"
+        href="{{ asset($hotelCss).($hotelCssVersion ? '?v='.$hotelCssVersion : '') }}"
+    >
+@endpush
+
 @section('content')
 
     <main class="egho-page">
         <div class="egho-shell">
+
+            <header class="egho-page-head">
+                <span class="egho-eyebrow">ROOM SELECTION</span>
+                <h1>Choose the room and rate for your stay</h1>
+                <p>
+                    Every room type, occupancy limit and nightly rate for the
+                    selected property is compared on this step. Until a hotel
+                    provider is connected these are layout samples and no room
+                    can be held.
+                </p>
+            </header>
 
             <ol class="egho-steps" aria-label="Hotel booking steps">
                 @foreach ([
@@ -102,7 +130,14 @@
 
                     <div class="egho-hotel-hero-copy">
                         <span class="egho-eyebrow">SELECTED PROPERTY</span>
-                        <h1>Sample hotel name</h1>
+                        {{--
+                            The screen now opens with its own <h1>, so the
+                            property panel is an <h2> and the room names below
+                            it stay one level down. Its type treatment is
+                            repeated in css/egh-hotels.css so the panel looks
+                            exactly as it did.
+                        --}}
+                        <h2>Sample hotel name</h2>
                         <p>Sample city, sample country</p>
                         <span class="egho-rating">
                             &#9733;&#9733;&#9733;&#9733;&#9733; 4.8
