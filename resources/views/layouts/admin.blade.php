@@ -14,8 +14,21 @@
     {{-- Instrument Sans, built from the Vite font manifest. --}}
     {{ Vite::fonts() }}
 
+    @php
+        /*
+         * Cache-busted like the site theme: this file lives in public/ rather
+         * than the Vite manifest, so the modification time stands in for the
+         * content hash a build would otherwise provide.
+         */
+        $themeCss = static function (string $file): string {
+            $modifiedAt = @filemtime(public_path($file));
+
+            return asset($file).($modifiedAt ? '?v='.$modifiedAt : '');
+        };
+    @endphp
+
     {{-- Additive mockup styling for the admin shell; scoped to `.egha-`. --}}
-    <link rel="stylesheet" href="{{ asset('css/egh-admin.css') }}">
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-admin.css') }}">
 
     <style>
         /*

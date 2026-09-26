@@ -16,11 +16,26 @@
     {{-- Instrument Sans, built from the Vite font manifest. --}}
     {{ Vite::fonts() }}
 
+    @php
+        /*
+         * Theme stylesheets are files in public/, not Vite assets, so they
+         * carry no content hash. Without one a browser keeps serving the copy
+         * it cached during an earlier visit, and markup written for the new
+         * classes renders unstyled. The modification time is appended as a
+         * query string so a design change always ships a new URL.
+         */
+        $themeCss = static function (string $file): string {
+            $modifiedAt = @filemtime(public_path($file));
+
+            return asset($file).($modifiedAt ? '?v='.$modifiedAt : '');
+        };
+    @endphp
+
     {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
-    <link rel="stylesheet" href="{{ asset('css/egh-ota.css') }}">
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}">
 
     {{-- Signed-in customer workspace skin. Scoped to `body.dashboard-body`. --}}
-    <link rel="stylesheet" href="{{ asset('css/egh-workspace.css') }}">
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}">
 
     @stack('head')
 </head>
