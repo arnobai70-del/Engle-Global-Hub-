@@ -31,7 +31,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
             ->assertOk()
             ->assertSee('Hotels')
             ->assertSee('Not Configured')
-            ->assertDontSee('href="http://localhost:8000/hotels"', false);
+            ->assertDontSee('href="'.route('hotels.index').'"', false);
     }
 
     public function test_safely_configured_service_becomes_an_available_link_without_exposing_secrets(): void
@@ -71,7 +71,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
             ->assertOk()
             ->assertSee('Hotels')
             ->assertSee('Available')
-            ->assertSee('href="http://localhost:8000/hotels"', false)
+            ->assertSee('href="'.route('hotels.index').'"', false)
             ->assertDontSee('homepage-must-never-render-this-secret');
     }
 
@@ -93,9 +93,9 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('href="http://localhost:8000/hotels"', false)
-            ->assertSee('href="http://localhost:8000/tours"', false)
-            ->assertSee('href="http://localhost:8000/visa"', false);
+            ->assertSee('href="'.route('hotels.index').'"', false)
+            ->assertSee('href="'.route('tours.index').'"', false)
+            ->assertSee('href="'.route('visa.index').'"', false);
 
         foreach ([
             'hotel-server-key',
