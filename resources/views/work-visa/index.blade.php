@@ -13,11 +13,14 @@
 @section('body_class', 'egho-page-body')
 @push('head')
 <link rel="stylesheet" href="{{ asset('css/egh-travel-pages.css') }}">
+<style>
+.egh-work-visa-hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.egh-work-visa-hero-actions .egho-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;text-decoration:none}.egh-work-visa-secondary{background:transparent!important;color:#fff!important;border:1px solid rgba(255,255,255,.9)!important}.egh-work-visa-secondary:hover,.egh-work-visa-secondary:focus-visible{background:#fff!important;color:#075cff!important;border-color:#fff!important}@media(max-width:640px){.egh-work-visa-hero-actions{align-items:stretch}.egh-work-visa-hero-actions .egho-btn{width:100%}}
+</style>
 <script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'Service','name'=>'Work Visa Processing Support','provider'=>['@type'=>'TravelAgency','name'=>$siteName??'Eagle Global Hub LTD'],'description'=>$pageContent['meta_description'],'url'=>route('work-visa.index')], JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 @section('content')
 <main class="egh-travel-page">
-<section class="egh-travel-hero"><div class="egho-shell"><span class="egho-eyebrow">{{ $pageContent['hero_eyebrow'] }}</span><h1>{{ $pageContent['hero_title'] }}</h1><p>{{ $pageContent['hero_subtitle'] }}</p><div class="egho-actions" style="margin-top:18px"><a href="{{ route('work-visa.apply') }}" class="egho-btn egho-btn-primary">{{ $pageContent['cta_label'] }}</a><a href="{{ route('visa.index') }}" class="egho-btn egho-btn-ghost" style="color:#fff;border-color:#fff">Visa information</a></div></div></section>
+<section class="egh-travel-hero"><div class="egho-shell"><span class="egho-eyebrow">{{ $pageContent['hero_eyebrow'] }}</span><h1>{{ $pageContent['hero_title'] }}</h1><p>{{ $pageContent['hero_subtitle'] }}</p><div class="egh-work-visa-hero-actions"><a href="{{ route('work-visa.apply') }}" class="egho-btn egho-btn-primary">{{ $pageContent['cta_label'] }}</a><a href="{{ route('visa.index') }}" class="egho-btn egho-btn-ghost egh-work-visa-secondary">Visa information</a></div></div></section>
 <div class="egho-shell">
 <x-travel.demo-notice message="Sample content shown for demonstration. Work-visa services, destinations and process information are previews only; no employer, job, sponsorship or visa approval is represented." />
 <div class="egh-legal-note"><strong>No guarantee:</strong> We do not promise employment, sponsorship, eligibility, visa approval or a processing time. Employers and destination authorities make their own decisions.</div>
