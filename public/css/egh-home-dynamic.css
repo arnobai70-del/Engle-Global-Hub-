@@ -4,4 +4,60 @@
 .egho-topbar .egho-topbar-item svg{stroke:#fff}.egho-topbar .egho-switch{background:transparent;border-color:rgba(255,255,255,.22);color:#fff}.egho-topbar .site-button-ghost{border-color:rgba(255,255,255,.28);color:#fff}
 .egho-brand-logo{display:block;width:76px;height:54px;object-fit:contain}.egho-footer-social{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.egho-footer-social a{display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(255,255,255,.2);border-radius:50%;color:#fff;font-size:12px;text-decoration:none}
 .egho-newsletter{display:flex;align-items:center;gap:0;min-width:min(100%,420px);background:#fff;border-radius:999px;padding:4px;box-shadow:0 12px 32px rgba(2,20,42,.2)}.egho-newsletter input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:12px 16px;font:inherit;color:#0b2545}.egho-newsletter button{border:0;border-radius:999px;background:#0b63f6;color:#fff;font-weight:800;padding:12px 22px;cursor:pointer}.egho-newsletter-status{margin:10px 0 0;color:#fff;font-weight:700}.egho-newsletter-status.is-error{color:#ffe2e2}.egho-voice-photo{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:0 0 auto}.egho-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-@media(max-width:760px){.egho-newsletter{width:100%;min-width:0}.egho-journey-inner{align-items:stretch}.egho-brand-logo{width:64px;height:46px}}
+
+/* Production polish: keep wide animated rails contained and smooth on mouse, touch and keyboard layouts. */
+.site-body{overflow-x:hidden}
+.site-home,.egh-travel-page{max-width:100%;overflow-x:hidden}
+.egho-destinations.is-rail,.egho-voices.is-rail{scroll-behavior:smooth;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;scroll-padding-inline:2px}
+.egho-destination{backface-visibility:hidden;transform:translateZ(0);transition:transform .28s ease,box-shadow .28s ease,filter .28s ease}
+.egho-destination:hover{transform:translateY(-5px) scale(1.012);box-shadow:0 20px 38px rgba(11,37,69,.22);filter:saturate(1.05)}
+.egho-rail[data-egho-rail-ready="true"] .egho-destination{animation:eghoDestinationIn .48s both}
+.egho-rail[data-egho-rail-ready="true"] .egho-destination:nth-child(2){animation-delay:.04s}.egho-rail[data-egho-rail-ready="true"] .egho-destination:nth-child(3){animation-delay:.08s}.egho-rail[data-egho-rail-ready="true"] .egho-destination:nth-child(4){animation-delay:.12s}
+@keyframes eghoDestinationIn{from{opacity:.72;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Prevent fixed-width controls and cards from forcing horizontal page overflow. */
+.egho-header-inner,.egho-topbar-inner,.egho-section-head,.egho-rail-head,.egho-search-card,.egho-panel,.egho-app,.egho-journey-inner{min-width:0}
+.egho-nav{min-width:0;max-width:100%}
+.egho-nav a,.egho-nav-more>summary{flex:0 0 auto}
+
+@media(max-width:900px){
+.egho-header-inner{align-items:flex-start}
+.egho-nav{width:100%;scroll-snap-type:x proximity;padding:4px 0 7px;overscroll-behavior-x:contain}
+.egho-nav>a,.egho-nav-more{scroll-snap-align:start}
+.egho-section-head>.egho-rail-head{width:100%;justify-content:flex-end}
+}
+
+@media(max-width:760px){
+.egho-newsletter{width:100%;min-width:0}.egho-journey-inner{align-items:stretch}.egho-brand-logo{width:64px;height:46px}
+.egho-shell{padding-left:14px;padding-right:14px}
+.egho-section{padding-top:30px;padding-bottom:30px}
+.egho-section-head h2{font-size:24px;line-height:1.2}
+.egho-section-head p{line-height:1.5}
+.egho-rail-button{width:40px;height:40px}
+.egho-destinations.is-rail{grid-auto-columns:84%;gap:12px}
+.egho-destination{min-height:220px;border-radius:16px}
+.egho-destination-copy{padding:15px}
+.egho-destination-copy strong{font-size:16px}
+.egho-tiles{gap:12px}
+.egho-tile{min-height:88px;padding:14px}
+.egho-panel,.egho-app{border-radius:16px}
+}
+
+@media(max-width:520px){
+.egho-topbar-inner{gap:6px;padding-top:8px;padding-bottom:8px}
+.egho-topbar-group{gap:9px}
+.egho-topbar-item{font-size:11.5px;white-space:normal}
+.egho-header-inner{padding-top:10px;padding-bottom:10px}
+.egho-brand-logo{width:58px;height:42px}
+.egho-nav a,.egho-nav-more>summary{min-height:40px;padding:8px 12px;font-size:12.5px}
+.egho-section-head>.egho-rail-head{justify-content:space-between}
+.egho-destinations.is-rail{grid-auto-columns:88%}
+.egho-journey{padding:34px 0}
+.egho-newsletter{border-radius:18px;align-items:stretch;flex-direction:column;padding:6px}
+.egho-newsletter input{min-height:44px}.egho-newsletter button{min-height:44px;width:100%}
+}
+
+@media(prefers-reduced-motion:reduce){
+.egho-destination,.egho-rail[data-egho-rail-ready="true"] .egho-destination{animation:none;transition:none}
+.egho-destinations.is-rail,.egho-voices.is-rail{scroll-behavior:auto}
+}
