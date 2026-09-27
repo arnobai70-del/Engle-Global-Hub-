@@ -16,13 +16,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function (): void {
             /*
-             * Public travel landing pages are presentation/browsing endpoints.
-             * They are registered after the legacy authenticated GET routes so
-             * guests can browse Hotels, Tours and Visa without weakening the
-             * protected POST search/action routes in routes/web.php.
+             * Hotels, Tours and Visa landing pages are catalogue/presentation
+             * pages and must remain browseable before sign-in. The routes live
+             * inside the legacy authenticated group in routes/web.php, so only
+             * those three GET routes explicitly exclude authentication,
+             * verification and search/view permissions here. Their feature
+             * visibility middleware remains active, and all POST searches and
+             * other protected customer actions keep the original middleware.
              */
-            Route::middleware('web')
-                ->group(base_path('routes/public-travel.php'));
+            $publicTravelPages = [
+                'hotels.index' => ['auth', 'verified', 'permission:hotels.search'],
+                'tours.index' => ['auth', 'verified', 'permission:tours.search'],
+                'visa.index' => ['auth', 'verified', 'permission:visa.view'],
+            ];
+
+            foreach ($publicTravelPages as $routeName => $middleware) {
+                Route::getRoutes()
+                    ->getByName($routeName)
+                    ?->withoutMiddleware($middleware);
+            }
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
