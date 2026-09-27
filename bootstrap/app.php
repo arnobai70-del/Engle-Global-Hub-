@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Hotel\HotelController;
+use App\Http\Controllers\Tour\TourController;
+use App\Http\Controllers\Visa\VisaController;
 use App\Http\Middleware\EnsureFeatureIsVisible;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,25 +19,29 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function (): void {
             /*
-             * Hotels, Tours and Visa landing pages are catalogue/presentation
-             * pages and must remain browseable before sign-in. The routes live
-             * inside the legacy authenticated group in routes/web.php, so only
-             * those three GET routes explicitly exclude authentication,
-             * verification and search/view permissions here. Their feature
-             * visibility middleware remains active, and all POST searches and
-             * other protected customer actions keep the original middleware.
+             * Public travel landing pages.
+             *
+             * routes/web.php still contains the legacy authenticated GET
+             * definitions alongside protected search/action routes. Registering
+             * these three GET routes after routes/web.php intentionally replaces
+             * only the matching GET URI entries in Laravel's route collection.
+             * This keeps catalogue/demo landing pages browseable for guests while
+             * POST searches, bookings, payments and other customer actions remain
+             * protected by their existing auth/verified/permission middleware.
              */
-            $publicTravelPages = [
-                'hotels.index' => ['auth', 'verified', 'permission:hotels.search'],
-                'tours.index' => ['auth', 'verified', 'permission:tours.search'],
-                'visa.index' => ['auth', 'verified', 'permission:visa.view'],
-            ];
+            Route::middleware('web')->group(function (): void {
+                Route::get('/hotels', HotelController::class)
+                    ->middleware('feature:hotels')
+                    ->name('hotels.index');
 
-            foreach ($publicTravelPages as $routeName => $middleware) {
-                Route::getRoutes()
-                    ->getByName($routeName)
-                    ?->withoutMiddleware($middleware);
-            }
+                Route::get('/tours', TourController::class)
+                    ->middleware('feature:tours')
+                    ->name('tours.index');
+
+                Route::get('/visa', VisaController::class)
+                    ->middleware('feature:visa')
+                    ->name('visa.index');
+            });
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
