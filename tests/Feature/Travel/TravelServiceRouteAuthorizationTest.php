@@ -18,7 +18,17 @@ class TravelServiceRouteAuthorizationTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_unverified_customer_is_redirected_from_service_pages(): void
+    public function test_service_landing_pages_are_public_for_guests(): void
+    {
+        foreach (
+            ['hotels.index', 'tours.index', 'visa.index'] as $routeName
+        ) {
+            $this->get(route($routeName))
+                ->assertOk();
+        }
+    }
+
+    public function test_unverified_customer_can_browse_service_landing_pages(): void
     {
         $user = User::factory()->unverified()->create();
         $user->assignRole('customer');
@@ -28,7 +38,7 @@ class TravelServiceRouteAuthorizationTest extends TestCase
         ) {
             $this->actingAs($user)
                 ->get(route($routeName))
-                ->assertRedirect(route('verification.notice'));
+                ->assertOk();
         }
     }
 
