@@ -66,7 +66,6 @@ class HomepageContentService
 
         $blocks = Schema::hasTable('homepage_blocks')
             ? HomepageBlock::query()
-                ->active()
                 ->orderBy('section')
                 ->orderBy('sort_order')
                 ->orderBy('id')
@@ -92,9 +91,15 @@ class HomepageContentService
             'destinations' => $this->sectionOrDefaults($blocks, 'destination'),
             'service_panels' => $this->sectionOrDefaults($blocks, 'service_panel'),
             'benefits' => $this->sectionOrDefaults($blocks, 'benefit'),
-            'testimonials' => $this->mapBlocks($blocks->get('testimonial', collect()), 'testimonial'),
+            'testimonials' => $this->mapBlocks(
+                $blocks->get('testimonial', collect())->where('is_active', true),
+                'testimonial',
+            ),
             'app_features' => $this->sectionOrDefaults($blocks, 'app_feature'),
-            'footer_links' => $this->mapBlocks($blocks->get('footer_link', collect()), 'footer_link'),
+            'footer_links' => $this->mapBlocks(
+                $blocks->get('footer_link', collect())->where('is_active', true),
+                'footer_link',
+            ),
         ];
     }
 
@@ -265,8 +270,16 @@ class HomepageContentService
     /** @return array<int, array<string, mixed>> */
     private function sectionOrDefaults(Collection $blocks, string $section): array
     {
-        $mapped = $this->mapBlocks($blocks->get($section, collect()), $section);
-        return $mapped !== [] ? $mapped : $this->defaultBlocks($section);
+        $sectionBlocks = $blocks->get($section, collect());
+
+        if ($sectionBlocks->isEmpty()) {
+            return $this->defaultBlocks($section);
+        }
+
+        return $this->mapBlocks(
+            $sectionBlocks->where('is_active', true),
+            $section,
+        );
     }
 
     /** @return array<int, array<string, mixed>> */
