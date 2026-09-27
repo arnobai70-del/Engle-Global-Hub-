@@ -12,10 +12,7 @@
     >
 
     @php
-        $officialLogoFile = public_path('images/eagle-global-hub-logo.png');
-        $officialLogo = is_file($officialLogoFile)
-            ? 'data:image/png;base64,'.base64_encode(file_get_contents($officialLogoFile))
-            : asset('images/eagle-global-hub-logo.png');
+        $officialLogo = asset('images/eagle-global-hub-logo.png');
     @endphp
 
     <link rel="icon" type="image/png" href="{{ $officialLogo }}">
@@ -58,8 +55,6 @@
                         src="{{ $officialLogo }}"
                         alt="Eagle Global Hub LTD logo"
                         class="egho-auth-brand-logo"
-                        width="240"
-                        height="241"
                     >
                     <span class="egho-auth-brand-copy">
                         <strong>Eagle Global Hub LTD</strong>
