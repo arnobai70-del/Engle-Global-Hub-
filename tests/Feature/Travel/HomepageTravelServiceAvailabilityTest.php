@@ -10,31 +10,43 @@ use Tests\TestCase;
 
 class HomepageTravelServiceAvailabilityTest extends TestCase
 {
-    public function test_homepage_shows_unconfigured_services_by_default(): void
+    public function test_homepage_shows_demo_service_links_by_default(): void
     {
-        $this->get(route('home'))
+        $response = $this->get(route('home'));
+
+        $response
             ->assertOk()
             ->assertSee('Flights')
-            ->assertSee('Available')
             ->assertSee('Hotels')
             ->assertSee('Tours')
             ->assertSee('Visa')
-            ->assertSee('Not Configured')
+            ->assertSee('Demo Preview')
+            ->assertSee('href="'.route('hotels.index').'"', false)
+            ->assertSee('href="'.route('tours.index').'"', false)
+            ->assertSee('href="'.route('visa.index').'"', false)
             ->assertDontSee('MetaFore');
     }
 
-    public function test_enabled_service_stays_unavailable_without_required_configuration(): void
+    public function test_enabled_service_without_required_provider_configuration_stays_demo_but_keeps_page_link(): void
     {
         $this->configureHotelProvider(apiKey: null);
+
+        $services = app(TravelServiceRegistry::class)->all();
+
+        $this->assertFalse($services['hotels']['available']);
+        $this->assertTrue($services['hotels']['demo_mode']);
+        $this->assertSame('Demo Preview', $services['hotels']['display_status']);
+        $this->assertSame('hotels.index', $services['hotels']['page_route_name']);
+        $this->assertNull($services['hotels']['route_name']);
 
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
-            ->assertSee('Not Configured')
-            ->assertDontSee('href="'.route('hotels.index').'"', false);
+            ->assertSee('Demo Preview')
+            ->assertSee('href="'.route('hotels.index').'"', false);
     }
 
-    public function test_safely_configured_service_becomes_an_available_link_without_exposing_secrets(): void
+    public function test_safely_configured_service_becomes_live_without_exposing_secrets(): void
     {
         $this->configureHotelProvider(
             apiKey: 'homepage-must-never-render-this-secret'
@@ -62,15 +74,16 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
                 'travel_services.services.hotels.provider_requirements.test-provider'
             )
         );
-        $this->assertTrue(
-            app(TravelServiceRegistry::class)
-                ->all()['hotels']['available']
-        );
+
+        $services = app(TravelServiceRegistry::class)->all();
+        $this->assertTrue($services['hotels']['available']);
+        $this->assertFalse($services['hotels']['demo_mode']);
+        $this->assertSame('Live Provider', $services['hotels']['display_status']);
 
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
-            ->assertSee('Available')
+            ->assertSee('Live Provider')
             ->assertSee('href="'.route('hotels.index').'"', false)
             ->assertDontSee('homepage-must-never-render-this-secret');
     }
