@@ -1,321 +1,84 @@
 @extends('layouts.site')
 
-@section('title', 'Hotels')
-
-@section(
-    'meta_description',
-    'Hotel search services from Eagle Global Hub LTD.'
-)
-
+@section('title', $pageContent['meta_title'])
+@section('meta_description', $pageContent['meta_description'])
+@section('canonical', route('hotels.index'))
+@section('og_title', $pageContent['meta_title'])
+@section('og_description', $pageContent['meta_description'])
+@section('twitter_card', 'summary_large_image')
 @section('body_class', 'egho-page-body')
 
-@php
-    /*
-     * Hotel screens carry their own stylesheet so a change here cannot reach
-     * another page. It has no content hash, so the modification time is
-     * appended to keep a cached copy from outliving an update.
-     */
-    $hotelCss = 'css/egh-hotels.css';
-    $hotelCssVersion = @filemtime(public_path($hotelCss));
-@endphp
-
 @push('head')
-    <link
-        rel="stylesheet"
-        href="{{ asset($hotelCss).($hotelCssVersion ? '?v='.$hotelCssVersion : '') }}"
-    >
+<link rel="stylesheet" href="{{ asset('css/egh-hotels.css') }}">
+<link rel="stylesheet" href="{{ asset('css/egh-travel-pages.css') }}">
+<script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'WebPage','name'=>$pageContent['meta_title'],'description'=>$pageContent['meta_description'],'url'=>route('hotels.index')], JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @section('content')
-
-    <main class="egho-page">
+<main class="egh-travel-page">
+    <section class="egh-travel-hero">
         <div class="egho-shell">
+            <span class="egho-eyebrow">{{ $pageContent['hero_eyebrow'] }}</span>
+            <h1>{{ $pageContent['hero_title'] }}</h1>
+            <p>{{ $pageContent['hero_subtitle'] }}</p>
+        </div>
+    </section>
 
-            <header class="egho-page-head">
-                <span class="egho-eyebrow">HOTELS</span>
-                <h1>Find a stay for your journey</h1>
-                <p>
-                    Search configured hotel inventory and review room and rate
-                    details before continuing to guest information.
-                </p>
-            </header>
-
-            <ol class="egho-steps" aria-label="Hotel booking steps">
-                @foreach ([
-                    'Search',
-                    'Results',
-                    'Hotel details',
-                    'Room & rate',
-                    'Guest details',
-                    'Review',
-                    'Booking',
-                    'Payment',
-                    'Confirmation',
-                ] as $step)
-                    <li @class(['is-active' => $loop->first])>{{ $step }}</li>
-                @endforeach
-            </ol>
-
-            @if (! $service['available'])
-                <section class="egho-notice" role="status">
-                    <span class="egho-notice-status">Not Configured</span>
-                    <h2>Hotel service is not configured</h2>
-                    <p>
-                        Hotel search will be available after an approved
-                        provider adapter and its required server configuration
-                        are enabled.
-                    </p>
-                    <div class="egho-actions">
-                        <a
-                            href="{{ route('home') }}"
-                            class="egho-btn egho-btn-ghost"
-                        >
-                            Back to travel services
-                        </a>
-                    </div>
-                </section>
-
-                {{--
-                    Design preview only, local development only.
-
-                    The search bar, the filter rail and the cards below are
-                    static samples that show the result layout. They are not
-                    live availability, they cannot be booked, and no price here
-                    comes from a supplier.
-
-                    Wiring point: once an approved hotel adapter is configured,
-                    the branch above renders the real search form and the
-                    `hotels.results` page renders real inventory inside the same
-                    card and filter structure.
-                --}}
-                @if (app()->environment('local'))
-                    <div class="egho-sample-note">
-                        <span aria-hidden="true">&#9432;</span>
-                        <span>
-                            <strong>Layout preview.</strong>
-                            Controls stay disabled and the cards are samples,
-                            because no hotel provider is configured in this
-                            environment. Nothing here is bookable.
-                        </span>
-                    </div>
-
-                    <div
-                        class="egho-searchbar"
-                        role="group"
-                        aria-label="Layout preview search controls (disabled)"
-                    >
-                        <label class="egho-field">
-                            <span>Destination</span>
-                            <input type="text" value="Sample destination" disabled>
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Check in</span>
-                            <input
-                                type="text"
-                                value="{{ now()->addWeek()->format('d M') }}"
-                                disabled
-                            >
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Check out</span>
-                            <input
-                                type="text"
-                                value="{{ now()->addWeek()->addDays(3)->format('d M') }}"
-                                disabled
-                            >
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Guests</span>
-                            <input type="text" value="2 Guests" disabled>
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Rooms</span>
-                            <input type="text" value="1 Room" disabled>
-                        </label>
-
-                        <div class="egho-actions">
-                            <span
-                                class="egho-btn egho-btn-primary"
-                                aria-disabled="true"
-                            >
-                                Search
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="egho-results-layout">
-                        @include('hotels._filters')
-
-                        <section
-                            class="egho-results"
-                            aria-label="Hotel result layout preview"
-                        >
-                            @foreach ([
-                                [
-                                    'name' => 'Sample property one',
-                                    'location' => 'Sample city, sample country',
-                                    'image' => 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=85',
-                                    'rating' => '4.6',
-                                    'nightly' => 'BDT 45,000',
-                                ],
-                                [
-                                    'name' => 'Sample property two',
-                                    'location' => 'Sample city, sample country',
-                                    'image' => 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=85',
-                                    'rating' => '4.8',
-                                    'nightly' => 'BDT 120,000',
-                                ],
-                                [
-                                    'name' => 'Sample property three',
-                                    'location' => 'Sample city, sample country',
-                                    'image' => 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1000&q=85',
-                                    'rating' => '4.4',
-                                    'nightly' => 'BDT 38,500',
-                                ],
-                            ] as $sample)
-                                <article class="egho-result-card">
-                                    <div class="egho-result-media">
-                                        <span class="egho-sample-badge">
-                                            Sample
-                                        </span>
-                                        <img
-                                            src="{{ $sample['image'] }}"
-                                            alt=""
-                                            loading="lazy"
-                                            width="900"
-                                            height="600"
-                                        >
-                                    </div>
-
-                                    <div class="egho-result-body">
-                                        <h3>{{ $sample['name'] }}</h3>
-                                        <p class="egho-result-location">
-                                            {{ $sample['location'] }}
-                                        </p>
-                                        <span class="egho-rating">
-                                            &#9733; {{ $sample['rating'] }}
-                                            <em>Sample rating</em>
-                                        </span>
-                                        <div class="egho-tags">
-                                            <span class="egho-tag egho-tag-muted">
-                                                Sample layout
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="egho-result-price">
-                                        <strong>{{ $sample['nightly'] }}</strong>
-                                        <small>Preview only</small>
-                                    </div>
-                                </article>
-                            @endforeach
-                        </section>
-                    </div>
-
-                    <div class="egho-actions" style="margin-top:16px">
-                        <a
-                            href="{{ route('hotels.rooms') }}"
-                            class="egho-btn egho-btn-ghost"
-                        >
-                            Preview room selection
-                        </a>
-                        <a
-                            href="{{ route('hotels.booking') }}"
-                            class="egho-btn egho-btn-ghost"
-                        >
-                            Preview guest details
-                        </a>
-                    </div>
-                @endif
+    <div class="egho-shell">
+        <section class="egh-search-panel" aria-label="Hotel search">
+            @if($demoMode)
+                <x-travel.demo-notice />
             @else
-                <section class="egho-panel">
-                    <div class="egho-panel-head">
-                        <span class="egho-eyebrow">HOTEL SEARCH</span>
-                        <h2>Search available stays</h2>
-                        <p>
-                            Availability, room types and rates come from the
-                            configured provider. Nothing is assumed.
-                        </p>
-                    </div>
-
-                    <form
-                        method="POST"
-                        action="{{ route('hotels.search') }}"
-                        class="egho-search-form-grid"
-                    >
-                        @csrf
-
-                        <label class="egho-field egho-field-wide">
-                            <span>Destination</span>
-                            <input
-                                type="text"
-                                name="destination"
-                                value="{{ old('destination') }}"
-                                maxlength="120"
-                                autocomplete="off"
-                                required
-                            >
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Check in</span>
-                            <input
-                                type="date"
-                                name="check_in"
-                                value="{{ old('check_in') }}"
-                                min="{{ now()->toDateString() }}"
-                                required
-                            >
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Check out</span>
-                            <input
-                                type="date"
-                                name="check_out"
-                                value="{{ old('check_out') }}"
-                                min="{{ now()->addDay()->toDateString() }}"
-                                required
-                            >
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Adults</span>
-                            <select name="adults" required>
-                                @for ($adults = 1; $adults <= 9; $adults++)
-                                    <option value="{{ $adults }}">
-                                        {{ $adults }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </label>
-
-                        <label class="egho-field">
-                            <span>Rooms</span>
-                            <select name="rooms" required>
-                                @for ($rooms = 1; $rooms <= 5; $rooms++)
-                                    <option value="{{ $rooms }}">
-                                        {{ $rooms }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </label>
-
-                        <button
-                            type="submit"
-                            class="egho-btn egho-btn-primary"
-                        >
-                            Search
-                        </button>
-                    </form>
-                </section>
+                <span class="egh-live-indicator">Live provider connected</span>
             @endif
 
-        </div>
-    </main>
+            <form method="POST" action="{{ route('hotels.search') }}" class="egh-search-grid">
+                @csrf
+                <label class="egho-field"><span>Destination</span><input name="destination" value="{{ old('destination') }}" placeholder="City or destination" maxlength="120" required></label>
+                <label class="egho-field"><span>Check-in</span><input type="date" name="check_in" value="{{ old('check_in') }}" min="{{ now()->toDateString() }}" required></label>
+                <label class="egho-field"><span>Check-out</span><input type="date" name="check_out" value="{{ old('check_out') }}" min="{{ now()->addDay()->toDateString() }}" required></label>
+                <label class="egho-field"><span>Guests</span><select name="adults">@for($i=1;$i<=9;$i++)<option value="{{ $i }}">{{ $i }} {{ $i===1?'Guest':'Guests' }}</option>@endfor</select></label>
+                <label class="egho-field"><span>Rooms</span><select name="rooms">@for($i=1;$i<=5;$i++)<option value="{{ $i }}">{{ $i }} {{ $i===1?'Room':'Rooms' }}</option>@endfor</select></label>
+                <button class="egho-btn egho-btn-primary" type="submit">{{ $demoMode ? 'View Demo Results' : 'Search Hotels' }}</button>
+            </form>
+        </section>
 
+        <section class="egh-section">
+            <div class="egh-section-head"><div><h2>{{ $pageContent['featured_title'] }}</h2><p>{{ $demoMode ? 'Sample stays demonstrate the live-result layout.' : 'Search above for current supplier availability.' }}</p></div></div>
+            @if($demoMode)
+            <div class="egh-card-grid">
+                @foreach($demoHotels as $hotel)
+                <article class="egh-travel-card egh-results-demo-card">
+                    <span class="egh-demo-badge">Demo Preview</span>
+                    <img src="{{ $hotel['image'] }}" alt="Sample hotel preview in {{ $hotel['location'] }}" loading="lazy" width="600" height="400">
+                    <div class="egh-card-body">
+                        <h3>{{ $hotel['name'] }}</h3><p>{{ $hotel['location'] }}</p>
+                        <span class="egh-sample-rating">★ {{ $hotel['sample_rating'] }} · Sample rating</span>
+                        <div class="egh-chip-row">@foreach($hotel['amenities'] as $amenity)<span class="egh-chip">{{ $amenity }}</span>@endforeach</div>
+                        <div class="egh-card-price"><div><small>{{ $hotel['sample_price_note'] }}</small><strong>{{ $hotel['sample_price'] }}</strong></div><span class="egh-muted-button" aria-disabled="true">Demo details</span></div>
+                    </div>
+                </article>
+                @endforeach
+            </div>
+            @endif
+        </section>
+
+        <section class="egh-section"><div class="egh-section-head"><div><h2>{{ $pageContent['destinations_title'] }}</h2><p>Popular travel ideas for your next hotel search.</p></div></div><div class="egh-info-grid">
+            @foreach([['Dubai','City breaks & premium stays'],['Bali','Resorts & family escapes'],['London','Central stays & business trips']] as $destination)
+            <article class="egh-info-card"><h3>{{ $destination[0] }}</h3><p>{{ $destination[1] }}. Search live inventory when the provider is connected.</p></article>
+            @endforeach
+        </div></section>
+
+        <section class="egh-section"><div class="egh-section-head"><div><h2>Why book hotels with Eagle Global Hub?</h2></div></div><div class="egh-info-grid">
+            <article class="egh-info-card"><h3>Transparent availability</h3><p>Live rates are shown only when returned by the configured supplier.</p></article>
+            <article class="egh-info-card"><h3>Secure account flow</h3><p>Hotel search remains behind the existing verified-account and permission controls.</p></article>
+            <article class="egh-info-card"><h3>One travel partner</h3><p>Coordinate flights, stays, tours and visa preparation from the same travel hub.</p></article>
+        </div></section>
+
+        <section class="egh-section egh-faq"><div class="egh-section-head"><div><h2>Hotel booking FAQ</h2></div></div>
+            <details><summary>Are Demo Preview prices live?</summary><p>No. Demo prices and ratings are samples only. Supplier-confirmed availability and rates appear only when a hotel provider is connected.</p></details>
+            <details><summary>What happens when a provider is connected?</summary><p>The same search flow sends validated criteria to the configured provider and the results page renders the provider response instead of demo cards.</p></details>
+        </section>
+    </div>
+</main>
 @endsection
