@@ -24,10 +24,15 @@
 
         var autoplayDelay = parseInt(rail.getAttribute('data-egho-autoplay') || '0', 10);
         var autoplayTimer = null;
-        var paused = false;
+        var interactionTimer = null;
+        var interacting = false;
+
+        var items = Array.prototype.slice.call(
+            track.querySelectorAll('[data-egho-rail-item]')
+        );
 
         var step = function () {
-            var card = track.querySelector('[data-egho-rail-item]');
+            var card = items[0];
 
             if (!card) {
                 return track.clientWidth;
@@ -44,6 +49,42 @@
             return Math.max(0, track.scrollWidth - track.clientWidth);
         };
 
+        var markActiveCard = function () {
+            if (!items.length) return;
+
+            var trackRect = track.getBoundingClientRect();
+            var trackCenter = trackRect.left + (trackRect.width / 2);
+            var closest = null;
+            var closestDistance = Infinity;
+
+            items.forEach(function (item) {
+                var rect = item.getBoundingClientRect();
+                var center = rect.left + (rect.width / 2);
+                var distance = Math.abs(center - trackCenter);
+
+                item.classList.remove('is-rail-active');
+
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closest = item;
+                }
+            });
+
+            if (closest) {
+                closest.classList.add('is-rail-active');
+            }
+        };
+
+        var pulseButton = function (button) {
+            if (!button || (reducedMotion && reducedMotion.matches)) return;
+            button.classList.remove('is-rail-pulse');
+            void button.offsetWidth;
+            button.classList.add('is-rail-pulse');
+            window.setTimeout(function () {
+                button.classList.remove('is-rail-pulse');
+            }, 420);
+        };
+
         var sync = function () {
             var limit = maxScroll();
             var canScroll = limit > 4;
@@ -55,11 +96,13 @@
             if (!canScroll) {
                 previous.disabled = true;
                 next.disabled = true;
+                markActiveCard();
                 return;
             }
 
             previous.disabled = track.scrollLeft <= 2;
             next.disabled = track.scrollLeft >= limit - 2;
+            markActiveCard();
         };
 
         var scrollToPosition = function (left) {
@@ -71,6 +114,7 @@
 
         var goPrevious = function () {
             scrollToPosition(Math.max(0, track.scrollLeft - step()));
+            pulseButton(previous);
         };
 
         var goNext = function () {
@@ -82,16 +126,18 @@
             }
 
             scrollToPosition(target);
+            pulseButton(next);
         };
 
         var autoplayTick = function () {
-            if (paused || document.hidden || maxScroll() <= 4) {
+            if (interacting || document.hidden || maxScroll() <= 4) {
                 return;
             }
 
             var limit = maxScroll();
             if (track.scrollLeft >= limit - 2) {
                 scrollToPosition(0);
+                pulseButton(previous);
             } else {
                 goNext();
             }
@@ -119,36 +165,45 @@
             autoplayTimer = window.setInterval(autoplayTick, autoplayDelay);
         };
 
+        var beginInteraction = function () {
+            interacting = true;
+            if (interactionTimer !== null) {
+                window.clearTimeout(interactionTimer);
+                interactionTimer = null;
+            }
+        };
+
+        var endInteraction = function () {
+            if (interactionTimer !== null) {
+                window.clearTimeout(interactionTimer);
+            }
+
+            interactionTimer = window.setTimeout(function () {
+                interacting = false;
+            }, 900);
+        };
+
         previous.addEventListener('click', function () {
+            beginInteraction();
             goPrevious();
+            endInteraction();
             startAutoplay();
         });
 
         next.addEventListener('click', function () {
+            beginInteraction();
             goNext();
+            endInteraction();
             startAutoplay();
         });
 
         track.addEventListener('scroll', sync, { passive: true });
-
-        rail.addEventListener('mouseenter', function () {
-            paused = true;
-        });
-        rail.addEventListener('mouseleave', function () {
-            paused = false;
-        });
-        rail.addEventListener('focusin', function () {
-            paused = true;
-        });
-        rail.addEventListener('focusout', function () {
-            paused = false;
-        });
-        rail.addEventListener('pointerdown', function () {
-            paused = true;
-        }, { passive: true });
-        rail.addEventListener('pointerup', function () {
-            paused = false;
-        }, { passive: true });
+        track.addEventListener('pointerdown', beginInteraction, { passive: true });
+        track.addEventListener('pointerup', endInteraction, { passive: true });
+        track.addEventListener('pointercancel', endInteraction, { passive: true });
+        track.addEventListener('touchend', endInteraction, { passive: true });
+        rail.addEventListener('focusin', beginInteraction);
+        rail.addEventListener('focusout', endInteraction);
 
         window.addEventListener('resize', function () {
             sync();
