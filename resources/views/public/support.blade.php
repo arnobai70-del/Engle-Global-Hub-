@@ -3,7 +3,7 @@
 @section('title', 'Contact & Support')
 @section(
     'meta_description',
-    'Customer support information for Eagle Global Hub LTD travel account and booking workflows.'
+    'Contact Eagle Global Hub LTD in Shahjadpur, Gulshan, Dhaka for travel account, booking and service support.'
 )
 @section('body_class', 'public-page-body egho-page-body')
 
@@ -17,9 +17,9 @@
                     <span class="egho-eyebrow">CONTACT &amp; SUPPORT</span>
                     <h1>Get in touch with Eagle Global Hub LTD</h1>
                     <p>
-                        Support for your travel account, booking status and
-                        protected customer pages. Official contact channels are
-                        published here once they are configured.
+                        Contact our Dhaka office for travel account, booking
+                        status and service enquiries using the official phone,
+                        email and office address below.
                     </p>
                 </div>
 
@@ -30,7 +30,7 @@
                             https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=85 1x,
                             https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1800&q=85 2x
                         "
-                        alt=""
+                        alt="Eagle Global Hub customer support"
                         loading="lazy"
                         width="1400"
                         height="933"
@@ -49,7 +49,9 @@
                         </span>
                         <div>
                             <strong>Support email</strong>
-                            <span>Not configured in this website yet</span>
+                            <a href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}">
+                                {{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}
+                            </a>
                         </div>
                     </div>
 
@@ -58,8 +60,10 @@
                             &#9742;
                         </span>
                         <div>
-                            <strong>Support phone</strong>
-                            <span>Not configured in this website yet</span>
+                            <strong>Mobile</strong>
+                            <a href="tel:{{ preg_replace('/[^+0-9]/', '', data_get($siteContact, 'phone', '01953626481')) }}">
+                                {{ data_get($siteContact, 'phone', '01953626481') }}
+                            </a>
                         </div>
                     </div>
 
@@ -69,36 +73,35 @@
                         </span>
                         <div>
                             <strong>Office address</strong>
-                            <span>Not configured in this website yet</span>
+                            <span>{{ data_get($siteContact, 'address', 'Mysha Chowdhury Tower, Ga-30/B, Pragati Sharani, Shahjadpur, Gulshan, Dhaka-1212') }}</span>
                         </div>
                     </div>
 
+                    @if(data_get($siteContact, 'hours'))
                     <div class="egho-contact-row">
                         <span class="egho-contact-icon" aria-hidden="true">
                             &#128337;
                         </span>
                         <div>
                             <strong>Support hours</strong>
-                            <span>Not configured in this website yet</span>
+                            <span>{{ data_get($siteContact, 'hours') }}</span>
                         </div>
                     </div>
+                    @endif
 
-                    <div class="egho-map-panel" role="img"
-                         aria-label="Office location is not configured in this website yet">
-                        {{--
-                            Drawn city-grid canvas, not a map service. It is
-                            decoration behind the notice below; the panel still
-                            states that no office location is configured and no
-                            coordinates are implied.
-                        --}}
+                    <div class="egho-map-panel" role="note" aria-label="Eagle Global Hub office address">
                         <span class="egho-map-canvas" aria-hidden="true"></span>
 
                         <div class="egho-map-panel-inner egho-map-panel-copy">
                             <span class="egho-map-pin" aria-hidden="true">
                                 &#128205;
                             </span>
-                            No office location is configured in this website
-                            yet, so no map is published.
+                            <span>
+                                <strong>Dhaka office</strong><br>
+                                Mysha Chowdhury Tower<br>
+                                Ga-30/B, Pragati Sharani, Shahjadpur,<br>
+                                Gulshan, Dhaka-1212
+                            </span>
                         </div>
                     </div>
                 </section>
@@ -109,10 +112,15 @@
                     <div class="egho-sample-note">
                         <span aria-hidden="true">&#9432;</span>
                         <span>
-                            <strong>Message delivery is not enabled yet.</strong>
-                            No support inbox is connected to this website, so
-                            this form cannot send anything. It is shown so the
-                            layout is ready for a configured support channel.
+                            <strong>The website message form is not connected yet.</strong>
+                            Please contact us directly at
+                            <a href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}">
+                                {{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}
+                            </a>
+                            or call
+                            <a href="tel:{{ preg_replace('/[^+0-9]/', '', data_get($siteContact, 'phone', '01953626481')) }}">
+                                {{ data_get($siteContact, 'phone', '01953626481') }}
+                            </a>.
                         </span>
                     </div>
 
@@ -146,16 +154,15 @@
                     </div>
 
                     <div class="egho-form-foot">
-                        <button
-                            type="button"
+                        <a
+                            href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}"
                             class="egho-btn egho-btn-primary"
-                            disabled
                         >
-                            Send message
-                        </button>
+                            Email support
+                        </a>
                         <small>
-                            Use your account pages for booking status while
-                            official support channels are being configured.
+                            For booking status, signed-in customers can also use
+                            their account and My Bookings pages.
                         </small>
                     </div>
                 </section>
@@ -184,8 +191,9 @@
                 <article class="egho-contact-card">
                     <h2>Official Contact Channels</h2>
                     <p class="egho-result-summary">
-                        No public support email, phone number or office address
-                        is configured in this website yet.
+                        Mobile: <a href="tel:{{ preg_replace('/[^+0-9]/', '', data_get($siteContact, 'phone', '01953626481')) }}">{{ data_get($siteContact, 'phone', '01953626481') }}</a><br>
+                        Email: <a href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}">{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}</a><br>
+                        {{ data_get($siteContact, 'address', 'Mysha Chowdhury Tower, Ga-30/B, Pragati Sharani, Shahjadpur, Gulshan, Dhaka-1212') }}
                     </p>
                 </article>
             </div>
