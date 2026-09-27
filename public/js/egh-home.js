@@ -1,4 +1,4 @@
-/* Homepage destination/comment rails with visible paging animation and autoplay. */
+/* Homepage destination/comment rails with smooth, seamless autoplay. */
 (function () {
     'use strict';
 
@@ -19,14 +19,38 @@
         rail.dataset.eghoRailInit = '1';
 
         var autoplayDelay = parseInt(rail.getAttribute('data-egho-autoplay') || '0', 10);
+        var autoplayEnabled = Number.isFinite(autoplayDelay) && autoplayDelay >= 2200;
         var autoplayTimer = null;
         var interactionTimer = null;
         var interacting = false;
         var animating = false;
-        var items = Array.prototype.slice.call(track.querySelectorAll('[data-egho-rail-item]'));
+        var animationFrame = null;
+        var originalItems = Array.prototype.slice.call(track.querySelectorAll('[data-egho-rail-item]'));
+        var cloneStart = 0;
+
+        /*
+         * Autoplay rails receive one visual copy of the original cards. This
+         * lets the strip move from the final destination to the first one
+         * without the long backwards jump that made the old carousel feel
+         * abrupt. Clones are presentation-only and hidden from assistive tech.
+         */
+        if (autoplayEnabled && originalItems.length > 1) {
+            originalItems.forEach(function (item) {
+                var clone = item.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                clone.removeAttribute('role');
+                clone.classList.add('is-rail-clone');
+                track.appendChild(clone);
+            });
+            rail.classList.add('is-infinite-rail');
+        }
+
+        var allItems = function () {
+            return Array.prototype.slice.call(track.querySelectorAll('[data-egho-rail-item]'));
+        };
 
         var step = function () {
-            var card = items[0];
+            var card = originalItems[0];
             if (!card) return track.clientWidth;
 
             var styles = window.getComputedStyle(track);
@@ -34,11 +58,22 @@
             return card.getBoundingClientRect().width + (Number.isFinite(gap) ? gap : 0);
         };
 
+        var updateCloneStart = function () {
+            if (!autoplayEnabled || originalItems.length < 2) {
+                cloneStart = 0;
+                return;
+            }
+
+            var firstClone = track.querySelector('.is-rail-clone');
+            cloneStart = firstClone ? firstClone.offsetLeft : 0;
+        };
+
         var maxScroll = function () {
             return Math.max(0, track.scrollWidth - track.clientWidth);
         };
 
         var markActiveCard = function () {
+            var items = originalItems;
             if (!items.length) return;
 
             var trackRect = track.getBoundingClientRect();
@@ -46,10 +81,13 @@
             var closest = null;
             var closestDistance = Infinity;
 
+            allItems().forEach(function (item) {
+                item.classList.remove('is-rail-active');
+            });
+
             items.forEach(function (item) {
                 var rect = item.getBoundingClientRect();
                 var distance = Math.abs(rect.left - targetX);
-                item.classList.remove('is-rail-active');
                 if (distance < closestDistance) {
                     closestDistance = distance;
                     closest = item;
@@ -66,92 +104,121 @@
             button.classList.add('is-rail-pulse');
             window.setTimeout(function () {
                 button.classList.remove('is-rail-pulse');
-            }, 560);
+            }, 520);
+        };
+
+        var normalizeLoopPosition = function () {
+            if (!autoplayEnabled || cloneStart <= 0) return;
+
+            if (track.scrollLeft >= cloneStart - 1) {
+                track.scrollLeft = track.scrollLeft - cloneStart;
+            }
         };
 
         var sync = function () {
-            var limit = maxScroll();
-            var canScroll = limit > 4;
+            updateCloneStart();
+            var canScroll = autoplayEnabled ? cloneStart > 4 : maxScroll() > 4;
 
             rail.setAttribute('data-egho-rail-ready', 'true');
             previous.hidden = !canScroll;
             next.hidden = !canScroll;
-            previous.disabled = !canScroll || track.scrollLeft <= 2;
-            next.disabled = !canScroll || track.scrollLeft >= limit - 2;
+
+            if (autoplayEnabled && canScroll) {
+                previous.disabled = false;
+                next.disabled = false;
+            } else {
+                previous.disabled = !canScroll || track.scrollLeft <= 2;
+                next.disabled = !canScroll || track.scrollLeft >= maxScroll() - 2;
+            }
 
             if (!animating) markActiveCard();
         };
 
+        var easeInOutCubic = function (progress) {
+            return progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        };
+
         var animateScroll = function (target, direction, done) {
+            if (animationFrame !== null) {
+                window.cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+
             var start = track.scrollLeft;
             var distance = target - start;
 
-            if (Math.abs(distance) < 1) {
+            if (Math.abs(distance) < 1 || (reducedMotion && reducedMotion.matches)) {
                 track.scrollLeft = target;
+                normalizeLoopPosition();
                 sync();
                 if (done) done();
                 return;
             }
 
-            if (reducedMotion && reducedMotion.matches) {
-                track.scrollLeft = target;
-                sync();
-                if (done) done();
-                return;
-            }
-
-            var duration = 720;
+            var duration = 980;
             var startedAt = null;
             animating = true;
             rail.classList.add('is-rail-moving');
             rail.classList.toggle('is-moving-next', direction === 'next');
             rail.classList.toggle('is-moving-prev', direction === 'prev');
 
-            var frame = function (timestamp) {
-                if (startedAt === null) startedAt = timestamp;
-                var progress = Math.min(1, (timestamp - startedAt) / duration);
-                var eased = 1 - Math.pow(1 - progress, 3);
-                track.scrollLeft = start + (distance * eased);
-
-                if (progress < 1) {
-                    window.requestAnimationFrame(frame);
-                    return;
-                }
-
+            var finish = function () {
                 track.scrollLeft = target;
+                normalizeLoopPosition();
                 animating = false;
+                animationFrame = null;
                 rail.classList.remove('is-rail-moving', 'is-moving-next', 'is-moving-prev');
                 sync();
                 if (done) done();
             };
 
-            window.requestAnimationFrame(frame);
+            var frame = function (timestamp) {
+                if (startedAt === null) startedAt = timestamp;
+                var progress = Math.min(1, (timestamp - startedAt) / duration);
+                track.scrollLeft = start + (distance * easeInOutCubic(progress));
+
+                if (progress < 1) {
+                    animationFrame = window.requestAnimationFrame(frame);
+                } else {
+                    finish();
+                }
+            };
+
+            animationFrame = window.requestAnimationFrame(frame);
         };
 
         var goPrevious = function () {
             if (animating) return;
+            updateCloneStart();
+
+            if (autoplayEnabled && cloneStart > 0 && track.scrollLeft <= 2) {
+                /* Same visual position in the cloned sequence, then slide left. */
+                track.scrollLeft = cloneStart;
+            }
+
             pulseButton(previous);
-            animateScroll(Math.max(0, track.scrollLeft - step()), 'prev');
+            animateScroll(Math.max(0, track.scrollLeft - step()), 'prev', function () {
+                if (autoplayEnabled && cloneStart > 0 && track.scrollLeft >= cloneStart - 1) {
+                    track.scrollLeft -= cloneStart;
+                }
+            });
         };
 
         var goNext = function () {
             if (animating) return;
-            var limit = maxScroll();
+            updateCloneStart();
+
+            var limit = autoplayEnabled && cloneStart > 0 ? cloneStart : maxScroll();
             var target = Math.min(limit, track.scrollLeft + step());
             pulseButton(next);
             animateScroll(target, 'next');
         };
 
         var autoplayTick = function () {
-            if (interacting || animating || document.hidden || maxScroll() <= 4) return;
-
-            var limit = maxScroll();
-            if (track.scrollLeft >= limit - 2) {
-                pulseButton(previous);
-                animateScroll(0, 'prev');
-            } else {
-                goNext();
-            }
+            if (interacting || animating || document.hidden || originalItems.length < 2) return;
+            goNext();
         };
 
         var stopAutoplay = function () {
@@ -163,7 +230,9 @@
 
         var startAutoplay = function () {
             stopAutoplay();
-            if (!Number.isFinite(autoplayDelay) || autoplayDelay < 2200 || maxScroll() <= 4) return;
+            updateCloneStart();
+
+            if (!autoplayEnabled || cloneStart <= 4) return;
             autoplayTimer = window.setInterval(autoplayTick, autoplayDelay);
         };
 
@@ -176,7 +245,7 @@
             if (interactionTimer !== null) window.clearTimeout(interactionTimer);
             interactionTimer = window.setTimeout(function () {
                 interacting = false;
-            }, 800);
+            }, 1000);
         };
 
         previous.addEventListener('click', function () {
@@ -193,7 +262,9 @@
             startAutoplay();
         });
 
-        track.addEventListener('scroll', sync, { passive: true });
+        track.addEventListener('scroll', function () {
+            if (!animating) sync();
+        }, { passive: true });
         track.addEventListener('pointerdown', beginInteraction, { passive: true });
         track.addEventListener('pointerup', endInteraction, { passive: true });
         track.addEventListener('pointercancel', endInteraction, { passive: true });
@@ -201,12 +272,23 @@
         rail.addEventListener('focusout', endInteraction);
 
         window.addEventListener('resize', function () {
+            if (animationFrame !== null) {
+                window.cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+                animating = false;
+                rail.classList.remove('is-rail-moving', 'is-moving-next', 'is-moving-prev');
+            }
+            normalizeLoopPosition();
             sync();
             startAutoplay();
         });
 
         document.addEventListener('visibilitychange', function () {
-            if (!document.hidden) startAutoplay();
+            if (document.hidden) {
+                stopAutoplay();
+            } else {
+                startAutoplay();
+            }
         });
 
         sync();
