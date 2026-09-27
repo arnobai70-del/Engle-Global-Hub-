@@ -29,7 +29,7 @@
 </div>
 
 @if ($popularDestinations !== [])
-<div class="egho-rail egho-infinite-slider" data-egho-rail data-egho-infinite-slider data-egho-speed="34" aria-label="Popular destinations carousel">
+<div class="egho-rail egho-infinite-slider" data-egho-rail data-egho-infinite-slider data-egho-speed="72" aria-label="Popular destinations carousel">
     <div class="egho-infinite-window">
         <div class="egho-destinations is-infinite" data-egho-infinite-track>
             @for ($copy = 0; $copy < 2; $copy++)
