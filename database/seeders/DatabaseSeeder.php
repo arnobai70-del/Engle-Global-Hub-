@@ -8,22 +8,19 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         $this->call([
             RolePermissionSeeder::class,
             SettingsSeeder::class,
+            HomepageSettingsSeeder::class,
+            HomepageContentSeeder::class,
             CountrySeeder::class,
             CitySeeder::class,
         ]);
 
         $user = User::query()->firstOrCreate(
-            [
-                'email' => 'test@example.com',
-            ],
+            ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
                 'password' => Hash::make((string) env('LOCAL_TEST_USER_PASSWORD', bin2hex(random_bytes(16)))),
@@ -34,9 +31,6 @@ class DatabaseSeeder extends Seeder
         if (! $user->hasVerifiedEmail()) {
             $user->markEmailAsVerified();
         }
-
-        $user->syncRoles([
-            'customer',
-        ]);
+        $user->syncRoles(['customer']);
     }
 }
