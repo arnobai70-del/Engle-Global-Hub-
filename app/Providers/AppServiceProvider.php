@@ -7,6 +7,9 @@ use App\Contracts\Hotel\HotelSearchProvider;
 use App\Contracts\Tour\TourSearchProvider;
 use App\Contracts\Travel\DestinationResolver;
 use App\Contracts\Visa\VisaInformationProvider;
+use App\Http\Controllers\Admin\HomepageContentController;
+use App\Http\Controllers\NewsletterSubscriptionController;
+use App\Http\Controllers\SitemapController;
 use App\Models\User;
 use App\Services\Feature\FeatureManager;
 use App\Services\Feature\FeatureRegistry;
@@ -20,6 +23,7 @@ use App\Services\Visa\UnavailableVisaInformationProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -73,6 +77,22 @@ class AppServiceProvider extends ServiceProvider
         View::composer('home', function (IlluminateView $view): void {
             $view->with('homeContent', app(HomepageContentService::class)->home());
         });
+
+        Route::post('/newsletter/subscribe', [NewsletterSubscriptionController::class, 'store'])
+            ->middleware('throttle:6,1')
+            ->name('newsletter.subscribe');
+        Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+
+        Route::prefix('admin/homepage')
+            ->name('admin.homepage.')
+            ->middleware(['web', 'auth', 'verified', 'role:admin|super-admin', 'permission:settings.view'])
+            ->group(function (): void {
+                Route::get('/', [HomepageContentController::class, 'index'])->name('index');
+                Route::patch('/settings', [HomepageContentController::class, 'updateSettings'])->middleware('permission:settings.manage')->name('settings.update');
+                Route::post('/blocks', [HomepageContentController::class, 'store'])->middleware('permission:settings.manage')->name('blocks.store');
+                Route::patch('/blocks/{homepageBlock}', [HomepageContentController::class, 'update'])->middleware('permission:settings.manage')->name('blocks.update');
+                Route::delete('/blocks/{homepageBlock}', [HomepageContentController::class, 'destroy'])->middleware('permission:settings.manage')->name('blocks.destroy');
+            });
     }
 
     /** @param class-string $contract @param class-string $fallback */
