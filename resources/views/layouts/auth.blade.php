@@ -10,6 +10,7 @@
         name="description"
         content="Secure account access for Eagle Global Hub LTD flight and travel services."
     >
+    <link rel="icon" type="image/png" href="{{ asset('images/eagle-global-hub-logo.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -31,6 +32,10 @@
 
     {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
     <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}">
+    <style>
+        .egho-auth-brand-logo{display:block;width:92px;height:92px;object-fit:contain}
+        @media(max-width:720px){.egho-auth-brand-logo{width:74px;height:74px}}
+    </style>
 </head>
 
 <body class="auth-body">
@@ -41,15 +46,14 @@
 
             <div class="egho-auth-visual-top">
 
-                <a href="{{ route('home') }}" class="egho-auth-brand">
-                    <span class="egho-auth-brand-mark" aria-hidden="true">
-                        &#9992;
-                    </span>
-
-                    <span class="egho-auth-brand-copy">
-                        <strong>Eagle Global Hub LTD</strong>
-                        <small>Flights &amp; Travel</small>
-                    </span>
+                <a href="{{ route('home') }}" class="egho-auth-brand" aria-label="Eagle Global Hub LTD home">
+                    <img
+                        src="{{ asset('images/eagle-global-hub-logo.png') }}"
+                        alt="Eagle Global Hub LTD logo"
+                        class="egho-auth-brand-logo"
+                        width="240"
+                        height="241"
+                    >
                 </a>
 
                 <a href="{{ route('home') }}" class="egho-auth-back">
