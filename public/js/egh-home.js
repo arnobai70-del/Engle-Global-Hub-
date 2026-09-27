@@ -1,26 +1,18 @@
 /*
     Homepage rails.
 
-    The destination strip and the customer-comments strip are horizontal
-    scrollers with real previous/next buttons. Every card is already in the
-    document, so the buttons only move a scroll position: this script never
-    requests, adds, removes or replaces a card, and it holds no copy of its own.
-
-    The buttons are rendered `hidden` in the markup and are revealed only once
-    this script has confirmed there is something to scroll. A browser without
-    JavaScript therefore still gets the full strip (scrollable by touch or
-    trackpad) and never a button that would do nothing.
+    Destination and comment rails stay progressively enhanced: every card is
+    present in the document, touch/trackpad scrolling works without JavaScript,
+    and controls appear only when there is actually something to scroll.
 */
 (function () {
     'use strict';
 
+    var reducedMotion = window.matchMedia
+        ? window.matchMedia('(prefers-reduced-motion: reduce)')
+        : null;
+
     var initRail = function (rail) {
-        /*
-         * The rail's buttons sit in the section heading, beside the strip
-         * rather than inside it, so they are looked up from the section the
-         * rail belongs to. A rail with no controls (the comment strip) simply
-         * has nothing to page and is left alone.
-         */
         var scope = rail.closest('section') || rail.parentElement || document;
         var track = rail.querySelector('[data-egho-rail-track]');
         var previous = scope.querySelector('[data-egho-rail-prev]');
@@ -30,7 +22,10 @@
             return;
         }
 
-        /* One card plus the row gap: the distance a single page moves. */
+        var autoplayDelay = parseInt(rail.getAttribute('data-egho-autoplay') || '0', 10);
+        var autoplayTimer = null;
+        var paused = false;
+
         var step = function () {
             var card = track.querySelector('[data-egho-rail-item]');
 
@@ -45,35 +40,133 @@
                 + (Number.isFinite(gap) ? gap : 0);
         };
 
+        var maxScroll = function () {
+            return Math.max(0, track.scrollWidth - track.clientWidth);
+        };
+
         var sync = function () {
-            var maxScroll = track.scrollWidth - track.clientWidth;
-            var canScroll = maxScroll > 4;
+            var limit = maxScroll();
+            var canScroll = limit > 4;
 
             rail.setAttribute('data-egho-rail-ready', 'true');
-
             previous.hidden = !canScroll;
             next.hidden = !canScroll;
 
             if (!canScroll) {
+                previous.disabled = true;
+                next.disabled = true;
                 return;
             }
 
             previous.disabled = track.scrollLeft <= 2;
-            next.disabled = track.scrollLeft >= maxScroll - 2;
+            next.disabled = track.scrollLeft >= limit - 2;
+        };
+
+        var scrollToPosition = function (left) {
+            track.scrollTo({
+                left: left,
+                behavior: reducedMotion && reducedMotion.matches ? 'auto' : 'smooth'
+            });
+        };
+
+        var goPrevious = function () {
+            scrollToPosition(Math.max(0, track.scrollLeft - step()));
+        };
+
+        var goNext = function () {
+            var limit = maxScroll();
+            var target = track.scrollLeft + step();
+
+            if (target >= limit - 2) {
+                target = limit;
+            }
+
+            scrollToPosition(target);
+        };
+
+        var autoplayTick = function () {
+            if (paused || document.hidden || maxScroll() <= 4) {
+                return;
+            }
+
+            var limit = maxScroll();
+            if (track.scrollLeft >= limit - 2) {
+                scrollToPosition(0);
+            } else {
+                goNext();
+            }
+        };
+
+        var stopAutoplay = function () {
+            if (autoplayTimer !== null) {
+                window.clearInterval(autoplayTimer);
+                autoplayTimer = null;
+            }
+        };
+
+        var startAutoplay = function () {
+            stopAutoplay();
+
+            if (
+                !Number.isFinite(autoplayDelay)
+                || autoplayDelay < 2500
+                || (reducedMotion && reducedMotion.matches)
+                || maxScroll() <= 4
+            ) {
+                return;
+            }
+
+            autoplayTimer = window.setInterval(autoplayTick, autoplayDelay);
         };
 
         previous.addEventListener('click', function () {
-            track.scrollBy({ left: -step(), behavior: 'smooth' });
+            goPrevious();
+            startAutoplay();
         });
 
         next.addEventListener('click', function () {
-            track.scrollBy({ left: step(), behavior: 'smooth' });
+            goNext();
+            startAutoplay();
         });
 
         track.addEventListener('scroll', sync, { passive: true });
-        window.addEventListener('resize', sync);
+
+        rail.addEventListener('mouseenter', function () {
+            paused = true;
+        });
+        rail.addEventListener('mouseleave', function () {
+            paused = false;
+        });
+        rail.addEventListener('focusin', function () {
+            paused = true;
+        });
+        rail.addEventListener('focusout', function () {
+            paused = false;
+        });
+        rail.addEventListener('pointerdown', function () {
+            paused = true;
+        }, { passive: true });
+        rail.addEventListener('pointerup', function () {
+            paused = false;
+        }, { passive: true });
+
+        window.addEventListener('resize', function () {
+            sync();
+            startAutoplay();
+        });
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                startAutoplay();
+            }
+        });
+
+        if (reducedMotion && typeof reducedMotion.addEventListener === 'function') {
+            reducedMotion.addEventListener('change', startAutoplay);
+        }
 
         sync();
+        startAutoplay();
     };
 
     var init = function () {
