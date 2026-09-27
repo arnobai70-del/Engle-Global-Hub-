@@ -79,9 +79,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Route::post('/newsletter/subscribe', [NewsletterSubscriptionController::class, 'store'])
-            ->middleware('throttle:6,1')
+            ->middleware(['web', 'throttle:6,1'])
             ->name('newsletter.subscribe');
-        Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+        Route::get('/sitemap.xml', SitemapController::class)
+            ->middleware('web')
+            ->name('sitemap');
 
         Route::prefix('admin/homepage')
             ->name('admin.homepage.')
