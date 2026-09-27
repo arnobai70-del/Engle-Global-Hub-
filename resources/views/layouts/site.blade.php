@@ -19,7 +19,7 @@
     <meta name="twitter:card" content="{{ $twitterCard }}"><meta name="twitter:title" content="{{ $ogTitle ?: $fullTitle }}"><meta name="twitter:description" content="{{ $ogDescription ?: $pageDescription }}">@if($ogImage)<meta name="twitter:image" content="{{ $ogImage }}">@endif
     <link rel="icon" type="image/png" href="{{ $siteLogo }}">
     @vite(['resources/css/app.css','resources/js/app.js']) {{ Vite::fonts() }}
-    <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-chrome.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-home-dynamic.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-travel-pages.css') }}">@stack('head')
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-chrome.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-home-dynamic.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-travel-pages.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">@stack('head')
 </head>
 <body class="site-body @yield('body_class')"><a href="#main-content" class="site-skip-link">Skip to content</a>
 <header class="egho-header-shell">
