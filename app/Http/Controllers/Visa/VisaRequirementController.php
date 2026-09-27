@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Visa;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Visa\CheckVisaRequirementsRequest;
+use App\Services\Travel\TravelDemoCatalog;
+use App\Services\Travel\TravelPageContent;
 use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Visa\VisaRequirementService;
 use Illuminate\Contracts\View\View;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class VisaRequirementController extends Controller
 {
@@ -15,21 +16,20 @@ class VisaRequirementController extends Controller
         CheckVisaRequirementsRequest $request,
         TravelServiceRegistry $registry,
         VisaRequirementService $requirementService,
+        TravelDemoCatalog $demo,
+        TravelPageContent $content,
     ): View {
         $service = $registry->all()['visa'];
-
-        if (! $service['available']) {
-            throw new ServiceUnavailableHttpException(
-                60,
-                'Visa information service is not configured.'
-            );
-        }
-
         $criteria = $request->validated();
+        $demoMode = (bool) $service['demo_mode'];
 
         return view('visa.requirements', [
             'criteria' => $criteria,
-            'information' => $requirementService->requirements($criteria),
+            'information' => $demoMode
+                ? $demo->visaRequirementPreview($criteria)
+                : $requirementService->requirements($criteria),
+            'demoMode' => $demoMode,
+            'pageContent' => $content->for('visa'),
         ]);
     }
 }
