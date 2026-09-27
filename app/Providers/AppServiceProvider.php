@@ -70,8 +70,24 @@ class AppServiceProvider extends ServiceProvider
             $view->with('travelServices', app(TravelServiceRegistry::class)->all());
         });
 
-        View::composer('layouts.site', function (IlluminateView $view): void {
-            $view->with(app(HomepageContentService::class)->siteChrome());
+        View::composer(['home', 'layouts.site', 'public.support'], function (IlluminateView $view): void {
+            $chrome = app(HomepageContentService::class)->siteChrome();
+
+            // Official brand/contact fallbacks. Existing admin settings still win
+            // whenever they contain a non-empty value.
+            if (empty($chrome['siteLogo'])) {
+                $chrome['siteLogo'] = asset('images/eagle-global-hub-logo.png');
+            }
+
+            $contact = is_array($chrome['siteContact'] ?? null) ? $chrome['siteContact'] : [];
+            $contact['phone'] = filled($contact['phone'] ?? null) ? $contact['phone'] : '01953626481';
+            $contact['email'] = filled($contact['email'] ?? null) ? $contact['email'] : 'info@eagleglobalhub.com';
+            $contact['address'] = filled($contact['address'] ?? null)
+                ? $contact['address']
+                : 'Mysha Chowdhury Tower, Ga-30/B, Pragati Sharani, Shahjadpur, Gulshan, Dhaka-1212';
+            $chrome['siteContact'] = $contact;
+
+            $view->with($chrome);
         });
 
         View::composer('home', function (IlluminateView $view): void {

@@ -35,15 +35,20 @@
     $travelServices = $travelServices ?? [];
     $serviceLink = static function (string $key) use ($travelServices): ?string {
         $service = $travelServices[$key] ?? null;
-        if (! $service || ! ($service['available'] ?? false) || empty($service['route_name'])) return null;
-        $permission = $service['permission'] ?? null;
-        if ($permission && (! auth()->check() || ! auth()->user()->can($permission))) return null;
-        return route($service['route_name']);
+        if (! $service) return null;
+
+        $routeName = $service['page_route_name'] ?? $service['route_name'] ?? null;
+        if (! is_string($routeName) || ! \Illuminate\Support\Facades\Route::has($routeName)) return null;
+
+        return route($routeName);
     };
     $serviceStatus = static function (string $key) use ($travelServices): ?array {
         $service = $travelServices[$key] ?? null;
         if (! $service) return null;
-        return ['label' => $service['status'] ?? 'Not Configured', 'live' => (bool) ($service['available'] ?? false)];
+        return [
+            'label' => $service['display_status'] ?? $service['status'] ?? 'Demo Preview',
+            'live' => (bool) ($service['available'] ?? false),
+        ];
     };
     $pageAssetVersion = static function (string $file): string {
         $modifiedAt = @filemtime(public_path($file));
@@ -65,6 +70,7 @@
     @if ($heroImage)<link rel="preload" as="image" href="{{ $heroImage }}">@endif
     <link rel="stylesheet" href="{{ asset('css/egh-home.css').$pageAssetVersion('css/egh-home.css') }}">
     <link rel="stylesheet" href="{{ asset('css/egh-home-dynamic.css').$pageAssetVersion('css/egh-home-dynamic.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/egh-home-effects.css').$pageAssetVersion('css/egh-home-effects.css') }}">
     <meta name="robots" content="{{ data_get($homeContent, 'seo.robots', 'index,follow') }}">
     <link rel="canonical" href="{{ data_get($homeContent, 'seo.canonical') ?: url()->current() }}">
     <meta property="og:title" content="{{ data_get($homeContent, 'seo.og_title') ?: data_get($homeContent, 'seo.title') }}">
