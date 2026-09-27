@@ -70,6 +70,7 @@
     @if ($heroImage)<link rel="preload" as="image" href="{{ $heroImage }}">@endif
     <link rel="stylesheet" href="{{ asset('css/egh-home.css').$pageAssetVersion('css/egh-home.css') }}">
     <link rel="stylesheet" href="{{ asset('css/egh-home-dynamic.css').$pageAssetVersion('css/egh-home-dynamic.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/egh-home-effects.css').$pageAssetVersion('css/egh-home-effects.css') }}">
     <meta name="robots" content="{{ data_get($homeContent, 'seo.robots', 'index,follow') }}">
     <link rel="canonical" href="{{ data_get($homeContent, 'seo.canonical') ?: url()->current() }}">
     <meta property="og:title" content="{{ data_get($homeContent, 'seo.og_title') ?: data_get($homeContent, 'seo.title') }}">
