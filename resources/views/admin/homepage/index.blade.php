@@ -11,7 +11,7 @@
 @if(session('status'))<div class="home-status" role="status">{{ session('status') }}</div>@endif
 @if($errors->any())<div class="home-errors" role="alert"><strong>Please fix these fields.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
 
-<section class="home-card"><h2>Site, Homepage & SEO</h2><p>Update public brand, contact, homepage copy, images, app links and homepage metadata.</p>
+<section class="home-card"><h2>Site, Homepage & SEO</h2><p>Update public brand, contact, homepage copy, ticker, images, app links and homepage metadata.</p>
 <form method="POST" action="{{ route('admin.homepage.settings.update') }}" enctype="multipart/form-data">@csrf @method('PATCH')
 <div class="home-grid">
 <div class="home-field"><label>Site name</label><input name="site_name" required value="{{ old('site_name',$general['site_name']??'Eagle Global Hub LTD') }}"></div>
@@ -23,6 +23,9 @@
 <div class="home-field"><label>Support hours</label><input name="hours" value="{{ old('hours',$contact['hours']??'') }}"></div>
 <div class="home-field wide"><label>Footer description</label><textarea name="footer_description">{{ old('footer_description',$general['footer_description']??'') }}</textarea></div>
 @foreach(['facebook'=>'Facebook','instagram'=>'Instagram','linkedin'=>'LinkedIn','youtube'=>'YouTube'] as $key=>$label)<div class="home-field"><label>{{ $label }} URL</label><input type="url" name="{{ $key }}_url" value="{{ old($key.'_url',$social[$key.'_url']??'') }}"></div>@endforeach
+<div class="home-field"><label>News ticker label</label><input name="news_ticker_label" maxlength="60" value="{{ old('news_ticker_label',$homepage['news_ticker_label']??'Latest News') }}" placeholder="Latest News"></div>
+<div class="home-field"><label>News ticker link (optional)</label><input type="url" name="news_ticker_url" value="{{ old('news_ticker_url',$homepage['news_ticker_url']??'') }}" placeholder="https://..."></div>
+<div class="home-field wide"><label>News ticker text</label><textarea name="news_ticker_text" maxlength="2000" placeholder="Enter one or more updates. Put each update on a new line.">{{ old('news_ticker_text',$homepage['news_ticker_text']??'Welcome to Eagle Global Hub — explore flights, hotels, tours, visa and work visa services.') }}</textarea><small>Each new line becomes a separate scrolling update. Leave this field blank to hide the ticker.</small></div>
 <div class="home-field"><label>Hero eyebrow</label><input name="hero_eyebrow" value="{{ old('hero_eyebrow',$homepage['hero_eyebrow']??'') }}"></div>
 <div class="home-field"><label>Hero image</label><input type="file" name="hero_image" accept="image/jpeg,image/png,image/webp,image/avif"></div>
 <div class="home-field"><label>Hero title</label><input name="hero_title" required value="{{ old('hero_title',$homepage['hero_title']??'Travel the World with') }}"></div>
