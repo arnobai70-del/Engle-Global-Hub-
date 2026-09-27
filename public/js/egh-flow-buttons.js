@@ -1,16 +1,12 @@
 /*
-    Flow-button enhancement for the public site.
+    Flow-button progressive enhancement for the public site.
 
-    The reference component supplied for this project is a React/shadcn button,
-    but the application itself is Laravel Blade. Rebuilding the public site in
-    React only for one interaction would add a second frontend architecture, so
-    this small progressive enhancement recreates the same interaction on the
-    existing semantic buttons and CTA links.
-
-    Icon-only controls (carousel arrows, swap buttons, close buttons, etc.) are
-    intentionally excluded: turning those into wide text buttons would reduce
-    usability. Buttons added later by existing booking/search scripts are picked
-    up by the MutationObserver as well.
+    This intentionally keeps the application's existing button/link DOM intact.
+    The previous implementation moved every child node into a new wrapper and
+    forced display/background styles, which could break existing icons, loading
+    states, widths and JavaScript that expected the original children. This
+    version only wraps direct text nodes for the small label translation and
+    appends decorative layers. Existing child elements stay where they are.
 */
 (function () {
     'use strict';
@@ -24,19 +20,28 @@
         'a.egho-app-store',
         'a.egho-journey-cta',
         'a[class*="-button"]',
-        'a[class*="-cta"]'
+        'a[class*="-cta"]',
+        '[data-flow-button]'
     ].join(',');
 
     var SKIP_SELECTOR = [
         '[data-flow-skip]',
         '.egho-rail-button',
         '.egho-swap',
-        '.egho-nav button',
-        '.egho-nav-more button',
         '.site-menu-toggle',
         '.site-modal-close',
         '.flight-offer-select-icon',
-        '[aria-label][class*="close"]'
+        '[data-egho-rail-prev]',
+        '[data-egho-rail-next]',
+        '[class*="close"]',
+        '[class*="icon-only"]',
+        '[class*="toggle"]'
+    ].join(',');
+
+    var DECORATION_SELECTOR = [
+        '.egh-flow-button__circle',
+        '.egh-flow-button__arrow',
+        '.egh-flow-button__label'
     ].join(',');
 
     var transparent = function (value) {
@@ -45,8 +50,12 @@
             || value === 'rgba(0,0,0,0)';
     };
 
-    var strongBackground = function (value) {
-        return value && !transparent(value) && value !== 'rgb(255, 255, 255)';
+    var strongBackground = function (element, computed) {
+        var backgroundImage = computed.backgroundImage || 'none';
+        var backgroundColor = computed.backgroundColor || 'transparent';
+
+        return backgroundImage !== 'none'
+            || (!transparent(backgroundColor) && backgroundColor !== 'rgb(255, 255, 255)');
     };
 
     var arrow = function (side) {
@@ -57,63 +66,122 @@
         return wrapper;
     };
 
-    var enhance = function (element) {
-        if (!(element instanceof HTMLElement)) {
-            return;
+    var circle = function () {
+        var node = document.createElement('span');
+        node.className = 'egh-flow-button__circle';
+        node.setAttribute('aria-hidden', 'true');
+        return node;
+    };
+
+    var visibleLabel = function (element) {
+        return (element.textContent || '').replace(/\s+/g, ' ').trim();
+    };
+
+    var shouldSkip = function (element) {
+        if (!(element instanceof HTMLElement) || element.matches(SKIP_SELECTOR)) {
+            return true;
         }
 
-        if (element.dataset.flowEnhanced === 'true' || element.matches(SKIP_SELECTOR)) {
-            return;
-        }
-
-        var label = (element.textContent || '').replace(/\s+/g, ' ').trim();
-
-        /* Icon-only controls retain their compact native treatment. */
+        var label = visibleLabel(element);
         if (!label) {
-            element.dataset.flowEnhanced = 'skip';
+            return true;
+        }
+
+        /*
+         * Small labelled controls are normally pagination / icon controls. Do
+         * not turn them into wide CTA buttons just because they contain a
+         * single character such as ‹, ›, + or ×.
+         */
+        if (label.length <= 2) {
+            var rect = element.getBoundingClientRect();
+            if ((rect.width && rect.width <= 56) || element.hasAttribute('aria-label')) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    var wrapDirectText = function (element) {
+        Array.prototype.slice.call(element.childNodes).forEach(function (node) {
+            if (node.nodeType !== Node.TEXT_NODE || !node.nodeValue || !node.nodeValue.trim()) {
+                return;
+            }
+
+            var label = document.createElement('span');
+            label.className = 'egh-flow-button__label';
+            label.textContent = node.nodeValue;
+            element.replaceChild(label, node);
+        });
+    };
+
+    var findNativeRightArrow = function (element) {
+        var children = Array.prototype.filter.call(element.children, function (child) {
+            return !child.matches(DECORATION_SELECTOR);
+        });
+        var last = children[children.length - 1];
+
+        if (
+            last
+            && last.tagName
+            && last.tagName.toLowerCase() === 'svg'
+            && last.getAttribute('aria-hidden') === 'true'
+        ) {
+            last.classList.add('egh-flow-button__native-right');
+            return last;
+        }
+
+        return null;
+    };
+
+    var ensureDecorations = function (element) {
+        if (!(element instanceof HTMLElement) || shouldSkip(element)) {
             return;
         }
 
-        var computed = window.getComputedStyle(element);
-        var baseBackground = computed.backgroundColor;
-        var baseColor = computed.color;
-        var baseBorder = computed.borderTopColor || 'rgba(11, 37, 69, .3)';
-        var hoverFill = strongBackground(baseBackground) ? '#082d56' : '#0b63f6';
+        wrapDirectText(element);
 
-        /* Keep destructive actions visually destructive. */
-        if (
-            element.classList.contains('danger')
-            || element.classList.contains('is-danger')
-            || element.classList.contains('destructive')
-            || element.dataset.variant === 'danger'
-        ) {
-            hoverFill = '#8f1d17';
+        if (!element.querySelector(':scope > .egh-flow-button__circle')) {
+            element.insertBefore(circle(), element.firstChild);
         }
 
-        element.style.setProperty('--egh-flow-base-bg', baseBackground);
-        element.style.setProperty('--egh-flow-base-color', baseColor);
-        element.style.setProperty('--egh-flow-base-border', baseBorder);
-        element.style.setProperty('--egh-flow-fill', hoverFill);
-        element.style.setProperty('--egh-flow-pad-left', computed.paddingLeft || '16px');
-        element.style.setProperty('--egh-flow-pad-right', computed.paddingRight || '16px');
-
-        var content = document.createElement('span');
-        content.className = 'egh-flow-button__content';
-
-        while (element.firstChild) {
-            content.appendChild(element.firstChild);
+        if (!element.querySelector(':scope > .egh-flow-button__arrow--left')) {
+            element.appendChild(arrow('left'));
         }
 
-        var circle = document.createElement('span');
-        circle.className = 'egh-flow-button__circle';
-        circle.setAttribute('aria-hidden', 'true');
+        var nativeRight = findNativeRightArrow(element);
+        if (!nativeRight && !element.querySelector(':scope > .egh-flow-button__arrow--right')) {
+            element.appendChild(arrow('right'));
+        }
+    };
 
-        element.appendChild(arrow('left'));
-        element.appendChild(content);
-        element.appendChild(circle);
-        element.appendChild(arrow('right'));
-        element.classList.add('egh-flow-button');
-        element.dataset.flowEnhanced = 'true';
+    var enhance = function (element) {
+        if (!(element instanceof HTMLElement) || shouldSkip(element)) {
+            return;
+        }
+
+        if (element.dataset.flowEnhanced !== 'true') {
+            var computed = window.getComputedStyle(element);
+            var hoverFill = strongBackground(element, computed) ? '#082d56' : '#0b63f6';
+
+            if (
+                element.classList.contains('danger')
+                || element.classList.contains('is-danger')
+                || element.classList.contains('destructive')
+                || element.dataset.variant === 'danger'
+            ) {
+                hoverFill = '#8f1d17';
+            }
+
+            element.style.setProperty('--egh-flow-fill', hoverFill);
+            element.style.setProperty('--egh-flow-base-color', computed.color || '#0b2545');
+            element.style.setProperty('--egh-flow-pad-left', computed.paddingLeft || '14px');
+            element.style.setProperty('--egh-flow-pad-right', computed.paddingRight || '14px');
+            element.classList.add('egh-flow-button');
+            element.dataset.flowEnhanced = 'true';
+        }
+
+        ensureDecorations(element);
     };
 
     var scan = function (root) {
@@ -128,6 +196,15 @@
         root.querySelectorAll(ACTION_SELECTOR).forEach(enhance);
     };
 
+    var repairClosestButton = function (node) {
+        var element = node instanceof Element ? node : node.parentElement;
+        var button = element && element.closest ? element.closest('.egh-flow-button') : null;
+
+        if (button) {
+            ensureDecorations(button);
+        }
+    };
+
     var init = function () {
         scan(document);
 
@@ -137,6 +214,8 @@
 
         var observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
+                repairClosestButton(mutation.target);
+
                 mutation.addedNodes.forEach(function (node) {
                     if (node.nodeType === 1) {
                         scan(node);
