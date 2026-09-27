@@ -22,9 +22,7 @@ class TravelServiceRegistry
 
             $providerAvailable = $this->isAvailable($service);
             $configuredRoute = $service['route_name'] ?? null;
-            $pageRouteName = is_string($configuredRoute) && Route::has($configuredRoute)
-                ? $configuredRoute
-                : null;
+            $pageRouteName = is_string($configuredRoute) && Route::has($configuredRoute) ? $configuredRoute : null;
 
             $capabilities[$key] = [
                 'key' => $key,
@@ -32,10 +30,9 @@ class TravelServiceRegistry
                 'available' => $providerAvailable,
                 'provider_available' => $providerAvailable,
                 'demo_mode' => ! $providerAvailable,
-                'status' => $providerAvailable ? 'Live Provider' : 'Demo Preview',
-                // Keep the legacy route contract live-provider-only.
+                'status' => $providerAvailable ? 'Available' : (string) ($service['unavailable_label'] ?? 'Not Configured'),
+                'display_status' => $providerAvailable ? 'Live Provider' : 'Demo Preview',
                 'route_name' => $providerAvailable ? $pageRouteName : null,
-                // Customer pages may still render safely in Demo Preview mode.
                 'page_route_name' => $pageRouteName,
                 'permission' => is_string($service['permission'] ?? null) ? $service['permission'] : null,
             ];
