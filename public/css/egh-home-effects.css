@@ -1,107 +1,135 @@
-/* Homepage interaction polish for the destination rail. */
+/* Strong, visible interaction polish for the Popular Destinations carousel. */
 .egho-destinations.is-rail{
-    scroll-behavior:smooth;
+    scroll-behavior:auto!important;
     scroll-snap-type:x mandatory;
 }
 
+.egho-rail.is-rail-moving .egho-destinations.is-rail{
+    scroll-snap-type:none!important;
+}
+
 .egho-destination{
+    position:relative;
     transform-origin:center center;
-    transition:transform .32s cubic-bezier(.2,.75,.25,1),box-shadow .32s ease,filter .32s ease;
-    will-change:transform;
+    transition:transform .32s cubic-bezier(.2,.75,.25,1),box-shadow .32s ease,filter .32s ease,opacity .32s ease!important;
+    will-change:transform,filter;
 }
 
 .egho-destination::after{
     content:"";
     position:absolute;
     inset:0;
-    z-index:0;
+    z-index:1;
     pointer-events:none;
-    background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.18) 48%,transparent 76%);
-    transform:translateX(-135%);
-    transition:transform .65s ease;
+    border-radius:inherit;
+    background:linear-gradient(110deg,transparent 18%,rgba(255,255,255,.32) 48%,transparent 78%);
+    transform:translateX(-145%);
+    transition:transform .75s ease;
 }
 
 .egho-destination-copy{
-    z-index:2;
+    z-index:2!important;
 }
 
 .egho-destination:hover,
 .egho-destination:focus-within{
-    transform:translateY(-8px) scale(1.025);
-    box-shadow:0 22px 44px rgba(7,35,69,.28);
-    filter:saturate(1.08) brightness(1.02);
+    transform:translateY(-9px) scale(1.035)!important;
+    box-shadow:0 24px 46px rgba(7,35,69,.32)!important;
+    filter:saturate(1.12) brightness(1.04)!important;
 }
 
 .egho-destination:hover::after,
 .egho-destination:focus-within::after,
 .egho-destination.is-rail-active::after{
-    transform:translateX(135%);
+    transform:translateX(145%);
 }
 
 .egho-destination.is-rail-active{
-    box-shadow:0 16px 34px rgba(7,35,69,.2);
+    box-shadow:0 18px 38px rgba(7,35,69,.25)!important;
+    filter:saturate(1.08) brightness(1.025)!important;
+}
+
+.egho-rail.is-rail-moving .egho-destination{
+    opacity:.82;
+    filter:saturate(.92) brightness(.98)!important;
+}
+
+.egho-rail.is-rail-moving .egho-destination.is-rail-active{
+    opacity:1;
 }
 
 .egho-rail-button{
-    position:relative;
-    overflow:hidden;
-    transition:transform .2s ease,background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease;
+    position:relative!important;
+    overflow:hidden!important;
+    border-color:#c9d9ef!important;
+    background:#fff!important;
+    color:#0b3c78!important;
+    box-shadow:0 5px 14px rgba(11,37,69,.08)!important;
+    transition:transform .2s ease,background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease!important;
 }
 
-.egho-rail-button::after{
+.egho-rail-button::before{
     content:"";
     position:absolute;
-    inset:-1px;
+    inset:0;
     border-radius:inherit;
-    background:rgba(255,255,255,.28);
-    transform:scale(0);
+    background:radial-gradient(circle,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 70%);
     opacity:0;
-    transition:transform .28s ease,opacity .28s ease;
+    transform:scale(.35);
 }
 
 .egho-rail-button:hover:not(:disabled),
 .egho-rail-button:focus-visible:not(:disabled){
-    transform:translateY(-2px) scale(1.07);
-    border-color:#0b63f6;
-    background:#0b63f6;
-    color:#fff;
-    box-shadow:0 9px 20px rgba(11,99,246,.24);
-    outline:none;
+    transform:translateY(-3px) scale(1.1)!important;
+    border-color:#0b63f6!important;
+    background:#0b63f6!important;
+    color:#fff!important;
+    box-shadow:0 12px 24px rgba(11,99,246,.32)!important;
+    outline:none!important;
 }
 
 .egho-rail-button:active:not(:disabled){
-    transform:translateY(0) scale(.94);
+    transform:translateY(0) scale(.9)!important;
 }
 
 .egho-rail-button.is-rail-pulse:not(:disabled){
-    animation:eghRailButtonPulse .42s ease;
+    animation:eghRailButtonPulse .56s cubic-bezier(.2,.8,.2,1)!important;
 }
 
-.egho-rail-button.is-rail-pulse::after{
-    animation:eghRailButtonRipple .42s ease;
+.egho-rail-button.is-rail-pulse::before{
+    animation:eghRailButtonRipple .56s ease!important;
+}
+
+.egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next]:not(:disabled),
+.egho-rail.is-moving-prev .egho-rail-button[data-egho-rail-prev]:not(:disabled){
+    background:#0b63f6!important;
+    border-color:#0b63f6!important;
+    color:#fff!important;
+    box-shadow:0 10px 22px rgba(11,99,246,.28)!important;
 }
 
 @keyframes eghRailButtonPulse{
     0%{transform:scale(1)}
-    45%{transform:scale(1.12)}
+    35%{transform:scale(1.18)}
+    68%{transform:scale(.96)}
     100%{transform:scale(1)}
 }
 
 @keyframes eghRailButtonRipple{
-    0%{transform:scale(.25);opacity:.55}
-    100%{transform:scale(1.5);opacity:0}
+    0%{opacity:.65;transform:scale(.25)}
+    100%{opacity:0;transform:scale(1.7)}
 }
 
 @media(max-width:760px){
     .egho-destination:hover,
     .egho-destination:focus-within{
-        transform:translateY(-4px) scale(1.012);
+        transform:translateY(-5px) scale(1.018)!important;
     }
 
     .egho-rail-button{
-        width:42px;
-        height:42px;
-        flex:0 0 42px;
+        width:42px!important;
+        height:42px!important;
+        flex:0 0 42px!important;
     }
 }
 
@@ -109,8 +137,15 @@
     .egho-destination,
     .egho-destination::after,
     .egho-rail-button,
-    .egho-rail-button::after{
+    .egho-rail-button::before{
         transition:none!important;
         animation:none!important;
+    }
+
+    .egho-rail-button:hover:not(:disabled),
+    .egho-rail-button:focus-visible:not(:disabled){
+        transform:none!important;
+        background:#0b63f6!important;
+        color:#fff!important;
     }
 }
