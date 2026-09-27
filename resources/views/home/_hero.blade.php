@@ -1,3 +1,38 @@
+@php
+    $tickerText = trim((string) data_get($settings, 'news_ticker_text', 'Welcome to Eagle Global Hub — explore flights, hotels, tours, visa and work visa services.'));
+    $tickerLabel = trim((string) data_get($settings, 'news_ticker_label', 'Latest News'));
+    $tickerUrl = trim((string) data_get($settings, 'news_ticker_url', ''));
+    $tickerItems = $tickerText !== ''
+        ? array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $tickerText) ?: [])))
+        : [];
+@endphp
+
+@if ($tickerItems !== [])
+<div class="egho-news-ticker" role="region" aria-label="Latest news">
+    <div class="egho-shell egho-news-ticker-inner">
+        <span class="egho-news-ticker-label">{{ $tickerLabel !== '' ? $tickerLabel : 'Latest News' }}</span>
+        <div class="egho-news-ticker-window" aria-live="off">
+            <div class="egho-news-ticker-track">
+                @for ($copy = 0; $copy < 2; $copy++)
+                    <div class="egho-news-ticker-set" @if ($copy === 1) aria-hidden="true" @endif>
+                        @foreach ($tickerItems as $item)
+                            <span class="egho-news-ticker-item">
+                                <span class="egho-news-ticker-dot" aria-hidden="true"></span>
+                                @if ($tickerUrl !== '')
+                                    <a href="{{ $tickerUrl }}" target="_blank" rel="noopener noreferrer">{{ $item }}</a>
+                                @else
+                                    <span>{{ $item }}</span>
+                                @endif
+                            </span>
+                        @endforeach
+                    </div>
+                @endfor
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 <section class="egho-hero" style="--egho-hero-image: url('{{ $heroImage }}')">
     <div class="egho-shell">
         <div class="egho-hero-copy">
