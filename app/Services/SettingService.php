@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 use JsonException;
 
@@ -32,6 +33,10 @@ class SettingService
     /** @return array<string, mixed> */
     public function group(string $group): array
     {
+        if (! Schema::hasTable('settings')) {
+            return [];
+        }
+
         return Cache::remember(
             self::GROUP_CACHE_PREFIX.$group,
             self::CACHE_TTL_SECONDS,
