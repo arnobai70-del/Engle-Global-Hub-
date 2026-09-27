@@ -17,9 +17,40 @@
 </div></div></section>
 
 <section class="egho-section"><div class="egho-shell">
-<div class="egho-section-head"><div><h2>{{ data_get($settings, 'destinations_title', 'Popular Destinations') }}</h2><p>{{ data_get($settings, 'destinations_subtitle') }}</p></div><div class="egho-rail-head">@feature('flights') @can('flights.search')<a href="{{ route('flights.index') }}" class="egho-section-link">View All Destinations &rarr;</a>@endcan @endfeature<div class="egho-rail-head" data-egho-rail-nav hidden><button type="button" class="egho-rail-button" data-egho-rail-prev aria-label="Show earlier destinations">‹</button><button type="button" class="egho-rail-button" data-egho-rail-next aria-label="Show more destinations">›</button></div></div></div>
-<div class="egho-rail" data-egho-rail data-egho-auto data-egho-auto-delay="3200"><div class="egho-destinations is-rail" data-egho-rail-track>
-@foreach ($popularDestinations as $destination)
-<div class="egho-destination" data-egho-rail-item style="--egho-destination-image: url('{{ $destination['image'] ?? '' }}')" role="img" aria-label="{{ $destination['image_alt'] ?? (($destination['name'] ?? '').' '.($destination['country'] ?? '')) }}"><span class="egho-destination-copy"><span class="egho-destination-tag">{{ $destination['tag'] ?? '' }}</span><strong>{{ $destination['name'] }}</strong><small>{{ $destination['country'] }}</small></span></div>
-@endforeach
-</div></div></div></section>
+<div class="egho-section-head">
+    <div><h2>{{ data_get($settings, 'destinations_title', 'Popular Destinations') }}</h2><p>{{ data_get($settings, 'destinations_subtitle') }}</p></div>
+    <div class="egho-rail-head">
+        @feature('flights') @can('flights.search')<a href="{{ route('flights.index') }}" class="egho-section-link">View All Destinations &rarr;</a>@endcan @endfeature
+        <div class="egho-rail-head" data-egho-rail-nav hidden>
+            <button type="button" class="egho-rail-button" data-egho-rail-prev aria-label="Show earlier destinations">‹</button>
+            <button type="button" class="egho-rail-button" data-egho-rail-next aria-label="Show more destinations">›</button>
+        </div>
+    </div>
+</div>
+
+@if ($popularDestinations !== [])
+<div class="egho-rail egho-infinite-slider" data-egho-rail data-egho-infinite-slider data-egho-speed="34" aria-label="Popular destinations carousel">
+    <div class="egho-infinite-window">
+        <div class="egho-destinations is-infinite" data-egho-infinite-track>
+            @for ($copy = 0; $copy < 2; $copy++)
+                <div class="egho-infinite-set" data-egho-infinite-set @if($copy === 1) aria-hidden="true" @endif>
+                    @foreach ($popularDestinations as $destination)
+                        <div class="egho-destination" data-egho-infinite-item
+                            style="--egho-destination-image: url('{{ $destination['image'] ?? '' }}')"
+                            @if($copy === 0)
+                                role="img" aria-label="{{ $destination['image_alt'] ?? (($destination['name'] ?? '').' '.($destination['country'] ?? '')) }}"
+                            @endif>
+                            <span class="egho-destination-copy">
+                                <span class="egho-destination-tag">{{ $destination['tag'] ?? '' }}</span>
+                                <strong>{{ $destination['name'] }}</strong>
+                                <small>{{ $destination['country'] }}</small>
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            @endfor
+        </div>
+    </div>
+</div>
+@endif
+</div></section>
