@@ -10,31 +10,38 @@
         name="description"
         content="Secure account access for Eagle Global Hub LTD flight and travel services."
     >
-    <link rel="icon" type="image/png" href="{{ asset('images/eagle-global-hub-logo.png') }}">
+
+    @php
+        $officialLogoFile = public_path('images/eagle-global-hub-logo.png');
+        $officialLogo = is_file($officialLogoFile)
+            ? 'data:image/png;base64,'.base64_encode(file_get_contents($officialLogoFile))
+            : asset('images/eagle-global-hub-logo.png');
+    @endphp
+
+    <link rel="icon" type="image/png" href="{{ $officialLogo }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    {{-- Instrument Sans, built from the Vite font manifest. --}}
     {{ Vite::fonts() }}
 
     @php
-        /*
-         * Cache-busted like the site theme: this file lives in public/ rather
-         * than the Vite manifest, so the modification time stands in for the
-         * content hash a build would otherwise provide.
-         */
         $themeCss = static function (string $file): string {
             $modifiedAt = @filemtime(public_path($file));
-
             return asset($file).($modifiedAt ? '?v='.$modifiedAt : '');
         };
     @endphp
 
-    {{-- Mockup-aligned OTA theme. Scoped to `.egho-` classes only. --}}
     <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}">
     <style>
-        .egho-auth-brand-logo{display:block;width:92px;height:92px;object-fit:contain}
-        @media(max-width:720px){.egho-auth-brand-logo{width:74px;height:74px}}
+        .egho-auth-brand{display:inline-flex!important;align-items:center!important;gap:12px!important;text-decoration:none!important;min-width:0}
+        .egho-auth-brand-logo{display:block!important;width:78px!important;height:78px!important;object-fit:contain!important;flex:0 0 78px!important}
+        .egho-auth-brand-copy{display:grid!important;gap:3px!important;line-height:1.1!important}
+        .egho-auth-brand-copy strong{color:#fff!important;font-size:18px!important;font-weight:800!important;letter-spacing:-.2px!important}
+        .egho-auth-brand-copy small{color:rgba(255,255,255,.72)!important;font-size:11px!important;font-weight:700!important;letter-spacing:.09em!important;text-transform:uppercase!important}
+        @media(max-width:720px){
+            .egho-auth-brand-logo{width:62px!important;height:62px!important;flex-basis:62px!important}
+            .egho-auth-brand-copy strong{font-size:16px!important}
+            .egho-auth-brand-copy small{font-size:10px!important}
+        }
     </style>
 </head>
 
@@ -48,12 +55,16 @@
 
                 <a href="{{ route('home') }}" class="egho-auth-brand" aria-label="Eagle Global Hub LTD home">
                     <img
-                        src="{{ asset('images/eagle-global-hub-logo.png') }}"
+                        src="{{ $officialLogo }}"
                         alt="Eagle Global Hub LTD logo"
                         class="egho-auth-brand-logo"
                         width="240"
                         height="241"
                     >
+                    <span class="egho-auth-brand-copy">
+                        <strong>Eagle Global Hub LTD</strong>
+                        <small>Travel &amp; Visa Services</small>
+                    </span>
                 </a>
 
                 <a href="{{ route('home') }}" class="egho-auth-back">
@@ -86,34 +97,25 @@
 
                     <li>
                         <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
-
                         <span>
                             <strong>Verified account access</strong>
-                            <small>
-                                Protected areas require authenticated and verified access.
-                            </small>
+                            <small>Protected areas require authenticated and verified access.</small>
                         </span>
                     </li>
 
                     <li>
                         <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
-
                         <span>
                             <strong>Clear booking flow</strong>
-                            <small>
-                                Review important itinerary and booking states as you continue.
-                            </small>
+                            <small>Review important itinerary and booking states as you continue.</small>
                         </span>
                     </li>
 
                     <li>
                         <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
-
                         <span>
                             <strong>Server-authoritative actions</strong>
-                            <small>
-                                Sensitive booking and payment decisions remain server controlled.
-                            </small>
+                            <small>Sensitive booking and payment decisions remain server controlled.</small>
                         </span>
                     </li>
 
@@ -132,32 +134,18 @@
             <div class="egho-auth-card">
 
                 @if ($errors->any())
-                    <div
-                        class="auth-alert auth-alert-error"
-                        role="alert"
-                    >
-                        <strong>
-                            Please check the form.
-                        </strong>
-
+                    <div class="auth-alert auth-alert-error" role="alert">
+                        <strong>Please check the form.</strong>
                         <ul>
                             @foreach ($errors->all() as $error)
-                                <li>
-                                    {{ $error }}
-                                </li>
+                                <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
                 @endif
 
-                @if (
-                    session('status')
-                    && session('status') !== 'verification-link-sent'
-                )
-                    <div
-                        class="auth-alert auth-alert-success"
-                        role="status"
-                    >
+                @if (session('status') && session('status') !== 'verification-link-sent')
+                    <div class="auth-alert auth-alert-success" role="status">
                         {{ session('status') }}
                     </div>
                 @endif
@@ -166,10 +154,7 @@
 
                 <div class="egho-auth-meta">
                     <span>Secure account access</span>
-
-                    <a href="{{ route('home') }}">
-                        Eagle Global Hub LTD
-                    </a>
+                    <a href="{{ route('home') }}">Eagle Global Hub LTD</a>
                 </div>
 
             </div>
