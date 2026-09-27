@@ -32,8 +32,8 @@
                 <span class="egh-live-indicator">Live provider connected</span>
             @endif
 
-            <form method="POST" action="{{ route('hotels.search') }}" class="egh-search-grid">
-                @csrf
+            <form method="{{ $demoMode ? 'GET' : 'POST' }}" action="{{ $demoMode ? route('hotels.index').'#hotel-demo-results' : route('hotels.search') }}" class="egh-search-grid">
+                @unless($demoMode) @csrf @endunless
                 <label class="egho-field"><span>Destination</span><input name="destination" value="{{ old('destination') }}" placeholder="City or destination" maxlength="120" required></label>
                 <label class="egho-field"><span>Check-in</span><input type="date" name="check_in" value="{{ old('check_in') }}" min="{{ now()->toDateString() }}" required></label>
                 <label class="egho-field"><span>Check-out</span><input type="date" name="check_out" value="{{ old('check_out') }}" min="{{ now()->addDay()->toDateString() }}" required></label>
@@ -43,7 +43,7 @@
             </form>
         </section>
 
-        <section class="egh-section">
+        <section class="egh-section" id="hotel-demo-results">
             <div class="egh-section-head"><div><h2>{{ $pageContent['featured_title'] }}</h2><p>{{ $demoMode ? 'Sample stays demonstrate the live-result layout.' : 'Search above for current supplier availability.' }}</p></div></div>
             @if($demoMode)
             <div class="egh-card-grid">
