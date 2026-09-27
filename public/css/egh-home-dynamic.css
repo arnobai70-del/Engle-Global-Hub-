@@ -41,6 +41,23 @@
 .egho-tiles{gap:12px}
 .egho-tile{min-height:88px;padding:14px}
 .egho-panel,.egho-app{border-radius:16px}
+
+/* Travel service pages: single-column controls/cards with comfortable mobile spacing. */
+.site-body .egh-travel-page .egho-shell{padding-left:14px;padding-right:14px}
+.site-body .egh-travel-page .egh-travel-hero{padding:34px 18px 38px;border-radius:0 0 20px 20px;margin-bottom:22px}
+.site-body .egh-travel-page .egh-travel-hero h1{font-size:clamp(30px,9vw,42px);line-height:1.08;margin-top:8px}
+.site-body .egh-travel-page .egh-travel-hero p{font-size:15px;line-height:1.6}
+.site-body .egh-travel-page .egh-search-panel{margin-top:-34px;padding:14px;border-radius:16px}
+.site-body .egh-travel-page .egh-search-grid,.site-body .egh-travel-page .egh-search-grid.egh-search-grid-tours{grid-template-columns:minmax(0,1fr)}
+.site-body .egh-travel-page .egh-search-grid .egho-btn{width:100%;min-height:46px}
+.site-body .egh-travel-page .egh-demo-notice{padding:13px 14px;border-radius:14px}
+.site-body .egh-travel-page .egh-card-grid,.site-body .egh-travel-page .egh-info-grid,.site-body .egh-travel-page .egh-step-grid,.site-body .egh-travel-page .egh-work-destinations{grid-template-columns:minmax(0,1fr)}
+.site-body .egh-travel-page .egh-travel-card img{height:205px}
+.site-body .egh-travel-page .egh-card-body{padding:15px}
+.site-body .egh-travel-page .egh-cta-panel{align-items:stretch;flex-direction:column;padding:22px 18px}
+.site-body .egh-travel-page .egh-cta-panel .egho-btn{width:100%;box-sizing:border-box;text-align:center}
+.site-body .egh-travel-page .egh-section{margin:28px 0}
+.site-body .egh-travel-page .egh-section-head h2{font-size:23px;line-height:1.2}
 }
 
 @media(max-width:520px){
@@ -55,6 +72,9 @@
 .egho-journey{padding:34px 0}
 .egho-newsletter{border-radius:18px;align-items:stretch;flex-direction:column;padding:6px}
 .egho-newsletter input{min-height:44px}.egho-newsletter button{min-height:44px;width:100%}
+.site-body .egh-travel-page .egh-card-price{align-items:stretch;flex-direction:column;gap:10px}
+.site-body .egh-travel-page .egh-card-price .egh-muted-button{width:100%;box-sizing:border-box}
+.site-body .egh-travel-page .egh-work-destination{min-height:210px}
 }
 
 @media(prefers-reduced-motion:reduce){
