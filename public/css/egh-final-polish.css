@@ -1,0 +1,308 @@
+/* Final delivery hardening for Eagle Global Hub.
+   Loaded last so it can safely correct layout edge cases without changing
+   booking/provider behaviour. */
+
+.site-body,
+.site-body * {
+    box-sizing: border-box;
+}
+
+.site-body {
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.site-body img {
+    max-width: 100%;
+}
+
+/* ---------------------------------------------------------------- Brand */
+.egho-brand-official {
+    min-width: 0 !important;
+    max-width: 100%;
+    gap: 10px !important;
+}
+
+/* The supplied artwork has transparent space above/below it. A wide viewport
+   with object-fit: cover makes the actual EGH mark and wordmark readable while
+   retaining the official source image unchanged. */
+.egho-brand-logo {
+    display: block !important;
+    width: 112px !important;
+    height: 66px !important;
+    flex: 0 0 112px !important;
+    object-fit: cover !important;
+    object-position: center 44% !important;
+}
+
+.egho-brand-official .egho-brand-copy {
+    min-width: 0 !important;
+}
+
+.egho-brand-official .egho-brand-copy strong,
+.egho-brand-official .egho-brand-copy small {
+    white-space: nowrap !important;
+}
+
+/* --------------------------------------------------------------- Footer */
+.egho-footer {
+    overflow: hidden;
+}
+
+.egho-footer .egho-shell,
+.egho-footer-main,
+.egho-footer-main > div,
+.egho-footer-bottom {
+    min-width: 0;
+}
+
+.egho-footer-brand-official {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: max-content;
+    max-width: 100%;
+    text-decoration: none !important;
+}
+
+.egho-footer-logo {
+    display: block !important;
+    width: 124px !important;
+    height: 76px !important;
+    flex: 0 0 124px !important;
+    object-fit: cover !important;
+    object-position: center 44% !important;
+}
+
+.egho-footer-brand-official > span {
+    min-width: 0;
+}
+
+.egho-footer-brand-official strong,
+.egho-footer-brand-official small {
+    white-space: nowrap;
+}
+
+.egho-footer-desc {
+    max-width: 38rem;
+    margin-top: 12px !important;
+    overflow-wrap: anywhere;
+}
+
+.egho-footer-list,
+.egho-footer-contact,
+.egho-footer-status {
+    min-width: 0;
+}
+
+.egho-footer-list a,
+.egho-footer-contact a,
+.egho-footer-contact span,
+.egho-footer-status li {
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+/* ---------------------------------------------------------- Common mobile */
+@media (max-width: 900px) {
+    .egho-header-inner {
+        flex-wrap: wrap !important;
+        align-items: center !important;
+    }
+
+    .egho-nav {
+        width: 100% !important;
+        max-width: 100%;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .egho-footer-main {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 32px 24px !important;
+    }
+
+    .egho-footer-main > div:first-child {
+        grid-column: 1 / -1 !important;
+    }
+
+    .egho-footer-bottom {
+        flex-wrap: wrap !important;
+        gap: 12px 20px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .egho-shell {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .egho-topbar-inner {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 4px !important;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .egho-topbar-group {
+        min-width: 0;
+        justify-content: center;
+        gap: 4px 10px !important;
+    }
+
+    .egho-topbar-item {
+        min-height: 28px !important;
+        font-size: 11px !important;
+    }
+
+    .egho-brand-logo {
+        width: 94px !important;
+        height: 58px !important;
+        flex-basis: 94px !important;
+    }
+
+    .egho-brand-official .egho-brand-copy strong {
+        font-size: 14px !important;
+    }
+
+    .egho-brand-official .egho-brand-copy small {
+        font-size: 8px !important;
+        letter-spacing: .04em !important;
+    }
+
+    .egho-footer-main {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 26px !important;
+    }
+
+    .egho-footer-main > div,
+    .egho-footer-main > div:first-child {
+        grid-column: 1 !important;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .egho-footer-brand-official {
+        width: auto;
+        max-width: 100%;
+        justify-content: flex-start;
+    }
+
+    .egho-footer-logo {
+        width: 112px !important;
+        height: 70px !important;
+        flex-basis: 112px !important;
+    }
+
+    .egho-footer-brand-official strong {
+        font-size: 15px !important;
+        line-height: 1.15 !important;
+    }
+
+    .egho-footer-brand-official small {
+        font-size: 8px !important;
+        line-height: 1.3 !important;
+    }
+
+    .egho-footer-desc {
+        max-width: 100%;
+        margin-top: 10px !important;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .egho-footer-bottom {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .egho-footer-status {
+        width: 100%;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px 16px !important;
+        padding-left: 0 !important;
+    }
+
+    .egho-footer h3 {
+        margin-bottom: 10px !important;
+    }
+
+    .egho-footer-list,
+    .egho-footer-contact {
+        gap: 8px !important;
+    }
+
+    /* Shared forms/cards: never force horizontal scrolling on phones. */
+    .egho-search-card,
+    .egho-panel,
+    .egho-contact-card,
+    .egh-travel-page .egh-search-panel,
+    .egh-travel-page .egh-travel-card,
+    .egh-travel-page .egh-info-card,
+    .egh-travel-page .egh-step-card,
+    .egh-travel-page .egh-work-destination {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .egho-field input,
+    .egho-field select,
+    .egho-field textarea,
+    .egh-travel-page input,
+    .egh-travel-page select,
+    .egh-travel-page textarea,
+    .egh-travel-page button,
+    .egh-travel-page .egho-btn {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .egho-brand-official {
+        gap: 7px !important;
+    }
+
+    .egho-brand-logo {
+        width: 82px !important;
+        height: 52px !important;
+        flex-basis: 82px !important;
+    }
+
+    .egho-brand-official .egho-brand-copy strong {
+        font-size: 13px !important;
+    }
+
+    .egho-brand-official .egho-brand-copy small {
+        font-size: 7.5px !important;
+    }
+
+    .egho-footer-brand-official {
+        gap: 9px !important;
+    }
+
+    .egho-footer-logo {
+        width: 104px !important;
+        height: 66px !important;
+        flex-basis: 104px !important;
+    }
+
+    .egho-footer-brand-official strong {
+        font-size: 14px !important;
+    }
+
+    .egho-footer-brand-official small {
+        font-size: 7.5px !important;
+    }
+
+    .egho-footer-contact a {
+        font-size: 12.5px;
+    }
+}
