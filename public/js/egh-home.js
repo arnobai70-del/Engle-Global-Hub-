@@ -1,17 +1,12 @@
 /*
     Homepage rails.
 
-    Destination and testimonial rails keep their real previous/next controls.
-    Rails marked with `data-egho-auto` also move automatically, one card at a
-    time. Autoplay keeps running while the pointer is merely hovering over the
-    cards, pauses only during an active pointer interaction / hidden tab, and is
-    disabled for users who prefer reduced motion.
+    Destination rails keep their real previous/next controls and can autoplay.
+    Autoplay is intentionally driven by the rail's own data attributes so it
+    behaves consistently across Windows/browser animation preferences.
 */
 (function () {
     'use strict';
-
-    var reduceMotion = window.matchMedia
-        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var initRail = function (rail) {
         var scope = rail.closest('section') || rail.parentElement || document;
@@ -23,157 +18,120 @@
             return;
         }
 
-        var autoTimer = null;
-        var autoDirection = 1;
+        var timer = null;
+        var direction = 1;
         var pointerActive = false;
-        var autoDelay = parseInt(rail.getAttribute('data-egho-auto-delay') || '2600', 10);
+        var delay = parseInt(rail.getAttribute('data-egho-auto-delay') || '2600', 10);
 
-        if (!Number.isFinite(autoDelay) || autoDelay < 1600) {
-            autoDelay = 2600;
+        if (!Number.isFinite(delay) || delay < 1400) {
+            delay = 2600;
         }
 
         var step = function () {
             var card = track.querySelector('[data-egho-rail-item]');
-
-            if (!card) {
-                return track.clientWidth;
-            }
+            if (!card) return Math.max(1, track.clientWidth);
 
             var styles = window.getComputedStyle(track);
             var gap = parseFloat(styles.columnGap || styles.gap || '0');
-
-            return card.getBoundingClientRect().width
-                + (Number.isFinite(gap) ? gap : 0);
+            return card.getBoundingClientRect().width + (Number.isFinite(gap) ? gap : 0);
         };
 
-        var maxScroll = function () {
+        var limit = function () {
             return Math.max(0, track.scrollWidth - track.clientWidth);
         };
 
         var sync = function () {
-            var limit = maxScroll();
-            var canScroll = limit > 4;
+            var max = limit();
+            var canScroll = max > 4;
 
             rail.setAttribute('data-egho-rail-ready', 'true');
             previous.hidden = !canScroll;
             next.hidden = !canScroll;
 
-            if (!canScroll) {
-                return;
-            }
-
+            if (!canScroll) return;
             previous.disabled = track.scrollLeft <= 2;
-            next.disabled = track.scrollLeft >= limit - 2;
+            next.disabled = track.scrollLeft >= max - 2;
         };
 
-        var move = function (direction) {
-            var limit = maxScroll();
-            var target = track.scrollLeft + (direction * step());
-
-            target = Math.max(0, Math.min(limit, target));
-
-            track.scrollTo({
-                left: target,
-                behavior: reduceMotion ? 'auto' : 'smooth'
-            });
+        var move = function (dir) {
+            var max = limit();
+            var target = Math.max(0, Math.min(max, track.scrollLeft + (dir * step())));
+            track.scrollTo({ left: target, behavior: 'smooth' });
         };
 
-        var stopAuto = function () {
-            if (autoTimer !== null) {
-                window.clearTimeout(autoTimer);
-                autoTimer = null;
+        var stop = function () {
+            if (timer !== null) {
+                window.clearTimeout(timer);
+                timer = null;
             }
         };
 
-        var scheduleAuto = function (delay) {
-            stopAuto();
+        var schedule = function (wait) {
+            stop();
 
-            if (
-                reduceMotion
-                || !rail.hasAttribute('data-egho-auto')
-                || maxScroll() <= 4
-                || pointerActive
-            ) {
+            if (!rail.hasAttribute('data-egho-auto') || limit() <= 4 || pointerActive) {
                 return;
             }
 
-            autoTimer = window.setTimeout(function tick() {
-                autoTimer = null;
+            timer = window.setTimeout(function tick() {
+                timer = null;
 
                 if (document.hidden || pointerActive) {
-                    scheduleAuto(autoDelay);
+                    schedule(delay);
                     return;
                 }
 
-                var limit = maxScroll();
-
-                if (track.scrollLeft >= limit - 3) {
-                    autoDirection = -1;
+                var max = limit();
+                if (track.scrollLeft >= max - 3) {
+                    direction = -1;
                 } else if (track.scrollLeft <= 3) {
-                    autoDirection = 1;
+                    direction = 1;
                 }
 
-                move(autoDirection);
-                scheduleAuto(autoDelay);
-            }, typeof delay === 'number' ? delay : autoDelay);
+                move(direction);
+                schedule(delay);
+            }, typeof wait === 'number' ? wait : delay);
         };
 
         previous.addEventListener('click', function () {
-            autoDirection = -1;
+            direction = -1;
             move(-1);
-            scheduleAuto(autoDelay);
+            schedule(delay);
         });
 
         next.addEventListener('click', function () {
-            autoDirection = 1;
+            direction = 1;
             move(1);
-            scheduleAuto(autoDelay);
+            schedule(delay);
         });
 
-        /*
-         * Do not pause on hover. A normal desktop user often leaves the mouse
-         * over the carousel while reading it, which made the earlier autoplay
-         * look broken. Pause only while the user is actively dragging/touching.
-         */
         rail.addEventListener('pointerdown', function () {
             pointerActive = true;
-            stopAuto();
+            stop();
         });
 
-        window.addEventListener('pointerup', function () {
-            if (!pointerActive) {
-                return;
-            }
-
+        var releasePointer = function () {
+            if (!pointerActive) return;
             pointerActive = false;
-            scheduleAuto(1200);
-        });
+            schedule(900);
+        };
 
-        window.addEventListener('pointercancel', function () {
-            if (!pointerActive) {
-                return;
-            }
-
-            pointerActive = false;
-            scheduleAuto(1200);
-        });
+        window.addEventListener('pointerup', releasePointer);
+        window.addEventListener('pointercancel', releasePointer);
 
         track.addEventListener('scroll', sync, { passive: true });
         window.addEventListener('resize', function () {
             sync();
-            scheduleAuto(autoDelay);
+            schedule(delay);
         });
 
         document.addEventListener('visibilitychange', function () {
-            if (document.hidden) {
-                stopAuto();
-            } else {
-                scheduleAuto(900);
-            }
+            if (document.hidden) stop();
+            else schedule(700);
         });
 
         sync();
-        scheduleAuto(1400);
+        schedule(900);
     };
 
     var init = function () {
