@@ -4,6 +4,9 @@
     scroll-snap-type:x mandatory;
 }
 
+/* Infinite autoplay is positioned frame-by-frame in JS; browser snapping would
+   fight that motion and make the automatic slide look jerky. */
+.egho-rail.is-infinite-rail .egho-destinations.is-rail,
 .egho-rail.is-rail-moving .egho-destinations.is-rail{
     scroll-snap-type:none!important;
 }
@@ -49,13 +52,11 @@
     filter:saturate(1.08) brightness(1.025)!important;
 }
 
+/* Keep the moving strip visually stable. The previous heavy dimming made the
+   autoplay feel like a cut even when the position itself was animating. */
 .egho-rail.is-rail-moving .egho-destination{
-    opacity:.82;
-    filter:saturate(.92) brightness(.98)!important;
-}
-
-.egho-rail.is-rail-moving .egho-destination.is-rail-active{
-    opacity:1;
+    opacity:.97;
+    filter:saturate(1) brightness(1)!important;
 }
 
 .egho-rail-button{
