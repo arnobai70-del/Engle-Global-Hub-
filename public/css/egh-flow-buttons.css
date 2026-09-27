@@ -1,30 +1,18 @@
 /*
-    Brand-matched Flow Button.
+    Eagle Global Hub Flow Button.
 
-    Mirrors the supplied React component's interaction while preserving each
-    existing public button's initial background, text colour and dimensions.
-    The hover fill uses Eagle Global Hub blue/navy instead of the reference
-    component's black so the effect belongs to this site.
+    The effect follows the supplied FlowButton interaction while preserving the
+    site's existing button dimensions, backgrounds, gradients and child markup.
+    Only a small arrow gutter is reserved; the original background is never
+    replaced, so primary/secondary/destructive variants keep their identity.
 */
 .egh-flow-button {
     position: relative !important;
     isolation: isolate;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-width: 0;
     overflow: hidden !important;
     box-sizing: border-box;
-    padding-left: max(var(--egh-flow-pad-left, 16px), 42px) !important;
-    padding-right: max(var(--egh-flow-pad-right, 16px), 42px) !important;
-    border-width: 1.5px !important;
-    border-style: solid !important;
-    border-color: var(--egh-flow-base-border, rgba(11, 37, 69, .3)) !important;
-    border-radius: 999px !important;
-    background: var(--egh-flow-base-bg, transparent) !important;
-    color: var(--egh-flow-base-color, #0b2545) !important;
-    text-decoration: none !important;
+    padding-left: max(var(--egh-flow-pad-left, 14px), 36px) !important;
+    padding-right: max(var(--egh-flow-pad-right, 14px), 36px) !important;
     cursor: pointer;
     transform: translateZ(0);
     transition:
@@ -35,7 +23,13 @@
         transform .18s ease !important;
 }
 
-.egh-flow-button:active {
+/* Existing direct children stay above the expanding fill. */
+.egh-flow-button > :not(.egh-flow-button__circle):not(.egh-flow-button__arrow) {
+    position: relative;
+    z-index: 3;
+}
+
+.egh-flow-button:active:not(:disabled):not([aria-disabled="true"]) {
     transform: scale(.95);
 }
 
@@ -44,21 +38,11 @@
     outline-offset: 3px;
 }
 
-.egh-flow-button__content {
-    position: relative;
-    z-index: 3;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: inherit;
-    min-width: 0;
-    transform: translateX(-4px);
+.egh-flow-button__label {
+    display: inline-block;
+    color: inherit;
+    transform: translateX(-6px);
     transition: transform .8s ease-out, color .45s ease;
-}
-
-.egh-flow-button__content > svg,
-.egh-flow-button__content > img {
-    flex: 0 0 auto;
 }
 
 .egh-flow-button__circle {
@@ -76,32 +60,37 @@
     transition:
         width .8s cubic-bezier(.19, 1, .22, 1),
         height .8s cubic-bezier(.19, 1, .22, 1),
-        opacity .35s ease;
+        opacity .28s ease;
 }
 
-.egh-flow-button__arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 4;
-    display: grid;
-    place-items: center;
-    width: 18px;
-    height: 18px;
-    color: var(--egh-flow-base-color, #0b2545);
-    transform: translateY(-50%);
+.egh-flow-button__arrow,
+.egh-flow-button__native-right {
+    position: absolute !important;
+    top: 50% !important;
+    z-index: 4 !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    color: var(--egh-flow-base-color, currentColor);
+    transform: translateY(-50%) !important;
     pointer-events: none;
     transition:
         left .8s cubic-bezier(.34, 1.56, .64, 1),
         right .8s cubic-bezier(.34, 1.56, .64, 1),
-        color .35s ease;
+        color .35s ease,
+        opacity .35s ease !important;
 }
 
-.egh-flow-button__arrow svg {
-    width: 17px;
-    height: 17px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
+.egh-flow-button__arrow {
+    display: grid;
+    place-items: center;
+}
+
+.egh-flow-button__arrow svg,
+.egh-flow-button__native-right {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
@@ -110,118 +99,98 @@
     left: -28%;
 }
 
-.egh-flow-button__arrow--right {
-    right: 14px;
+.egh-flow-button__arrow--right,
+.egh-flow-button__native-right {
+    right: 13px !important;
+    left: auto !important;
 }
 
-.egh-flow-button:hover,
-.egh-flow-button:focus-visible {
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]),
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) {
     border-color: transparent !important;
     border-radius: 12px !important;
     color: #fff !important;
     box-shadow: 0 12px 28px rgba(8, 45, 86, .18);
 }
 
-.egh-flow-button:hover .egh-flow-button__content,
-.egh-flow-button:focus-visible .egh-flow-button__content {
-    color: #fff;
-    transform: translateX(8px);
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) > :not(.egh-flow-button__circle),
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) > :not(.egh-flow-button__circle) {
+    color: #fff !important;
 }
 
-.egh-flow-button:hover .egh-flow-button__circle,
-.egh-flow-button:focus-visible .egh-flow-button__circle {
-    width: 280px;
-    height: 280px;
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__label,
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__label {
+    transform: translateX(7px);
+}
+
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__circle,
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__circle {
+    width: 240%;
+    height: 520%;
     opacity: 1;
 }
 
-.egh-flow-button:hover .egh-flow-button__arrow,
-.egh-flow-button:focus-visible .egh-flow-button__arrow {
-    color: #fff;
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__arrow--left,
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__arrow--left {
+    left: 13px;
 }
 
-.egh-flow-button:hover .egh-flow-button__arrow--left,
-.egh-flow-button:focus-visible .egh-flow-button__arrow--left {
-    left: 14px;
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__arrow--right,
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__arrow--right,
+.egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__native-right,
+.egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__native-right {
+    right: -28% !important;
 }
 
-.egh-flow-button:hover .egh-flow-button__arrow--right,
-.egh-flow-button:focus-visible .egh-flow-button__arrow--right {
-    right: -28%;
+/* The search button keeps its search glyph; it remains part of the content. */
+.egho-submit.egh-flow-button > svg:not(.egh-flow-button__native-right) {
+    flex: 0 0 auto;
 }
 
-/* Keep compact header controls compact even after the two arrow gutters. */
+/* Compact account actions should not grow vertically. */
 .egho-topbar .egh-flow-button {
     min-height: 32px;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
 }
 
-/* Search / newsletter actions keep the site's stronger call-to-action weight. */
 .egho-submit.egh-flow-button,
 .egho-newsletter button.egh-flow-button {
     font-weight: 800;
 }
 
-/* Disabled actions remain visibly disabled and never animate as clickable. */
 .egh-flow-button:disabled,
 .egh-flow-button[aria-disabled="true"] {
     cursor: not-allowed;
     opacity: .55;
 }
 
-.egh-flow-button:disabled:hover,
-.egh-flow-button[aria-disabled="true"]:hover {
-    border-color: var(--egh-flow-base-border, rgba(11, 37, 69, .3)) !important;
-    border-radius: 999px !important;
-    color: var(--egh-flow-base-color, #0b2545) !important;
-    box-shadow: none;
-}
-
-.egh-flow-button:disabled:hover .egh-flow-button__content,
-.egh-flow-button[aria-disabled="true"]:hover .egh-flow-button__content {
-    color: inherit;
-    transform: translateX(-4px);
-}
-
-.egh-flow-button:disabled:hover .egh-flow-button__circle,
-.egh-flow-button[aria-disabled="true"]:hover .egh-flow-button__circle {
-    width: 16px;
-    height: 16px;
-    opacity: 0;
-}
-
-.egh-flow-button:disabled:hover .egh-flow-button__arrow--left,
-.egh-flow-button[aria-disabled="true"]:hover .egh-flow-button__arrow--left {
-    left: -28%;
-}
-
-.egh-flow-button:disabled:hover .egh-flow-button__arrow--right,
-.egh-flow-button[aria-disabled="true"]:hover .egh-flow-button__arrow--right {
-    right: 14px;
+.egh-flow-button:disabled .egh-flow-button__arrow--left,
+.egh-flow-button[aria-disabled="true"] .egh-flow-button__arrow--left {
+    display: none;
 }
 
 @media (max-width: 640px) {
     .egh-flow-button {
-        padding-left: max(var(--egh-flow-pad-left, 14px), 38px) !important;
-        padding-right: max(var(--egh-flow-pad-right, 14px), 38px) !important;
+        padding-left: max(var(--egh-flow-pad-left, 12px), 32px) !important;
+        padding-right: max(var(--egh-flow-pad-right, 12px), 32px) !important;
     }
 
-    .egh-flow-button__arrow--right {
-        right: 12px;
+    .egh-flow-button__arrow--right,
+    .egh-flow-button__native-right {
+        right: 11px !important;
     }
 
-    .egh-flow-button:hover .egh-flow-button__arrow--left,
-    .egh-flow-button:focus-visible .egh-flow-button__arrow--left {
-        left: 12px;
+    .egh-flow-button:hover:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__arrow--left,
+    .egh-flow-button:focus-visible:not(:disabled):not([aria-disabled="true"]) .egh-flow-button__arrow--left {
+        left: 11px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .egh-flow-button,
-    .egh-flow-button__content,
+    .egh-flow-button__label,
     .egh-flow-button__circle,
-    .egh-flow-button__arrow {
+    .egh-flow-button__arrow,
+    .egh-flow-button__native-right {
         transition-duration: .01ms !important;
     }
 }
