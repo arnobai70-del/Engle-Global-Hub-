@@ -51,10 +51,10 @@ final class RemainingScreensUiContractTest extends TestCase
     public function test_remaining_screens_each_open_with_exactly_one_page_heading(): void
     {
         $screens = [
-            'hotels.index' => 'Find a stay for your journey',
+            'hotels.index' => 'Find the right stay for every journey',
             'hotels.rooms' => 'Choose the room and rate for your stay',
             'hotels.booking' => 'Guest details for your stay',
-            'tours.index' => 'Explore tours for your destination',
+            'tours.index' => 'Turn every destination into an experience',
         ];
 
         foreach ($screens as $routeName => $heading) {
@@ -90,7 +90,7 @@ final class RemainingScreensUiContractTest extends TestCase
         $this->assertIsString($html);
 
         $this->assertStringContainsString(
-            'Prepare a work visa application',
+            'Prepare for a work visa consultation',
             $html,
         );
 
