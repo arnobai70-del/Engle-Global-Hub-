@@ -40,7 +40,9 @@ class SettingPageController extends Controller
 
         $activeGroup = $requestedGroup !== '' && $groups->has($requestedGroup)
             ? $requestedGroup
-            : ($groups->keys()->first() ?? 'general');
+            : ($groups->has('general')
+                ? 'general'
+                : ($groups->keys()->first() ?? 'general'));
 
         $activeSettings = $groups->get(
             $activeGroup,
