@@ -67,6 +67,11 @@ class HomepageContentController extends Controller
             'youtube_url' => $data['youtube_url'] ?? null,
         ]);
         $this->saveGroup('homepage', [
+            'news_enabled' => $request->boolean('news_enabled') ? '1' : '0',
+            'news_label' => $data['news_label'] ?? null,
+            'news_text' => $data['news_text'] ?? null,
+            'news_url' => $data['news_url'] ?? null,
+            'news_link_label' => $data['news_link_label'] ?? null,
             'hero_eyebrow' => $data['hero_eyebrow'] ?? null,
             'hero_title' => $data['hero_title'],
             'hero_accent' => $data['hero_accent'] ?? null,
