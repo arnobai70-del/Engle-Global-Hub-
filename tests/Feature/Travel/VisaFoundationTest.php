@@ -22,16 +22,21 @@ class VisaFoundationTest extends TestCase
         }
     }
 
-    public function test_guest_is_redirected_from_visa_service(): void { $this->get(route('visa.index'))->assertRedirect(route('login')); }
+    public function test_guest_can_browse_visa_landing_page(): void
+    {
+        $this->get(route('visa.index'))->assertOk()->assertSee('Demo Preview');
+    }
 
     public function test_verified_customer_sees_demo_preview_and_authority_disclaimer(): void
     {
         $this->actingAs($this->customer())->get(route('visa.index'))->assertOk()->assertSee('Demo Preview')->assertSee('Visa approval')->assertSee('relevant government authority');
     }
 
-    public function test_user_without_permission_cannot_access_visa_service(): void
+    public function test_user_without_permission_can_browse_landing_but_cannot_lookup_requirements(): void
     {
-        $user=User::factory()->create(['email_verified_at'=>now()]); $this->actingAs($user)->get(route('visa.index'))->assertForbidden();
+        $user=User::factory()->create(['email_verified_at'=>now()]);
+        $this->actingAs($user)->get(route('visa.index'))->assertOk()->assertSee('Demo Preview');
+        $this->actingAs($user)->post(route('visa.requirements'), $this->validRequest())->assertForbidden();
     }
 
     public function test_unconfigured_requirement_lookup_returns_demo_guidance(): void
