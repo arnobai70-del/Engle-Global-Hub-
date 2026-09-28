@@ -13,6 +13,11 @@ class HomepageSettingsSeeder extends Seeder
         $settings = [
             ['general', 'site_tagline', 'Travel & Visa Services'],
             ['general', 'footer_description', 'Your trusted global travel and visa partner. We make travel, work, and study abroad simpler and easier.'],
+            ['homepage', 'news_enabled', '1'],
+            ['homepage', 'news_label', 'Latest News'],
+            ['homepage', 'news_text', 'Welcome to Eagle Global Hub LTD — Travel & Visa Services.'],
+            ['homepage', 'news_url', ''],
+            ['homepage', 'news_link_label', 'Learn More'],
             ['homepage', 'hero_eyebrow', 'EXPLORE · BOOK · TRAVEL · GROW'],
             ['homepage', 'hero_title', 'Travel the World with'],
             ['homepage', 'hero_accent', 'Eagle Global Hub'],
