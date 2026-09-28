@@ -19,27 +19,50 @@ class UpdateSettingRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'value' => [
-                'nullable',
+        $group = (string) $this->route('group');
+        $key = (string) $this->route('key');
+        $isMetaPixelId = $group === 'analytics' && $key === 'meta_pixel_id';
+        $isMetaPixelEnabled = $group === 'analytics' && $key === 'meta_pixel_enabled';
+
+        $valueRules = ['nullable'];
+
+        if ($isMetaPixelId) {
+            $valueRules[] = 'string';
+            $valueRules[] = 'regex:/^\d{5,30}$/';
+        }
+
+        $allowedTypes = match (true) {
+            $isMetaPixelId => ['string'],
+            $isMetaPixelEnabled => ['boolean'],
+            default => [
+                'string',
+                'integer',
+                'float',
+                'boolean',
+                'json',
             ],
+        };
+
+        return [
+            'value' => $valueRules,
 
             'type' => [
                 'required',
                 'string',
-                Rule::in([
-                    'string',
-                    'integer',
-                    'float',
-                    'boolean',
-                    'json',
-                ]),
+                Rule::in($allowedTypes),
             ],
 
             'is_public' => [
                 'required',
                 'boolean',
             ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'value.regex' => 'The Meta Pixel ID must contain digits only.',
         ];
     }
 }
