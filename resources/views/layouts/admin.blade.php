@@ -180,6 +180,8 @@
             }
         }
     </style>
+
+    @stack('head')
 </head>
 
 @php
