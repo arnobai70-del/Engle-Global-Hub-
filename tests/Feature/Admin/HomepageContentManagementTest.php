@@ -26,6 +26,11 @@ class HomepageContentManagementTest extends TestCase
         $payload = [
             'site_name' => 'Eagle Global Hub LTD',
             'site_tagline' => 'Travel & Visa Services',
+            'news_enabled' => '1',
+            'news_label' => 'Latest News',
+            'news_text' => 'Travel service updates appear here.',
+            'news_url' => 'https://example.com/news',
+            'news_link_label' => 'Read More',
             'hero_title' => 'Travel the World with',
             'hero_accent' => 'Eagle Global Hub',
             'seo_title' => 'Eagle Global Hub | Travel Services',
@@ -35,6 +40,8 @@ class HomepageContentManagementTest extends TestCase
         ];
         $this->actingAs($user)->patch(route('admin.homepage.settings.update'), $payload)->assertRedirect();
         $this->assertDatabaseHas('settings', ['group' => 'seo', 'key' => 'home_meta_title', 'value' => $payload['seo_title']]);
+        $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'news_enabled', 'value' => '1']);
+        $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'news_text', 'value' => $payload['news_text']]);
     }
 
     public function test_super_admin_can_create_and_hide_repeatable_homepage_content(): void

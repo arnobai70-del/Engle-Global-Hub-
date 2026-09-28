@@ -23,12 +23,14 @@ class PublicPagesTest extends TestCase
         }
     }
 
-    public function test_support_page_does_not_fabricate_contact_details(): void
+    public function test_support_page_renders_only_the_official_contact_details(): void
     {
         $this->get(route('support'))
             ->assertOk()
-            ->assertSee('No public support email')
-            ->assertSee('configured in this website yet')
+            ->assertSee('info@eagleglobalhub.com')
+            ->assertSee('01953626481')
+            ->assertSee('Mysha Chowdhury Tower')
+            ->assertSee('Pragati Sharani')
             ->assertDontSee('support@')
             ->assertDontSee('+880')
             ->assertDontSee('registration number');

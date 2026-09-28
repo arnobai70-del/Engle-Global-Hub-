@@ -211,7 +211,7 @@ final class FeatureVisibilityTest extends TestCase
             ->get(route('hotels.index'))
             ->assertOk()
             ->assertSee('Super Admin Preview:')
-            ->assertSee('Hotel service is not configured');
+            ->assertSee('Demo Preview');
 
         $this->actingAs($superAdmin)
             ->postJson(route('hotels.search'), [])
@@ -225,14 +225,16 @@ final class FeatureVisibilityTest extends TestCase
             ]);
 
         $this->actingAs($superAdmin)
-            ->postJson(route('hotels.search'), [
+            ->post(route('hotels.search'), [
                 'destination' => 'Dhaka',
                 'check_in' => now()->addDay()->toDateString(),
                 'check_out' => now()->addDays(2)->toDateString(),
                 'adults' => 1,
                 'rooms' => 1,
             ])
-            ->assertServiceUnavailable();
+            ->assertOk()
+            ->assertSee('Demo Preview')
+            ->assertSee('Sample content shown for demonstration');
 
         $this->assertFalse(app(FeatureManager::class)->isEnabled('hotels'));
         $this->assertSame(

@@ -53,7 +53,7 @@ class SettingControllerTest extends TestCase
         $this->actingAs($user)
             ->getJson(route('admin.settings.index'))
             ->assertOk()
-            ->assertJsonCount(3, 'data')
+            ->assertJsonCount(7, 'data')
             ->assertJsonFragment([
                 'group' => 'general',
                 'key' => 'site_name',

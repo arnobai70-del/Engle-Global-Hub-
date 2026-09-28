@@ -18,9 +18,11 @@ class HotelFoundationTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_guest_is_redirected_from_hotel_service(): void
+    public function test_guest_can_browse_hotel_landing_page(): void
     {
-        $this->get(route('hotels.index'))->assertRedirect(route('login'));
+        $this->get(route('hotels.index'))
+            ->assertOk()
+            ->assertSee('Demo Preview');
     }
 
     public function test_verified_customer_sees_demo_preview_when_provider_is_unavailable(): void
@@ -30,10 +32,18 @@ class HotelFoundationTest extends TestCase
             ->assertDontSee('booking confirmed');
     }
 
-    public function test_user_without_permission_cannot_access_hotel_service(): void
+    public function test_user_without_permission_can_browse_landing_but_cannot_search(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
-        $this->actingAs($user)->get(route('hotels.index'))->assertForbidden();
+
+        $this->actingAs($user)
+            ->get(route('hotels.index'))
+            ->assertOk()
+            ->assertSee('Demo Preview');
+
+        $this->actingAs($user)
+            ->post(route('hotels.search'), $this->validSearch())
+            ->assertForbidden();
     }
 
     public function test_unconfigured_search_returns_clearly_labelled_demo_results(): void

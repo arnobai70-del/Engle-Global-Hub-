@@ -1,5 +1,7 @@
 @extends('layouts.site')
 
+@php($demoMode = $demoMode ?? false)
+
 @section('title', 'Hotel Results')
 @section('meta_description', $demoMode ? 'Demo hotel search results. Sample content only; live availability appears when the hotel provider is connected.' : 'Live hotel search results from the configured provider.')
 @section('canonical', route('hotels.index'))
