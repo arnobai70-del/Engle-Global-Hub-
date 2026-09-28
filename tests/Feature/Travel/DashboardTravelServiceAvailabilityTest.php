@@ -22,8 +22,7 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
     public function test_dashboard_shows_truthful_unconfigured_service_states_by_default(): void
     {
         $customer = $this->customer();
-
-        $this->actingAs($customer)
+        $html = $this->actingAs($customer)
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSee('Hotels')
@@ -32,9 +31,12 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
             ->assertSee('Not Configured')
             ->assertSee('not configured for customer use')
             ->assertDontSee('Coming Soon')
-            ->assertDontSee('href="'.route('hotels.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
-            ->assertDontSee('href="'.route('tours.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
-            ->assertDontSee('href="'.route('visa.index').'" class="dashboard-service-card dashboard-service-card-link"', false);
+            ->getContent();
+
+        $this->assertIsString($html);
+        $this->assertDoesNotMatchRegularExpression($this->serviceCardLinkPattern(route('hotels.index')), $html);
+        $this->assertDoesNotMatchRegularExpression($this->serviceCardLinkPattern(route('tours.index')), $html);
+        $this->assertDoesNotMatchRegularExpression($this->serviceCardLinkPattern(route('visa.index')), $html);
     }
 
     public function test_configured_service_becomes_a_dashboard_link_without_exposing_secrets(): void
@@ -42,14 +44,16 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
         $this->configureHotelProvider('dashboard-secret-must-not-render');
 
         $customer = $this->customer();
-
-        $this->actingAs($customer)
+        $html = $this->actingAs($customer)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('href="'.route('hotels.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
             ->assertSee('Search configured hotel availability')
             ->assertSee('Available')
-            ->assertDontSee('dashboard-secret-must-not-render');
+            ->assertDontSee('dashboard-secret-must-not-render')
+            ->getContent();
+
+        $this->assertIsString($html);
+        $this->assertMatchesRegularExpression($this->serviceCardLinkPattern(route('hotels.index')), $html);
     }
 
     public function test_configured_service_is_not_linked_without_customer_permission(): void
@@ -60,13 +64,21 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $this->actingAs($user)
+        $html = $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSee('This service is not enabled for your account')
             ->assertSee('Unavailable')
-            ->assertDontSee('href="'.route('hotels.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
-            ->assertDontSee('permission-test-secret');
+            ->assertDontSee('permission-test-secret')
+            ->getContent();
+
+        $this->assertIsString($html);
+        $this->assertDoesNotMatchRegularExpression($this->serviceCardLinkPattern(route('hotels.index')), $html);
+    }
+
+    private function serviceCardLinkPattern(string $url): string
+    {
+        return '/href="'.preg_quote($url, '/').'"\s+class="dashboard-service-card dashboard-service-card-link"/s';
     }
 
     private function customer(): User
