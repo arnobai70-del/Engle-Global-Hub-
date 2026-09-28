@@ -103,27 +103,28 @@
     transform: scaleX(1);
 }
 
+/* Keep the carousel navigation light and independent instead of a heavy pill. */
 .egho-rail-head[data-egho-rail-nav] {
-    gap: 4px;
-    padding: 4px;
-    border: 1px solid rgba(8,47,94,.13);
-    border-radius: 999px;
-    background: linear-gradient(135deg, #0a386c 0%, #0b4d8d 100%);
-    box-shadow: 0 10px 24px rgba(7,35,69,.16);
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .egho-rail-button {
     position: relative !important;
     display: grid !important;
     place-items: center !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: 42px !important;
+    height: 42px !important;
     overflow: hidden !important;
-    border: 1px solid rgba(255,255,255,.18) !important;
+    border: 1px solid #d5e3f3 !important;
     border-radius: 50% !important;
-    background: rgba(255,255,255,.08) !important;
-    color: #fff !important;
-    box-shadow: none !important;
+    background: #fff !important;
+    color: #0b4d8d !important;
+    box-shadow: 0 6px 16px rgba(18, 86, 160, .08) !important;
     transition:
         transform .2s cubic-bezier(.2,.8,.2,1),
         background .2s ease,
@@ -137,7 +138,7 @@
     height: 18px !important;
     fill: none !important;
     stroke: currentColor !important;
-    stroke-width: 2.3 !important;
+    stroke-width: 2.2 !important;
     stroke-linecap: round !important;
     stroke-linejoin: round !important;
     transition: transform .22s ease;
@@ -145,34 +146,35 @@
 
 .egho-rail-button:hover:not(:disabled),
 .egho-rail-button:focus-visible:not(:disabled) {
-    transform: translateY(-3px) scale(1.08) !important;
-    border-color: #ffd24f !important;
-    background: linear-gradient(135deg, #ffd24f 0%, #f59e0b 100%) !important;
-    color: #10254a !important;
-    box-shadow: 0 10px 22px rgba(245,158,11,.34) !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    border-color: #1256a0 !important;
+    background: #1256a0 !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(18, 86, 160, .16) !important;
     outline: none !important;
 }
 
 .egho-rail-button[data-egho-rail-prev]:hover svg,
 .egho-rail-button[data-egho-rail-prev]:focus-visible svg {
-    transform: translateX(-3px);
+    transform: translateX(-2px);
 }
 
 .egho-rail-button[data-egho-rail-next]:hover svg,
 .egho-rail-button[data-egho-rail-next]:focus-visible svg {
-    transform: translateX(3px);
+    transform: translateX(2px);
 }
 
 .egho-rail-button:active:not(:disabled) {
-    transform: translateY(0) scale(.91) !important;
+    transform: translateY(0) scale(.94) !important;
+    box-shadow: 0 3px 9px rgba(18, 86, 160, .12) !important;
 }
 
 .egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next]:not(:disabled),
 .egho-rail.is-moving-prev .egho-rail-button[data-egho-rail-prev]:not(:disabled) {
-    border-color: #ffd24f !important;
-    background: #ffd24f !important;
-    color: #10254a !important;
-    box-shadow: 0 8px 18px rgba(245,158,11,.24) !important;
+    border-color: #c7dcf4 !important;
+    background: #edf5ff !important;
+    color: #1256a0 !important;
+    box-shadow: 0 6px 16px rgba(18, 86, 160, .10) !important;
 }
 
 .egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next] svg {
@@ -208,12 +210,13 @@
     }
 
     .egho-rail-head[data-egho-rail-nav] {
-        padding: 3px;
+        gap: 7px;
+        padding: 0;
     }
 
     .egho-rail-button {
-        width: 39px !important;
-        height: 39px !important;
-        flex: 0 0 39px !important;
+        width: 40px !important;
+        height: 40px !important;
+        flex: 0 0 40px !important;
     }
 }
