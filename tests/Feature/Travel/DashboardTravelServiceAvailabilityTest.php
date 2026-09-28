@@ -32,9 +32,9 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
             ->assertSee('Not Configured')
             ->assertSee('not configured for customer use')
             ->assertDontSee('Coming Soon')
-            ->assertDontSee('href="'.route('hotels.index').'"', false)
-            ->assertDontSee('href="'.route('tours.index').'"', false)
-            ->assertDontSee('href="'.route('visa.index').'"', false);
+            ->assertDontSee('href="'.route('hotels.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
+            ->assertDontSee('href="'.route('tours.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
+            ->assertDontSee('href="'.route('visa.index').'" class="dashboard-service-card dashboard-service-card-link"', false);
     }
 
     public function test_configured_service_becomes_a_dashboard_link_without_exposing_secrets(): void
@@ -46,7 +46,7 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
         $this->actingAs($customer)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('href="'.route('hotels.index').'"', false)
+            ->assertSee('href="'.route('hotels.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
             ->assertSee('Search configured hotel availability')
             ->assertSee('Available')
             ->assertDontSee('dashboard-secret-must-not-render');
@@ -65,7 +65,7 @@ class DashboardTravelServiceAvailabilityTest extends TestCase
             ->assertOk()
             ->assertSee('This service is not enabled for your account')
             ->assertSee('Unavailable')
-            ->assertDontSee('href="'.route('hotels.index').'"', false)
+            ->assertDontSee('href="'.route('hotels.index').'" class="dashboard-service-card dashboard-service-card-link"', false)
             ->assertDontSee('permission-test-secret');
     }
 
