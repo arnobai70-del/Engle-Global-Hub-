@@ -1,4 +1,7 @@
 @extends('layouts.site')
+
+@php($demoMode = $demoMode ?? false)
+
 @section('title', 'Tour Results')
 @section('meta_description', $demoMode ? 'Demo tour results with sample content only.' : 'Live tour results from the configured provider.')
 @section('canonical', route('tours.index'))
