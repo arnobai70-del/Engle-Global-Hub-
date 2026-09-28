@@ -13,16 +13,21 @@ class TourFoundationTest extends TestCase
     use RefreshDatabase;
     protected function setUp(): void { parent::setUp(); $this->seed(RolePermissionSeeder::class); }
 
-    public function test_guest_is_redirected_from_tour_service(): void { $this->get(route('tours.index'))->assertRedirect(route('login')); }
+    public function test_guest_can_browse_tour_landing_page(): void
+    {
+        $this->get(route('tours.index'))->assertOk()->assertSee('Demo Preview');
+    }
 
     public function test_verified_customer_sees_demo_preview_when_provider_is_unavailable(): void
     {
         $this->actingAs($this->customer())->get(route('tours.index'))->assertOk()->assertSee('Demo Preview')->assertSee('View Demo Activities');
     }
 
-    public function test_user_without_permission_cannot_access_tour_service(): void
+    public function test_user_without_permission_can_browse_landing_but_cannot_search(): void
     {
-        $user=User::factory()->create(['email_verified_at'=>now()]); $this->actingAs($user)->get(route('tours.index'))->assertForbidden();
+        $user=User::factory()->create(['email_verified_at'=>now()]);
+        $this->actingAs($user)->get(route('tours.index'))->assertOk()->assertSee('Demo Preview');
+        $this->actingAs($user)->post(route('tours.search'), $this->validSearch())->assertForbidden();
     }
 
     public function test_unconfigured_tour_search_returns_demo_results(): void
