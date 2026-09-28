@@ -1,11 +1,9 @@
-/* Interaction polish for the Popular Destinations carousel. */
+/* Motion and interaction polish for the Popular Destinations carousel. */
 .egho-destinations.is-rail {
     scroll-behavior: auto !important;
     scroll-snap-type: x mandatory;
 }
 
-/* Infinite autoplay is positioned frame-by-frame in JS; browser snapping would
-   fight that motion and make the automatic glide look jerky. */
 .egho-rail.is-infinite-rail .egho-destinations.is-rail,
 .egho-rail.is-rail-moving .egho-destinations.is-rail {
     scroll-snap-type: none !important;
@@ -15,10 +13,10 @@
     position: relative;
     transform-origin: center center;
     transition:
-        transform .34s cubic-bezier(.2,.75,.25,1),
-        box-shadow .34s ease,
-        filter .34s ease,
-        opacity .34s ease !important;
+        transform .42s cubic-bezier(.2,.75,.25,1),
+        box-shadow .42s ease,
+        filter .42s ease,
+        opacity .42s ease !important;
     will-change: transform, filter;
 }
 
@@ -29,9 +27,9 @@
     z-index: 1;
     pointer-events: none;
     border-radius: inherit;
-    background: linear-gradient(112deg, transparent 22%, rgba(255,255,255,.30) 48%, transparent 74%);
-    transform: translateX(-145%);
-    transition: transform .8s ease;
+    background: linear-gradient(112deg, transparent 20%, rgba(255,255,255,.30) 48%, transparent 76%);
+    transform: translateX(-150%);
+    transition: transform .9s ease;
 }
 
 .egho-destination-copy {
@@ -48,122 +46,151 @@
 .egho-destination:hover::after,
 .egho-destination:focus-within::after,
 .egho-destination.is-rail-active::after {
-    transform: translateX(145%);
+    transform: translateX(150%);
 }
 
 .egho-destination.is-rail-active {
-    transform: translateY(-3px) scale(1.012);
-    box-shadow: 0 17px 34px rgba(7,35,69,.22) !important;
-    filter: saturate(1.075) brightness(1.02) !important;
+    transform: translateY(-4px) scale(1.018);
+    box-shadow: 0 18px 38px rgba(7,35,69,.24) !important;
+    filter: saturate(1.09) brightness(1.025) !important;
 }
 
 .egho-rail.is-rail-moving .egho-destination {
     opacity: .985;
-    filter: saturate(1.02) brightness(1.01) !important;
 }
 
-/* Make the destination actions feel like one deliberate control group instead
-   of two plain circles floating beside the section heading. */
+.egho-rail.is-moving-next .egho-destination.is-rail-active {
+    transform: translateY(-4px) scale(1.025);
+}
+
 .egho-rail-head > .egho-section-link {
+    position: relative;
     min-height: 38px;
-    padding: 8px 13px;
-    border: 1px solid #d7e5f7;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
-    box-shadow: 0 5px 14px rgba(11,37,69,.06);
-    transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    padding: 8px 4px;
+    color: #0b4d9a;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.egho-rail-head > .egho-section-link::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    height: 2px;
+    border-radius: 999px;
+    background: #f59e0b;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease;
 }
 
 .egho-rail-head > .egho-section-link:hover,
 .egho-rail-head > .egho-section-link:focus-visible {
-    transform: translateY(-2px);
-    border-color: #a9c9f2;
-    background: #fff;
-    box-shadow: 0 9px 20px rgba(11,72,145,.12);
+    color: #082f5e;
+    transform: translateY(-1px);
     outline: none;
 }
 
+.egho-rail-head > .egho-section-link:hover::after,
+.egho-rail-head > .egho-section-link:focus-visible::after {
+    transform: scaleX(1);
+}
+
 .egho-rail-head[data-egho-rail-nav] {
-    gap: 6px;
+    gap: 4px;
     padding: 4px;
-    border: 1px solid #dce7f4;
-    border-radius: 16px;
-    background: rgba(255,255,255,.86);
-    box-shadow: 0 8px 20px rgba(11,37,69,.07);
-    backdrop-filter: blur(8px);
+    border: 1px solid rgba(8,47,94,.13);
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0a386c 0%, #0b4d8d 100%);
+    box-shadow: 0 10px 24px rgba(7,35,69,.16);
 }
 
 .egho-rail-button {
     position: relative !important;
-    overflow: hidden !important;
+    display: grid !important;
+    place-items: center !important;
     width: 40px !important;
     height: 40px !important;
-    border: 1px solid transparent !important;
-    border-radius: 12px !important;
-    background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%) !important;
-    color: #0b3c78 !important;
-    box-shadow: inset 0 0 0 1px #d8e5f5, 0 4px 10px rgba(11,37,69,.06) !important;
-    font-size: 23px;
-    font-weight: 800;
-    line-height: 1;
+    overflow: hidden !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,.08) !important;
+    color: #fff !important;
+    box-shadow: none !important;
     transition:
         transform .2s cubic-bezier(.2,.8,.2,1),
         background .2s ease,
+        border-color .2s ease,
         color .2s ease,
         box-shadow .2s ease !important;
 }
 
-.egho-rail-button::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.55), rgba(255,255,255,0) 68%);
-    opacity: 0;
-    transform: scale(.45);
+.egho-rail-button svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2.3 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    transition: transform .22s ease;
 }
 
 .egho-rail-button:hover:not(:disabled),
 .egho-rail-button:focus-visible:not(:disabled) {
-    transform: translateY(-2px) !important;
-    background: linear-gradient(135deg, #1267df 0%, #0a4fae 100%) !important;
-    color: #fff !important;
-    box-shadow: 0 11px 22px rgba(11,83,179,.24) !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    border-color: #ffd24f !important;
+    background: linear-gradient(135deg, #ffd24f 0%, #f59e0b 100%) !important;
+    color: #10254a !important;
+    box-shadow: 0 8px 18px rgba(245,158,11,.28) !important;
     outline: none !important;
 }
 
-.egho-rail-button:focus-visible:not(:disabled) {
-    box-shadow: 0 0 0 3px rgba(18,103,223,.18), 0 11px 22px rgba(11,83,179,.24) !important;
+.egho-rail-button[data-egho-rail-prev]:hover svg,
+.egho-rail-button[data-egho-rail-prev]:focus-visible svg {
+    transform: translateX(-2px);
+}
+
+.egho-rail-button[data-egho-rail-next]:hover svg,
+.egho-rail-button[data-egho-rail-next]:focus-visible svg {
+    transform: translateX(2px);
 }
 
 .egho-rail-button:active:not(:disabled) {
-    transform: translateY(0) scale(.96) !important;
-}
-
-.egho-rail-button.is-rail-pulse:not(:disabled) {
-    animation: eghRailButtonPress .36s cubic-bezier(.2,.8,.2,1) !important;
-}
-
-.egho-rail-button.is-rail-pulse::before {
-    animation: eghRailButtonRipple .36s ease !important;
+    transform: translateY(0) scale(.93) !important;
 }
 
 .egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next]:not(:disabled),
 .egho-rail.is-moving-prev .egho-rail-button[data-egho-rail-prev]:not(:disabled) {
-    background: linear-gradient(135deg, #1267df 0%, #0a4fae 100%) !important;
-    color: #fff !important;
-    box-shadow: 0 9px 18px rgba(11,83,179,.20) !important;
+    border-color: #ffd24f !important;
+    background: #ffd24f !important;
+    color: #10254a !important;
+    box-shadow: 0 8px 18px rgba(245,158,11,.24) !important;
 }
 
-@keyframes eghRailButtonPress {
-    0% { transform: translateY(-2px) scale(1); }
-    50% { transform: translateY(0) scale(.94); }
-    100% { transform: translateY(-2px) scale(1); }
+.egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next] svg {
+    animation: eghRailArrowNext .62s ease;
 }
 
-@keyframes eghRailButtonRipple {
-    0% { opacity: .55; transform: scale(.35); }
-    100% { opacity: 0; transform: scale(1.45); }
+.egho-rail.is-moving-prev .egho-rail-button[data-egho-rail-prev] svg {
+    animation: eghRailArrowPrev .62s ease;
+}
+
+@keyframes eghRailArrowNext {
+    0% { transform: translateX(0); opacity: 1; }
+    45% { transform: translateX(7px); opacity: .3; }
+    46% { transform: translateX(-7px); opacity: .3; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes eghRailArrowPrev {
+    0% { transform: translateX(0); opacity: 1; }
+    45% { transform: translateX(-7px); opacity: .3; }
+    46% { transform: translateX(7px); opacity: .3; }
+    100% { transform: translateX(0); opacity: 1; }
 }
 
 @media (max-width: 760px) {
@@ -173,18 +200,17 @@
     }
 
     .egho-destination.is-rail-active {
-        transform: translateY(-2px) scale(1.008);
+        transform: translateY(-2px) scale(1.01);
     }
 
     .egho-rail-head[data-egho-rail-nav] {
         padding: 3px;
-        border-radius: 15px;
     }
 
     .egho-rail-button {
-        width: 40px !important;
-        height: 40px !important;
-        flex: 0 0 40px !important;
+        width: 39px !important;
+        height: 39px !important;
+        flex: 0 0 39px !important;
     }
 }
 
@@ -192,8 +218,9 @@
     .egho-destination,
     .egho-destination::after,
     .egho-rail-button,
-    .egho-rail-button::before,
-    .egho-rail-head > .egho-section-link {
+    .egho-rail-button svg,
+    .egho-rail-head > .egho-section-link,
+    .egho-rail-head > .egho-section-link::after {
         transition: none !important;
         animation: none !important;
     }
@@ -206,11 +233,5 @@
     .egho-rail-head > .egho-section-link:hover,
     .egho-rail-head > .egho-section-link:focus-visible {
         transform: none !important;
-    }
-
-    .egho-rail-button:hover:not(:disabled),
-    .egho-rail-button:focus-visible:not(:disabled) {
-        background: #0b63f6 !important;
-        color: #fff !important;
     }
 }

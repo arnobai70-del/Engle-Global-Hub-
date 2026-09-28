@@ -1,11 +1,10 @@
-/* Homepage news / announcement ticker. */
+/* Homepage news / announcement ticker with a CSS-only seamless TV headline loop. */
 .egho-news-ticker {
     position: relative;
     z-index: 12;
     overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    background:
-        linear-gradient(90deg, #082f5e 0%, #0b3d73 52%, #0d4b83 100%);
+    background: linear-gradient(90deg, #082f5e 0%, #0b3d73 52%, #0d4b83 100%);
     color: #fff;
     box-shadow: 0 8px 22px rgba(7, 31, 61, 0.14);
 }
@@ -23,7 +22,7 @@
     display: flex;
     align-items: center;
     min-height: 44px;
-    gap: 18px;
+    gap: 16px;
 }
 
 .egho-news-ticker-label {
@@ -32,16 +31,16 @@
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
-    min-height: 28px;
-    padding: 6px 13px 6px 14px;
-    border: 1px solid rgba(255, 196, 61, .82);
-    border-radius: 9px;
-    background: linear-gradient(135deg, #ffc43d 0%, #f59e0b 100%);
+    min-height: 30px;
+    padding: 7px 14px 7px 15px;
+    border: 1px solid rgba(255, 205, 75, .88);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ffd24f 0%, #f59e0b 100%);
     color: #10254a;
-    box-shadow: 0 6px 14px rgba(245, 158, 11, .26);
+    box-shadow: 0 7px 16px rgba(245, 158, 11, .25);
     font-size: 11px;
     font-weight: 900;
-    letter-spacing: 0.09em;
+    letter-spacing: .085em;
     line-height: 1;
     text-transform: uppercase;
     white-space: nowrap;
@@ -51,12 +50,10 @@
     content: "";
     position: absolute;
     top: 50%;
-    right: -7px;
-    width: 12px;
-    height: 12px;
-    border-top: 1px solid rgba(255, 196, 61, .82);
-    border-right: 1px solid rgba(255, 196, 61, .82);
-    background: #f7a90f;
+    right: -6px;
+    width: 11px;
+    height: 11px;
+    background: #f8aa11;
     transform: translateY(-50%) rotate(45deg);
 }
 
@@ -65,47 +62,48 @@
     min-width: 0;
     flex: 1 1 auto;
     overflow: hidden;
-    scroll-behavior: auto;
-    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 2.5%, #000 97.5%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 2.5%, #000 97.5%, transparent);
 }
 
 .egho-news-ticker-track {
     display: flex;
     width: max-content;
     align-items: center;
-    color: rgba(255, 255, 255, 0.97);
-    font-size: 13.5px;
-    font-weight: 700;
-    line-height: 1.35;
-    white-space: nowrap;
-    animation: egho-news-scroll 12s linear infinite;
+    animation: egho-news-marquee 32s linear infinite;
+    transform: translate3d(0, 0, 0);
     will-change: transform;
 }
 
-.egho-news-ticker.is-ticker-enhanced .egho-news-ticker-track {
-    animation: none;
-    will-change: auto;
+.egho-news-ticker-group {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
 }
 
-.egho-news-ticker-track span {
+.egho-news-ticker-group span {
     display: inline-flex;
     flex: 0 0 auto;
     align-items: center;
     min-width: 320px;
+    padding: 0 54px 0 0;
     box-sizing: border-box;
-    padding-right: 88px;
+    color: rgba(255, 255, 255, .98);
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
 }
 
-.egho-news-ticker-track span::before {
+.egho-news-ticker-group span::before {
     content: "";
     flex: 0 0 auto;
     width: 6px;
     height: 6px;
     margin: 0 13px 0 2px;
     border-radius: 50%;
-    background: #ffc43d;
-    box-shadow: 0 0 0 4px rgba(255, 196, 61, .12), 0 0 10px rgba(255, 196, 61, .38);
+    background: #ffd24f;
+    box-shadow: 0 0 0 4px rgba(255, 210, 79, .12), 0 0 10px rgba(255, 210, 79, .38);
 }
 
 .egho-news-ticker-link {
@@ -115,10 +113,10 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    min-height: 30px;
-    padding: 6px 11px;
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: 999px;
+    min-height: 32px;
+    padding: 7px 12px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 10px;
     background: rgba(255,255,255,.08);
     color: #fff;
     font-size: 12px;
@@ -136,10 +134,10 @@
 .egho-news-ticker-link:hover,
 .egho-news-ticker-link:focus-visible {
     transform: translateY(-1px);
-    border-color: rgba(255,196,61,.7);
-    background: rgba(255,196,61,.14);
-    color: #ffd56a;
-    box-shadow: 0 7px 16px rgba(2, 24, 52, .16);
+    border-color: #ffd24f;
+    background: #ffd24f;
+    color: #10254a;
+    box-shadow: 0 8px 18px rgba(2, 24, 52, .2);
     outline: none;
 }
 
@@ -148,7 +146,7 @@
     transform: translateX(3px);
 }
 
-@keyframes egho-news-scroll {
+@keyframes egho-news-marquee {
     from { transform: translate3d(0, 0, 0); }
     to { transform: translate3d(-50%, 0, 0); }
 }
@@ -156,13 +154,12 @@
 @media (prefers-reduced-motion: reduce) {
     .egho-news-ticker-track {
         width: auto;
-        min-width: 0;
         animation: none;
         transform: none;
     }
 
-    .egho-news-ticker-track span[aria-hidden="true"],
-    .egho-news-ticker-track .is-news-clone {
+    .egho-news-ticker-group[aria-hidden="true"],
+    .egho-news-ticker-group span[aria-hidden="true"] {
         display: none;
     }
 
@@ -175,27 +172,26 @@
 @media (max-width: 640px) {
     .egho-news-ticker-inner {
         min-height: 42px;
-        gap: 12px;
+        gap: 11px;
     }
 
     .egho-news-ticker-label {
-        min-height: 26px;
-        padding: 5px 9px 5px 10px;
-        border-radius: 8px;
+        min-height: 27px;
+        padding: 6px 9px 6px 10px;
         font-size: 10px;
     }
 
     .egho-news-ticker-track {
+        animation-duration: 24s;
+    }
+
+    .egho-news-ticker-group span {
+        min-width: 255px;
+        padding-right: 38px;
         font-size: 12.5px;
-        animation-duration: 10s;
     }
 
-    .egho-news-ticker-track span {
-        min-width: 260px;
-        padding-right: 56px;
-    }
-
-    .egho-news-ticker-track span::before {
+    .egho-news-ticker-group span::before {
         margin-right: 10px;
     }
 
