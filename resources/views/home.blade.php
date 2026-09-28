@@ -102,8 +102,13 @@
         <strong class="egho-news-ticker-label">{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}</strong>
         <div class="egho-news-ticker-viewport">
             <div class="egho-news-ticker-track">
-                <span>{{ $newsText }}</span>
-                <span aria-hidden="true">{{ $newsText }}</span>
+                @foreach ([false, true] as $duplicateGroup)
+                    <div class="egho-news-ticker-group" @if($duplicateGroup) aria-hidden="true" @endif>
+                        @for ($tickerRepeat = 0; $tickerRepeat < 6; $tickerRepeat++)
+                            <span @if($duplicateGroup || $tickerRepeat > 0) aria-hidden="true" @endif>{{ $newsText }}</span>
+                        @endfor
+                    </div>
+                @endforeach
             </div>
         </div>
         @if($newsUrl !== '')
