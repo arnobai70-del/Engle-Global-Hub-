@@ -5,13 +5,20 @@
     @php
         $key = $tile['key'] ?? '';
         $serviceKey = $tile['service'] ?? null;
+        $visibilityKey = $key === 'work-visa'
+            ? 'visa'
+            : (is_string($serviceKey) && $serviceKey !== '' ? $serviceKey : null);
+        $isVisible = $visibilityKey === null
+            || app(\App\Services\Feature\FeatureManager::class)->isVisibleTo($visibilityKey, auth()->user());
         $tileLink = $key === 'work-visa' ? route('work-visa.index') : ($serviceKey ? $serviceLink($serviceKey) : ($tile['url'] ?? null));
         $tileStatus = $serviceKey ? $serviceStatus($serviceKey) : null;
     @endphp
-    @if ($tileLink)
-        <a href="{{ $tileLink }}" class="egho-tile"><span class="egho-tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{!! $tile['icon'] ?? '' !!}</svg></span><span><strong>{{ $tile['title'] }}</strong><small>{{ $tile['copy'] ?? $tile['subtitle'] ?? '' }}</small>@if ($tileStatus)<span @class(['egho-tile-status','is-live'=>$tileStatus['live']])>{{ $tileStatus['label'] }}</span>@endif</span></a>
-    @else
-        <span class="egho-tile"><span class="egho-tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{!! $tile['icon'] ?? '' !!}</svg></span><span><strong>{{ $tile['title'] }}</strong><small>{{ $tile['copy'] ?? $tile['subtitle'] ?? '' }}</small>@if ($tileStatus)<span @class(['egho-tile-status','is-live'=>$tileStatus['live']])>{{ $tileStatus['label'] }}</span>@elseif (! $serviceKey && $key !== 'work-visa')<span class="egho-tile-status is-planned">Not available yet</span>@endif</span></span>
+    @if ($isVisible)
+        @if ($tileLink)
+            <a href="{{ $tileLink }}" class="egho-tile"><span class="egho-tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{!! $tile['icon'] ?? '' !!}</svg></span><span><strong>{{ $tile['title'] }}</strong><small>{{ $tile['copy'] ?? $tile['subtitle'] ?? '' }}</small>@if ($tileStatus)<span @class(['egho-tile-status','is-live'=>$tileStatus['live']])>{{ $tileStatus['label'] }}</span>@endif</span></a>
+        @else
+            <span class="egho-tile"><span class="egho-tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{!! $tile['icon'] ?? '' !!}</svg></span><span><strong>{{ $tile['title'] }}</strong><small>{{ $tile['copy'] ?? $tile['subtitle'] ?? '' }}</small>@if ($tileStatus)<span @class(['egho-tile-status','is-live'=>$tileStatus['live']])>{{ $tileStatus['label'] }}</span>@elseif (! $serviceKey && $key !== 'work-visa')<span class="egho-tile-status is-planned">Not available yet</span>@endif</span></span>
+        @endif
     @endif
 @endforeach
 </div></div></section>
