@@ -49,9 +49,12 @@
             .egho-auth-brand-copy small{font-size:7.5px!important;letter-spacing:.04em!important}
         }
     </style>
+    @include('partials.analytics.meta-pixel-head')
 </head>
 
 <body class="auth-body">
+
+    @include('partials.analytics.meta-pixel-noscript')
 
     <main class="egho-auth">
 

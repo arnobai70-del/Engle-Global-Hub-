@@ -20,8 +20,11 @@
     <link rel="icon" type="image/png" href="{{ $siteLogo }}">
     @vite(['resources/css/app.css','resources/js/app.js']) {{ Vite::fonts() }}
     <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-chrome.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-home-dynamic.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-travel-pages.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">@stack('head')
+    @include('partials.analytics.meta-pixel-head')
 </head>
-<body class="site-body @yield('body_class')"><a href="#main-content" class="site-skip-link">Skip to content</a>
+<body class="site-body @yield('body_class')">
+@include('partials.analytics.meta-pixel-noscript')
+<a href="#main-content" class="site-skip-link">Skip to content</a>
 <header class="egho-header-shell">
 <div class="egho-topbar"><div class="egho-shell egho-topbar-inner"><div class="egho-topbar-group">
 @feature('support')<a class="egho-topbar-item" href="{{ route('support') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.6v4.9c0 4.6 3.1 7.6 7.5 8.5 4.4-.9 7.5-3.9 7.5-8.5V6.6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><strong>Customer Support</strong></a>@endfeature

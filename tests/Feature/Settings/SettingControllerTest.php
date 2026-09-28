@@ -53,12 +53,19 @@ class SettingControllerTest extends TestCase
         $this->actingAs($user)
             ->getJson(route('admin.settings.index'))
             ->assertOk()
-            ->assertJsonCount(7, 'data')
+            ->assertJsonCount(9, 'data')
             ->assertJsonFragment([
                 'group' => 'general',
                 'key' => 'site_name',
                 'value' => 'Eagle Global Hub LTD',
                 'type' => 'string',
+                'is_public' => true,
+            ])
+            ->assertJsonFragment([
+                'group' => 'analytics',
+                'key' => 'meta_pixel_enabled',
+                'value' => false,
+                'type' => 'boolean',
                 'is_public' => true,
             ]);
     }
@@ -161,6 +168,61 @@ class SettingControllerTest extends TestCase
             'value' => '1',
             'type' => 'boolean',
         ]);
+    }
+
+    public function test_meta_pixel_id_must_be_numeric(): void
+    {
+        $user = $this->createUserWithRole('super-admin');
+
+        $this->actingAs($user)
+            ->putJson(
+                route('admin.settings.update', [
+                    'group' => 'analytics',
+                    'key' => 'meta_pixel_id',
+                ]),
+                [
+                    'value' => 'pixel-123<script>',
+                    'type' => 'string',
+                    'is_public' => true,
+                ]
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['value']);
+    }
+
+    public function test_meta_pixel_settings_keep_their_expected_types(): void
+    {
+        $user = $this->createUserWithRole('super-admin');
+
+        $this->actingAs($user)
+            ->putJson(
+                route('admin.settings.update', [
+                    'group' => 'analytics',
+                    'key' => 'meta_pixel_enabled',
+                ]),
+                [
+                    'value' => '1',
+                    'type' => 'string',
+                    'is_public' => true,
+                ]
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['type']);
+
+        $this->actingAs($user)
+            ->putJson(
+                route('admin.settings.update', [
+                    'group' => 'analytics',
+                    'key' => 'meta_pixel_id',
+                ]),
+                [
+                    'value' => '123456789012345',
+                    'type' => 'boolean',
+                    'is_public' => true,
+                ]
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['type']);
     }
 
     public function test_unsupported_setting_type_is_rejected(): void
