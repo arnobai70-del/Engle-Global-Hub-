@@ -211,7 +211,7 @@ final class FeatureVisibilityTest extends TestCase
             ->get(route('hotels.index'))
             ->assertOk()
             ->assertSee('Super Admin Preview:')
-            ->assertSee('Hotel service is not configured');
+            ->assertSee('Demo Preview');
 
         $this->actingAs($superAdmin)
             ->postJson(route('hotels.search'), [])
