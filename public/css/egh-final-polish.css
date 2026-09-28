@@ -103,6 +103,119 @@
     word-break: normal;
 }
 
+/* ---------------------------------------------------- Public interactions */
+/* Shared motion for the public website's real controls. This deliberately
+   changes only interaction feedback; existing colours, routes, permissions and
+   submit behaviour stay untouched. */
+.site-body :is(
+    button:not(:disabled),
+    .site-button,
+    .egho-submit,
+    .egho-search-tab,
+    .egho-panel-cta,
+    .egho-promo-cta,
+    .egho-app-cta,
+    .egho-journey-cta,
+    .egho-section-link,
+    .egho-btn,
+    .egho-nav a,
+    .egho-nav-more > summary,
+    a.egho-tile
+) {
+    transform-origin: center;
+    transition:
+        transform .18s cubic-bezier(.2,.8,.2,1),
+        box-shadow .18s ease,
+        filter .18s ease,
+        border-color .18s ease,
+        background-color .18s ease,
+        color .18s ease !important;
+}
+
+.site-body :is(
+    button:not(:disabled),
+    .site-button,
+    .egho-submit,
+    .egho-search-tab,
+    .egho-panel-cta,
+    .egho-promo-cta,
+    .egho-app-cta,
+    .egho-journey-cta,
+    .egho-section-link,
+    .egho-btn,
+    .egho-nav a,
+    .egho-nav-more > summary,
+    a.egho-tile
+):hover {
+    transform: translateY(-2px) scale(1.015);
+    filter: brightness(1.035) saturate(1.025);
+    box-shadow: 0 10px 24px rgba(11, 37, 69, .14);
+}
+
+.site-body :is(
+    button:not(:disabled),
+    .site-button,
+    .egho-submit,
+    .egho-search-tab,
+    .egho-panel-cta,
+    .egho-promo-cta,
+    .egho-app-cta,
+    .egho-journey-cta,
+    .egho-section-link,
+    .egho-btn,
+    .egho-nav a,
+    .egho-nav-more > summary,
+    a.egho-tile
+):active {
+    transform: translateY(0) scale(.965);
+    filter: brightness(.99);
+    box-shadow: 0 4px 10px rgba(11, 37, 69, .10);
+}
+
+.site-body :is(
+    button,
+    .site-button,
+    .egho-submit,
+    .egho-search-tab,
+    .egho-panel-cta,
+    .egho-promo-cta,
+    .egho-app-cta,
+    .egho-journey-cta,
+    .egho-section-link,
+    .egho-btn,
+    .egho-nav a,
+    .egho-nav-more > summary,
+    a.egho-tile
+):focus-visible {
+    outline: 3px solid rgba(18, 86, 160, .22) !important;
+    outline-offset: 3px !important;
+}
+
+/* Primary public actions get a small highlight sweep on hover without changing
+   their text or click target. */
+.site-body :is(.site-button-primary, .egho-submit, .egho-panel-cta, .egho-promo-cta, .egho-btn) {
+    position: relative;
+    overflow: hidden;
+}
+
+.site-body :is(.site-button-primary, .egho-submit, .egho-panel-cta, .egho-promo-cta, .egho-btn)::after {
+    content: "";
+    position: absolute;
+    top: -35%;
+    bottom: -35%;
+    left: -45%;
+    width: 28%;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.34), transparent);
+    transform: skewX(-18deg) translateX(0);
+    transition: transform .48s ease;
+}
+
+.site-body :is(.site-button-primary, .egho-submit, .egho-panel-cta, .egho-promo-cta, .egho-btn):hover::after,
+.site-body :is(.site-button-primary, .egho-submit, .egho-panel-cta, .egho-promo-cta, .egho-btn):focus-visible::after {
+    transform: skewX(-18deg) translateX(520%);
+}
+
 /* ---------------------------------------------------------- Common mobile */
 @media (max-width: 900px) {
     .egho-header-inner {
@@ -262,6 +375,43 @@
     .egh-travel-page button,
     .egh-travel-page .egho-btn {
         max-width: 100%;
+    }
+
+    /* Hover-only lift should not leave touch controls visually displaced. */
+    .site-body :is(
+        button:not(:disabled),
+        .site-button,
+        .egho-submit,
+        .egho-search-tab,
+        .egho-panel-cta,
+        .egho-promo-cta,
+        .egho-app-cta,
+        .egho-journey-cta,
+        .egho-section-link,
+        .egho-btn,
+        .egho-nav a,
+        .egho-nav-more > summary,
+        a.egho-tile
+    ):hover {
+        transform: none;
+    }
+
+    .site-body :is(
+        button:not(:disabled),
+        .site-button,
+        .egho-submit,
+        .egho-search-tab,
+        .egho-panel-cta,
+        .egho-promo-cta,
+        .egho-app-cta,
+        .egho-journey-cta,
+        .egho-section-link,
+        .egho-btn,
+        .egho-nav a,
+        .egho-nav-more > summary,
+        a.egho-tile
+    ):active {
+        transform: scale(.97);
     }
 }
 

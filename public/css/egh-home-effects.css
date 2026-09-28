@@ -63,6 +63,10 @@
     transform: translateY(-4px) scale(1.025);
 }
 
+.egho-rail.is-motion-ready {
+    isolation: isolate;
+}
+
 .egho-rail-head > .egho-section-link {
     position: relative;
     min-height: 38px;
@@ -90,7 +94,7 @@
 .egho-rail-head > .egho-section-link:hover,
 .egho-rail-head > .egho-section-link:focus-visible {
     color: #082f5e;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     outline: none;
 }
 
@@ -141,26 +145,26 @@
 
 .egho-rail-button:hover:not(:disabled),
 .egho-rail-button:focus-visible:not(:disabled) {
-    transform: translateY(-2px) scale(1.04) !important;
+    transform: translateY(-3px) scale(1.08) !important;
     border-color: #ffd24f !important;
     background: linear-gradient(135deg, #ffd24f 0%, #f59e0b 100%) !important;
     color: #10254a !important;
-    box-shadow: 0 8px 18px rgba(245,158,11,.28) !important;
+    box-shadow: 0 10px 22px rgba(245,158,11,.34) !important;
     outline: none !important;
 }
 
 .egho-rail-button[data-egho-rail-prev]:hover svg,
 .egho-rail-button[data-egho-rail-prev]:focus-visible svg {
-    transform: translateX(-2px);
+    transform: translateX(-3px);
 }
 
 .egho-rail-button[data-egho-rail-next]:hover svg,
 .egho-rail-button[data-egho-rail-next]:focus-visible svg {
-    transform: translateX(2px);
+    transform: translateX(3px);
 }
 
 .egho-rail-button:active:not(:disabled) {
-    transform: translateY(0) scale(.93) !important;
+    transform: translateY(0) scale(.91) !important;
 }
 
 .egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next]:not(:disabled),
@@ -211,27 +215,5 @@
         width: 39px !important;
         height: 39px !important;
         flex: 0 0 39px !important;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .egho-destination,
-    .egho-destination::after,
-    .egho-rail-button,
-    .egho-rail-button svg,
-    .egho-rail-head > .egho-section-link,
-    .egho-rail-head > .egho-section-link::after {
-        transition: none !important;
-        animation: none !important;
-    }
-
-    .egho-destination.is-rail-active,
-    .egho-destination:hover,
-    .egho-destination:focus-within,
-    .egho-rail-button:hover:not(:disabled),
-    .egho-rail-button:focus-visible:not(:disabled),
-    .egho-rail-head > .egho-section-link:hover,
-    .egho-rail-head > .egho-section-link:focus-visible {
-        transform: none !important;
     }
 }

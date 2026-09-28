@@ -25,7 +25,7 @@
 
 <section class="egho-section"><div class="egho-shell">
 <div class="egho-section-head"><div><h2>{{ data_get($settings, 'destinations_title', 'Popular Destinations') }}</h2><p>{{ data_get($settings, 'destinations_subtitle') }}</p></div><div class="egho-rail-head">@feature('flights') @can('flights.search')<a href="{{ route('flights.index') }}" class="egho-section-link">View All Destinations &rarr;</a>@endcan @endfeature<div class="egho-rail-head" data-egho-rail-nav hidden><button type="button" class="egho-rail-button" data-egho-rail-prev aria-label="Show earlier destinations"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg></button><button type="button" class="egho-rail-button" data-egho-rail-next aria-label="Show more destinations"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6.5 5.5 5.5-5.5 5.5"/></svg></button></div></div></div>
-<div class="egho-rail" data-egho-rail data-egho-autoplay="step" data-egho-interval="2600"><div class="egho-destinations is-rail" data-egho-rail-track>
+<div class="egho-rail" data-egho-rail data-egho-autoplay="step" data-egho-interval="2200"><div class="egho-destinations is-rail" data-egho-rail-track>
 @foreach ($popularDestinations as $destination)
 <div class="egho-destination" data-egho-rail-item style="--egho-destination-image: url('{{ $destination['image'] ?? '' }}')" role="img" aria-label="{{ $destination['image_alt'] ?? (($destination['name'] ?? '').' '.($destination['country'] ?? '')) }}"><span class="egho-destination-copy"><span class="egho-destination-tag">{{ $destination['tag'] ?? '' }}</span><strong>{{ $destination['name'] }}</strong><small>{{ $destination['country'] }}</small></span></div>
 @endforeach

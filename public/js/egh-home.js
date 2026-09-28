@@ -2,10 +2,6 @@
 (function () {
     'use strict';
 
-    var reducedMotion = window.matchMedia
-        ? window.matchMedia('(prefers-reduced-motion: reduce)')
-        : null;
-
     var initRail = function (rail) {
         var scope = rail.closest('section') || rail.parentElement || document;
         var track = rail.querySelector('[data-egho-rail-track]');
@@ -35,8 +31,8 @@
             track.appendChild(clone);
         });
 
-        var interval = parseInt(rail.getAttribute('data-egho-interval') || '2600', 10);
-        interval = Number.isFinite(interval) ? Math.max(1800, interval) : 2600;
+        var interval = parseInt(rail.getAttribute('data-egho-interval') || '2200', 10);
+        interval = Number.isFinite(interval) ? Math.max(1600, interval) : 2200;
 
         var autoplay = rail.getAttribute('data-egho-autoplay') === 'step';
         var cloneStart = 0;
@@ -111,7 +107,7 @@
             var start = track.scrollLeft;
             var distance = target - start;
 
-            if (Math.abs(distance) < 1 || (reducedMotion && reducedMotion.matches)) {
+            if (Math.abs(distance) < 1) {
                 track.scrollLeft = target;
                 normalize();
                 markActiveCard();
@@ -122,7 +118,7 @@
             moving = true;
             setMovingClass(direction, true);
 
-            var duration = 760;
+            var duration = 700;
             var startedAt = null;
 
             var ease = function (progress) {
@@ -163,21 +159,21 @@
 
         var moveOne;
 
-        var scheduleAutoplay = function () {
+        var scheduleAutoplay = function (delay) {
             clearAutoplay();
 
-            if (!autoplay || (reducedMotion && reducedMotion.matches)) {
+            if (!autoplay) {
                 return;
             }
 
             autoplayTimer = window.setTimeout(function () {
                 if (document.hidden || dragging || moving) {
-                    scheduleAutoplay();
+                    scheduleAutoplay(interval);
                     return;
                 }
 
                 moveOne(1, true);
-            }, interval);
+            }, typeof delay === 'number' ? delay : interval);
         };
 
         moveOne = function (direction, fromAutoplay) {
@@ -200,7 +196,7 @@
                         rail.classList.remove('is-rail-manual');
                     }, 900);
                 }
-                scheduleAutoplay();
+                scheduleAutoplay(interval);
             });
         };
 
@@ -221,7 +217,7 @@
             dragging = false;
             normalize();
             markActiveCard();
-            scheduleAutoplay();
+            scheduleAutoplay(900);
         };
 
         track.addEventListener('pointerup', endPointerInteraction, { passive: true });
@@ -232,8 +228,10 @@
             if (!document.hidden) {
                 normalize();
                 markActiveCard();
+                scheduleAutoplay(700);
+            } else {
+                clearAutoplay();
             }
-            scheduleAutoplay();
         });
 
         window.addEventListener('resize', function () {
@@ -246,10 +244,11 @@
         previous.disabled = false;
         next.disabled = false;
         rail.setAttribute('data-egho-rail-ready', 'true');
+        rail.classList.add('is-motion-ready');
 
         normalize();
         markActiveCard();
-        scheduleAutoplay();
+        scheduleAutoplay(900);
 
         window.addEventListener('beforeunload', function () {
             clearAutoplay();
