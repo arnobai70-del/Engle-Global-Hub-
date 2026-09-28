@@ -9,9 +9,10 @@
     @php
         $isWorkVisa = (bool) ($promo['work_visa'] ?? false);
         $feature = $promo['feature'] ?? null;
+        $visibilityKey = $isWorkVisa ? 'visa' : $feature;
         $promoLink = $isWorkVisa ? route('work-visa.apply') : ($feature ? $serviceLink($feature) : ($promo['url'] ?? null));
     @endphp
-    @if (! $feature || app(\App\Services\Feature\FeatureManager::class)->isVisibleTo($feature, auth()->user()))
+    @if (! $visibilityKey || app(\App\Services\Feature\FeatureManager::class)->isVisibleTo($visibilityKey, auth()->user()))
         <div @class(['egho-promo', 'is-workvisa' => $isWorkVisa]) style="--egho-promo-image: url('{{ $promo['image'] ?? '' }}')">
             <span class="egho-promo-badge">{{ $promo['badge'] ?? '' }}</span><h2>{{ $promo['title'] }}</h2><p>{{ $promo['copy'] ?? $promo['subtitle'] ?? '' }}</p>
             @if (! empty($promo['items']) && is_array($promo['items']))<ul class="egho-promo-list">@foreach ($promo['items'] as $item)<li><span aria-hidden="true">&#10003;</span>{{ $item }}</li>@endforeach</ul>@endif
