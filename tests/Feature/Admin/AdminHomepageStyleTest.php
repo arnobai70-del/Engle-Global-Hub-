@@ -22,7 +22,7 @@ class AdminHomepageStyleTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Site, Homepage &amp; SEO', false)
+            ->assertSeeText('Site, Homepage & SEO')
             ->assertSee('.home-admin{display:grid;gap:22px}', false)
             ->assertSee('.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))', false);
     }
