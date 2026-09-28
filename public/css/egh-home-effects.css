@@ -1,152 +1,216 @@
-/* Strong, visible interaction polish for the Popular Destinations carousel. */
-.egho-destinations.is-rail{
-    scroll-behavior:auto!important;
-    scroll-snap-type:x mandatory;
+/* Interaction polish for the Popular Destinations carousel. */
+.egho-destinations.is-rail {
+    scroll-behavior: auto !important;
+    scroll-snap-type: x mandatory;
 }
 
 /* Infinite autoplay is positioned frame-by-frame in JS; browser snapping would
-   fight that motion and make the automatic slide look jerky. */
+   fight that motion and make the automatic glide look jerky. */
 .egho-rail.is-infinite-rail .egho-destinations.is-rail,
-.egho-rail.is-rail-moving .egho-destinations.is-rail{
-    scroll-snap-type:none!important;
+.egho-rail.is-rail-moving .egho-destinations.is-rail {
+    scroll-snap-type: none !important;
 }
 
-.egho-destination{
-    position:relative;
-    transform-origin:center center;
-    transition:transform .32s cubic-bezier(.2,.75,.25,1),box-shadow .32s ease,filter .32s ease,opacity .32s ease!important;
-    will-change:transform,filter;
+.egho-destination {
+    position: relative;
+    transform-origin: center center;
+    transition:
+        transform .34s cubic-bezier(.2,.75,.25,1),
+        box-shadow .34s ease,
+        filter .34s ease,
+        opacity .34s ease !important;
+    will-change: transform, filter;
 }
 
-.egho-destination::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    z-index:1;
-    pointer-events:none;
-    border-radius:inherit;
-    background:linear-gradient(110deg,transparent 18%,rgba(255,255,255,.32) 48%,transparent 78%);
-    transform:translateX(-145%);
-    transition:transform .75s ease;
+.egho-destination::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(112deg, transparent 22%, rgba(255,255,255,.30) 48%, transparent 74%);
+    transform: translateX(-145%);
+    transition: transform .8s ease;
 }
 
-.egho-destination-copy{
-    z-index:2!important;
+.egho-destination-copy {
+    z-index: 2 !important;
 }
 
 .egho-destination:hover,
-.egho-destination:focus-within{
-    transform:translateY(-9px) scale(1.035)!important;
-    box-shadow:0 24px 46px rgba(7,35,69,.32)!important;
-    filter:saturate(1.12) brightness(1.04)!important;
+.egho-destination:focus-within {
+    transform: translateY(-7px) scale(1.025) !important;
+    box-shadow: 0 22px 44px rgba(7,35,69,.28) !important;
+    filter: saturate(1.10) brightness(1.035) !important;
 }
 
 .egho-destination:hover::after,
 .egho-destination:focus-within::after,
-.egho-destination.is-rail-active::after{
-    transform:translateX(145%);
+.egho-destination.is-rail-active::after {
+    transform: translateX(145%);
 }
 
-.egho-destination.is-rail-active{
-    box-shadow:0 18px 38px rgba(7,35,69,.25)!important;
-    filter:saturate(1.08) brightness(1.025)!important;
+.egho-destination.is-rail-active {
+    transform: translateY(-3px) scale(1.012);
+    box-shadow: 0 17px 34px rgba(7,35,69,.22) !important;
+    filter: saturate(1.075) brightness(1.02) !important;
 }
 
-/* Keep the moving strip visually stable. The previous heavy dimming made the
-   autoplay feel like a cut even when the position itself was animating. */
-.egho-rail.is-rail-moving .egho-destination{
-    opacity:.97;
-    filter:saturate(1) brightness(1)!important;
+.egho-rail.is-rail-moving .egho-destination {
+    opacity: .985;
+    filter: saturate(1.02) brightness(1.01) !important;
 }
 
-.egho-rail-button{
-    position:relative!important;
-    overflow:hidden!important;
-    border-color:#c9d9ef!important;
-    background:#fff!important;
-    color:#0b3c78!important;
-    box-shadow:0 5px 14px rgba(11,37,69,.08)!important;
-    transition:transform .2s ease,background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+/* Make the destination actions feel like one deliberate control group instead
+   of two plain circles floating beside the section heading. */
+.egho-rail-head > .egho-section-link {
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid #d7e5f7;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+    box-shadow: 0 5px 14px rgba(11,37,69,.06);
+    transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
 }
 
-.egho-rail-button::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:inherit;
-    background:radial-gradient(circle,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 70%);
-    opacity:0;
-    transform:scale(.35);
+.egho-rail-head > .egho-section-link:hover,
+.egho-rail-head > .egho-section-link:focus-visible {
+    transform: translateY(-2px);
+    border-color: #a9c9f2;
+    background: #fff;
+    box-shadow: 0 9px 20px rgba(11,72,145,.12);
+    outline: none;
+}
+
+.egho-rail-head[data-egho-rail-nav] {
+    gap: 6px;
+    padding: 4px;
+    border: 1px solid #dce7f4;
+    border-radius: 16px;
+    background: rgba(255,255,255,.86);
+    box-shadow: 0 8px 20px rgba(11,37,69,.07);
+    backdrop-filter: blur(8px);
+}
+
+.egho-rail-button {
+    position: relative !important;
+    overflow: hidden !important;
+    width: 40px !important;
+    height: 40px !important;
+    border: 1px solid transparent !important;
+    border-radius: 12px !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%) !important;
+    color: #0b3c78 !important;
+    box-shadow: inset 0 0 0 1px #d8e5f5, 0 4px 10px rgba(11,37,69,.06) !important;
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1;
+    transition:
+        transform .2s cubic-bezier(.2,.8,.2,1),
+        background .2s ease,
+        color .2s ease,
+        box-shadow .2s ease !important;
+}
+
+.egho-rail-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.55), rgba(255,255,255,0) 68%);
+    opacity: 0;
+    transform: scale(.45);
 }
 
 .egho-rail-button:hover:not(:disabled),
-.egho-rail-button:focus-visible:not(:disabled){
-    transform:translateY(-3px) scale(1.1)!important;
-    border-color:#0b63f6!important;
-    background:#0b63f6!important;
-    color:#fff!important;
-    box-shadow:0 12px 24px rgba(11,99,246,.32)!important;
-    outline:none!important;
+.egho-rail-button:focus-visible:not(:disabled) {
+    transform: translateY(-2px) !important;
+    background: linear-gradient(135deg, #1267df 0%, #0a4fae 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 11px 22px rgba(11,83,179,.24) !important;
+    outline: none !important;
 }
 
-.egho-rail-button:active:not(:disabled){
-    transform:translateY(0) scale(.9)!important;
+.egho-rail-button:focus-visible:not(:disabled) {
+    box-shadow: 0 0 0 3px rgba(18,103,223,.18), 0 11px 22px rgba(11,83,179,.24) !important;
 }
 
-.egho-rail-button.is-rail-pulse:not(:disabled){
-    animation:eghRailButtonPulse .56s cubic-bezier(.2,.8,.2,1)!important;
+.egho-rail-button:active:not(:disabled) {
+    transform: translateY(0) scale(.96) !important;
 }
 
-.egho-rail-button.is-rail-pulse::before{
-    animation:eghRailButtonRipple .56s ease!important;
+.egho-rail-button.is-rail-pulse:not(:disabled) {
+    animation: eghRailButtonPress .36s cubic-bezier(.2,.8,.2,1) !important;
+}
+
+.egho-rail-button.is-rail-pulse::before {
+    animation: eghRailButtonRipple .36s ease !important;
 }
 
 .egho-rail.is-moving-next .egho-rail-button[data-egho-rail-next]:not(:disabled),
-.egho-rail.is-moving-prev .egho-rail-button[data-egho-rail-prev]:not(:disabled){
-    background:#0b63f6!important;
-    border-color:#0b63f6!important;
-    color:#fff!important;
-    box-shadow:0 10px 22px rgba(11,99,246,.28)!important;
+.egho-rail.is-moving-prev .egho-rail-button[data-egho-rail-prev]:not(:disabled) {
+    background: linear-gradient(135deg, #1267df 0%, #0a4fae 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 9px 18px rgba(11,83,179,.20) !important;
 }
 
-@keyframes eghRailButtonPulse{
-    0%{transform:scale(1)}
-    35%{transform:scale(1.18)}
-    68%{transform:scale(.96)}
-    100%{transform:scale(1)}
+@keyframes eghRailButtonPress {
+    0% { transform: translateY(-2px) scale(1); }
+    50% { transform: translateY(0) scale(.94); }
+    100% { transform: translateY(-2px) scale(1); }
 }
 
-@keyframes eghRailButtonRipple{
-    0%{opacity:.65;transform:scale(.25)}
-    100%{opacity:0;transform:scale(1.7)}
+@keyframes eghRailButtonRipple {
+    0% { opacity: .55; transform: scale(.35); }
+    100% { opacity: 0; transform: scale(1.45); }
 }
 
-@media(max-width:760px){
+@media (max-width: 760px) {
     .egho-destination:hover,
-    .egho-destination:focus-within{
-        transform:translateY(-5px) scale(1.018)!important;
+    .egho-destination:focus-within {
+        transform: translateY(-4px) scale(1.015) !important;
     }
 
-    .egho-rail-button{
-        width:42px!important;
-        height:42px!important;
-        flex:0 0 42px!important;
+    .egho-destination.is-rail-active {
+        transform: translateY(-2px) scale(1.008);
+    }
+
+    .egho-rail-head[data-egho-rail-nav] {
+        padding: 3px;
+        border-radius: 15px;
+    }
+
+    .egho-rail-button {
+        width: 40px !important;
+        height: 40px !important;
+        flex: 0 0 40px !important;
     }
 }
 
-@media(prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion: reduce) {
     .egho-destination,
     .egho-destination::after,
     .egho-rail-button,
-    .egho-rail-button::before{
-        transition:none!important;
-        animation:none!important;
+    .egho-rail-button::before,
+    .egho-rail-head > .egho-section-link {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .egho-destination.is-rail-active,
+    .egho-destination:hover,
+    .egho-destination:focus-within,
+    .egho-rail-button:hover:not(:disabled),
+    .egho-rail-button:focus-visible:not(:disabled),
+    .egho-rail-head > .egho-section-link:hover,
+    .egho-rail-head > .egho-section-link:focus-visible {
+        transform: none !important;
     }
 
     .egho-rail-button:hover:not(:disabled),
-    .egho-rail-button:focus-visible:not(:disabled){
-        transform:none!important;
-        background:#0b63f6!important;
-        color:#fff!important;
+    .egho-rail-button:focus-visible:not(:disabled) {
+        background: #0b63f6 !important;
+        color: #fff !important;
     }
 }
