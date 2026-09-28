@@ -21,6 +21,19 @@
     $testimonials = data_get($homeContent, 'testimonials', []);
     $appFeatures = data_get($homeContent, 'app_features', []);
 
+    $newsEnabledValue = data_get($settings, 'news_enabled', true);
+    $newsEnabled = is_bool($newsEnabledValue)
+        ? $newsEnabledValue
+        : ! in_array(strtolower(trim((string) $newsEnabledValue)), ['0', 'false', 'off', 'no'], true);
+    $newsLabel = trim((string) data_get($settings, 'news_label', 'Latest News'));
+    $newsText = trim((string) data_get(
+        $settings,
+        'news_text',
+        'Welcome to Eagle Global Hub LTD — Travel & Visa Services.'
+    ));
+    $newsUrl = trim((string) data_get($settings, 'news_url', ''));
+    $newsLinkLabel = trim((string) data_get($settings, 'news_link_label', 'Learn More'));
+
     $flightSearchAction = route('login');
     $flightSearchMethod = 'GET';
     if (auth()->check()) {
@@ -71,6 +84,7 @@
     <link rel="stylesheet" href="{{ asset('css/egh-home.css').$pageAssetVersion('css/egh-home.css') }}">
     <link rel="stylesheet" href="{{ asset('css/egh-home-dynamic.css').$pageAssetVersion('css/egh-home-dynamic.css') }}">
     <link rel="stylesheet" href="{{ asset('css/egh-home-effects.css').$pageAssetVersion('css/egh-home-effects.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/egh-news-ticker.css').$pageAssetVersion('css/egh-news-ticker.css') }}">
     <meta name="robots" content="{{ data_get($homeContent, 'seo.robots', 'index,follow') }}">
     <link rel="canonical" href="{{ data_get($homeContent, 'seo.canonical') ?: url()->current() }}">
     <meta property="og:title" content="{{ data_get($homeContent, 'seo.og_title') ?: data_get($homeContent, 'seo.title') }}">
@@ -82,6 +96,22 @@
 @endpush
 
 @section('content')
+@if($newsEnabled && $newsText !== '')
+<section class="egho-news-ticker" aria-label="{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}">
+    <div class="egho-shell egho-news-ticker-inner">
+        <strong class="egho-news-ticker-label">{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}</strong>
+        <div class="egho-news-ticker-viewport">
+            <div class="egho-news-ticker-track">
+                <span>{{ $newsText }}</span>
+                <span aria-hidden="true">{{ $newsText }}</span>
+            </div>
+        </div>
+        @if($newsUrl !== '')
+            <a class="egho-news-ticker-link" href="{{ $newsUrl }}">{{ $newsLinkLabel !== '' ? $newsLinkLabel : 'Learn More' }}</a>
+        @endif
+    </div>
+</section>
+@endif
 <main class="site-home site-ota-home">
     @include('home._hero')
     @include('home._highlights')
