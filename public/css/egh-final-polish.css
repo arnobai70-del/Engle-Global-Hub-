@@ -149,7 +149,7 @@
 ):hover {
     transform: translateY(-2px) scale(1.015);
     filter: brightness(1.035) saturate(1.025);
-    box-shadow: 0 10px 24px rgba(11, 37, 69, .14);
+    box-shadow: 0 8px 20px rgba(18, 86, 160, .10);
 }
 
 .site-body :is(
@@ -169,7 +169,24 @@
 ):active {
     transform: translateY(0) scale(.965);
     filter: brightness(.99);
-    box-shadow: 0 4px 10px rgba(11, 37, 69, .10);
+    box-shadow: 0 3px 8px rgba(18, 86, 160, .08);
+}
+
+/* Header navigation keeps the lift/colour feedback but never draws a shadow
+   behind the text/pill. Preventing text selection also avoids a browser
+   selection block appearing when a user clicks or drags over More/nav items. */
+.site-body .egho-nav a,
+.site-body .egho-nav-more > summary {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.site-body .egho-nav a:hover,
+.site-body .egho-nav a:active,
+.site-body .egho-nav-more > summary:hover,
+.site-body .egho-nav-more > summary:active,
+.site-body .egho-nav-more[open] > summary {
+    box-shadow: none !important;
 }
 
 .site-body :is(
