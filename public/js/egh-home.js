@@ -1,10 +1,88 @@
-/* Homepage destination/comment rails with continuous seamless autoplay. */
+/* Homepage news ticker and destination/comment rails with seamless autoplay. */
 (function () {
     'use strict';
 
     var reducedMotion = window.matchMedia
         ? window.matchMedia('(prefers-reduced-motion: reduce)')
         : null;
+
+    var initTicker = function (ticker) {
+        var viewport = ticker.querySelector('.egho-news-ticker-viewport');
+        var track = ticker.querySelector('.egho-news-ticker-track');
+        var seed = track ? track.querySelector('span') : null;
+
+        if (!viewport || !track || !seed || ticker.dataset.eghoTickerInit === '1') {
+            return;
+        }
+
+        ticker.dataset.eghoTickerInit = '1';
+        ticker.classList.add('is-ticker-enhanced');
+
+        var configuredSpeed = parseFloat(ticker.getAttribute('data-egho-ticker-speed') || '48');
+        var speed = Number.isFinite(configuredSpeed) ? Math.max(38, configuredSpeed) : 48;
+        var segmentWidth = 0;
+        var rafId = null;
+        var lastFrame = null;
+
+        var ensureCopies = function () {
+            segmentWidth = seed.getBoundingClientRect().width;
+            if (!(segmentWidth > 1)) return;
+
+            var requiredWidth = viewport.clientWidth + (segmentWidth * 3);
+            var guard = 0;
+
+            while (track.scrollWidth < requiredWidth && guard < 24) {
+                var clone = seed.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                clone.classList.add('is-news-clone');
+                track.appendChild(clone);
+                guard += 1;
+            }
+        };
+
+        var normalizePosition = function () {
+            if (!(segmentWidth > 1)) return;
+
+            while (viewport.scrollLeft >= segmentWidth) {
+                viewport.scrollLeft -= segmentWidth;
+            }
+        };
+
+        var frame = function (timestamp) {
+            if (lastFrame === null) lastFrame = timestamp;
+            var elapsed = Math.min(50, Math.max(0, timestamp - lastFrame));
+            lastFrame = timestamp;
+
+            if (
+                !document.hidden
+                && !(reducedMotion && reducedMotion.matches)
+                && segmentWidth > 1
+            ) {
+                viewport.scrollLeft += speed * (elapsed / 1000);
+                normalizePosition();
+            }
+
+            rafId = window.requestAnimationFrame(frame);
+        };
+
+        ensureCopies();
+        viewport.scrollLeft = 0;
+        rafId = window.requestAnimationFrame(frame);
+
+        window.addEventListener('resize', function () {
+            viewport.scrollLeft = 0;
+            ensureCopies();
+            lastFrame = null;
+        });
+
+        document.addEventListener('visibilitychange', function () {
+            lastFrame = null;
+        });
+
+        window.addEventListener('beforeunload', function () {
+            if (rafId !== null) window.cancelAnimationFrame(rafId);
+        }, { once: true });
+    };
 
     var initRail = function (rail) {
         var scope = rail.closest('section') || rail.parentElement || document;
@@ -20,7 +98,8 @@
 
         var autoplayMode = rail.getAttribute('data-egho-autoplay') || '';
         var continuous = autoplayMode === 'continuous';
-        var speed = parseFloat(rail.getAttribute('data-egho-speed') || '36');
+        var configuredSpeed = parseFloat(rail.getAttribute('data-egho-speed') || '58');
+        var speed = Number.isFinite(configuredSpeed) ? Math.max(58, configuredSpeed) : 58;
         var originalItems = Array.prototype.slice.call(track.querySelectorAll('[data-egho-rail-item]'));
         var cloneStart = 0;
         var dragging = false;
@@ -110,7 +189,7 @@
         var syncControls = function () {
             updateCloneStart();
             var canScroll = continuous
-                ? cloneStart > track.clientWidth + 4
+                ? cloneStart > 1
                 : maxScroll() > 4;
 
             rail.setAttribute('data-egho-rail-ready', 'true');
@@ -135,7 +214,7 @@
             button.classList.add('is-rail-pulse');
             window.setTimeout(function () {
                 button.classList.remove('is-rail-pulse');
-            }, 520);
+            }, 380);
         };
 
         var easeInOutCubic = function (progress) {
@@ -162,12 +241,12 @@
             }
 
             manualAnimating = true;
-            pauseUntil = performance.now() + 1500;
+            pauseUntil = performance.now() + 900;
             rail.classList.add('is-rail-moving');
             rail.classList.toggle('is-moving-next', direction > 0);
             rail.classList.toggle('is-moving-prev', direction < 0);
 
-            var duration = 620;
+            var duration = 520;
             var startedAt = null;
 
             var frame = function (timestamp) {
@@ -202,12 +281,12 @@
 
         track.addEventListener('pointerdown', function () {
             dragging = true;
-            pauseUntil = performance.now() + 1200;
+            pauseUntil = performance.now() + 900;
         }, { passive: true });
 
         var endPointerInteraction = function () {
             dragging = false;
-            pauseUntil = performance.now() + 1200;
+            pauseUntil = performance.now() + 900;
             normalizeLoopPosition();
             syncControls();
         };
@@ -232,9 +311,9 @@
                 && !manualAnimating
                 && timestamp >= pauseUntil
                 && !(reducedMotion && reducedMotion.matches)
-                && cloneStart > track.clientWidth + 4
+                && cloneStart > 1
             ) {
-                track.scrollLeft += (Number.isFinite(speed) ? speed : 36) * (elapsed / 1000);
+                track.scrollLeft += speed * (elapsed / 1000);
                 normalizeLoopPosition();
             }
 
@@ -265,6 +344,7 @@
     };
 
     var init = function () {
+        document.querySelectorAll('.egho-news-ticker').forEach(initTicker);
         document.querySelectorAll('[data-egho-rail]').forEach(initRail);
     };
 
