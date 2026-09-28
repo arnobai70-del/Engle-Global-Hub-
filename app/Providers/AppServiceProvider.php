@@ -16,6 +16,7 @@ use App\Services\Feature\FeatureRegistry;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 use App\Services\HomepageContentService;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
+use App\Services\SettingService;
 use App\Services\Tour\UnavailableTourSearchProvider;
 use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Travel\UnavailableDestinationResolver;
@@ -88,6 +89,19 @@ class AppServiceProvider extends ServiceProvider
             $chrome['siteContact'] = $contact;
 
             $view->with($chrome);
+        });
+
+        View::composer(['layouts.site', 'layouts.auth'], function (IlluminateView $view): void {
+            $analytics = app(SettingService::class)->group('analytics');
+            $metaPixelId = trim((string) ($analytics['meta_pixel_id'] ?? ''));
+            $metaPixelEnabled = (bool) ($analytics['meta_pixel_enabled'] ?? false);
+            $metaPixelActive = $metaPixelEnabled
+                && preg_match('/^\d{5,30}$/D', $metaPixelId) === 1;
+
+            $view->with([
+                'metaPixelActive' => $metaPixelActive,
+                'metaPixelId' => $metaPixelActive ? $metaPixelId : null,
+            ]);
         });
 
         View::composer('home', function (IlluminateView $view): void {
