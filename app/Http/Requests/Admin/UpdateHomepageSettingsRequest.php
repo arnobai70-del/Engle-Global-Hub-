@@ -30,7 +30,7 @@ class UpdateHomepageSettingsRequest extends FormRequest
             'news_text' => ['nullable', 'string', 'max:500'],
             'news_url' => ['nullable', 'url:http,https', 'max:500'],
             'news_link_label' => ['nullable', 'string', 'max:80'],
-            'news_ticker_duration' => ['required', 'integer', 'between:8,120'],
+            'news_ticker_duration' => ['nullable', 'integer', 'between:8,120'],
             'hero_eyebrow' => ['nullable', 'string', 'max:160'],
             'hero_title' => ['required', 'string', 'max:180'],
             'hero_accent' => ['nullable', 'string', 'max:120'],
