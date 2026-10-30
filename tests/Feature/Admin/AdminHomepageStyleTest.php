@@ -22,8 +22,11 @@ class AdminHomepageStyleTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSeeText('Site, Homepage & SEO')
-            ->assertSee('.home-admin{display:grid;gap:22px}', false)
+            ->assertSeeText('Site & Homepage Settings')
+            ->assertSeeText('Content Block Manager')
+            ->assertSee('data-home-tab="ticker"', false)
+            ->assertSee('id="home-block-search"', false)
+            ->assertSee('.home-shell{display:grid;grid-template-columns:214px', false)
             ->assertSee('.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))', false);
     }
 }
