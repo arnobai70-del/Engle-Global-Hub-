@@ -70,7 +70,7 @@
     display: flex;
     width: max-content;
     align-items: center;
-    animation: egho-news-marquee 20s linear infinite !important;
+    animation: egho-news-marquee var(--egho-news-duration, 20s) linear infinite !important;
     animation-play-state: running !important;
     transform: translate3d(0, 0, 0);
     will-change: transform;
@@ -166,10 +166,6 @@
         min-height: 27px;
         padding: 6px 9px 6px 10px;
         font-size: 10px;
-    }
-
-    .egho-news-ticker-track {
-        animation-duration: 16s !important;
     }
 
     .egho-news-ticker-group span {
