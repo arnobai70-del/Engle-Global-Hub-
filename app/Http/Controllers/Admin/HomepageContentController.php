@@ -72,6 +72,7 @@ class HomepageContentController extends Controller
             'news_text' => $data['news_text'] ?? null,
             'news_url' => $data['news_url'] ?? null,
             'news_link_label' => $data['news_link_label'] ?? null,
+            'news_ticker_duration' => (string) $data['news_ticker_duration'],
             'hero_eyebrow' => $data['hero_eyebrow'] ?? null,
             'hero_title' => $data['hero_title'],
             'hero_accent' => $data['hero_accent'] ?? null,
