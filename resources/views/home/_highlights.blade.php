@@ -1,9 +1,12 @@
+@if($showSection('assurances'))
 <section class="egho-section egho-section-tight"><div class="egho-shell"><ul class="egho-assurances">
 @foreach ($assurances as $assurance)
 <li><span class="egho-assurance-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{!! $assurance['icon'] ?? '' !!}</svg></span><span class="egho-assurance-copy"><strong>{{ $assurance['title'] }}</strong><small>{{ $assurance['subtitle'] ?? $assurance['copy'] ?? '' }}</small></span></li>
 @endforeach
 </ul></div></section>
+@endif
 
+@if($showSection('promotions'))
 <section class="egho-section"><div class="egho-shell"><div class="egho-promos">
 @foreach ($promoBanners as $promo)
     @php
@@ -21,3 +24,5 @@
     @endif
 @endforeach
 </div></div></section>
+
+@endif

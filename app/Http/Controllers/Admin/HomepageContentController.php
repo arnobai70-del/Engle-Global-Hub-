@@ -73,6 +73,7 @@ class HomepageContentController extends Controller
             'news_url' => $data['news_url'] ?? null,
             'news_link_label' => $data['news_link_label'] ?? null,
             'news_ticker_duration' => (string) ($data['news_ticker_duration'] ?? 20),
+            'destination_autoplay_interval' => (string) ($data['destination_autoplay_interval'] ?? 2200),
             'hero_eyebrow' => $data['hero_eyebrow'] ?? null,
             'hero_title' => $data['hero_title'],
             'hero_accent' => $data['hero_accent'] ?? null,
@@ -91,6 +92,12 @@ class HomepageContentController extends Controller
             'journey_title' => $data['journey_title'] ?? null,
             'journey_copy' => $data['journey_copy'] ?? null,
         ]);
+        foreach (['hero', 'flight_search', 'assurances', 'promotions', 'services', 'destinations', 'service_panels', 'benefits', 'testimonials', 'app', 'newsletter'] as $section) {
+            $key = 'show_'.$section;
+            if ($request->exists($key)) {
+                $this->settings->set('homepage', $key, $request->boolean($key) ? '1' : '0', 'string', true);
+            }
+        }
         $this->saveGroup('app', [
             'app_title' => $data['app_title'] ?? null,
             'app_subtitle' => $data['app_subtitle'] ?? null,

@@ -44,6 +44,29 @@ class HomepageContentManagementTest extends TestCase
         $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'news_text', 'value' => $payload['news_text']]);
     }
 
+    public function test_admin_can_control_section_visibility_and_destination_slider_speed(): void
+    {
+        $user = $this->superAdmin();
+        $this->actingAs($user)->patch(route('admin.homepage.settings.update'), [
+            'site_name' => 'Eagle Global Hub LTD',
+            'hero_title' => 'Travel the World with',
+            'seo_title' => 'Eagle Global Hub | Travel Services',
+            'seo_description' => 'Flights, hotels, tours and visa services.',
+            'show_promotions' => '0',
+            'show_services' => '0',
+            'show_destinations' => '1',
+            'destination_autoplay_interval' => 4200,
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'show_promotions', 'value' => '0']);
+        $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'destination_autoplay_interval', 'value' => '4200']);
+
+        $html = $this->get(route('home'))->assertOk()->getContent();
+        $this->assertStringNotContainsString('class="egho-promos"', $html);
+        $this->assertStringNotContainsString('class="egho-tiles"', $html);
+        $this->assertStringContainsString('data-egho-interval="4200"', $html);
+    }
+
     public function test_super_admin_can_create_and_hide_repeatable_homepage_content(): void
     {
         $user = $this->superAdmin();

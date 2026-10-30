@@ -1,3 +1,4 @@
+@if($showSection('hero'))
 <section class="egho-hero" style="--egho-hero-image: url('{{ $heroImage }}')">
     <div class="egho-shell">
         <div class="egho-hero-copy">
@@ -11,6 +12,8 @@
     @endif
 </section>
 
+@endif
+@if($showSection('flight_search'))
 @feature('flights')
 <section class="egho-search-wrap" aria-label="Flight search">
     <div class="egho-shell"><div class="egho-search-card">
@@ -64,3 +67,4 @@
     </div></div>
 </section>
 @endfeature
+@endif
