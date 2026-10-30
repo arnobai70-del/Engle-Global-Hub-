@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             field.dataset.settingsTab = category;
         });
+        grid.querySelectorAll('[required]').forEach(function (input) { input.dataset.initiallyRequired = '1'; });
         const tabs = Array.from(document.querySelectorAll('[data-home-tab]'));
         function selectTab(name) {
             tabs.forEach(function (button) {
@@ -154,8 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const active = field.dataset.settingsTab === name;
                 field.hidden = !active;
                 // Hidden HTML required inputs cannot be focused by browser validation.
-                field.querySelectorAll('[required]').forEach(function (input) {
-                    if (!input.dataset.initiallyRequired) input.dataset.initiallyRequired = '1';
+                field.querySelectorAll('[data-initially-required]').forEach(function (input) {
                     input.required = active;
                 });
             });
