@@ -3,15 +3,76 @@
 @section('page_title','Homepage Content')
 @push('head')
 <style>
-.home-admin{display:grid;gap:22px}.home-card{border:1px solid #e2e8f0;border-radius:16px;background:#fff;padding:20px}.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}.home-field{display:grid;gap:6px}.home-field.wide{grid-column:1/-1}.home-field label{font-size:12px;font-weight:800;color:#344866}.home-field input,.home-field textarea,.home-field select{width:100%;border:1px solid #dbe3ee;border-radius:10px;padding:10px 12px}.home-field textarea{min-height:90px}.home-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.home-btn{border:0;border-radius:10px;padding:10px 16px;background:#155eef;color:#fff;font-weight:800;cursor:pointer}.home-btn.danger{background:#b42318}.home-status{padding:12px;border-radius:10px;background:#ecfdf3;color:#067647}.home-errors{padding:12px;border-radius:10px;background:#fef3f2;color:#b42318}.home-block{margin-top:12px;border:1px solid #e4eaf3;border-radius:12px;overflow:hidden}.home-block summary{padding:14px;background:#f8fafc;cursor:pointer;font-weight:800}.home-block>div{padding:16px}.home-section{margin-top:22px;padding-top:18px;border-top:1px solid #edf1f6}.home-check{display:flex!important;gap:8px;align-items:center}.home-check input{width:auto!important}.home-field-note{font-size:12px;color:#64748b}.home-subsection{grid-column:1/-1;margin-top:4px;padding-top:14px;border-top:1px solid #edf1f6}.home-subsection h3{margin:0 0 4px;font-size:15px}.home-subsection p{margin:0;color:#64748b;font-size:12px}@media(max-width:700px){.home-grid{grid-template-columns:1fr}.home-field.wide,.home-subsection{grid-column:auto}}
+.home-admin{--home-ink:#172c49;--home-muted:#64748b;--home-border:#e2e9f3;--home-primary:#2459db;display:grid;gap:20px;color:var(--home-ink)}
+.home-workspace-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.home-workspace-header h1{font-size:25px;letter-spacing:-.7px;margin:0}.home-workspace-header p{margin:5px 0 0;color:var(--home-muted)}
+.home-visit{display:inline-flex;padding:10px 15px;border:1px solid var(--home-border);border-radius:11px;color:#1d4bbd;text-decoration:none;font-weight:800;background:#fff}
+.home-shell{display:grid;grid-template-columns:214px minmax(0,1fr);align-items:start;gap:20px}
+.home-aside{position:sticky;top:20px;background:#fff;border:1px solid var(--home-border);border-radius:15px;padding:13px}
+.home-aside-title{font-size:11px;text-transform:uppercase;font-weight:900;letter-spacing:.1em;color:#8897ad;padding:9px 12px}
+.home-aside a{display:block;padding:11px 12px;border-radius:9px;text-decoration:none;color:#425473;font-size:13px;font-weight:750}
+.home-aside a:hover,.home-aside a:focus-visible{background:#eff5ff;color:#1d4bbd}
+.home-main{min-width:0;display:grid;gap:20px}
+.home-card{border:1px solid var(--home-border);border-radius:16px;background:#fff;padding:23px;box-shadow:0 5px 26px rgba(20,50,100,.035)}
+.home-card h2{margin:0 0 6px;font-size:18px;letter-spacing:-.3px}.home-card>p{margin:0 0 16px;color:var(--home-muted);font-size:13px}
+.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-top:19px}
+.home-field{display:grid;gap:7px;min-width:0}.home-field.wide{grid-column:1/-1}
+.home-field label{font-size:12px;font-weight:800;color:#344866}
+.home-field input,.home-field textarea,.home-field select{width:100%;min-height:43px;border:1px solid #dbe3ee;border-radius:10px;padding:10px 12px;color:#162b4a;background:#fff;font:inherit;font-size:13px}
+.home-field input:focus,.home-field textarea:focus,.home-field select:focus{border-color:#4779f4;outline:3px solid #e3edff}
+.home-field textarea{min-height:96px;resize:vertical}
+.home-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:19px;padding-top:15px;border-top:1px solid #eef2f7}
+.home-btn{border:0;border-radius:10px;padding:11px 18px;min-height:42px;background:var(--home-primary);color:#fff;font-weight:800;cursor:pointer}
+.home-btn:hover{background:#1745b3}.home-btn.danger{background:#b42318}
+.home-status{padding:12px;border-radius:10px;background:#ecfdf3;color:#067647}.home-errors{padding:12px;border-radius:10px;background:#fef3f2;color:#b42318}
+.home-block{margin-top:10px;border:1px solid #e4eaf3;border-radius:11px;overflow:hidden}
+.home-block summary{padding:13px 15px;background:#f8fafc;cursor:pointer;font-size:13px;font-weight:800}
+.home-block[open] summary{background:#edf4ff;color:#1b4cb6}.home-block>div{padding:17px}
+.home-section{margin-top:17px;padding-top:16px;border-top:1px solid #edf1f6}
+.home-section h3{margin:0 0 12px;font-size:15px}
+.home-check{display:flex!important;gap:8px;align-items:center}.home-check input{width:auto!important;min-height:0}
+.home-field-note{font-size:12px;color:#64748b}
+.home-subsection{grid-column:1/-1;margin-top:4px;padding-top:14px;border-top:1px solid #edf1f6}
+.home-subsection h3{margin:0 0 4px;font-size:15px}.home-subsection p{margin:0;color:#64748b;font-size:12px}
+.home-tabbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid #e5ebf5;border-radius:12px;background:#f7f9fd}
+.home-tab{border:1px solid transparent;border-radius:9px;padding:10px 13px;background:transparent;color:#4a5e7b;font-weight:800;cursor:pointer;font-size:12px}
+.home-tab[aria-selected=true]{background:#fff;border-color:#d8e3f6;color:#1c4fc0;box-shadow:0 1px 3px #dae4f5}
+.home-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;border-radius:12px;background:#f7f9fd;border:1px solid #e8edf5}
+.home-toolbar label{font-size:12px;font-weight:800;display:grid;gap:7px}
+.home-toolbar input,.home-toolbar select{min-width:0;width:100%;padding:10px;border:1px solid #d6e1ef;border-radius:9px;background:#fff;font:inherit;font-size:13px}
+.home-empty{padding:18px;border:1px dashed #cbd5e1;border-radius:10px;color:#64748b}
+.home-block-count{font-weight:700;color:#64748b;font-size:12px}
+.home-help{font-size:12px;color:#64748b;margin:10px 0 0}
+.home-pill{font-size:11px;font-weight:800;padding:4px 8px;border-radius:7px;background:#e7f7ee;color:#12723f}
+.home-pill.is-hidden{background:#f2f4f7;color:#667085}
+.home-block summary{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.home-admin [hidden]{display:none!important}
+@media(max-width:1100px){.home-shell{grid-template-columns:1fr}.home-aside{position:static;display:flex;flex-wrap:wrap;gap:3px}.home-aside-title{width:100%}}
+@media(max-width:700px){.home-card{padding:15px}.home-grid,.home-toolbar{grid-template-columns:1fr}.home-field.wide,.home-subsection{grid-column:auto}.home-workspace-header h1{font-size:21px}.home-tabbar{gap:3px}.home-tab{padding:9px}}
 </style>
 @endpush
 @section('content')
 <div class="home-admin">
+<header class="home-workspace-header"><div><h1>Homepage Workspace</h1><p>Manage website content in organized sections. Edit real data, not mockups.</p></div><a class="home-visit" href="{{ route('home') }}" target="_blank" rel="noopener">View live homepage ↗</a></header>
 @if(session('status'))<div class="home-status" role="status">{{ session('status') }}</div>@endif
 @if($errors->any())<div class="home-errors" role="alert"><strong>Please fix these fields.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
 
-<section class="home-card"><h2>Site, Homepage & SEO</h2><p>Update public brand, contact, homepage copy, images, app links and homepage metadata.</p>
+<div class="home-shell"><aside class="home-aside" aria-label="Homepage editor navigation">
+<div class="home-aside-title">Workspace</div>
+<a href="#homepage-settings">Site & homepage settings</a>
+<a href="#homepage-blocks">Content blocks</a>
+<a href="#homepage-newsletter">Newsletter subscribers</a>
+<div class="home-aside-title">Quick tips</div>
+<p class="home-help" style="padding:0 12px">Choose a settings tab or a content category. Save each block separately.</p>
+</aside><div class="home-main">
+<section class="home-card" id="homepage-settings"><h2>Site & Homepage Settings</h2><p>Choose a category below. All fields retain their existing saved values.</p>
+<div class="home-tabbar" role="tablist" aria-label="Settings categories">
+<button type="button" class="home-tab" data-home-tab="general" aria-selected="true">General & Contact</button>
+<button type="button" class="home-tab" data-home-tab="ticker" aria-selected="false">News Ticker</button>
+<button type="button" class="home-tab" data-home-tab="visibility" aria-selected="false">Visibility & Motion</button>
+<button type="button" class="home-tab" data-home-tab="content" aria-selected="false">Hero & Sections</button>
+<button type="button" class="home-tab" data-home-tab="seo" aria-selected="false">SEO & Social Sharing</button>
+</div>
 <form method="POST" action="{{ route('admin.homepage.settings.update') }}" enctype="multipart/form-data">@csrf @method('PATCH')
 <div class="home-grid">
 <div class="home-field"><label>Site name</label><input name="site_name" required value="{{ old('site_name',$general['site_name']??'Eagle Global Hub LTD') }}"></div>
@@ -53,10 +114,84 @@
 <div class="home-field"><label>Open Graph title</label><input name="og_title" value="{{ old('og_title',$seo['home_og_title']??'') }}"></div><div class="home-field"><label>Open Graph image</label><input type="file" name="og_image" accept="image/jpeg,image/png,image/webp,image/avif"></div><div class="home-field wide"><label>Open Graph description</label><textarea name="og_description">{{ old('og_description',$seo['home_og_description']??'') }}</textarea></div><div class="home-field"><label>Twitter card</label><select name="twitter_card"><option value="summary_large_image">Large image</option><option value="summary">Summary</option></select></div>
 </div><div class="home-actions"><button class="home-btn">Save Settings</button></div></form></section>
 
-<section class="home-card"><h2>Repeatable Homepage Blocks</h2><p>Manage promotions, services, destinations, panels, benefits, testimonials and footer links.</p>
-<details class="home-block" open><summary>Add block</summary><div><form method="POST" action="{{ route('admin.homepage.blocks.store') }}" enctype="multipart/form-data">@csrf @include('admin.homepage.partials.block-form',['block'=>null])<div class="home-actions"><button class="home-btn">Add Block</button></div></form></div></details>
-@foreach($sections as $sectionKey=>$sectionLabel)<div class="home-section"><h3>{{ $sectionLabel }}</h3>@forelse($blocks[$sectionKey]??collect() as $block)<details class="home-block"><summary>{{ $block->title ?: $block->key }} · {{ $block->is_active?'Published':'Hidden' }}</summary><div><form method="POST" action="{{ route('admin.homepage.blocks.update',$block) }}" enctype="multipart/form-data">@csrf @method('PATCH') @include('admin.homepage.partials.block-form',['block'=>$block])<div class="home-actions"><button class="home-btn">Save</button></div></form><form method="POST" action="{{ route('admin.homepage.blocks.destroy',$block) }}" onsubmit="return confirm('Delete this block?')">@csrf @method('DELETE')<div class="home-actions"><button class="home-btn danger">Delete</button></div></form></div></details>@empty<p>No records yet.</p>@endforelse</div>@endforeach
+<section class="home-card" id="homepage-blocks"><h2>Content Block Manager</h2><p>Browse and edit a category without scrolling through every block.</p>
+<div class="home-toolbar">
+<label for="home-block-filter">Content category<select id="home-block-filter"><option value="all">All categories</option>@foreach($sections as $sectionKey=>$sectionLabel)<option value="{{ $sectionKey }}" @selected($loop->first)>{{ $sectionLabel }} ({{ ($blocks[$sectionKey]??collect())->count() }})</option>@endforeach</select></label>
+<label for="home-block-search">Search block title<input type="search" id="home-block-search" placeholder="e.g. Dubai, Flights, Visa..." autocomplete="off"></label>
+</div><p class="home-help" id="home-filter-count" aria-live="polite"></p>
+<details class="home-block"><summary>+ Add new content block</summary><div><form method="POST" action="{{ route('admin.homepage.blocks.store') }}" enctype="multipart/form-data">@csrf @include('admin.homepage.partials.block-form',['block'=>null])<div class="home-actions"><button class="home-btn">Add Block</button></div></form></div></details>
+@foreach($sections as $sectionKey=>$sectionLabel)<div class="home-section" data-block-section="{{ $sectionKey }}"><h3>{{ $sectionLabel }} <span class="home-block-count">({{ ($blocks[$sectionKey]??collect())->count() }})</span></h3>@forelse($blocks[$sectionKey]??collect() as $block)<details class="home-block" data-block-title="{{ Str::lower($block->title ?: $block->key) }}"><summary><span>{{ $block->title ?: $block->key }}</span><span class="home-pill {{ $block->is_active ? '' : 'is-hidden' }}">{{ $block->is_active?'Published':'Hidden' }}</span></summary><div><form method="POST" action="{{ route('admin.homepage.blocks.update',$block) }}" enctype="multipart/form-data">@csrf @method('PATCH') @include('admin.homepage.partials.block-form',['block'=>$block])<div class="home-actions"><button class="home-btn">Save</button></div></form><form method="POST" action="{{ route('admin.homepage.blocks.destroy',$block) }}" onsubmit="return confirm('Delete this block?')">@csrf @method('DELETE')<div class="home-actions"><button class="home-btn danger">Delete</button></div></form></div></details>@empty<p>No records yet.</p>@endforelse</div>@endforeach
 </section>
-<section class="home-card"><h2>Newsletter Subscribers</h2><p>{{ number_format($newsletterCount) }} subscriber(s).</p>@foreach($recentSubscribers as $subscriber)<span style="display:inline-block;margin:5px;padding:6px 10px;background:#f1f5f9;border-radius:999px">{{ $subscriber->email }}</span>@endforeach</section>
-</div>
+<section class="home-card" id="homepage-newsletter"><h2>Newsletter Subscribers</h2><p>{{ number_format($newsletterCount) }} subscriber(s).</p>@foreach($recentSubscribers as $subscriber)<span style="display:inline-block;margin:5px;padding:6px 10px;background:#f1f5f9;border-radius:999px">{{ $subscriber->email }}</span>@endforeach</section>
+</div></div></div>
 @endsection
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const grid = document.querySelector('#homepage-settings .home-grid');
+    if (grid) {
+        // Associate existing fields with their corresponding settings tab without
+        // changing field names, form actions or saved data.
+        let category = 'general';
+        grid.querySelectorAll(':scope > .home-field, :scope > .home-subsection').forEach(function (field) {
+            if (field.classList.contains('home-subsection')) {
+                const heading = field.querySelector('h3')?.textContent || '';
+                if (heading.includes('News Ticker')) category = 'ticker';
+                else if (heading.includes('visibility & motion')) category = 'visibility';
+                else if (heading.includes('Hero & Homepage')) category = 'content';
+            } else if (field.querySelector('[name="seo_title"]')) {
+                category = 'seo';
+            }
+            field.dataset.settingsTab = category;
+        });
+        const tabs = Array.from(document.querySelectorAll('[data-home-tab]'));
+        function selectTab(name) {
+            tabs.forEach(function (button) {
+                const active = button.dataset.homeTab === name;
+                button.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+            grid.querySelectorAll('[data-settings-tab]').forEach(function (field) {
+                const active = field.dataset.settingsTab === name;
+                field.hidden = !active;
+                // Hidden HTML required inputs cannot be focused by browser validation.
+                field.querySelectorAll('[required]').forEach(function (input) {
+                    if (!input.dataset.initiallyRequired) input.dataset.initiallyRequired = '1';
+                    input.required = active;
+                });
+            });
+        }
+        tabs.forEach(function (button) {
+            button.addEventListener('click', function () { selectTab(button.dataset.homeTab); });
+        });
+        selectTab('general');
+        @if($errors->any())
+        const firstError = document.querySelector('#homepage-settings [name="{{ $errors->keys()[0] ?? '' }}"]');
+        if (firstError && firstError.closest('[data-settings-tab]')) selectTab(firstError.closest('[data-settings-tab]').dataset.settingsTab);
+        @endif
+    }
+    const filter = document.getElementById('home-block-filter');
+    const search = document.getElementById('home-block-search');
+    const counter = document.getElementById('home-filter-count');
+    function refreshBlocks() {
+        if (!filter || !search) return;
+        const term = search.value.trim().toLocaleLowerCase();
+        let total = 0;
+        document.querySelectorAll('[data-block-section]').forEach(function (section) {
+            const categoryMatches = filter.value === 'all' || section.dataset.blockSection === filter.value;
+            let shown = 0;
+            section.querySelectorAll('[data-block-title]').forEach(function (block) {
+                const matches = categoryMatches && block.dataset.blockTitle.includes(term);
+                block.hidden = !matches;
+                if (matches) shown++;
+            });
+            section.hidden = !categoryMatches || (term !== '' && shown === 0);
+            total += shown;
+        });
+        if (counter) counter.textContent = total + ' matching content block' + (total === 1 ? '' : 's');
+    }
+    filter?.addEventListener('change', refreshBlocks);
+    search?.addEventListener('input', refreshBlocks);
+    refreshBlocks();
+});
+</script>
+@endpush
