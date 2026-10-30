@@ -1,3 +1,4 @@
+@if($showSection('service_panels'))
 <section class="egho-section egho-section-alt"><div class="egho-shell"><div class="egho-panels">
 @foreach ($servicePanels as $panel)
     @php
@@ -23,3 +24,5 @@
     @endif
 @endforeach
 </div></div></section>
+
+@endif
