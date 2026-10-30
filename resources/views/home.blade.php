@@ -34,6 +34,8 @@
     $newsUrl = trim((string) data_get($settings, 'news_url', ''));
     $newsLinkLabel = trim((string) data_get($settings, 'news_link_label', 'Learn More'));
     $newsTickerDuration = max(8, min(120, (int) data_get($settings, 'news_ticker_duration', 20)));
+    $destinationAutoplayInterval = max(1000, min(15000, (int) data_get($settings, 'destination_autoplay_interval', 2200)));
+    $showSection = static fn (string $section): bool => ! in_array(strtolower(trim((string) data_get($settings, 'show_'.$section, '1'))), ['0', 'false', 'off', 'no'], true);
 
     $flightSearchAction = route('login');
     $flightSearchMethod = 'GET';
