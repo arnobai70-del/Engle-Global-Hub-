@@ -103,6 +103,53 @@ class HomepageContentService
         ];
     }
 
+    /**
+     * Convert the same defaults used by the public homepage into editable block records.
+     * No duplicated seeder copy: changing homepage defaults also changes the import preview.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function defaultEditableBlocks(): array
+    {
+        $icons = [];
+        foreach (['plane', 'hotel', 'globe', 'document', 'briefcase', 'gift', 'train', 'bus', 'car', 'shield', 'star', 'user', 'check', 'card', 'headset', 'lock', 'list'] as $name) {
+            $icons[$this->iconSvg($name)] = $name;
+        }
+
+        $rows = [];
+        foreach (['assurance', 'promotion', 'service', 'destination', 'service_panel', 'benefit', 'app_feature'] as $section) {
+            foreach ($this->defaultBlocks($section) as $index => $block) {
+                $title = $block['title'] ?? $block['name'] ?? null;
+                $subtitle = $block['subtitle'] ?? $block['country'] ?? null;
+                $body = $block['body'] ?? $block['copy'] ?? null;
+
+                // mapBlock() merges meta after core fields. Keep only extra public fields.
+                $extras = array_diff_key($block, array_flip([
+                    'key', 'title', 'name', 'subtitle', 'country', 'body', 'copy',
+                    'image', 'image_alt', 'icon', 'url', 'cta',
+                ]));
+
+                $rows[] = [
+                    'section' => $section,
+                    'key' => $block['key'],
+                    'title' => $title,
+                    'subtitle' => $subtitle,
+                    'body' => $body,
+                    'image_path' => $block['image'] ?? null,
+                    'image_alt' => $block['image_alt'] ?? null,
+                    'icon' => isset($block['icon']) ? ($icons[$block['icon']] ?? null) : null,
+                    'url' => $block['url'] ?? null,
+                    'cta_label' => $block['cta'] ?? null,
+                    'meta' => $extras,
+                    'sort_order' => ($index + 1) * 10,
+                    'is_active' => true,
+                ];
+            }
+        }
+
+        return $rows;
+    }
+
     public function mediaUrl(?string $path, ?string $fallback = null): ?string
     {
         if ($path === null || trim($path) === '') {
