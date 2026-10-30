@@ -28,7 +28,6 @@
                             @php $tabLink = $serviceLink($tab['key']); @endphp
                             @if ($tabLink)<a class="egho-search-tab" href="{{ $tabLink }}">{{ $tab['label'] }}</a>@else<span class="egho-search-tab" title="Available when the provider is configured">{{ $tab['label'] }}</span>@endif
                         @endfeature
-@endIf
                     @endforeach
                     @feature('visa')<a class="egho-search-tab" href="{{ route('work-visa.index') }}">Work Visa</a>@endfeature
                 </div>
