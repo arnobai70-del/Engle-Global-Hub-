@@ -33,6 +33,7 @@
     ));
     $newsUrl = trim((string) data_get($settings, 'news_url', ''));
     $newsLinkLabel = trim((string) data_get($settings, 'news_link_label', 'Learn More'));
+    $newsTickerDuration = max(8, min(120, (int) data_get($settings, 'news_ticker_duration', 20)));
 
     $flightSearchAction = route('login');
     $flightSearchMethod = 'GET';
@@ -97,7 +98,7 @@
 
 @section('content')
 @if($newsEnabled && $newsText !== '')
-<section class="egho-news-ticker" aria-label="{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}">
+<section class="egho-news-ticker" style="--egho-news-duration: {{ $newsTickerDuration }}s" aria-label="{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}">
     <div class="egho-shell egho-news-ticker-inner">
         <strong class="egho-news-ticker-label">{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}</strong>
         <div class="egho-news-ticker-viewport">
