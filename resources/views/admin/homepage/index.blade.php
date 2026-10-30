@@ -125,7 +125,7 @@
 <section class="home-card" id="homepage-newsletter"><h2>Newsletter Subscribers</h2><p>{{ number_format($newsletterCount) }} subscriber(s).</p>@foreach($recentSubscribers as $subscriber)<span style="display:inline-block;margin:5px;padding:6px 10px;background:#f1f5f9;border-radius:999px">{{ $subscriber->email }}</span>@endforeach</section>
 </div></div></div>
 @endsection
-@push('scripts')
+@section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const grid = document.querySelector('#homepage-settings .home-grid');
@@ -165,7 +165,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         selectTab('general');
         @if($errors->any())
-        const firstError = document.querySelector('#homepage-settings [name="{{ $errors->keys()[0] ?? '' }}"]');
+        const errorField = @json($errors->keys()[0] ?? '');
+        const firstError = Array.from(grid.querySelectorAll('[name]')).find(function (input) { return input.name === errorField; });
         if (firstError && firstError.closest('[data-settings-tab]')) selectTab(firstError.closest('[data-settings-tab]').dataset.settingsTab);
         @endif
     }
@@ -194,4 +195,4 @@ document.addEventListener('DOMContentLoaded', function () {
     refreshBlocks();
 });
 </script>
-@endpush
+@endsection
