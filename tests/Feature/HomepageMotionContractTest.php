@@ -14,6 +14,7 @@ final class HomepageMotionContractTest extends TestCase
 
         $this->assertIsString($html);
         $this->assertStringContainsString('egho-news-ticker-track', $html);
+        $this->assertStringContainsString('--egho-news-duration: 20s', $html);
         $this->assertSame(2, substr_count($html, 'class="egho-news-ticker-group"'));
         $this->assertStringContainsString('data-egho-autoplay="step"', $html);
         $this->assertStringContainsString('data-egho-interval="2200"', $html);
@@ -42,7 +43,7 @@ final class HomepageMotionContractTest extends TestCase
         $this->assertIsString($ticker);
         $this->assertIsString($effects);
         $this->assertStringContainsString('@keyframes egho-news-marquee', $ticker);
-        $this->assertStringContainsString('animation: egho-news-marquee 20s linear infinite !important;', $ticker);
+        $this->assertStringContainsString('animation: egho-news-marquee var(--egho-news-duration, 20s) linear infinite !important;', $ticker);
         $this->assertStringContainsString('animation-play-state: running !important;', $ticker);
         $this->assertStringContainsString('.egho-news-ticker-group', $ticker);
         $this->assertStringNotContainsString('prefers-reduced-motion', $ticker);
