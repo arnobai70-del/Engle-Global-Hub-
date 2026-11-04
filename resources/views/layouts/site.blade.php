@@ -21,6 +21,16 @@
     @vite(['resources/css/app.css','resources/js/app.js']) {{ Vite::fonts() }}
     <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-chrome.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-home-dynamic.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-travel-pages.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">@stack('head')
     @include('partials.analytics.meta-pixel-head')
+    {{-- Travelpayouts Drive: provider-supplied project tag, included once on public site pages. --}}
+    <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
+    (function () {
+        var script = document.createElement("script");
+        script.async = 1;
+        script.setAttribute("data-cmp-ab", "2");
+        script.src = 'https://tpembars.com/NTk1NTQ0.js?t=595544';
+        document.head.appendChild(script);
+    })();
+    </script>
 </head>
 <body class="site-body @yield('body_class')">
 @include('partials.analytics.meta-pixel-noscript')
