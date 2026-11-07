@@ -13,6 +13,11 @@
 </section>
 
 @endif
+@auth
+<div class="egho-shell" style="padding:14px 0">
+    <a class="site-button site-button-primary" href="{{ route('flights.enquiries.create') }}">Request Flight Fare (Manual Confirmation)</a>
+</div>
+@endauth
 @if($showSection('flight_search'))
 @feature('flights')
 <section class="egho-search-wrap" aria-label="Flight search">
