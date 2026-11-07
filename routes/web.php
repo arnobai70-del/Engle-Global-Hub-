@@ -791,3 +791,26 @@ Route::view('/admin/destinations', 'admin.destinations.index')
         'permission:master-data.view',
     ])
     ->name('admin.destinations.index');
+
+/*
+ * Manual flight enquiries are separate from supplier reservations and payment.
+ * Search providers may be unavailable: no offer, fare or ticket is fabricated.
+ */
+Route::middleware(['auth', 'verified', 'feature:flights', 'permission:flights.search'])
+    ->group(function () {
+        Route::get('/flights/enquiries/create', [\App\Http\Controllers\Flight\FlightEnquiryController::class, 'create'])->name('flights.enquiries.create');
+        Route::post('/flights/enquiries', [\App\Http\Controllers\Flight\FlightEnquiryController::class, 'store'])
+            ->middleware('throttle:10,1')->name('flights.enquiries.store');
+        Route::get('/flights/enquiries/{enquiry}', [\App\Http\Controllers\Flight\FlightEnquiryController::class, 'show'])
+            ->whereNumber('enquiry')->name('flights.enquiries.show');
+    });
+
+Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
+    ->prefix('admin/flight-enquiries')->name('admin.flight-enquiries.')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\FlightEnquiryController::class, 'index'])->name('index');
+        Route::get('/{enquiry}', [\App\Http\Controllers\Admin\FlightEnquiryController::class, 'show'])
+            ->whereNumber('enquiry')->name('show');
+        Route::patch('/{enquiry}', [\App\Http\Controllers\Admin\FlightEnquiryController::class, 'update'])
+            ->whereNumber('enquiry')->name('update');
+    });
