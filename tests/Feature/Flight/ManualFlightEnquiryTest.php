@@ -78,9 +78,14 @@ final class ManualFlightEnquiryTest extends TestCase
         $user = $this->user('customer');
         $payload = $this->payload();
         $payload['departure_date'] = now()->subDay()->toDateString();
+        $this->actingAs($user)->post(route('flights.enquiries.store'), $payload)
+            ->assertSessionHasErrors(['departure_date']);
+
+        $payload = $this->payload();
         unset($payload['consent']);
         $this->actingAs($user)->post(route('flights.enquiries.store'), $payload)
-            ->assertSessionHasErrors(['departure_date', 'consent']);
+            ->assertSessionHasErrors(['consent']);
+
         $this->assertDatabaseCount('flight_enquiries', 0);
     }
 
