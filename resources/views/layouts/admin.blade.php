@@ -352,6 +352,12 @@
             <div class="admin-nav-section">
                 <span class="admin-nav-title">BUSINESS</span>
 
+                <a href="{{ route('admin.flight-enquiries.index') }}"
+                   class="admin-nav-link {{ request()->routeIs('admin.flight-enquiries.*') ? 'active' : '' }}">
+                    <span aria-hidden="true">✈</span>
+                    <span>Flight Enquiries</span>
+                </a>
+
                 <a
                     href="{{ route('admin.bookings.index') }}"
                     class="admin-nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
