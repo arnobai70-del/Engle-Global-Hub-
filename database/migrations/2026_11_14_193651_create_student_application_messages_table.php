@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('author_type', 16);
             $table->text('body');
             $table->timestamp('created_at')->useCurrent();
-            $table->index(['student_application_id', 'created_at']);
+            $table->index(['student_application_id', 'created_at'], 'sam_application_created_at_index');
         });
     }
 
