@@ -9,6 +9,8 @@
     <label>Email<input type="email" name="email" value="{{ old('email', $agent->email ?? '') }}" required maxlength="255"></label>
     <label>Phone<input type="tel" name="phone" value="{{ old('phone', $agent->phone ?? '') }}" maxlength="32"></label>
     <label>Company<input name="company_name" value="{{ old('company_name', $agent->company_name ?? '') }}" maxlength="150"></label>
+    <label>Partner type<select name="partner_type">@foreach(\App\Models\Agent::TYPES as $value => $label)<option value="{{ $value }}" @selected(old('partner_type', $agent->partner_type ?? \App\Models\Agent::TYPE_AGENT) === $value)>{{ $label }}</option>@endforeach</select></label>
+    <label>Website (https)<input type="url" name="website_url" value="{{ old('website_url', $agent->website_url ?? '') }}" maxlength="2048"></label>
     <label>Registration number<input name="registration_number" value="{{ old('registration_number', $agent->registration_number ?? '') }}" maxlength="100"></label>
     <label>Country
         <select name="country_id">

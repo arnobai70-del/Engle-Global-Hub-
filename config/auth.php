@@ -42,6 +42,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Bearer tokens for the versioned JSON API (see App\Models\ApiToken).
+        'api' => [
+            'driver' => 'egh-api-token',
+        ],
     ],
 
     /*

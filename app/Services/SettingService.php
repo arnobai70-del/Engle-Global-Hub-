@@ -16,6 +16,12 @@ class SettingService
 
     private const GROUP_CACHE_PREFIX = 'settings:group:';
 
+    /**
+     * Container flag remembering, for the current application instance only,
+     * that the settings table exists. A missing table is re-checked each time.
+     */
+    private const TABLE_EXISTS_FLAG = 'settings.table-exists';
+
     public function get(string $group, string $key, mixed $default = null): mixed
     {
         $cached = Cache::remember(
@@ -23,6 +29,7 @@ class SettingService
             self::CACHE_TTL_SECONDS,
             function () use ($group, $key): ?array {
                 $setting = Setting::query()->where('group', $group)->where('key', $key)->first();
+
                 return $setting ? ['value' => $setting->value, 'type' => $setting->type] : null;
             }
         );
@@ -33,7 +40,7 @@ class SettingService
     /** @return array<string, mixed> */
     public function group(string $group): array
     {
-        if (! Schema::hasTable('settings')) {
+        if (! $this->tableExists()) {
             return [];
         }
 
@@ -62,6 +69,7 @@ class SettingService
         );
 
         $this->forget($group, $key);
+
         return $setting->refresh();
     }
 
@@ -85,6 +93,7 @@ class SettingService
     {
         $deleted = Setting::query()->where('group', $group)->where('key', $key)->delete();
         $this->forget($group, $key);
+
         return $deleted > 0;
     }
 
@@ -108,7 +117,9 @@ class SettingService
     /** @throws JsonException */
     private function prepareValueForStorage(mixed $value, string $type): ?string
     {
-        if ($value === null) return null;
+        if ($value === null) {
+            return null;
+        }
 
         return match ($type) {
             'integer' => (string) ((int) $value),
@@ -122,7 +133,9 @@ class SettingService
     /** @throws JsonException */
     private function castValue(?string $value, string $type): mixed
     {
-        if ($value === null) return null;
+        if ($value === null) {
+            return null;
+        }
 
         return match ($type) {
             'integer' => (int) $value,
@@ -135,13 +148,36 @@ class SettingService
 
     private function normalizeBoolean(mixed $value): bool
     {
-        if (is_bool($value)) return $value;
-        if (is_int($value)) return $value === 1;
+        if (is_bool($value)) {
+            return $value;
+        }
+        if (is_int($value)) {
+            return $value === 1;
+        }
         if (is_string($value)) {
             $value = strtolower(trim($value));
-            if (in_array($value, ['1', 'true', 'yes', 'on'], true)) return true;
-            if (in_array($value, ['0', 'false', 'no', 'off', ''], true)) return false;
+            if (in_array($value, ['1', 'true', 'yes', 'on'], true)) {
+                return true;
+            }
+            if (in_array($value, ['0', 'false', 'no', 'off', ''], true)) {
+                return false;
+            }
         }
         throw new InvalidArgumentException('Invalid boolean setting value.');
+    }
+
+    private function tableExists(): bool
+    {
+        if (app()->bound(self::TABLE_EXISTS_FLAG)) {
+            return true;
+        }
+
+        if (! Schema::hasTable('settings')) {
+            return false;
+        }
+
+        app()->instance(self::TABLE_EXISTS_FLAG, true);
+
+        return true;
     }
 }

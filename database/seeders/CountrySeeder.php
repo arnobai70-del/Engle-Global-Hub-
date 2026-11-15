@@ -12,7 +12,27 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
-        $countries = [
+        foreach (self::countries() as $country) {
+            Country::query()->updateOrCreate(
+                [
+                    'iso2' => $country['iso2'],
+                ],
+                [
+                    'name' => $country['name'],
+                    'iso3' => $country['iso3'],
+                    'phone_code' => $country['phone_code'],
+                    'is_active' => true,
+                ]
+            );
+        }
+    }
+
+    /**
+     * @return list<array{name: string, iso2: string, iso3: string, phone_code: string}>
+     */
+    public static function countries(): array
+    {
+        return [
             [
                 'name' => 'Bangladesh',
                 'iso2' => 'BD',
@@ -193,20 +213,17 @@ class CountrySeeder extends Seeder
                 'iso3' => 'ESP',
                 'phone_code' => '+34',
             ],
+            // Destinations listed in the business requirements document.
+            ['name' => 'Philippines', 'iso2' => 'PH', 'iso3' => 'PHL', 'phone_code' => '+63'],
+            ['name' => 'Egypt', 'iso2' => 'EG', 'iso3' => 'EGY', 'phone_code' => '+20'],
+            ['name' => 'Vietnam', 'iso2' => 'VN', 'iso3' => 'VNM', 'phone_code' => '+84'],
+            ['name' => 'Cambodia', 'iso2' => 'KH', 'iso3' => 'KHM', 'phone_code' => '+855'],
+            ['name' => 'Sweden', 'iso2' => 'SE', 'iso3' => 'SWE', 'phone_code' => '+46'],
+            ['name' => 'Austria', 'iso2' => 'AT', 'iso3' => 'AUT', 'phone_code' => '+43'],
+            ['name' => 'Jordan', 'iso2' => 'JO', 'iso3' => 'JOR', 'phone_code' => '+962'],
+            ['name' => 'Belarus', 'iso2' => 'BY', 'iso3' => 'BLR', 'phone_code' => '+375'],
+            ['name' => 'Bulgaria', 'iso2' => 'BG', 'iso3' => 'BGR', 'phone_code' => '+359'],
+            ['name' => 'Cyprus', 'iso2' => 'CY', 'iso3' => 'CYP', 'phone_code' => '+357'],
         ];
-
-        foreach ($countries as $country) {
-            Country::query()->updateOrCreate(
-                [
-                    'iso2' => $country['iso2'],
-                ],
-                [
-                    'name' => $country['name'],
-                    'iso3' => $country['iso3'],
-                    'phone_code' => $country['phone_code'],
-                    'is_active' => true,
-                ]
-            );
-        }
     }
 }

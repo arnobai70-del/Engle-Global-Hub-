@@ -346,18 +346,231 @@
                         </svg>
                         <span>Destinations</span>
                     </a>
+
+                    <a
+                        href="{{ route('admin.service-destinations.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.service-destinations.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 3h9l4 4v14H6z"/>
+                            <path d="M9 13h6M9 16.5h4"/>
+                        </svg>
+                        <span>Services &amp; Destinations</span>
+                    </a>
+                @endcan
+
+                @can('content.view')
+                    <a
+                        href="{{ route('admin.team-members.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.team-members.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M2.5 21c.7-4.3 2.9-6.5 6.5-6.5s5.8 2.2 6.5 6.5"/>
+                        </svg>
+                        <span>Team</span>
+                    </a>
+
+                    <a
+                        href="{{ route('admin.offers.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 12 12 20 4 12V4h8z"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                        </svg>
+                        <span>Offers</span>
+                    </a>
+
+                    <a
+                        href="{{ route('admin.reviews.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>
+                        </svg>
+                        <span>Reviews</span>
+                    </a>
+
+                    @can('content.view')
+                        <a
+                            href="{{ route('admin.media.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5-9 8"/></svg>
+                            <span>Media Library</span>
+                        </a>
+                    @endcan
+
+                    @can('content.view')
+                        <a
+                            href="{{ route('admin.content.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.content.*') && ! request()->routeIs('admin.content.approvals*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z"/><path d="M8 11h8M8 15h8M8 7h4"/></svg>
+                            <span>Website Content</span>
+                        </a>
+                    @endcan
+
+                    @can('content.approve')
+                        <a
+                            href="{{ route('admin.content.approvals') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.content.approvals*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>
+                            <span>Content Approval</span>
+                        </a>
+                    @endcan
+
+                    @can('content.manage')
+                        <a
+                            href="{{ route('admin.contact-directory.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.contact-directory.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+                            <span>Contact Directory</span>
+                        </a>
+                    @endcan
+
+                    @can('forums.moderate')
+                        <a
+                            href="{{ route('admin.forums.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.forums.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h12v9H8l-4 3z"/><path d="M8 17h8l4 3V9h-4"/></svg>
+                            <span>Forums</span>
+                        </a>
+                    @endcan
+
+                    @can('rewards.manage')
+                        <a
+                            href="{{ route('admin.rewards.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.rewards.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9 5.5-.8z"/></svg>
+                            <span>Rewards</span>
+                        </a>
+                    @endcan
+
+                    @can('content.view')
+                        <a
+                            href="{{ route('admin.translations.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.translations.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8 3v2M6 5c0 4 3 7 6 8M11 5c-1 4-4 7-7 8"/><path d="m13 21 4-10 4 10M14.5 17h5"/></svg>
+                            <span>Translations</span>
+                        </a>
+                    @endcan
+
+                    @can('seo.manage')
+                        <a
+                            href="{{ route('admin.seo.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+                            <span>SEO &amp; Redirects</span>
+                        </a>
+                    @endcan
                 @endcan
             </div>
+
+            @canany(['student-enquiries.view', 'student-applications.view', 'courses.view', 'appointments.view', 'payments.view'])
+                <div class="admin-nav-section">
+                    <span class="admin-nav-title">SINGAPORE CONSULTANCY</span>
+
+                    @can('student-enquiries.view')
+                        <a
+                            href="{{ route('admin.student-enquiries.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.student-enquiries.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 5h16v12H9l-5 4V5Z"/>
+                                <path d="M8 9h8M8 13h5"/>
+                            </svg>
+                            <span>Student Enquiries</span>
+                        </a>
+                    @endcan
+
+                    @can('student-applications.view')
+                        <a
+                            href="{{ route('admin.student-applications.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.student-applications.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="m3 9 9-5 9 5-9 5z"/>
+                                <path d="M6 11v5c3.5 3 8.5 3 12 0v-5"/>
+                            </svg>
+                            <span>Student Applications</span>
+                        </a>
+                    @endcan
+
+                    @can('courses.view')
+                        <a
+                            href="{{ route('admin.courses.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
+                            <span>Courses &amp; Intakes</span>
+                        </a>
+                    @endcan
+
+                    @can('student-applications.view')
+                        <a
+                            href="{{ route('admin.success-pipeline.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.success-pipeline.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 10 14l4 4 6-8"/><path d="M14 10h6v6"/></svg>
+                            <span>Upcoming Success</span>
+                        </a>
+                    @endcan
+
+                    @can('appointments.view')
+                        <a
+                            href="{{ route('admin.appointments.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.appointments.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                            <span>Appointments</span>
+                        </a>
+                    @endcan
+
+                    @can('payments.view')
+                        <a
+                            href="{{ route('admin.payments.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>
+                            <span>Payments</span>
+                        </a>
+                    @endcan
+                </div>
+            @endcanany
 
             <div class="admin-nav-section">
                 <span class="admin-nav-title">BUSINESS</span>
 
+                @role('admin|super-admin')
                 <a href="{{ route('admin.flight-enquiries.index') }}"
                    class="admin-nav-link {{ request()->routeIs('admin.flight-enquiries.*') ? 'active' : '' }}">
                     <span aria-hidden="true">✈</span>
                     <span>Flight Enquiries</span>
                 </a>
+                @endrole
 
+                @can('service-enquiries.view')
+                    <a
+                        href="{{ route('admin.service-enquiries.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.service-enquiries.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 3h9l4 4v14H6z"/>
+                            <path d="M9 13h6M9 16.5h4"/>
+                        </svg>
+                        <span>Service Enquiries</span>
+                    </a>
+                @endcan
+
+                @role('admin|super-admin')
                 <a
                     href="{{ route('admin.bookings.index') }}"
                     class="admin-nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
@@ -368,6 +581,7 @@
                     </svg>
                     <span>Bookings</span>
                 </a>
+                @endrole
 
                 @can('agents.view')
                     <a
@@ -450,6 +664,36 @@
                         </svg>
                         <span>System Logs</span>
                     </a>
+                </div>
+            @endcan
+
+            @can('activity-logs.view')
+                <div class="admin-nav-section">
+                    <span class="admin-nav-title">USERS &amp; SECURITY</span>
+
+                    <a
+                        href="{{ route('admin.activity-logs.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 8v4l3 2"/>
+                            <circle cx="12" cy="12" r="9"/>
+                        </svg>
+                        <span>Activity Logs</span>
+                    </a>
+
+                    @can('integrations.view')
+                        <a
+                            href="{{ route('admin.integrations.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.integrations.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0z"/>
+                                <path d="M12 16v5"/>
+                            </svg>
+                            <span>API &amp; Integrations</span>
+                        </a>
+                    @endcan
                 </div>
             @endcan
         </nav>

@@ -38,6 +38,31 @@
                     </a>
                 @endfeature
 
+                @feature('student-consultancy')
+                    <a
+                        href="{{ route('student.applications.index') }}"
+                        class="site-button site-button-secondary"
+                    >
+                        My Applications
+                    </a>
+                @endfeature
+
+                <a
+                    href="{{ route('service-enquiries.mine') }}"
+                    class="site-button site-button-secondary"
+                >
+                    My Enquiries
+                </a>
+
+                @if(app(\App\Services\AgentPortal::class)->agentFor(auth()->user()))
+                    <a
+                        href="{{ route('agent.index') }}"
+                        class="site-button site-button-secondary"
+                    >
+                        Agent Portal
+                    </a>
+                @endif
+
             </div>
         </div>
 

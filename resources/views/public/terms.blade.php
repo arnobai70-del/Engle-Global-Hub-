@@ -8,6 +8,7 @@
 @section('body_class', 'public-page-body terms-page-body')
 
 @section('content')
+@php($termsSection = app(\App\Services\Content\PageContent::class)->section('terms'))
 
     <main class="egho-doc">
 
@@ -29,6 +30,15 @@
                 </p>
             </section>
 
+            @if($termsSection)
+            <section class="egho-doc-stack">
+                <article class="egho-doc-card">
+                    <h2>{{ $termsSection->localized('title') }}</h2>
+                    @foreach(preg_split('/\R{2,}/', trim((string) $termsSection->localized('body'))) as $paragraph)<p>{!! nl2br(e($paragraph)) !!}</p>@endforeach
+                    <p><small>{{ __('Last updated') }}: {{ $termsSection->updated_at->format('j M Y') }}</small></p>
+                </article>
+            </section>
+            @else
             <section class="egho-doc-stack">
 
                 <article class="egho-doc-card">
@@ -64,6 +74,7 @@
                 </article>
 
             </section>
+            @endif
 
             <p class="egho-doc-note">
                 These notices describe how this website presents travel data. They

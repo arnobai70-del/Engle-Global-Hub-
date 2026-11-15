@@ -4,26 +4,38 @@ namespace App\Providers;
 
 use App\Contracts\Flight\FlightSearchProvider;
 use App\Contracts\Hotel\HotelSearchProvider;
+use App\Contracts\Messaging\MapProvider;
+use App\Contracts\Messaging\SmsSender;
+use App\Contracts\Messaging\WhatsAppSender;
+use App\Contracts\Payments\PaymentGateway;
 use App\Contracts\Tour\TourSearchProvider;
 use App\Contracts\Travel\DestinationResolver;
 use App\Contracts\Visa\VisaInformationProvider;
 use App\Http\Controllers\Admin\HomepageContentController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\SitemapController;
+use App\Models\ApiToken;
 use App\Models\User;
 use App\Services\Feature\FeatureManager;
 use App\Services\Feature\FeatureRegistry;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 use App\Services\HomepageContentService;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
+use App\Services\Integrations\UnavailableMessaging;
+use App\Services\Localization\OverridableTranslationLoader;
+use App\Services\Payments\UnavailablePaymentGateway;
 use App\Services\SettingService;
 use App\Services\Tour\UnavailableTourSearchProvider;
 use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Travel\UnavailableDestinationResolver;
 use App\Services\Visa\UnavailableVisaInformationProvider;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Translation\Loader;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -37,6 +49,17 @@ class AppServiceProvider extends ServiceProvider
         $this->app->scoped(FeatureRegistry::class);
         $this->app->scoped(FeatureManager::class);
 
+        $this->app->bind(PaymentGateway::class, function (Application $app): PaymentGateway {
+            $class = config('payments.gateway');
+
+            return is_string($class) && is_a($class, PaymentGateway::class, true) ? $app->make($class) : new UnavailablePaymentGateway;
+        });
+        $this->app->bind(SmsSender::class, UnavailableMessaging::class);
+        $this->app->bind(WhatsAppSender::class, UnavailableMessaging::class);
+        $this->app->bind(MapProvider::class, UnavailableMessaging::class);
+
+        $this->app->extend('translation.loader', fn (Loader $loader): Loader => new OverridableTranslationLoader($loader));
+
         $this->app->bind(
             FlightSearchProvider::class,
             function (Application $app): FlightSearchProvider {
@@ -46,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
                 if (! is_string($providerClass) || ! is_a($providerClass, FlightSearchProvider::class, true)) {
                     $providerClass = UnavailableFlightSearchProvider::class;
                 }
+
                 return $app->make($providerClass);
             }
         );
@@ -58,12 +82,35 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Auth::viaRequest('egh-api-token', function (Request $request): ?User {
+            $plain = $request->bearerToken();
+            if (! is_string($plain) || $plain === '') {
+                return null;
+            }
+
+            $token = ApiToken::findValid($plain);
+            $user = $token?->user;
+            if ($token === null || $user === null || ! $user->hasVerifiedEmail()) {
+                return null;
+            }
+
+            if ($token->last_used_at === null || $token->last_used_at->lt(now()->subMinutes(5))) {
+                $token->forceFill(['last_used_at' => now()])->save();
+            }
+            $request->attributes->set('api_token', $token);
+
+            return $user;
+        });
+
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->getAuthIdentifier() ?: $request->ip()));
+        RateLimiter::for('api-auth', fn (Request $request) => Limit::perMinute(5)->by(strtolower((string) $request->input('email')).'|'.$request->ip()));
         if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
 
         Blade::if('feature', static function (string $key): bool {
             $user = Auth::user();
+
             return app(FeatureManager::class)->isVisibleTo($key, $user instanceof User ? $user : null);
         });
 
@@ -134,7 +181,10 @@ class AppServiceProvider extends ServiceProvider
             $providerName = (string) config($configKey.'.provider', 'unavailable');
             $providers = config($configKey.'.providers', []);
             $providerClass = is_array($providers) ? ($providers[$providerName] ?? null) : null;
-            if (! is_string($providerClass) || ! is_a($providerClass, $contract, true)) $providerClass = $fallback;
+            if (! is_string($providerClass) || ! is_a($providerClass, $contract, true)) {
+                $providerClass = $fallback;
+            }
+
             return $app->make($providerClass);
         });
     }
@@ -146,7 +196,10 @@ class AppServiceProvider extends ServiceProvider
             $providerName = (string) config($configKey.'.provider', 'unavailable');
             $dependencies = config($configKey.'.provider_dependencies.'.$providerName, []);
             $dependencyClass = is_array($dependencies) ? ($dependencies[$contract] ?? null) : null;
-            if (! is_string($dependencyClass) || ! is_a($dependencyClass, $contract, true)) $dependencyClass = $fallback;
+            if (! is_string($dependencyClass) || ! is_a($dependencyClass, $contract, true)) {
+                $dependencyClass = $fallback;
+            }
+
             return $app->make($dependencyClass);
         });
     }

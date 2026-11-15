@@ -1,27 +1,53 @@
 <?php
 
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AffiliateController;
 use App\Http\Controllers\Admin\AgentController;
+use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\BookingPageController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryPageController;
 use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\ContactDirectoryController;
+use App\Http\Controllers\Admin\ContentApprovalController;
+use App\Http\Controllers\Admin\ContentEntryController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CurrencyPageController;
+use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\FeatureControlController;
+use App\Http\Controllers\Admin\ForumModerationController;
 use App\Http\Controllers\Admin\InstitutionController;
+use App\Http\Controllers\Admin\IntegrationController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguagePageController;
 use App\Http\Controllers\Admin\MasterDataPageController;
+use App\Http\Controllers\Admin\MediaAssetController;
+use App\Http\Controllers\Admin\PaymentRecordController;
 use App\Http\Controllers\Admin\ReportPageController;
+use App\Http\Controllers\Admin\ReviewModerationController;
+use App\Http\Controllers\Admin\RewardProgramController;
+use App\Http\Controllers\Admin\SeoController;
+use App\Http\Controllers\Admin\ServiceDestinationController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\SuccessPipelineController;
 use App\Http\Controllers\Admin\SystemLogPageController;
+use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\TranslationController;
+use App\Http\Controllers\Agent\AgentPortalController;
+use App\Http\Controllers\Agent\PartnerRegistrationController;
+use App\Http\Controllers\Consultancy\SingaporeStudyController;
+use App\Http\Controllers\Consultancy\StudentEnquiryController;
+use App\Http\Controllers\ContentPageController;
+use App\Http\Controllers\ExploreBangladeshController;
 use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
 use App\Http\Controllers\Flight\FlightBookingDraftController;
 use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
+use App\Http\Controllers\Flight\FlightEnquiryController;
 use App\Http\Controllers\Flight\FlightOfferSelectionController;
 use App\Http\Controllers\Flight\FlightOrderAttemptStatusController;
 use App\Http\Controllers\Flight\FlightOrderConfirmationController;
@@ -34,8 +60,19 @@ use App\Http\Controllers\Flight\FlightOrderReconciliationController;
 use App\Http\Controllers\Flight\FlightSearchController;
 use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use App\Http\Controllers\FlightBookingController;
+use App\Http\Controllers\ForumController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Hotel\HotelSearchController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OfferController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\RewardController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ServiceEnquiryController;
+use App\Http\Controllers\Student\StudentApplicationController;
+use App\Http\Controllers\Student\StudentApplicationMessageController;
+use App\Http\Controllers\Student\StudentAppointmentController;
+use App\Http\Controllers\Student\StudentDocumentController;
 use App\Http\Controllers\Tour\TourController;
 use App\Http\Controllers\Tour\TourSearchController;
 use App\Http\Controllers\Visa\VisaController;
@@ -44,7 +81,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
 
-Route::view('/about', 'public.about')
+Route::get('/about', AboutController::class)
     ->middleware('feature:about')
     ->name('about');
 
@@ -776,21 +813,31 @@ Route::get(
     ->name('admin.master-data.manage');
 
 /*
- * Destination content page.
+ * Destination catalogue (Explore Bangladesh and other destinations).
  *
- * Presentation only: no destination, image, translation or publish state is
- * stored yet, so the page reports that plainly instead of offering controls
- * that cannot save anything. It follows the same admin role and permission
- * middleware as the other catalogue pages.
+ * Follows the same admin role and master-data permissions as the other
+ * catalogue pages. Only published destinations are rendered publicly.
  */
-Route::view('/admin/destinations', 'admin.destinations.index')
-    ->middleware([
-        'auth',
-        'verified',
-        'role:admin|super-admin',
-        'permission:master-data.view',
-    ])
-    ->name('admin.destinations.index');
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/destinations')->name('admin.destinations.')
+    ->group(function () {
+        Route::get('/', [DestinationController::class, 'index'])
+            ->middleware('permission:master-data.view')->name('index');
+        Route::middleware('permission:master-data.manage|content.manage')->group(function () {
+            Route::get('/create', [DestinationController::class, 'create'])->name('create');
+            Route::post('/', [DestinationController::class, 'store'])->name('store');
+            Route::get('/{destination}/edit', [DestinationController::class, 'edit'])->whereNumber('destination')->name('edit');
+            Route::patch('/{destination}', [DestinationController::class, 'update'])->whereNumber('destination')->name('update');
+            Route::delete('/{destination}', [DestinationController::class, 'destroy'])->whereNumber('destination')->name('destroy');
+            Route::delete('/{destination}/images/{image}', [DestinationController::class, 'destroyImage'])
+                ->whereNumber(['destination', 'image'])->name('images.destroy');
+        });
+    });
+
+Route::get('/explore-bangladesh', [ExploreBangladeshController::class, 'index'])
+    ->name('explore-bangladesh.index');
+Route::get('/explore-bangladesh/{slug}', [ExploreBangladeshController::class, 'show'])
+    ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('explore-bangladesh.show');
 
 /*
  * Manual flight enquiries are separate from supplier reservations and payment.
@@ -798,19 +845,351 @@ Route::view('/admin/destinations', 'admin.destinations.index')
  */
 Route::middleware(['auth', 'verified', 'feature:flights', 'permission:flights.search'])
     ->group(function () {
-        Route::get('/flights/enquiries/create', [\App\Http\Controllers\Flight\FlightEnquiryController::class, 'create'])->name('flights.enquiries.create');
-        Route::post('/flights/enquiries', [\App\Http\Controllers\Flight\FlightEnquiryController::class, 'store'])
+        Route::get('/flights/enquiries/create', [FlightEnquiryController::class, 'create'])->name('flights.enquiries.create');
+        Route::post('/flights/enquiries', [FlightEnquiryController::class, 'store'])
             ->middleware('throttle:10,1')->name('flights.enquiries.store');
-        Route::get('/flights/enquiries/{enquiry}', [\App\Http\Controllers\Flight\FlightEnquiryController::class, 'show'])
+        Route::get('/flights/enquiries/{enquiry}', [FlightEnquiryController::class, 'show'])
             ->whereNumber('enquiry')->name('flights.enquiries.show');
     });
 
 Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
     ->prefix('admin/flight-enquiries')->name('admin.flight-enquiries.')
     ->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\FlightEnquiryController::class, 'index'])->name('index');
-        Route::get('/{enquiry}', [\App\Http\Controllers\Admin\FlightEnquiryController::class, 'show'])
+        Route::get('/', [App\Http\Controllers\Admin\FlightEnquiryController::class, 'index'])->name('index');
+        Route::get('/{enquiry}', [App\Http\Controllers\Admin\FlightEnquiryController::class, 'show'])
             ->whereNumber('enquiry')->name('show');
-        Route::patch('/{enquiry}', [\App\Http\Controllers\Admin\FlightEnquiryController::class, 'update'])
+        Route::patch('/{enquiry}', [App\Http\Controllers\Admin\FlightEnquiryController::class, 'update'])
             ->whereNumber('enquiry')->name('update');
+    });
+
+/*
+ * Singapore Student Consultancy.
+ *
+ * The public page collects consultation enquiries (rate limited, consent
+ * required). Students track their own applications; staff manage enquiries
+ * and applications. Statuses are manual staff records: no institution or ICA
+ * system is called, and no admission or Student's Pass outcome is implied.
+ */
+Route::get('/study-in-singapore', SingaporeStudyController::class)
+    ->middleware('feature:student-consultancy')
+    ->name('consultancy.singapore');
+
+Route::post('/study-in-singapore/enquiries', [StudentEnquiryController::class, 'store'])
+    ->middleware(['feature:student-consultancy', 'throttle:5,1'])
+    ->name('consultancy.enquiries.store');
+
+Route::middleware(['auth', 'verified', 'feature:student-consultancy'])
+    ->prefix('my-applications')->name('student.applications.')
+    ->group(function () {
+        Route::get('/', [StudentApplicationController::class, 'index'])->name('index');
+        Route::get('/{application}', [StudentApplicationController::class, 'show'])
+            ->whereNumber('application')->name('show');
+        Route::post('/{application}/documents', [StudentDocumentController::class, 'store'])
+            ->whereNumber('application')->middleware('throttle:20,1')->name('documents.store');
+        Route::get('/{application}/documents/{document}', [StudentDocumentController::class, 'download'])
+            ->whereNumber(['application', 'document'])->name('documents.download');
+        Route::delete('/{application}/documents/{document}', [StudentDocumentController::class, 'destroy'])
+            ->whereNumber(['application', 'document'])->name('documents.destroy');
+        Route::post('/{application}/messages', [StudentApplicationMessageController::class, 'store'])
+            ->whereNumber('application')->middleware('throttle:10,1')->name('messages.store');
+    });
+
+Route::middleware(['auth', 'verified'])
+    ->prefix('notifications')->name('notifications.')
+    ->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/read', [NotificationController::class, 'markAllRead'])->name('read');
+    });
+
+Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:admin|super-admin', 'permission:activity-logs.view'])
+    ->name('admin.activity-logs.index');
+
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/student-enquiries')->name('admin.student-enquiries.')
+    ->group(function () {
+        Route::middleware('can:student-enquiries.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\StudentEnquiryController::class, 'index'])->name('index');
+            Route::get('/{enquiry}', [App\Http\Controllers\Admin\StudentEnquiryController::class, 'show'])
+                ->whereNumber('enquiry')->name('show');
+        });
+        Route::middleware('can:student-enquiries.manage')->group(function () {
+            Route::patch('/{enquiry}', [App\Http\Controllers\Admin\StudentEnquiryController::class, 'update'])
+                ->whereNumber('enquiry')->name('update');
+            Route::post('/{enquiry}/convert', [App\Http\Controllers\Admin\StudentEnquiryController::class, 'convert'])
+                ->whereNumber('enquiry')->middleware('can:student-applications.manage')->name('convert');
+        });
+    });
+
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/student-applications')->name('admin.student-applications.')
+    ->group(function () {
+        Route::middleware('can:student-applications.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\StudentApplicationController::class, 'index'])->name('index');
+            Route::get('/{application}', [App\Http\Controllers\Admin\StudentApplicationController::class, 'show'])
+                ->whereNumber('application')->name('show');
+            Route::get('/{application}/documents/{document}', [App\Http\Controllers\Admin\StudentDocumentController::class, 'download'])
+                ->whereNumber(['application', 'document'])->name('documents.download');
+        });
+        Route::patch('/{application}/documents/{document}/review', [App\Http\Controllers\Admin\StudentDocumentController::class, 'review'])
+            ->whereNumber(['application', 'document'])->middleware('can:student-documents.verify')->name('documents.review');
+        Route::middleware('can:student-applications.manage')->group(function () {
+            Route::post('/{application}/documents', [App\Http\Controllers\Admin\StudentDocumentController::class, 'store'])
+                ->whereNumber('application')->name('documents.store');
+            Route::delete('/{application}/documents/{document}', [App\Http\Controllers\Admin\StudentDocumentController::class, 'destroy'])
+                ->whereNumber(['application', 'document'])->name('documents.destroy');
+            Route::post('/{application}/messages', [App\Http\Controllers\Admin\StudentApplicationMessageController::class, 'store'])
+                ->whereNumber('application')->name('messages.store');
+            Route::get('/students/{student}/create', [App\Http\Controllers\Admin\StudentApplicationController::class, 'create'])
+                ->whereNumber('student')->name('create');
+            Route::post('/students/{student}', [App\Http\Controllers\Admin\StudentApplicationController::class, 'store'])
+                ->whereNumber('student')->name('store');
+            Route::patch('/{application}', [App\Http\Controllers\Admin\StudentApplicationController::class, 'update'])
+                ->whereNumber('application')->name('update');
+            Route::post('/{application}/transitions', [App\Http\Controllers\Admin\StudentApplicationController::class, 'transition'])
+                ->whereNumber('application')->name('transition');
+        });
+    });
+
+/*
+ * Website CMS: team profiles. Drafts are never rendered publicly.
+ */
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/team')->name('admin.team-members.')
+    ->group(function () {
+        Route::get('/', [TeamMemberController::class, 'index'])
+            ->middleware('can:content.view')->name('index');
+        Route::middleware('can:content.manage')->group(function () {
+            Route::get('/create', [TeamMemberController::class, 'create'])->name('create');
+            Route::post('/', [TeamMemberController::class, 'store'])->name('store');
+            Route::get('/{teamMember}/edit', [TeamMemberController::class, 'edit'])->whereNumber('teamMember')->name('edit');
+            Route::patch('/{teamMember}', [TeamMemberController::class, 'update'])->whereNumber('teamMember')->name('update');
+            Route::delete('/{teamMember}', [TeamMemberController::class, 'destroy'])->whereNumber('teamMember')->name('destroy');
+        });
+    });
+
+/*
+ * Services and their destination countries (master data).
+ */
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/service-destinations')->name('admin.service-destinations.')
+    ->group(function () {
+        Route::get('/', [ServiceDestinationController::class, 'index'])
+            ->middleware('permission:master-data.view')->name('index');
+        Route::middleware('permission:master-data.manage')->group(function () {
+            Route::post('/', [ServiceDestinationController::class, 'store'])->name('store');
+            Route::patch('/{serviceDestination}', [ServiceDestinationController::class, 'update'])->whereNumber('serviceDestination')->name('update');
+            Route::delete('/{serviceDestination}', [ServiceDestinationController::class, 'destroy'])->whereNumber('serviceDestination')->name('destroy');
+        });
+    });
+
+/*
+ * Service enquiries: the manual fallback for services without a live booking
+ * provider. Guests may submit; signed-in customers can follow their own.
+ */
+Route::get('/enquiries/{service}', [ServiceEnquiryController::class, 'create'])
+    ->where('service', '[a-z]+(?:-[a-z]+)*')->name('service-enquiries.create');
+Route::post('/enquiries/{service}', [ServiceEnquiryController::class, 'store'])
+    ->where('service', '[a-z]+(?:-[a-z]+)*')->middleware('throttle:5,1')->name('service-enquiries.store');
+Route::get('/my-enquiries', [ServiceEnquiryController::class, 'mine'])
+    ->middleware(['auth', 'verified'])->name('service-enquiries.mine');
+
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/service-enquiries')->name('admin.service-enquiries.')
+    ->group(function () {
+        Route::middleware('can:service-enquiries.view')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\ServiceEnquiryController::class, 'index'])->name('index');
+            Route::get('/{enquiry}', [App\Http\Controllers\Admin\ServiceEnquiryController::class, 'show'])->whereNumber('enquiry')->name('show');
+        });
+        Route::patch('/{enquiry}', [App\Http\Controllers\Admin\ServiceEnquiryController::class, 'update'])
+            ->whereNumber('enquiry')->middleware('can:service-enquiries.manage')->name('update');
+    });
+
+/*
+ * Agent portal. Access requires a verified login whose email matches an
+ * agent record staff have marked active.
+ */
+Route::middleware(['auth', 'verified'])
+    ->prefix('agent')->name('agent.')
+    ->group(function () {
+        Route::get('/', [AgentPortalController::class, 'index'])->name('index');
+        Route::get('/referrals/create', [AgentPortalController::class, 'create'])->name('referrals.create');
+        Route::post('/referrals', [AgentPortalController::class, 'store'])
+            ->middleware('throttle:20,1')->name('referrals.store');
+    });
+
+/*
+ * Offers (staff-written) and reviews (customer-written, moderated).
+ */
+Route::get('/offers', OfferController::class)->name('offers.index');
+Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+Route::post('/reviews', [ReviewController::class, 'store'])
+    ->middleware(['auth', 'verified', 'throttle:3,10'])->name('reviews.store');
+
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin')->name('admin.')
+    ->group(function () {
+        Route::get('/offers', [App\Http\Controllers\Admin\OfferController::class, 'index'])->middleware('can:content.view')->name('offers.index');
+        Route::middleware('can:content.manage')->group(function () {
+            Route::get('/offers/create', [App\Http\Controllers\Admin\OfferController::class, 'create'])->name('offers.create');
+            Route::post('/offers', [App\Http\Controllers\Admin\OfferController::class, 'store'])->name('offers.store');
+            Route::get('/offers/{offer}/edit', [App\Http\Controllers\Admin\OfferController::class, 'edit'])->whereNumber('offer')->name('offers.edit');
+            Route::patch('/offers/{offer}', [App\Http\Controllers\Admin\OfferController::class, 'update'])->whereNumber('offer')->name('offers.update');
+            Route::delete('/offers/{offer}', [App\Http\Controllers\Admin\OfferController::class, 'destroy'])->whereNumber('offer')->name('offers.destroy');
+            Route::patch('/reviews/{review}', [ReviewModerationController::class, 'update'])->whereNumber('review')->name('reviews.update');
+        });
+        Route::get('/reviews', [ReviewModerationController::class, 'index'])->middleware('can:content.view')->name('reviews.index');
+    });
+
+Route::get('/admin/integrations', [IntegrationController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:admin|super-admin', 'permission:integrations.view'])
+    ->name('admin.integrations.index');
+
+Route::post('/admin/integrations/{integration}/test', [IntegrationController::class, 'test'])
+    ->where('integration', '[a-z-]+')
+    ->middleware(['auth', 'verified', 'role:admin|super-admin', 'permission:integrations.view', 'throttle:6,1'])
+    ->name('admin.integrations.test');
+
+/*
+ * Back-office modules for staff roles. Route access needs a staff role;
+ * permissions and StudentApplicationPolicy decide what each role can do.
+ */
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin')->name('admin.')
+    ->group(function () {
+        Route::get('/courses', [CourseController::class, 'index'])->middleware('can:courses.view')->name('courses.index');
+        Route::middleware('can:courses.manage')->group(function () {
+            Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+            Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->whereNumber('course')->name('courses.edit');
+            Route::patch('/courses/{course}', [CourseController::class, 'update'])->whereNumber('course')->name('courses.update');
+            Route::post('/courses/{course}/intakes', [CourseController::class, 'storeIntake'])->whereNumber('course')->name('courses.intakes.store');
+            Route::patch('/courses/{course}/intakes/{intake}', [CourseController::class, 'updateIntake'])->whereNumber(['course', 'intake'])->name('courses.intakes.update');
+        });
+
+        Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('can:appointments.view')->name('appointments.index');
+        Route::middleware('can:appointments.manage')->group(function () {
+            Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+            Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update'])->whereNumber('appointment')->name('appointments.update');
+        });
+
+        Route::middleware('can:payments.view')->group(function () {
+            Route::get('/payments', [PaymentRecordController::class, 'index'])->name('payments.index');
+            Route::get('/payments/{payment}', [PaymentRecordController::class, 'show'])->whereNumber('payment')->name('payments.show');
+            Route::get('/payments/{payment}/receipt', [PaymentRecordController::class, 'receipt'])->whereNumber('payment')->name('payments.receipt');
+        });
+        Route::middleware('can:payments.record')->group(function () {
+            Route::get('/payments/create', [PaymentRecordController::class, 'create'])->name('payments.create');
+            Route::post('/payments', [PaymentRecordController::class, 'store'])->name('payments.store');
+        });
+        Route::patch('/payments/{payment}/verify', [PaymentRecordController::class, 'verify'])
+            ->whereNumber('payment')->middleware('can:payments.verify')->name('payments.verify');
+
+        Route::middleware('can:seo.manage')->group(function () {
+            Route::get('/seo', [SeoController::class, 'index'])->name('seo.index');
+            Route::patch('/seo/pages', [SeoController::class, 'updatePage'])->name('seo.pages.update');
+            Route::post('/seo/redirects', [SeoController::class, 'storeRedirect'])->name('seo.redirects.store');
+            Route::patch('/seo/redirects/{redirect}', [SeoController::class, 'updateRedirect'])->whereNumber('redirect')->name('seo.redirects.update');
+            Route::delete('/seo/redirects/{redirect}', [SeoController::class, 'destroyRedirect'])->whereNumber('redirect')->name('seo.redirects.destroy');
+        });
+
+        Route::get('/media', [MediaAssetController::class, 'index'])->middleware('can:content.view')->name('media.index');
+        Route::middleware('can:content.manage')->group(function () {
+            Route::post('/media', [MediaAssetController::class, 'store'])->name('media.store');
+            Route::patch('/media/{asset}', [MediaAssetController::class, 'update'])->whereNumber('asset')->name('media.update');
+            Route::delete('/media/{asset}', [MediaAssetController::class, 'destroy'])->whereNumber('asset')->name('media.destroy');
+            Route::patch('/translations', [TranslationController::class, 'update'])->name('translations.update');
+        });
+        Route::get('/translations', [TranslationController::class, 'index'])->middleware('can:content.view')->name('translations.index');
+    });
+
+Route::post('/my-applications/{application}/appointments', [StudentAppointmentController::class, 'store'])
+    ->whereNumber('application')
+    ->middleware(['auth', 'verified', 'feature:student-consultancy', 'throttle:5,1'])
+    ->name('student.applications.appointments.store');
+
+Route::get('/search', SearchController::class)
+    ->middleware('throttle:30,1')->name('search');
+
+/*
+ * Published admin-managed content (company, business services, restaurants,
+ * inspiration, success stories, Singapore guides). Drafts are never served.
+ */
+foreach ([
+    'company' => ['/company', 'company'],
+    'business-services' => ['/business-services', 'business-services'],
+    'restaurants' => ['/restaurants', 'restaurants'],
+    'inspiration' => ['/get-inspired', 'inspiration'],
+    'success-stories' => ['/success-stories', 'success-stories'],
+] as $listing => [$path, $name]) {
+    Route::get($path, [ContentPageController::class, 'index'])->defaults('listing', $listing)->name($name.'.index');
+}
+Route::get('/company/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('company.show');
+Route::get('/business-services/projects/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('business-services.projects.show');
+Route::get('/business-services/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('business-services.show');
+Route::get('/restaurants/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('restaurants.show');
+Route::get('/get-inspired/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('inspiration.show');
+Route::get('/success-stories/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('success-stories.show');
+Route::get('/study-in-singapore/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('consultancy.guides.show');
+
+/*
+ * Community forums: anyone may read public categories; posting needs a verified login.
+ */
+Route::get('/forums', [ForumController::class, 'index'])->name('forums.index');
+Route::get('/forums/{category}', [ForumController::class, 'category'])->where('category', '[a-z0-9-]+')->name('forums.category');
+Route::get('/forums/{category}/{thread}', [ForumController::class, 'thread'])->where(['category' => '[a-z0-9-]+', 'thread' => '[a-z0-9-]+'])->name('forums.thread');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/forums/{category}', [ForumController::class, 'storeThread'])->where('category', '[a-z0-9-]+')->middleware('throttle:3,10')->name('forums.threads.store');
+    Route::post('/forums/{category}/{thread}', [ForumController::class, 'storeReply'])->where(['category' => '[a-z0-9-]+', 'thread' => '[a-z0-9-]+'])->middleware('throttle:6,1')->name('forums.replies.store');
+    Route::post('/forum-posts/{post}/report', [ForumController::class, 'report'])->whereNumber('post')->middleware('throttle:10,1')->name('forums.posts.report');
+
+    Route::get('/b2b/register', [PartnerRegistrationController::class, 'create'])->name('b2b.register');
+    Route::post('/b2b/register', [PartnerRegistrationController::class, 'store'])->middleware('throttle:3,10')->name('b2b.register.store');
+    Route::get('/agent/service-referrals/create', [AgentPortalController::class, 'createServiceReferral'])->name('agent.service-referrals.create');
+    Route::post('/agent/service-referrals', [AgentPortalController::class, 'storeServiceReferral'])->middleware('throttle:20,1')->name('agent.service-referrals.store');
+});
+
+Route::get('/rewards', RewardController::class)->name('rewards.index');
+
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin')->name('admin.')
+    ->group(function () {
+        Route::get('/content', [ContentEntryController::class, 'index'])->middleware('can:content.view')->name('content.index');
+        Route::middleware('can:content.manage')->group(function () {
+            Route::get('/content/create', [ContentEntryController::class, 'create'])->name('content.create');
+            Route::post('/content', [ContentEntryController::class, 'store'])->name('content.store');
+            Route::get('/content/{entry}/edit', [ContentEntryController::class, 'edit'])->whereNumber('entry')->name('content.edit');
+            Route::patch('/content/{entry}', [ContentEntryController::class, 'update'])->whereNumber('entry')->name('content.update');
+            Route::patch('/content/{entry}/status', [ContentEntryController::class, 'status'])->whereNumber('entry')->name('content.status');
+            Route::post('/content/{entry}/restore', [ContentEntryController::class, 'restore'])->whereNumber('entry')->name('content.restore');
+            Route::get('/content/{entry}/preview', [ContentEntryController::class, 'preview'])->whereNumber('entry')->name('content.preview');
+
+            Route::get('/contact-directory', [ContactDirectoryController::class, 'index'])->name('contact-directory.index');
+            Route::post('/contact-directory', [ContactDirectoryController::class, 'store'])->name('contact-directory.store');
+            Route::patch('/contact-directory/{entry}', [ContactDirectoryController::class, 'update'])->whereNumber('entry')->name('contact-directory.update');
+            Route::delete('/contact-directory/{entry}', [ContactDirectoryController::class, 'destroy'])->whereNumber('entry')->name('contact-directory.destroy');
+        });
+        Route::post('/content/{entry}/approve', [ContentEntryController::class, 'approve'])->whereNumber('entry')->middleware('can:content.approve')->name('content.approve');
+        Route::middleware('can:content.approve')->group(function () {
+            Route::get('/content-approvals', [ContentApprovalController::class, 'index'])->name('content.approvals');
+            Route::post('/content-approvals/{entry}/approve', [ContentApprovalController::class, 'approve'])->whereNumber('entry')->name('content.approvals.approve');
+            Route::post('/content-approvals/{entry}/reject', [ContentApprovalController::class, 'reject'])->whereNumber('entry')->name('content.approvals.reject');
+        });
+
+        Route::get('/upcoming-success', [SuccessPipelineController::class, 'index'])->middleware('can:student-applications.view')->name('success-pipeline.index');
+        Route::patch('/upcoming-success/{application}', [SuccessPipelineController::class, 'followUp'])->whereNumber('application')->middleware('can:student-applications.manage')->name('success-pipeline.follow-up');
+
+        Route::middleware('can:rewards.manage')->group(function () {
+            Route::get('/rewards', [RewardProgramController::class, 'index'])->name('rewards.index');
+            Route::post('/rewards', [RewardProgramController::class, 'store'])->name('rewards.store');
+            Route::patch('/rewards/{program}', [RewardProgramController::class, 'update'])->whereNumber('program')->name('rewards.update');
+            Route::post('/rewards/adjust', [RewardProgramController::class, 'adjust'])->name('rewards.adjust');
+        });
+
+        Route::middleware('can:forums.moderate')->group(function () {
+            Route::get('/forums', [ForumModerationController::class, 'index'])->name('forums.index');
+            Route::post('/forums/categories', [ForumModerationController::class, 'storeCategory'])->name('forums.categories.store');
+            Route::patch('/forums/categories/{category}', [ForumModerationController::class, 'updateCategory'])->whereNumber('category')->name('forums.categories.update');
+            Route::patch('/forums/posts/{post}', [ForumModerationController::class, 'moderatePost'])->whereNumber('post')->name('forums.posts.moderate');
+            Route::patch('/forums/threads/{thread}/lock', [ForumModerationController::class, 'lockThread'])->whereNumber('thread')->name('forums.threads.lock');
+        });
     });

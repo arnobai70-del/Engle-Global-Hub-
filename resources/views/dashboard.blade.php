@@ -1,5 +1,5 @@
 @php
-    $isAdminDashboard = auth()->user()->hasAnyRole(['admin', 'super-admin']);
+    $isAdminDashboard = auth()->user()->isBackOffice();
 @endphp
 
 @extends($isAdminDashboard ? 'layouts.admin' : 'layouts.site')

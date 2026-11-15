@@ -30,6 +30,7 @@ final class FeatureManagerTest extends TestCase
                 'support',
                 'about',
                 'account',
+                'student-consultancy',
                 'dashboard',
             ],
             array_keys($features->all()),

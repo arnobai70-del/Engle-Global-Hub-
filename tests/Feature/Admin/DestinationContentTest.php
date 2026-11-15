@@ -46,16 +46,15 @@ final class DestinationContentTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_admin_sees_honest_not_stored_state(): void
+    public function test_admin_sees_real_destination_catalogue_without_sample_data(): void
     {
         $this->actingAs($this->userWithRole('admin'))
             ->get(route('admin.destinations.index'))
             ->assertOk()
             ->assertSee('Manage Destinations')
-            ->assertSee('Destinations are not stored by this application')
-            ->assertSee('No destination record, image upload or status change')
-            ->assertDontSee('Sample destination one')
-            ->assertDontSee('Add new destination');
+            ->assertSee('Add Destination')
+            ->assertSee('No destinations yet.')
+            ->assertDontSee('Sample destination one');
     }
 
     public function test_super_admin_sees_destination_navigation_entry(): void
@@ -82,32 +81,32 @@ final class DestinationContentTest extends TestCase
             );
     }
 
-    public function test_local_preview_shows_sample_rows_and_disabled_controls(): void
+    public function test_local_environment_shows_no_sample_rows(): void
     {
         $this->app['env'] = 'local';
 
         $this->actingAs($this->userWithRole('admin'))
             ->get(route('admin.destinations.index'))
             ->assertOk()
-            ->assertSee('Layout preview')
-            ->assertSee('Sample destination one')
-            ->assertSee('Published')
-            ->assertSee('Hidden')
-            ->assertSee('Add new destination')
-            ->assertSee('disabled', false);
+            ->assertDontSee('Layout preview')
+            ->assertDontSee('Sample destination one');
     }
 
-    public function test_destination_page_accepts_no_writes(): void
+    public function test_destination_writes_require_master_data_or_content_manage_permission(): void
     {
         $admin = $this->userWithRole('admin');
+        Role::findByName('admin')->revokePermissionTo(['master-data.manage', 'content.manage']);
+        $admin->refresh();
 
         $this->actingAs($admin)
-            ->post(route('admin.destinations.index'))
-            ->assertStatus(405);
+            ->post(route('admin.destinations.store'), ['name' => 'Test'])
+            ->assertForbidden();
 
         $this->actingAs($admin)
             ->put(route('admin.destinations.index'))
             ->assertStatus(405);
+
+        $this->assertDatabaseCount('destinations', 0);
     }
 
     private function userWithRole(string $role): User

@@ -34,6 +34,8 @@ class SaveAgentRequest extends FormRequest
                 'regex:/^\+?[0-9\s().-]{7,32}$/',
             ],
             'company_name' => ['nullable', 'string', 'max:150'],
+            'partner_type' => ['sometimes', 'string', Rule::in(array_keys(Agent::TYPES))],
+            'website_url' => ['nullable', 'url:https', 'max:2048'],
             'registration_number' => [
                 'nullable',
                 'string',

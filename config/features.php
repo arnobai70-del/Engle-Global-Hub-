@@ -57,6 +57,11 @@ return [
         'description' => 'Authenticated customer account overview.',
         'default' => $visibleByDefault,
     ],
+    'student-consultancy' => [
+        'label' => 'Student Consultancy',
+        'description' => 'Singapore-focused study consultation enquiries and student application tracking.',
+        'default' => $visibleByDefault,
+    ],
     'dashboard' => [
         'label' => 'Dashboard',
         'description' => 'Authenticated customer and administrative dashboard.',

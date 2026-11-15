@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
@@ -31,5 +32,36 @@ class Student extends Model
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+
+    /**
+     * The portal login linked to this profile. Set by staff workflows only, never mass-assigned.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(StudentApplication::class);
+    }
+
+    /**
+     * The login that may see this profile in the student portal: the linked
+     * account, or else a verified account with the same email that is not
+     * linked to another profile.
+     */
+    public function portalUser(): ?User
+    {
+        if ($this->user_id !== null) {
+            return $this->user;
+        }
+
+        return User::query()
+            ->where('email', $this->email)
+            ->whereNotNull('email_verified_at')
+            ->whereDoesntHave('student')
+            ->first();
     }
 }

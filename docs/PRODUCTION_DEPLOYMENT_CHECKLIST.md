@@ -29,9 +29,11 @@ platform's encrypted environment or secret store. Never commit the real `.env`.
 - The web server document root must be the repository's `public` directory.
 - The web/PHP process must be able to write `storage` and `bootstrap/cache`.
   Source and configuration files should otherwise be read-only to that process.
-- Public uploads are not used by current application features, so
-  `php artisan storage:link` is not currently required. Add it only when an
-  approved public-upload feature starts using the `public` filesystem disk.
+- **`php artisan storage:link` is required.** Team photos, the media library,
+  the office gallery, destination images and content covers are stored on the
+  `public` disk. Student documents and payment receipts use the private
+  `student_documents` and `payment_receipts` disks and are never linked or
+  served directly.
 
 ## Infrastructure inputs
 
@@ -45,11 +47,15 @@ Before deploying, provision:
 5. Centralized logs, monitoring, alerting, encrypted secret storage, and
    automated database backups with a tested restore procedure.
 
-There are currently no application classes implementing `ShouldQueue` and no
-scheduled application tasks. A dedicated queue worker and Laravel scheduler are
-therefore not required for current behavior. If queued jobs or scheduled tasks
-are introduced, deployment must add supervised `queue:work` processes and/or a
-once-per-minute `schedule:run` trigger before that feature is enabled.
+**A queue worker and the scheduler are required.** Student, appointment,
+document-review, message and enquiry notifications are queued (`ShouldQueue`,
+dispatched after commit). Without a supervised `php artisan queue:work` process
+they are never sent. Admin › API & Integrations shows a "Queue worker" warning
+when jobs wait longer than 10 minutes or have failed.
+
+The scheduler runs daily housekeeping (purging expired API tokens and expired
+password-reset tokens) and weekly failed-job pruning. It needs a cron entry
+running `php artisan schedule:run` every minute. See `docs/DEPLOYMENT.md`.
 
 ## Validation before release
 
@@ -80,8 +86,15 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan migrate --force
+php artisan db:seed --class=ProductionSeeder --force
 php artisan app:production-readiness
 ```
+
+Run **only** `ProductionSeeder` on a server with live data. It never overwrites
+live records and never publishes content. Never run `DatabaseSeeder` (test user),
+`HomepageContentSeeder`, `CountrySeeder` or `CitySeeder` on production. The
+Contabo-specific commands (release folders, Supervisor, cron, staging over an
+SSH tunnel) are in `docs/DEPLOYMENT.md`.
 
 Every readiness check must report `PASS` or an understood non-blocking `WARN`;
 any `FAIL` blocks release. The command performs only local configuration,
@@ -113,11 +126,33 @@ rollback decision in the private release record.
 
 ## Backup and rollback boundary
 
-Create and verify a restorable database backup before migrations. Determine
+Create and verify a restorable database backup before migrations
+(`docs/BACKUP_RESTORE.md` §2). Determine
 whether every migration is backward compatible with the previous application
 release before switching traffic.
 
 Application rollback means switching traffic to the previous immutable
 artifact. Do not run `migrate:rollback` automatically and do not delete current
 data. If a migration is not backward compatible, stop and follow its reviewed
-forward-fix or restore plan.
+forward-fix or restore plan. Full procedure: `docs/ROLLBACK_PLAN.md`.
+
+## Contabo go-live prerequisites (15 Nov 2026)
+
+| Prerequisite | Status |
+|---|---|
+| Server identified (Contabo VPS, Apache 2.4.52, Ubuntu), document root `public/`, HTTPS with Let's Encrypt | READY (from public checks) |
+| Read-only server audit output (`docs/DEPLOYMENT.md` §2): PHP version and extensions, database engine, disk, firewall, layout | BLOCKED (needs SSH output from the owner) |
+| Migrations tested on MySQL/MariaDB (staging) | BLOCKED (no MySQL available locally; needs staging) |
+| Contabo snapshot before release | READY (`before-release-2026-11-15`, 15 Nov 2026; retake right before the actual deployment) |
+| Pre-release encrypted database and files backup | NEEDS CONFIGURATION |
+| Webmin restricted (port 10000 is public), ufw enabled for 22/80/443 | REQUIRES OWNER APPROVAL (security) |
+| Off-server backup target and retention | REQUIRES OWNER APPROVAL (choose and pay for storage) |
+| Restore rehearsal | BLOCKED (needs staging) |
+| Outgoing email (SMTP provider, SPF/DKIM/DMARC) | REQUIRES OWNER APPROVAL (provider choice and DNS change) |
+| Supervisor queue worker | REQUIRES OWNER APPROVAL (server package and config) |
+| Scheduler cron | REQUIRES OWNER APPROVAL (server crontab) |
+| `storage:link` and storage permissions | NEEDS CONFIGURATION |
+| Apache security headers and `ServerTokens Prod` | REQUIRES OWNER APPROVAL (server config) |
+| Production `.env` keeps the live APP_KEY; `APP_ENV`, `APP_DEBUG`, `LOG_LEVEL`, secure cookies verified | NEEDS CONFIGURATION (confirm with the audit) |
+| Commit, review and push the release | REQUIRES OWNER APPROVAL |
+| Deployment | REQUIRES OWNER APPROVAL |

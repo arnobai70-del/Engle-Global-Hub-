@@ -285,7 +285,7 @@ final class CheckProductionReadiness extends Command
         }
 
         return $this->warning(
-            'Public storage link is absent; current application features do not require public uploads',
+            'Public storage link is absent; run php artisan storage:link, or uploaded team photos, media library, destination and content images will not display',
         );
     }
 

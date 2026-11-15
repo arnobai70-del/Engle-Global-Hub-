@@ -17,6 +17,13 @@ class DatabaseSeeder extends Seeder
             HomepageContentSeeder::class,
             CountrySeeder::class,
             CitySeeder::class,
+            ServiceDestinationSeeder::class,
+            TeamMemberSeeder::class,
+            BangladeshDestinationSeeder::class,
+            CompanyContentSettingsSeeder::class,
+            SeoSettingsSeeder::class,
+            SingaporeGuideSeeder::class,
+            ContentDraftSeeder::class,
         ]);
 
         $user = User::query()->firstOrCreate(

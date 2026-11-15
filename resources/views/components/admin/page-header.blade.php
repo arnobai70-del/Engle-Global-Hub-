@@ -44,8 +44,13 @@
         str_starts_with($routeName, 'admin.affiliates.')
             => 'affiliates',
 
-        str_starts_with($routeName, 'admin.students.')
+        str_starts_with($routeName, 'admin.students.'),
+        str_starts_with($routeName, 'admin.student-applications.')
             => 'students',
+
+        str_starts_with($routeName, 'admin.student-enquiries.'),
+        str_starts_with($routeName, 'admin.service-enquiries.')
+            => 'languages',
 
         str_starts_with($routeName, 'admin.institutions.')
             => 'institutions',
@@ -53,10 +58,15 @@
         str_starts_with($routeName, 'admin.reports.')
             => 'reports',
 
-        str_starts_with($routeName, 'admin.destinations.')
+        str_starts_with($routeName, 'admin.destinations.'),
+        str_starts_with($routeName, 'admin.service-destinations.')
             => 'countries',
 
-        str_starts_with($routeName, 'admin.system-logs.')
+        str_starts_with($routeName, 'admin.team-members.')
+            => 'users',
+
+        str_starts_with($routeName, 'admin.system-logs.'),
+        str_starts_with($routeName, 'admin.activity-logs.')
             => 'logs',
 
         default => 'default',

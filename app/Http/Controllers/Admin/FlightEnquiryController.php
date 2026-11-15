@@ -16,10 +16,13 @@ final class FlightEnquiryController extends Controller
         'payment_confirmed', 'ticket_issued', 'cancelled', 'expired',
     ];
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $cabin = in_array($request->query('cabin_class'), ['economy', 'premium_economy', 'business', 'first'], true) ? (string) $request->query('cabin_class') : null;
+
         return view('admin.flight-enquiries.index', [
-            'enquiries' => FlightEnquiry::query()->latest()->paginate(25),
+            'enquiries' => FlightEnquiry::query()->when($cabin, fn ($query) => $query->where('cabin_class', $cabin))->latest()->paginate(25)->withQueryString(),
+            'cabin' => $cabin,
         ]);
     }
 

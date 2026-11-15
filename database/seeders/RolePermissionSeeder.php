@@ -52,6 +52,42 @@ class RolePermissionSeeder extends Seeder
             'institutions.view',
             'institutions.manage',
 
+            'student-enquiries.view',
+            'student-enquiries.manage',
+
+            'student-applications.view',
+            'student-applications.manage',
+
+            'student-documents.verify',
+
+            'content.view',
+            'content.manage',
+
+            'service-enquiries.view',
+            'service-enquiries.manage',
+
+            'activity-logs.view',
+
+            'integrations.view',
+
+            'student-applications.view-all',
+
+            'courses.view',
+            'courses.manage',
+
+            'appointments.view',
+            'appointments.manage',
+
+            'payments.view',
+            'payments.record',
+            'payments.verify',
+
+            'seo.manage',
+
+            'content.approve',
+            'forums.moderate',
+            'rewards.manage',
+
             'reports.view',
 
             'system-logs.view',
@@ -136,6 +172,32 @@ class RolePermissionSeeder extends Seeder
             'institutions.view',
             'institutions.manage',
 
+            'student-enquiries.view',
+            'student-enquiries.manage',
+
+            'student-applications.view',
+            'student-applications.manage',
+
+            'student-documents.verify',
+
+            'student-applications.view-all',
+            'courses.view',
+            'courses.manage',
+            'appointments.view',
+            'appointments.manage',
+            'payments.view',
+            'payments.record',
+            'payments.verify',
+            'seo.manage',
+            'forums.moderate',
+            'rewards.manage',
+
+            'content.view',
+            'content.manage',
+
+            'service-enquiries.view',
+            'service-enquiries.manage',
+
             'reports.view',
 
             'flights.search',
@@ -156,6 +218,48 @@ class RolePermissionSeeder extends Seeder
         | Customer Permissions
         |--------------------------------------------------------------------------
         */
+
+        /*
+        |--------------------------------------------------------------------------
+        | Staff Roles (least privilege)
+        |--------------------------------------------------------------------------
+        | Consultants and visa staff see only applications assigned to them
+        | (enforced by StudentApplicationPolicy); they lack "view-all".
+        */
+
+        $staffRoles = [
+            'admission-consultant' => [
+                'dashboard.view',
+                'student-enquiries.view', 'student-enquiries.manage',
+                'student-applications.view', 'student-applications.manage',
+                'courses.view', 'appointments.view', 'appointments.manage',
+                'payments.view', 'payments.record',
+            ],
+            'visa-officer' => [
+                'dashboard.view',
+                'student-applications.view', 'student-applications.manage',
+                'student-documents.verify', 'appointments.view',
+            ],
+            'crm-staff' => [
+                'dashboard.view',
+                'student-enquiries.view', 'student-enquiries.manage',
+                'service-enquiries.view', 'service-enquiries.manage',
+                'appointments.view', 'appointments.manage', 'forums.moderate',
+            ],
+            'content-editor' => [
+                'dashboard.view',
+                'content.view', 'content.manage', 'master-data.view', 'forums.moderate',
+            ],
+            'seo-manager' => [
+                'dashboard.view',
+                'content.view', 'seo.manage',
+            ],
+        ];
+
+        foreach ($staffRoles as $roleName => $rolePermissions) {
+            Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guard])
+                ->syncPermissions($rolePermissions);
+        }
 
         $customer->syncPermissions([
             'dashboard.view',

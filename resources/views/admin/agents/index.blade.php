@@ -27,7 +27,7 @@
             <tr>
                 <td>{{ $agent->name }}</td>
                 <td>{{ $agent->email }}@if($agent->phone)<br><span class="agt-muted">{{ $agent->phone }}</span>@endif</td>
-                <td>{{ $agent->company_name ?: '—' }}</td>
+                <td>{{ $agent->company_name ?: '—' }}<br><span class="agt-muted">{{ \App\Models\Agent::TYPES[$agent->partner_type ?? 'agent'] ?? 'Agent' }}</span></td>
                 <td>{{ $agent->country ? $agent->country->name.' ('.$agent->country->iso2.')' : '—' }}</td>
                 <td class="agt-status">{{ $agent->status }}</td>
                 <td><a class="agt-link" href="{{ route('admin.agents.show', $agent) }}">View</a>@can('agents.manage') · <a class="agt-link" href="{{ route('admin.agents.edit', $agent) }}">Edit</a>@endcan</td>

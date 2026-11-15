@@ -1,3 +1,11 @@
 User-agent: *
-Disallow:
-Sitemap: /sitemap.xml
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /account
+Disallow: /my-applications
+Disallow: /my-enquiries
+Disallow: /notifications
+Disallow: /agent
+Disallow: /bookings
+
+Sitemap: https://eagleglobalhub.com/sitemap.xml

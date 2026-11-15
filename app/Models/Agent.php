@@ -20,8 +20,17 @@ class Agent extends Model
         self::STATUS_INACTIVE,
     ];
 
+    public const TYPE_AGENT = 'agent';
+
+    public const TYPE_B2B_PARTNER = 'b2b_partner';
+
+    /** @var array<string, string> */
+    public const TYPES = [self::TYPE_AGENT => 'Agent', self::TYPE_B2B_PARTNER => 'Egabe B2B partner'];
+
     /** @var list<string> */
     protected $fillable = [
+        'partner_type',
+        'website_url',
         'name',
         'email',
         'phone',

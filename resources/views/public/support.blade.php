@@ -8,6 +8,10 @@
 @section('body_class', 'public-page-body egho-page-body')
 
 @section('content')
+@php($pageContent = app(\App\Services\Content\PageContent::class))
+@php($supportIntro = $pageContent->section('support-intro'))
+@php($supportContacts = $pageContent->contacts())
+@php($supportFaqs = $pageContent->published(\App\Enums\ContentType::Faq))
 
     <main class="egho-page">
         <div class="egho-shell">
@@ -16,11 +20,15 @@
                 <div>
                     <span class="egho-eyebrow">CONTACT &amp; SUPPORT</span>
                     <h1>Get in touch with Eagle Global Hub LTD</h1>
+                    @if($supportIntro)
+                        @foreach(preg_split('/\R{2,}/', trim((string) $supportIntro->localized('body'))) as $paragraph)<p>{!! nl2br(e($paragraph)) !!}</p>@endforeach
+                    @else
                     <p>
                         Contact our Dhaka office for travel account, booking
                         status and service enquiries using the official phone,
                         email and office address below.
                     </p>
+                    @endif
                 </div>
 
                 <div class="egho-contact-hero-media">
@@ -197,6 +205,35 @@
                     </p>
                 </article>
             </div>
+
+            @if($supportContacts->isNotEmpty())
+                <section class="egho-contact-card" style="margin-top:20px" aria-labelledby="contact-directory">
+                    <h2 id="contact-directory">{{ __('Phone directory') }}</h2>
+                    @foreach($supportContacts as $line)
+                        <div class="egho-contact-row">
+                            <span class="egho-contact-icon" aria-hidden="true">{{ $line->kind === 'ip_24x7' ? '24' : '☎' }}</span>
+                            <div>
+                                <strong>{{ $line->label }}@if($line->kind === 'ip_24x7') — {{ __('24/7 IP calling') }}@endif</strong>
+                                <a href="tel:{{ preg_replace('/[^+0-9]/', '', $line->phone) }}">{{ $line->phone }}</a>
+                                @if($line->contact_name || $line->department)<span>{{ trim($line->contact_name.' '.($line->department ? '· '.$line->department : ''), ' ·') }}</span>@endif
+                                @if($line->availability)<span>{{ $line->availability }}</span>@endif
+                            </div>
+                        </div>
+                    @endforeach
+                </section>
+            @endif
+
+            @if($supportFaqs->isNotEmpty())
+                <section class="egho-contact-card" style="margin-top:20px" aria-labelledby="support-faqs">
+                    <h2 id="support-faqs">{{ __('Frequently asked questions') }}</h2>
+                    @foreach($supportFaqs as $faq)
+                        <details><summary>{{ $faq->localized('title') }}</summary><p style="white-space:pre-line">{{ $faq->localized('body') ?: $faq->localized('summary') }}</p></details>
+                    @endforeach
+                </section>
+                @push('head')
+                <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $supportFaqs->map(fn ($faq) => ['@type' => 'Question', 'name' => $faq->title, 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq->body ?: $faq->summary]])->values()->all()], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+                @endpush
+            @endif
 
         </div>
     </main>

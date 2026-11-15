@@ -33,8 +33,35 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Not served over HTTP: this root also contains the private student
+            // document and payment receipt folders.
+            'serve' => false,
             'throw' => false,
+            'report' => false,
+        ],
+
+        /*
+         * Student identity and academic documents. Private: never served by
+         * URL, only streamed through an authorised download route.
+         */
+        'student_documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/student-documents'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => true,
+            'report' => false,
+        ],
+
+        /*
+         * Payment receipts. Private: only streamed to staff with payment permissions.
+         */
+        'payment_receipts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/payment-receipts'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => true,
             'report' => false,
         ],
 
