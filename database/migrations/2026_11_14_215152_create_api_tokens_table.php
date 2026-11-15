@@ -15,7 +15,7 @@ return new class extends Migration
             // SHA-256 of the token; the plain token is shown to the client once and never stored.
             $table->char('token_hash', 64)->unique();
             $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at');
+            $table->dateTime('expires_at');
             $table->timestamps();
         });
     }

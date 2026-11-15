@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('wants_consultation')->default(false);
             $table->text('message')->nullable();
             $table->string('lead_source', 40)->default('direct');
-            $table->timestamp('consented_at');
+            $table->dateTime('consented_at');
             $table->string('status', 40)->default('new');
             $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('student_id')->nullable()->constrained()->nullOnDelete();

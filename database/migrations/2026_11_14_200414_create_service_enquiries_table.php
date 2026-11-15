@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('email', 254);
             $table->string('phone', 32);
             $table->text('message')->nullable();
-            $table->timestamp('consented_at');
+            $table->dateTime('consented_at');
             $table->string('status', 30)->default('new');
             $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->text('internal_notes')->nullable();
