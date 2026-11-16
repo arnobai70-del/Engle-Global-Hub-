@@ -52,7 +52,7 @@ class StudentDocumentController extends Controller
         abort_unless((int) $document->student_application_id === (int) $application->getKey(), 404);
 
         if ($document->status === StudentDocument::STATUS_VERIFIED) {
-            return back()->withErrors(['document' => 'A verified document cannot be removed. Please contact your consultant.']);
+            return back()->withErrors(['document' => __('A verified document cannot be removed. Please contact your consultant.')]);
         }
 
         $this->documents->delete($document, $request->user());

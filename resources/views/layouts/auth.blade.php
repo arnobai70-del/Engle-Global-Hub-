@@ -4,15 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title', 'Eagle Global Hub LTD')</title>
+    <title>{{ __(html_entity_decode(trim($__env->yieldContent('title', 'Eagle Global Hub LTD')), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}</title>
 
     <meta
         name="description"
         content="Secure account access for Eagle Global Hub LTD flight and travel services."
     >
 
+    {{-- Account pages are not search results: keep them out of the index but let crawlers follow links.
+         Only pages without secrets in the URL get a canonical (never the password-reset token page). --}}
     @php
-        $officialLogo = asset('images/eagle-global-hub-logo.png');
+        $authTitle = __(html_entity_decode(trim($__env->yieldContent('title', 'Eagle Global Hub LTD')), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $authCanonical = request()->routeIs('login', 'register', 'password.request') ? request()->url() : null;
+    @endphp
+    <meta name="robots" content="noindex,follow">
+    @if($authCanonical)<link rel="canonical" href="{{ $authCanonical }}">@endif
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Eagle Global Hub LTD">
+    <meta property="og:title" content="{{ $authTitle }}">
+    <meta property="og:description" content="Secure account access for Eagle Global Hub LTD flight and travel services.">
+    @if($authCanonical)<meta property="og:url" content="{{ $authCanonical }}">@endif
+
+    @php
+        $officialLogo = rescue(fn () => app(\App\Services\HomepageContentService::class)->mediaUrl(app(\App\Services\SettingService::class)->get('general', 'logo_path'), asset('images/eagle-global-hub-logo.png')), asset('images/eagle-global-hub-logo.png'), false);
     @endphp
 
     <link rel="icon" type="image/png" href="{{ $officialLogo }}">
@@ -29,6 +43,7 @@
 
     <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}">
     <link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-sg.css') }}">
     <style>
         .egho-auth-brand{display:inline-flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;min-width:0;max-width:100%}
         .egho-auth-brand-logo{display:block!important;width:112px!important;height:68px!important;object-fit:cover!important;object-position:center 44%!important;flex:0 0 112px!important}
@@ -52,7 +67,7 @@
     @include('partials.analytics.meta-pixel-head')
 </head>
 
-<body class="auth-body">
+<body class="auth-body sg-auth-body">
 
     @include('partials.analytics.meta-pixel-noscript')
 
@@ -62,20 +77,20 @@
 
             <div class="egho-auth-visual-top">
 
-                <a href="{{ route('home') }}" class="egho-auth-brand" aria-label="Eagle Global Hub LTD home">
+                <a href="{{ route('home') }}" class="egho-auth-brand" aria-label="{{ __('Eagle Global Hub LTD home') }}">
                     <img
                         src="{{ $officialLogo }}"
-                        alt="Eagle Global Hub LTD logo"
+                        alt="{{ __('Eagle Global Hub LTD logo') }}"
                         class="egho-auth-brand-logo"
                     >
                     <span class="egho-auth-brand-copy">
-                        <strong>Eagle Global Hub LTD</strong>
-                        <small>Travel &amp; Visa Services</small>
+                        <strong>{{ __('Eagle Global Hub LTD') }}</strong>
+                        <small>{{ __('Travel & Visa Services') }}</small>
                     </span>
                 </a>
 
                 <a href="{{ route('home') }}" class="egho-auth-back">
-                    Back to website
+                    {{ __('Back to website') }}
                 </a>
 
             </div>
@@ -83,21 +98,15 @@
             <div class="egho-auth-visual-body">
 
                 <span class="egho-eyebrow">
-                    SECURE TRAVEL ACCOUNT
+                    {{ __('SECURE TRAVEL ACCOUNT') }}
                 </span>
 
                 <h1>
-                    @yield(
-                        'hero-title',
-                        'Your journey starts with secure account access.'
-                    )
+                    {{ __(html_entity_decode(trim($__env->yieldContent('hero-title', 'Your journey starts with secure account access.')), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}
                 </h1>
 
                 <p>
-                    @yield(
-                        'hero-description',
-                        'Search, review and manage your flight journey from one verified account.'
-                    )
+                    {{ __(html_entity_decode(trim($__env->yieldContent('hero-description', 'Search, review and manage your flight journey from one verified account.')), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}
                 </p>
 
                 <ul class="egho-auth-points">
@@ -105,24 +114,24 @@
                     <li>
                         <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
                         <span>
-                            <strong>Verified account access</strong>
-                            <small>Protected areas require authenticated and verified access.</small>
+                            <strong>{{ __('Verified account access') }}</strong>
+                            <small>{{ __('Protected areas require authenticated and verified access.') }}</small>
                         </span>
                     </li>
 
                     <li>
                         <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
                         <span>
-                            <strong>Clear booking flow</strong>
-                            <small>Review important itinerary and booking states as you continue.</small>
+                            <strong>{{ __('Clear booking flow') }}</strong>
+                            <small>{{ __('Review important itinerary and booking states as you continue.') }}</small>
                         </span>
                     </li>
 
                     <li>
                         <span class="egho-auth-tick" aria-hidden="true">&#10003;</span>
                         <span>
-                            <strong>Server-authoritative actions</strong>
-                            <small>Sensitive booking and payment decisions remain server controlled.</small>
+                            <strong>{{ __('Server-authoritative actions') }}</strong>
+                            <small>{{ __('Sensitive booking and payment decisions remain server controlled.') }}</small>
                         </span>
                     </li>
 
@@ -131,7 +140,7 @@
             </div>
 
             <small class="egho-auth-visual-foot">
-                Eagle Global Hub LTD
+                {{ __('Eagle Global Hub LTD') }}
             </small>
 
         </section>
@@ -142,7 +151,7 @@
 
                 @if ($errors->any())
                     <div class="auth-alert auth-alert-error" role="alert">
-                        <strong>Please check the form.</strong>
+                        <strong>{{ __('Please check the form.') }}</strong>
                         <ul>
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -160,8 +169,8 @@
                 @yield('content')
 
                 <div class="egho-auth-meta">
-                    <span>Secure account access</span>
-                    <a href="{{ route('home') }}">Eagle Global Hub LTD</a>
+                    <span>{{ __('Secure account access') }}</span>
+                    <a href="{{ route('home') }}">{{ __('Eagle Global Hub LTD') }}</a>
                 </div>
 
             </div>

@@ -11,12 +11,12 @@
 
 @section('content')
     <div class="egho-auth-head">
-        <span class="egho-eyebrow">SECURE YOUR ACCOUNT</span>
+        <span class="egho-eyebrow">{{ __('SECURE YOUR ACCOUNT') }}</span>
 
-        <h2>Reset Password</h2>
+        <h2>{{ __('Reset Password') }}</h2>
 
         <p>
-            Enter your email address and choose a new password.
+            {{ __('Enter your email address and choose a new password.') }}
         </p>
     </div>
 
@@ -34,7 +34,7 @@
         >
 
         <label class="egho-field" for="email">
-            <span>Email Address</span>
+            <span>{{ __('Email Address') }}</span>
 
             <input
                 id="email"
@@ -49,40 +49,40 @@
         </label>
 
         <label class="egho-field" for="password">
-            <span>New Password</span>
+            <span>{{ __('New Password') }}</span>
 
             <input
                 id="password"
                 type="password"
                 name="password"
                 autocomplete="new-password"
-                placeholder="Enter new password"
+                placeholder="{{ __('Enter new password') }}"
                 required
             >
         </label>
 
         <label class="egho-field" for="password_confirmation">
-            <span>Confirm New Password</span>
+            <span>{{ __('Confirm New Password') }}</span>
 
             <input
                 id="password_confirmation"
                 type="password"
                 name="password_confirmation"
                 autocomplete="new-password"
-                placeholder="Confirm new password"
+                placeholder="{{ __('Confirm new password') }}"
                 required
             >
         </label>
 
         <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
-            Reset Password
+            {{ __('Reset Password') }}
         </button>
 
         <p class="egho-auth-alt">
-            Remember your password?
+            {{ __('Remember your password?') }}
 
             <a href="{{ route('login') }}">
-                Back to Login
+                {{ __('Back to Login') }}
             </a>
         </p>
     </form>

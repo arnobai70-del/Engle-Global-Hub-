@@ -3,6 +3,7 @@
 @section('robots', 'noindex,nofollow')
 @section('body_class', 'public-page-body egho-page-body')
 @section('content')
+<x-site.portal active="applications" kind="student">
 <main class="egho-page">
     <div class="egho-shell">
         <section class="egho-contact-card">
@@ -26,4 +27,5 @@
         </section>
     </div>
 </main>
+</x-site.portal>
 @endsection

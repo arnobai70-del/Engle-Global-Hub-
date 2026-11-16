@@ -4,6 +4,7 @@ namespace Tests\Feature\Travel;
 
 use App\Contracts\Hotel\HotelSearchProvider;
 use App\Models\User;
+use App\Services\Integrations\ProviderStatus;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,13 +23,15 @@ class HotelFoundationTest extends TestCase
     {
         $this->get(route('hotels.index'))
             ->assertOk()
-            ->assertSee('Demo Preview');
+            ->assertSee('Waiting for API')
+            ->assertSee(route('service-enquiries.create', 'hotel-booking'), false);
     }
 
-    public function test_verified_customer_sees_demo_preview_when_provider_is_unavailable(): void
+    public function test_verified_customer_sees_waiting_for_api_without_sample_prices_when_provider_is_unavailable(): void
     {
         $this->actingAs($this->customer())->get(route('hotels.index'))
-            ->assertOk()->assertSee('Demo Preview')->assertSee('Sample from price')->assertSee('View Demo Results')
+            ->assertOk()->assertSee('Waiting for API')->assertSee('Send a hotel enquiry')
+            ->assertDontSee('Sample from price')->assertDontSee('Sample rating')->assertDontSee('USD 145')
             ->assertDontSee('booking confirmed');
     }
 
@@ -39,18 +42,19 @@ class HotelFoundationTest extends TestCase
         $this->actingAs($user)
             ->get(route('hotels.index'))
             ->assertOk()
-            ->assertSee('Demo Preview');
+            ->assertSee('Waiting for API');
 
         $this->actingAs($user)
             ->post(route('hotels.search'), $this->validSearch())
             ->assertForbidden();
     }
 
-    public function test_unconfigured_search_returns_clearly_labelled_demo_results(): void
+    public function test_unconfigured_search_never_returns_sample_results(): void
     {
         $this->actingAs($this->customer())->post(route('hotels.search'), $this->validSearch())
-            ->assertOk()->assertSee('Demo Preview')->assertSee('Sample content shown for demonstration')
-            ->assertDontSee('booking confirmed');
+            ->assertRedirect(route('hotels.index'))
+            ->assertSessionHas('api_waiting');
+        $this->actingAs($this->customer())->get(route('hotels.index'))->assertSee('Online search is waiting for the provider API')->assertDontSee('Dubai Marina Sample Stay');
     }
 
     public function test_configured_provider_can_return_an_honest_empty_result(): void
@@ -62,6 +66,9 @@ class HotelFoundationTest extends TestCase
         config()->set('travel_services.services.hotels.credentials.api_key', 'server-only-test-key');
         $this->app->forgetInstance(HotelSearchProvider::class);
 
+        $this->assertNotSame(ProviderStatus::LIVE, app(ProviderStatus::class)->of('hotels'), 'A configured provider stays Waiting for API until its connection test passes.');
+        app(ProviderStatus::class)->recordVerified('hotels');
+
         $this->actingAs($this->customer())->post(route('hotels.search'), $this->validSearch())
             ->assertOk()->assertSee('No hotel stays were returned')->assertSee('No availability or price has been assumed')
             ->assertDontSee('server-only-test-key')->assertDontSee('Demo Preview');
@@ -69,24 +76,28 @@ class HotelFoundationTest extends TestCase
 
     public function test_hotel_search_input_is_validated_before_provider_use(): void
     {
-        $this->actingAs($this->customer())->post(route('hotels.search'), ['destination'=>'','check_in'=>now()->subDay()->toDateString(),'check_out'=>now()->subDays(2)->toDateString(),'adults'=>0,'rooms'=>0])
-            ->assertSessionHasErrors(['destination','check_in','check_out','adults','rooms']);
+        $this->actingAs($this->customer())->post(route('hotels.search'), ['destination' => '', 'check_in' => now()->subDay()->toDateString(), 'check_out' => now()->subDays(2)->toDateString(), 'adults' => 0, 'rooms' => 0])
+            ->assertSessionHasErrors(['destination', 'check_in', 'check_out', 'adults', 'rooms']);
     }
 
     private function customer(): User
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         $user->assignRole('customer');
+
         return $user;
     }
 
     private function validSearch(): array
     {
-        return ['destination'=>'Dhaka','check_in'=>now()->addWeek()->toDateString(),'check_out'=>now()->addWeek()->addDays(2)->toDateString(),'adults'=>2,'rooms'=>1];
+        return ['destination' => 'Dhaka', 'check_in' => now()->addWeek()->toDateString(), 'check_out' => now()->addWeek()->addDays(2)->toDateString(), 'adults' => 2, 'rooms' => 1];
     }
 }
 
 class EmptyHotelSearchProvider implements HotelSearchProvider
 {
-    public function search(array $criteria): array { return []; }
+    public function search(array $criteria): array
+    {
+        return [];
+    }
 }

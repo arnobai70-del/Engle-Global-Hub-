@@ -37,6 +37,7 @@ class ProductionSeeder extends Seeder
             BangladeshDestinationSeeder::class,
             SingaporeGuideSeeder::class,
             ContentDraftSeeder::class,
+            MenuSeeder::class,
         ]);
     }
 

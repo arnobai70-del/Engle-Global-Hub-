@@ -1,0 +1,72 @@
+/*
+ * Eagle Global Hub — admin panel in the shared navy / white / red design.
+ * Loaded last in layouts/admin.blade.php. Visual only: no markup or behaviour changes.
+ */
+:root {
+    --egha-navy: #0b1f4b;
+    --egha-blue: #e31b23;
+    --egha-line: #e3e8f2;
+    --egha-muted: #64748b;
+    --egha-sky: #fdecee;
+    --egha-surface: #f4f6fb;
+    --sga-red: #e31b23;
+    --sga-red-dark: #c3121a;
+    --sga-navy: #0b1f4b;
+    --sga-heading: "Poppins", "Instrument Sans", system-ui, sans-serif;
+}
+
+.admin-body { background: #f4f6fb; font-family: "Instrument Sans", system-ui, sans-serif; }
+.admin-body h1, .admin-body h2, .admin-body h3 { font-family: var(--sga-heading); }
+
+/* Sidebar */
+.admin-body .admin-sidebar { background: #0b1f4b !important; box-shadow: 8px 0 28px rgba(11, 31, 75, .18); }
+.admin-body .admin-brand { padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, .1); }
+.admin-body .admin-brand-mark { background: #fff !important; border-radius: 12px; display: grid; place-items: center; overflow: hidden; }
+.admin-body .admin-brand-mark img { width: 34px; height: auto; }
+.admin-body .admin-brand-copy strong { font-family: var(--sga-heading); color: #fff; }
+.admin-body .admin-brand-copy span { color: #9fb0d6; }
+.admin-body .admin-nav-title { color: #7f91bd; letter-spacing: .12em; }
+.admin-body .admin-nav-link { color: #c9d3ea; border-radius: 10px; }
+.admin-body .admin-nav-link:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.admin-body .admin-nav-link.active { background: var(--sga-red) !important; color: #fff; box-shadow: 0 8px 20px rgba(227, 27, 35, .35) !important; }
+.admin-body .admin-nav-link.active svg { stroke: #fff; }
+
+/* Top bar */
+.admin-body .admin-topbar { background: #fff; border-bottom: 1px solid var(--egha-line); box-shadow: 0 4px 18px rgba(11, 31, 75, .04); }
+.admin-body .admin-topbar-link { border-radius: 8px; }
+
+/* Page header */
+.admin-body .admin-page-heading { background: #fff !important; border: 1px solid var(--egha-line) !important; box-shadow: 0 10px 28px rgba(11, 31, 75, .06); }
+.admin-body .admin-page-heading::before { background: var(--sga-red) !important; }
+.admin-body .admin-page-title-icon { background: var(--sga-navy) !important; border-color: transparent !important; }
+
+/* Cards, tables and controls */
+.admin-body .egh-card, .admin-body .egha-kpi, .admin-body .admin-table-card, .admin-body .stu-card {
+    border-radius: 16px !important; border: 1px solid var(--egha-line) !important; box-shadow: 0 10px 28px rgba(11, 31, 75, .06) !important; background: #fff;
+}
+.admin-body .egh-button, .admin-body button.egh-button, .admin-body a.egh-button { background: var(--sga-red) !important; border-color: var(--sga-red) !important; color: #fff !important; border-radius: 10px; }
+.admin-body .egh-button:hover { background: var(--sga-red-dark) !important; }
+.admin-body .egh-button.secondary { background: #fff !important; color: var(--sga-navy) !important; border: 1px solid #cbd3e3 !important; }
+.admin-body .egh-button.secondary:hover { border-color: var(--sga-navy) !important; }
+.admin-body .egh-button.danger { background: #fff !important; color: var(--sga-red) !important; border: 1px solid var(--sga-red) !important; }
+.admin-body .stu-table th, .admin-body table th { background: #f6f8fc; color: #0f1b3d; }
+.admin-body .stu-link, .admin-body .egh-content a:not(.egh-button):not(.admin-nav-link) { color: #c3121a; }
+.admin-body .egho-alert, .admin-body .egh-alert { border-radius: 12px; }
+.admin-body input:focus, .admin-body select:focus, .admin-body textarea:focus { border-color: #1b3d86 !important; box-shadow: 0 0 0 3px rgba(27, 61, 134, .12) !important; outline: none; }
+.admin-body :focus-visible { outline: 3px solid rgba(227, 27, 35, .45); outline-offset: 2px; }
+
+/* Dashboard */
+.admin-body .eghad-hero { background: #0b1f4b url("https://images.unsplash.com/photo-1496939376851-89342e90adcd?auto=format&fit=crop&w=1600&q=70") right center / cover no-repeat !important; position: relative; isolation: isolate; border-radius: 18px !important; overflow: hidden; }
+.admin-body .eghad-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(8, 22, 58, .97) 0%, rgba(11, 31, 75, .88) 50%, rgba(11, 31, 75, .45) 100%); }
+.admin-body .eghad-button { border-radius: 10px !important; }
+.admin-body .eghad-hero .eghad-button:first-child, .admin-body .eghad-hero .eghad-button-primary { background: #e31b23 !important; color: #fff !important; border-color: #e31b23 !important; }
+.admin-body .eghad-card-icon { background: #fdecee !important; color: #e31b23 !important; }
+.admin-body .eghad-card-icon.eghad-icon-green { background: #e7f7ee !important; color: #16a34a !important; }
+.admin-body .eghad-card, .admin-body .eghad-mini-card, .admin-body .eghad-section { border-radius: 16px !important; }
+.admin-body .eghad-kicker { color: #e31b23 !important; }
+.sga-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin: 18px 0; }
+.sga-kpi { display: grid; gap: .3rem; padding: 1.1rem 1.25rem; background: #fff; border: 1px solid #e3e8f2; border-radius: 16px; box-shadow: 0 10px 28px rgba(11, 31, 75, .06); text-decoration: none; transition: transform .18s ease, box-shadow .18s ease; }
+.sga-kpi:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(11, 31, 75, .12); }
+.sga-kpi strong { font: 700 2rem/1 "Poppins", system-ui, sans-serif; color: #0b1f4b; }
+.sga-kpi:nth-child(2n) strong { color: #e31b23; }
+.sga-kpi span { color: #64748b; font-size: .9rem; }

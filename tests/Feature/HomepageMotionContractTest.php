@@ -6,7 +6,7 @@ use Tests\TestCase;
 
 final class HomepageMotionContractTest extends TestCase
 {
-    public function test_homepage_wires_seamless_news_and_timed_destination_motion(): void
+    public function test_homepage_wires_the_seamless_news_ticker(): void
     {
         $html = $this->get(route('home'))
             ->assertOk()
@@ -16,23 +16,6 @@ final class HomepageMotionContractTest extends TestCase
         $this->assertStringContainsString('egho-news-ticker-track', $html);
         $this->assertStringContainsString('--egho-news-duration: 20s', $html);
         $this->assertSame(2, substr_count($html, 'class="egho-news-ticker-group"'));
-        $this->assertStringContainsString('data-egho-autoplay="step"', $html);
-        $this->assertStringContainsString('data-egho-interval="2200"', $html);
-        $this->assertStringContainsString('data-egho-rail-track', $html);
-        $this->assertStringContainsString('data-egho-rail-prev', $html);
-        $this->assertStringContainsString('data-egho-rail-next', $html);
-
-        $script = file_get_contents(public_path('js/egh-home.js'));
-        $this->assertIsString($script);
-        $this->assertStringNotContainsString('prefers-reduced-motion', $script);
-        $this->assertStringContainsString("rail.getAttribute('data-egho-autoplay') === 'step'", $script);
-        $this->assertStringContainsString("rail.getAttribute('data-egho-interval') || '2200'", $script);
-        $this->assertStringContainsString('var duration = 700;', $script);
-        $this->assertStringContainsString('scheduleAutoplay(900);', $script);
-        $this->assertStringContainsString('moveOne(1, true);', $script);
-        $this->assertStringContainsString("clone.classList.add('is-rail-clone')", $script);
-        $this->assertStringContainsString("rail.classList.add('is-motion-ready')", $script);
-        $this->assertStringContainsString('track.scrollLeft = start + (distance * ease(progress));', $script);
     }
 
     public function test_motion_styles_keep_ticker_and_destination_motion_active(): void

@@ -1,7 +1,7 @@
 # PDF Requirement Compliance Matrix
 
 Source: *Travel & Visa Agency Business Requirements.pdf* (2 pages), the owner's implementation briefs, and the owner-approved definitions of the 12 previously unclear items (round 4).
-Last updated: 2026-11-15, after round 5 (content drafts and production readiness). All work is local and uncommitted on `main`.
+Last updated: 2026-11-16, after the UI completion round (redesign, Bengali completion, three new pages, SEO canonical fix). The redesign and this round are local and uncommitted; earlier rounds are on `main` (last pushed commit `c8efad0`).
 
 ## Status categories (stricter than earlier rounds)
 
@@ -116,13 +116,21 @@ The catalogue, public pages, structured data and "Places You May Like" all work.
 | Item | Status | Notes |
 |---|---|---|
 | English | FULL | |
-| Bengali | FULL | Working EN/বাং switch. All 279 public and portal interface keys are translated; `TranslationCoverageTest` fails if one is missing. Admin-editable in Translations. **Needs native-speaker review.** Admin screens are English only. |
+| Bengali | FULL | Working EN / বাংলা switch. 839 interface strings are translated, including the Visa, Work Visa, Hotels, Tours, Support, Terms and About pages, the demo catalogue text, country names and Bengali validation messages (`lang/bn/validation.php`). `TranslationCoverageTest` and `BengaliPagesAndAuthSeoTest` fail if strings go missing. Admin-editable in Translations; owner-edited page text is shown as entered. **Needs native-speaker review; Terms, visa and work-visa wording also needs legal review.** Admin screens are English only. |
 | Foreigner Support | FULL | `/enquiries/foreigner-support` with categories, staff assignment, status tracking and customer notifications |
 | Special Offers, Agent / Student / Tourist Login, About | FULL | |
 
 ## Singapore SEO (round 4)
 
 Seven guide topics are drafts (`SingaporeGuideSeeder`). Admin controls title, slug, canonical URL, SEO title and description, cover (Open Graph), related links and publishing. Publishing requires an official https source. The public page shows Article and Breadcrumb structured data, the sources, and an `hreflang` Bengali version. Published guides appear in the sitemap and on the Singapore page. **Owner action:** write verified content for each guide.
+
+## New public pages (UI completion round)
+
+| Page | Route | Status | Notes |
+|---|---|---|---|
+| Singapore Guides index | `/study-in-singapore/guides` (`consultancy.guides.index`) | OWNER | Search and topic filter; lists only published, approved guides. Shows "Guides are on the way" until the owner publishes a guide. Test: `NewPublicPagesTest` |
+| Institutions | `/study-in-singapore/institutions` (`consultancy.institutions.index`) | OWNER | Shows only institutions the owner marks "Show on the public Institutions page" (new owner-only flag), with active courses and open intakes. No contact details, registration numbers, notes or partnership claims. Test: `NewPublicPagesTest` |
+| Travel Services landing | `/travel-services` (`travel-services.index`) | FULL | Flights, Hotels & Homes, Tours, Tourist Visa, Work Visa, Business Visa, Business Class, each labelled Live Provider, Demo Preview or Enquiry only. Uses existing routes and follows feature switches. Test: `NewPublicPagesTest` |
 
 ## API and integration readiness
 

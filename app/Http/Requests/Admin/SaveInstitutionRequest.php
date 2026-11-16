@@ -32,6 +32,7 @@ class SaveInstitutionRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:500'],
             'status' => ['required', 'string', Rule::in(Institution::STATUSES)],
             'notes' => ['nullable', 'string', 'max:5000'],
+            'is_public' => ['sometimes', 'boolean'],
         ];
     }
 

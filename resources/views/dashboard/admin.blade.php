@@ -42,6 +42,8 @@
         </div>
     </section>
 
+    @include('dashboard._admin-kpis')
+
     <section class="eghad-section" aria-labelledby="eghad-priority-heading">
         <div class="eghad-section-heading">
             <div>

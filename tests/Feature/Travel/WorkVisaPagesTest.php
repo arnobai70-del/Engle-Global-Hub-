@@ -3,14 +3,21 @@
 namespace Tests\Feature\Travel;
 
 use App\Services\Feature\FeatureManager;
+use Database\Seeders\CountrySeeder;
 use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\ServiceDestinationSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class WorkVisaPagesTest extends TestCase
 {
     use RefreshDatabase;
-    protected function setUp(): void { parent::setUp(); $this->seed(RolePermissionSeeder::class); }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed([RolePermissionSeeder::class, CountrySeeder::class, ServiceDestinationSeeder::class]);
+    }
 
     public function test_work_visa_pages_are_reachable_without_signing_in(): void
     {
@@ -20,7 +27,7 @@ class WorkVisaPagesTest extends TestCase
 
     public function test_work_visa_page_has_safe_service_and_destination_previews(): void
     {
-        $this->get(route('work-visa.index'))->assertOk()->assertSee('Skilled Worker')->assertSee('Employer Sponsored')->assertSee('Job Visa &amp; Work Permits', false)->assertSee('Sample destination')->assertSee('No guarantee')->assertDontSee('application submitted')->assertDontSee('guaranteed sponsorship');
+        $this->get(route('work-visa.index'))->assertOk()->assertSee('Skilled Worker')->assertSee('Employer Sponsored')->assertSee('Job Visa &amp; Work Permits', false)->assertDontSee('Sample destination')->assertSee('Work permit destinations')->assertSee('Belarus')->assertSee('Dubai (United Arab Emirates)')->assertSee('No guarantee')->assertDontSee('application submitted')->assertDontSee('guaranteed sponsorship');
     }
 
     public function test_work_visa_preview_does_not_claim_real_jobs_or_sponsorship(): void
@@ -35,7 +42,7 @@ class WorkVisaPagesTest extends TestCase
 
     public function test_work_visa_pages_follow_visa_feature_visibility(): void
     {
-        app(FeatureManager::class)->update('visa', $this->state(publicVisible:false));
+        app(FeatureManager::class)->update('visa', $this->state(publicVisible: false));
         $this->get(route('work-visa.index'))->assertNotFound();
         $this->get(route('work-visa.apply'))->assertNotFound();
         $this->get(route('home'))->assertOk()->assertDontSee(route('work-visa.index'));
@@ -47,8 +54,8 @@ class WorkVisaPagesTest extends TestCase
         $this->post(route('work-visa.apply'))->assertStatus(405);
     }
 
-    private function state(bool $enabled=true,bool $publicVisible=true,bool $authenticatedVisible=true,bool $adminVisible=true,?string $message=null): array
+    private function state(bool $enabled = true, bool $publicVisible = true, bool $authenticatedVisible = true, bool $adminVisible = true, ?string $message = null): array
     {
-        return ['enabled'=>$enabled,'public_visible'=>$publicVisible,'authenticated_visible'=>$authenticatedVisible,'admin_visible'=>$adminVisible,'message'=>$message];
+        return ['enabled' => $enabled, 'public_visible' => $publicVisible, 'authenticated_visible' => $authenticatedVisible, 'admin_visible' => $adminVisible, 'message' => $message];
     }
 }

@@ -11,12 +11,12 @@
 
 @section('content')
     <div class="egho-auth-head">
-        <span class="egho-eyebrow">ACCOUNT RECOVERY</span>
+        <span class="egho-eyebrow">{{ __('ACCOUNT RECOVERY') }}</span>
 
-        <h2>Forgot Password</h2>
+        <h2>{{ __('Forgot Password') }}</h2>
 
         <p>
-            Enter the email address associated with your Eagle Global Hub LTD account.
+            {{ __('Enter the email address associated with your Eagle Global Hub LTD account.') }}
         </p>
     </div>
 
@@ -28,7 +28,7 @@
         @csrf
 
         <label class="egho-field" for="email">
-            <span>Email Address</span>
+            <span>{{ __('Email Address') }}</span>
 
             <input
                 id="email"
@@ -43,14 +43,14 @@
         </label>
 
         <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
-            Send Password Reset Link
+            {{ __('Send Password Reset Link') }}
         </button>
 
         <p class="egho-auth-alt">
-            Remember your password?
+            {{ __('Remember your password?') }}
 
             <a href="{{ route('login') }}">
-                Back to Login
+                {{ __('Back to Login') }}
             </a>
         </p>
     </form>

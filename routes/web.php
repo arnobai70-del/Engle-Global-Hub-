@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguagePageController;
 use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\MediaAssetController;
+use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\PaymentRecordController;
 use App\Http\Controllers\Admin\ReportPageController;
 use App\Http\Controllers\Admin\ReviewModerationController;
@@ -40,10 +41,13 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Agent\AgentPortalController;
 use App\Http\Controllers\Agent\PartnerRegistrationController;
+use App\Http\Controllers\Consultancy\InstitutionDirectoryController;
+use App\Http\Controllers\Consultancy\SingaporeGuideIndexController;
 use App\Http\Controllers\Consultancy\SingaporeStudyController;
 use App\Http\Controllers\Consultancy\StudentEnquiryController;
 use App\Http\Controllers\ContentPageController;
 use App\Http\Controllers\ExploreBangladeshController;
+use App\Http\Controllers\FeaturePageController;
 use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
 use App\Http\Controllers\Flight\FlightBookingDraftController;
 use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
@@ -69,12 +73,14 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceEnquiryController;
+use App\Http\Controllers\ServicePageController;
 use App\Http\Controllers\Student\StudentApplicationController;
 use App\Http\Controllers\Student\StudentApplicationMessageController;
 use App\Http\Controllers\Student\StudentAppointmentController;
 use App\Http\Controllers\Student\StudentDocumentController;
 use App\Http\Controllers\Tour\TourController;
 use App\Http\Controllers\Tour\TourSearchController;
+use App\Http\Controllers\TravelServicesController;
 use App\Http\Controllers\Visa\VisaController;
 use App\Http\Controllers\Visa\VisaRequirementController;
 use Illuminate\Support\Facades\Route;
@@ -874,6 +880,20 @@ Route::get('/study-in-singapore', SingaporeStudyController::class)
     ->middleware('feature:student-consultancy')
     ->name('consultancy.singapore');
 
+Route::get('/study-in-singapore/guides', SingaporeGuideIndexController::class)
+    ->middleware('feature:student-consultancy')
+    ->name('consultancy.guides.index');
+
+Route::get('/study-in-singapore/institutions', InstitutionDirectoryController::class)
+    ->middleware('feature:student-consultancy')
+    ->name('consultancy.institutions.index');
+
+Route::get('/travel-services', TravelServicesController::class)->name('travel-services.index');
+Route::get('/services', [ServicePageController::class, 'index'])->name('services.index');
+Route::get('/services/{slug}', [ServicePageController::class, 'show'])->where('slug', '[a-z]+(?:-[a-z]+)*')->name('services.show');
+Route::get('/map', [FeaturePageController::class, 'map'])->name('map');
+Route::get('/mobile-app', [FeaturePageController::class, 'mobileApp'])->name('mobile-app');
+
 Route::post('/study-in-singapore/enquiries', [StudentEnquiryController::class, 'store'])
     ->middleware(['feature:student-consultancy', 'throttle:5,1'])
     ->name('consultancy.enquiries.store');
@@ -1168,6 +1188,17 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
             Route::patch('/contact-directory/{entry}', [ContactDirectoryController::class, 'update'])->whereNumber('entry')->name('contact-directory.update');
             Route::delete('/contact-directory/{entry}', [ContactDirectoryController::class, 'destroy'])->whereNumber('entry')->name('contact-directory.destroy');
         });
+        Route::middleware('can:menus.manage')->group(function () {
+            Route::get('/menus', [MenuItemController::class, 'index'])->name('menus.index');
+            Route::get('/menus/create', [MenuItemController::class, 'create'])->name('menus.create');
+            Route::post('/menus', [MenuItemController::class, 'store'])->name('menus.store');
+            Route::patch('/menus/branding', [MenuItemController::class, 'branding'])->name('menus.branding');
+            Route::get('/menus/{item}/edit', [MenuItemController::class, 'edit'])->whereNumber('item')->name('menus.edit');
+            Route::patch('/menus/{item}', [MenuItemController::class, 'update'])->whereNumber('item')->name('menus.update');
+            Route::patch('/menus/{item}/toggle', [MenuItemController::class, 'toggle'])->whereNumber('item')->name('menus.toggle');
+            Route::patch('/menus/{item}/move', [MenuItemController::class, 'move'])->whereNumber('item')->name('menus.move');
+            Route::delete('/menus/{item}', [MenuItemController::class, 'destroy'])->whereNumber('item')->name('menus.destroy');
+        });
         Route::post('/content/{entry}/approve', [ContentEntryController::class, 'approve'])->whereNumber('entry')->middleware('can:content.approve')->name('content.approve');
         Route::middleware('can:content.approve')->group(function () {
             Route::get('/content-approvals', [ContentApprovalController::class, 'index'])->name('content.approvals');
@@ -1193,3 +1224,8 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
             Route::patch('/forums/threads/{thread}/lock', [ForumModerationController::class, 'lockThread'])->whereNumber('thread')->name('forums.threads.lock');
         });
     });
+
+/*
+ * Unknown URLs go through the web middleware so the 404 page uses the visitor's language and session.
+ */
+Route::fallback(static fn () => abort(404));

@@ -11,19 +11,18 @@
 
 @section('content')
     <div class="egho-auth-head">
-        <span class="egho-eyebrow">EMAIL VERIFICATION</span>
+        <span class="egho-eyebrow">{{ __('EMAIL VERIFICATION') }}</span>
 
-        <h2>Check Your Inbox</h2>
+        <h2>{{ __('Check Your Inbox') }}</h2>
 
         <p>
-            We sent a verification link to your registered email address.
-            Please verify your email before continuing.
+            {{ __('We sent a verification link to your registered email address. Please verify your email before continuing.') }}
         </p>
     </div>
 
     @if (session('status') === 'verification-link-sent')
         <div class="auth-alert auth-alert-success" role="status">
-            A new verification link has been sent to your email address.
+            {{ __('A new verification link has been sent to your email address.') }}
         </div>
     @endif
 
@@ -32,7 +31,7 @@
             @csrf
 
             <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
-                Resend Verification Email
+                {{ __('Resend Verification Email') }}
             </button>
         </form>
 
@@ -40,7 +39,7 @@
             @csrf
 
             <button type="submit" class="egho-btn egho-btn-ghost egho-auth-submit">
-                Logout
+                {{ __('Logout') }}
             </button>
         </form>
     </div>

@@ -41,99 +41,49 @@ final class HomepageMockupContractTest extends TestCase
         );
     }
 
-    public function test_homepage_follows_the_approved_panel_section_order(): void
+    public function test_homepage_follows_the_singapore_consultancy_section_order(): void
     {
         $html = $this->home();
 
-        $this->assertStringContainsString('Travel the World with', $html);
-        $this->assertOrder('egho-hero', 'egho-search-card', $html);
-        $this->assertOrder('egho-search-card', 'egho-assurances', $html);
-        $this->assertOrder('egho-assurances', 'egho-promos', $html);
-        $this->assertOrder('egho-promos', 'Our Services', $html);
-        $this->assertOrder('Our Services', 'Popular Destinations', $html);
-        $this->assertOrder('Popular Destinations', 'egho-panels', $html);
-        $this->assertOrder('egho-panels', 'Why Choose Eagle Global Hub?', $html);
-        $this->assertOrder('Why Choose Eagle Global Hub?', 'Download Our Mobile App', $html);
-        $this->assertOrder('Download Our Mobile App', 'Make Your Next Journey Amazing', $html);
+        $this->assertStringContainsString('Your Gateway to Study in Singapore', $html);
+        $this->assertStringContainsString('Singapore Student Consultancy', $html);
+        $this->assertOrder('sg-hero', 'sg-tiles', $html);
+        $this->assertOrder('sg-tiles', 'Complete Student Consultancy for', $html);
+        $this->assertOrder('Complete Student Consultancy for', 'Our Complete Services', $html);
+        $this->assertOrder('Our Complete Services', 'Your journey to Singapore, step by step', $html);
+        $this->assertOrder('Your journey to Singapore, step by step', 'Visa &amp; Travel Services', $html);
     }
 
-    public function test_homepage_renders_the_panels_ten_service_tiles(): void
+    public function test_homepage_renders_the_seven_service_tiles_with_study_featured(): void
     {
         $html = $this->home();
 
-        $this->assertSame(10, substr_count($html, 'class="egho-tile"'));
-
-        foreach ([
-            'Flights',
-            'Hotels',
-            'Tours &amp; Activities',
-            'Visa Assistance',
-            'Work Visa Processing',
-            'Holiday Packages',
-            'Trains',
-            'Buses',
-            'Cabs',
-            'Travel Insurance',
-        ] as $tile) {
-            $this->assertStringContainsString($tile, $html, 'the services grid is missing '.$tile);
-        }
-
-        $this->assertSame(5, substr_count($html, 'egho-tile-status is-planned'));
-        $this->assertStringContainsString('Live Provider', $html);
-        $this->assertStringContainsString('Demo Preview', $html);
-    }
-
-    public function test_homepage_renders_the_panels_eight_destination_cards(): void
-    {
-        $html = $this->home();
-
-        $this->assertSame(8, substr_count($html, 'egho-destination-copy'));
-
-        foreach ([
-            'Dubai',
-            'Bali',
-            'Bangkok',
-            'Singapore',
-            'Maldives',
-            'London',
-            'Istanbul',
-            'Paris',
-        ] as $destination) {
-            $this->assertStringContainsString($destination, $html);
-        }
-
-        $this->assertStringContainsString('data-egho-rail-nav hidden', $html);
-        $this->assertStringContainsString('data-egho-rail-track', $html);
-    }
-
-    public function test_homepage_keeps_the_five_statement_assurance_strip(): void
-    {
-        $html = $this->home();
-
-        $this->assertSame(5, substr_count($html, 'egho-assurance-copy'));
-
-        foreach ([
-            'Compare fares',
-            'Live revalidation',
-            'Secure account steps',
-            'Status you can check',
-            'Honest availability',
-        ] as $statement) {
-            $this->assertStringContainsString($statement, $html);
+        $this->assertSame(6, substr_count($html, 'class="sg-tile"'));
+        $this->assertSame(1, substr_count($html, 'sg-tile is-featured'));
+        foreach (['Study in Singapore', 'Student&#039;s Pass (ICA)', 'Visa Services', 'Flight Services', 'Hotels &amp; Homes', 'Tour Packages', 'Explore Bangladesh'] as $tile) {
+            $this->assertStringContainsString($tile, $html);
         }
     }
 
-    public function test_homepage_renders_the_promotions_and_service_panels(): void
+    public function test_homepage_lists_the_six_consultancy_services_and_secondary_services(): void
     {
         $html = $this->home();
 
-        $this->assertSame(2, substr_count($html, 'class="egho-promo"'));
-        $this->assertSame(1, substr_count($html, 'egho-promo is-workvisa'));
-        $this->assertSame(3, substr_count($html, 'class="egho-panel '));
-        $this->assertStringContainsString('Visa Services', $html);
-        $this->assertStringContainsString('Work Visa Processing', $html);
-        $this->assertStringContainsString('Holiday Packages', $html);
-        $this->assertSame(6, substr_count($html, 'egho-why-icon'));
+        foreach (['Admission Support', 'Student&#039;s Pass (ICA) Support', 'Documents Support', 'Air Ticket Booking', 'Accommodation', 'Arrival Support'] as $service) {
+            $this->assertStringContainsString('<h3>'.$service.'</h3>', $html);
+        }
+        foreach (['Work Visa', 'Flights', 'Offers &amp; Promotions'] as $secondary) {
+            $this->assertStringContainsString('<h3>'.$secondary.'</h3>', $html);
+        }
+        $this->assertStringContainsString(route('consultancy.singapore').'#consultation', $html);
+    }
+
+    public function test_homepage_shows_only_published_guides_and_destinations(): void
+    {
+        $html = $this->home();
+
+        $this->assertStringNotContainsString('sg-guide-list', $html, 'no guide is published in this test, so none may be listed');
+        $this->assertStringNotContainsString('sg-photo-card', $html, 'no destination is published in this test, so none may be listed');
     }
 
     public function test_homepage_publishes_only_the_official_contact_details_and_no_fake_promo_code(): void
@@ -181,42 +131,29 @@ final class HomepageMockupContractTest extends TestCase
         }
     }
 
-    public function test_homepage_loads_its_page_scoped_sheet_and_rail_script(): void
+    public function test_homepage_loads_the_shared_design_sheet(): void
     {
         $html = $this->home();
 
-        $this->assertStringContainsString('css/egh-home.css?v=', $html);
+        $this->assertStringContainsString('css/egh-sg.css?v=', $html);
         $this->assertStringContainsString('css/egh-chrome.css?v=', $html);
-        $this->assertStringContainsString('js/egh-home.js?v=', $html);
-
-        $script = file_get_contents(public_path('js/egh-home.js'));
-        $this->assertIsString($script);
-
-        foreach (['fetch(', 'XMLHttpRequest', 'innerHTML', 'insertAdjacent'] as $banned) {
-            $this->assertStringNotContainsString(
-                $banned,
-                $script,
-                'the homepage script performs a forbidden operation: '.$banned,
-            );
-        }
+        $this->assertStringContainsString('css/egh-news-ticker.css?v=', $html);
     }
 
-    public function test_homepage_chrome_carries_the_mockup_navigation_and_footer(): void
+    public function test_homepage_chrome_carries_the_reference_navigation_and_footer(): void
     {
         $html = $this->home();
 
-        $this->assertSame(1, substr_count($html, 'egho-nav-more'));
+        foreach (['Study in Singapore', 'Visa Services', 'Travel Services', 'Explore Bangladesh', 'About'] as $menu) {
+            $this->assertStringContainsString('<summary>'.$menu.'</summary>', $html);
+        }
+        $this->assertStringContainsString('Apply Now', $html);
+        $this->assertStringContainsString('data-sg-burger', $html);
 
-        foreach ([
-            'Quick Links',
-            'Our Services',
-            'Support',
-            'Contact Info',
-        ] as $column) {
+        foreach (['Quick Links', 'Study in Singapore', 'Our Services', 'Contact Info'] as $column) {
             $this->assertStringContainsString('<h3>'.$column.'</h3>', $html);
         }
 
         $this->assertStringContainsString('Secure account &amp; booking steps', $html);
-        $this->assertStringContainsString('Provider credentials stay server-side', $html);
     }
 }

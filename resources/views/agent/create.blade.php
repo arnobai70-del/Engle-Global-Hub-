@@ -3,6 +3,7 @@
 @section('robots', 'noindex,nofollow')
 @section('body_class', 'public-page-body egho-page-body')
 @section('content')
+<x-site.portal active="agent-referral" kind="agent">
 <main class="egho-page">
     <div class="egho-shell">
         <section class="egho-contact-card">
@@ -14,7 +15,7 @@
                     <label class="egho-field"><span>{{ __('Student full name') }}</span><input name="full_name" value="{{ old('full_name') }}" maxlength="150" required></label>
                     <label class="egho-field"><span>{{ __('Student email') }}</span><input type="email" name="email" value="{{ old('email') }}" maxlength="254" required></label>
                     <label class="egho-field"><span>{{ __('Student phone') }}</span><input type="tel" name="phone" value="{{ old('phone') }}" maxlength="32" required></label>
-                    <label class="egho-field"><span>{{ __('Study destination') }}</span><select name="destination" required>@foreach($destinations as $destination)<option value="{{ $destination->iso2 }}" @selected(old('destination', 'SG') === $destination->iso2)>{{ $destination->name }}</option>@endforeach</select></label>
+                    <label class="egho-field"><span>{{ __('Study destination') }}</span><select name="destination" required>@foreach($destinations as $destination)<option value="{{ $destination->iso2 }}" @selected(old('destination', 'SG') === $destination->iso2)>{{ __($destination->name) }}</option>@endforeach</select></label>
                     <label class="egho-field"><span>{{ __('Study level') }}</span><select name="study_level"><option value="">{{ __('Select a level') }}</option>@foreach($studyLevels as $value => $label)<option value="{{ $value }}" @selected(old('study_level') === $value)>{{ $label }}</option>@endforeach</select></label>
                     <label class="egho-field"><span>{{ __('Preferred intake') }}</span><input name="preferred_intake" value="{{ old('preferred_intake') }}" maxlength="40"></label>
                     <label class="egho-field"><span>{{ __('Highest qualification') }}</span><input name="highest_qualification" value="{{ old('highest_qualification') }}" maxlength="120"></label>
@@ -26,4 +27,5 @@
         </section>
     </div>
 </main>
+</x-site.portal>
 @endsection

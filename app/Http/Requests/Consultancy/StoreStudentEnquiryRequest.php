@@ -41,8 +41,8 @@ class StoreStudentEnquiryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone.regex' => 'Enter a valid phone number, for example +8801712345678.',
-            'consent.accepted' => 'Please agree to be contacted about your study enquiry.',
+            'phone.regex' => __('Enter a valid phone number, for example +8801712345678.'),
+            'consent.accepted' => __('Please agree to be contacted about your study enquiry.'),
         ];
     }
 

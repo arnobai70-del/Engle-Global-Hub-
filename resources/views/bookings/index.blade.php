@@ -4,6 +4,7 @@
 @section('body_class', 'bookings-body egho-page-body')
 
 @section('content')
+<x-site.portal active="bookings" kind="tourist">
 
     @php
         $activeTab = request()->query('tab', 'flights');
@@ -300,4 +301,5 @@
         </div>
     </main>
 
+</x-site.portal>
 @endsection

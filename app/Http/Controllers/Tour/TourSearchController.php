@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Tour;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tour\SearchToursRequest;
+use App\Services\Integrations\ProviderStatus;
 use App\Services\Tour\TourSearchService;
 use App\Services\Travel\TravelDemoCatalog;
 use App\Services\Travel\TravelPageContent;
 use App\Services\Travel\TravelServiceRegistry;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class TourSearchController extends Controller
 {
@@ -17,11 +19,16 @@ class TourSearchController extends Controller
         TravelServiceRegistry $registry,
         TourSearchService $searchService,
         TravelDemoCatalog $demo,
-        TravelPageContent $content,
-    ): View {
+        TravelPageContent $content, ProviderStatus $providerStatus,
+    ): View|RedirectResponse {
         $service = $registry->all()['tours'];
         $criteria = $request->validated();
-        $demoMode = (bool) $service['demo_mode'];
+        $demoMode = $providerStatus->of('tours') !== ProviderStatus::LIVE;
+
+        // Without a connected provider there are no real results: never render sample data as results.
+        if ($demoMode) {
+            return redirect()->route('tours.index')->with('api_waiting', __('Online search is waiting for the provider API. Please send an enquiry and our team will help you.'));
+        }
 
         return view('tours.results', [
             'criteria' => $criteria,

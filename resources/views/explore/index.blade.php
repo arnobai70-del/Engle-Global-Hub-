@@ -1,6 +1,6 @@
 @extends('layouts.site')
 @section('title', 'Explore Bangladesh')
-@section('meta_description', 'Discover tourist places in Bangladesh with Eagle Global Hub LTD, including Cox\'s Bazar, Sylhet and Kuakata.')
+@section('meta_description', 'Discover tourist places across Bangladesh, with travel support from Eagle Global Hub LTD.')
 @section('body_class', 'public-page-body egho-page-body')
 @section('content')
 <main class="egho-page">

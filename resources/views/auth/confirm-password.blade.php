@@ -6,10 +6,10 @@
 
 @section('content')
     <div class="egho-auth-head">
-        <span class="egho-eyebrow">SECURITY CHECK</span>
-        <h2>Confirm Password</h2>
+        <span class="egho-eyebrow">{{ __('SECURITY CHECK') }}</span>
+        <h2>{{ __('Confirm Password') }}</h2>
         <p>
-            For your security, please confirm your password before continuing.
+            {{ __('For your security, please confirm your password before continuing.') }}
         </p>
     </div>
 
@@ -21,26 +21,26 @@
         @csrf
 
         <label class="egho-field" for="password">
-            <span>Password</span>
+            <span>{{ __('Password') }}</span>
 
             <input
                 id="password"
                 type="password"
                 name="password"
                 autocomplete="current-password"
-                placeholder="Enter your password"
+                placeholder="{{ __('Enter your password') }}"
                 required
                 autofocus
             >
         </label>
 
         <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
-            Confirm Password
+            {{ __('Confirm Password') }}
         </button>
 
         <p class="egho-auth-alt">
             <a href="{{ route('dashboard') }}">
-                Return to dashboard
+                {{ __('Return to dashboard') }}
             </a>
         </p>
     </form>

@@ -17,6 +17,7 @@ class HomepageContentManagementTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
         $user = User::factory()->create();
         $user->assignRole('super-admin');
+
         return $user;
     }
 
@@ -44,7 +45,7 @@ class HomepageContentManagementTest extends TestCase
         $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'news_text', 'value' => $payload['news_text']]);
     }
 
-    public function test_admin_can_control_section_visibility_and_destination_slider_speed(): void
+    public function test_admin_can_control_homepage_section_visibility(): void
     {
         $user = $this->superAdmin();
         $this->actingAs($user)->patch(route('admin.homepage.settings.update'), [
@@ -62,9 +63,9 @@ class HomepageContentManagementTest extends TestCase
         $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'destination_autoplay_interval', 'value' => '4200']);
 
         $html = $this->get(route('home'))->assertOk()->getContent();
-        $this->assertStringNotContainsString('class="egho-promos"', $html);
-        $this->assertStringNotContainsString('class="egho-tiles"', $html);
-        $this->assertStringContainsString('data-egho-interval="4200"', $html);
+        $this->assertStringNotContainsString('Our Complete Services', $html);
+        $this->assertStringNotContainsString('<h3>Offers &amp; Promotions</h3>', $html);
+        $this->assertStringContainsString('Visa &amp; Travel Services', $html);
     }
 
     public function test_super_admin_can_create_and_hide_repeatable_homepage_content(): void

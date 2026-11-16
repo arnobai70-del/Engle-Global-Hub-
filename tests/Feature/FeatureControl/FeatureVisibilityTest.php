@@ -211,7 +211,7 @@ final class FeatureVisibilityTest extends TestCase
             ->get(route('hotels.index'))
             ->assertOk()
             ->assertSee('Super Admin Preview:')
-            ->assertSee('Demo Preview');
+            ->assertSee('Waiting for API');
 
         $this->actingAs($superAdmin)
             ->postJson(route('hotels.search'), [])
@@ -232,9 +232,8 @@ final class FeatureVisibilityTest extends TestCase
                 'adults' => 1,
                 'rooms' => 1,
             ])
-            ->assertOk()
-            ->assertSee('Demo Preview')
-            ->assertSee('Sample content shown for demonstration');
+            ->assertRedirect(route('hotels.index'))
+            ->assertSessionHas('api_waiting');
 
         $this->assertFalse(app(FeatureManager::class)->isEnabled('hotels'));
         $this->assertSame(

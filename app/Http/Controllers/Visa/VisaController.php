@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Visa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Country;
+use App\Services\Integrations\ProviderStatus;
 use App\Services\Travel\TravelDemoCatalog;
 use App\Services\Travel\TravelPageContent;
 use App\Services\Travel\TravelServiceRegistry;
@@ -11,7 +12,7 @@ use Illuminate\Contracts\View\View;
 
 class VisaController extends Controller
 {
-    public function __invoke(TravelServiceRegistry $registry, TravelDemoCatalog $demo, TravelPageContent $content): View
+    public function __invoke(TravelServiceRegistry $registry, TravelDemoCatalog $demo, TravelPageContent $content, ProviderStatus $providerStatus): View
     {
         $countries = Country::query()
             ->where('is_active', true)
@@ -22,7 +23,7 @@ class VisaController extends Controller
 
         return view('visa.index', [
             'service' => $service,
-            'demoMode' => $service['demo_mode'],
+            'demoMode' => $providerStatus->of('visa') !== ProviderStatus::LIVE,
             'countries' => $countries,
             'visaServices' => $demo->visaServices(),
             'visaSteps' => $demo->visaSteps(),

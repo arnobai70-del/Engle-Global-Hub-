@@ -47,6 +47,7 @@ class InstitutionController extends Controller
     public function store(SaveInstitutionRequest $request): RedirectResponse
     {
         $institution = Institution::query()->create($request->validated());
+        $this->applyPublicListing($request, $institution);
 
         return redirect()->route('admin.institutions.show', $institution)->with('status', 'Institution created successfully.');
     }
@@ -66,6 +67,7 @@ class InstitutionController extends Controller
     public function update(SaveInstitutionRequest $request, Institution $institution): RedirectResponse
     {
         $institution->update($request->validated());
+        $this->applyPublicListing($request, $institution);
 
         return redirect()->route('admin.institutions.show', $institution)->with('status', 'Institution updated successfully.');
     }
@@ -75,6 +77,22 @@ class InstitutionController extends Controller
         $institution->delete();
 
         return redirect()->route('admin.institutions.index')->with('status', 'Institution deleted successfully.');
+    }
+
+    /**
+     * Only the owner may list an institution publicly; the date records when it was verified.
+     */
+    private function applyPublicListing(SaveInstitutionRequest $request, Institution $institution): void
+    {
+        if (! $request->has('is_public') || ! $request->user()->can('content.approve')) {
+            return;
+        }
+
+        $listed = $request->boolean('is_public');
+        $institution->forceFill([
+            'is_public' => $listed,
+            'publicly_verified_at' => $listed ? ($institution->publicly_verified_at ?? now()) : null,
+        ])->save();
     }
 
     /** @return Collection<int, Country> */

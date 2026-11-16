@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Destination;
+use App\Models\Institution;
 use App\Models\Offer;
 use App\Services\Feature\FeatureManager;
 use Illuminate\Http\Response;
@@ -33,6 +34,16 @@ class SitemapController extends Controller
         }
 
         $urls[] = ['loc' => route('reviews.index'), 'priority' => '0.4'];
+        $urls[] = ['loc' => route('travel-services.index'), 'priority' => '0.7'];
+
+        if ($features->isVisibleTo('student-consultancy', null)) {
+            if (ContentEntry::query()->published(ContentType::Guide)->exists()) {
+                $urls[] = ['loc' => route('consultancy.guides.index'), 'priority' => '0.8'];
+            }
+            if (Institution::query()->publiclyListed()->exists()) {
+                $urls[] = ['loc' => route('consultancy.institutions.index'), 'priority' => '0.7'];
+            }
+        }
 
         $published = ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)
             ->whereNotIn('type', [ContentType::Faq->value, ContentType::PageSection->value])->get(['type', 'slug', 'updated_at', 'status', 'canonical_url']);
