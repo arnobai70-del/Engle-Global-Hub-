@@ -3,6 +3,7 @@
 @section('robots', 'noindex,nofollow')
 @section('body_class', 'public-page-body egho-page-body')
 @section('content')
+<x-site.portal active="applications" kind="student">
 <main class="egho-page">
     <div class="egho-shell">
         @if(session('status'))<div class="egho-result-summary" role="status"><strong>{{ session('status') }}</strong></div>@endif
@@ -137,4 +138,5 @@
         <p><a href="{{ route('student.applications.index') }}">{{ __('All my applications') }}</a> · <a href="{{ route('notifications.index') }}">{{ __('Notifications') }}</a></p>
     </div>
 </main>
+</x-site.portal>
 @endsection

@@ -8,6 +8,7 @@
 </div>
 @if(session('status'))<div class="egh-alert" role="status">{{ session('status') }}</div>@endif
 @if(session('test_error'))<div class="egh-alert is-error" role="alert">{{ session('test_error') }}</div>@endif
+<section class="egh-card" aria-labelledby="public-status"><h2 id="public-status">Public status on the website</h2><p>What visitors see on each API-dependent feature. <strong>Live Provider</strong> appears only after a passing connection test for the current configuration; changing a key or provider returns it to <strong>Waiting for API</strong> until it is tested again.</p><table class="stu-table"><thead><tr><th>Feature</th><th>Shown on the website</th></tr></thead><tbody>@foreach($publicStatuses as $key => $item)<tr data-capability="{{ $key }}"><td>{{ $item['label'] }}</td><td><strong>{{ strtoupper($item['state_label']) }}</strong></td></tr>@endforeach</tbody></table></section>
 @foreach($integrations as $group => $items)
 <div class="egh-card admin-table-card">
 <h2>{{ $group }}</h2>

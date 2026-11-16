@@ -1,0 +1,1 @@
+@include('errors._standalone', ['code' => 500, 'title' => __('Something went wrong'), 'message' => __('An unexpected error stopped this page. Nothing was submitted twice. Please try again in a moment; if it keeps happening, contact us.')])

@@ -5,11 +5,15 @@ namespace Tests\Feature\Travel;
 use App\Contracts\Hotel\HotelSearchProvider;
 use App\Contracts\Tour\TourSearchProvider;
 use App\Contracts\Visa\VisaInformationProvider;
+use App\Services\Integrations\ProviderStatus;
 use App\Services\Travel\TravelServiceRegistry;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class HomepageTravelServiceAvailabilityTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_homepage_shows_demo_service_links_by_default(): void
     {
         $response = $this->get(route('home'));
@@ -20,7 +24,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
             ->assertSee('Hotels')
             ->assertSee('Tours')
             ->assertSee('Visa')
-            ->assertSee('Demo Preview')
+            ->assertSee('Waiting for API')
             ->assertSee('href="'.route('hotels.index').'"', false)
             ->assertSee('href="'.route('tours.index').'"', false)
             ->assertSee('href="'.route('visa.index').'"', false)
@@ -42,7 +46,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
-            ->assertSee('Demo Preview')
+            ->assertSee('Waiting for API')
             ->assertSee('href="'.route('hotels.index').'"', false);
     }
 
@@ -80,11 +84,20 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
         $this->assertFalse($services['hotels']['demo_mode']);
         $this->assertSame('Live Provider', $services['hotels']['display_status']);
 
+        // Configured is not enough: the public label stays "Waiting for API" until a connection test passes.
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
-            ->assertSee('Live Provider')
+            ->assertSee('Waiting for API')
+            ->assertDontSee('Live Provider')
             ->assertSee('href="'.route('hotels.index').'"', false)
+            ->assertDontSee('homepage-must-never-render-this-secret');
+
+        app(ProviderStatus::class)->recordVerified('hotels');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Live Provider')
             ->assertDontSee('homepage-must-never-render-this-secret');
     }
 

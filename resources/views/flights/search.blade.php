@@ -87,6 +87,7 @@
                 @endforeach
             </ol>
         </section>
+        <x-site.api-notice capability="flights" :enquiry-url="route('flights.enquiries.create')" :enquiry-label="__('Request a Flight Fare')" style="margin-top:18px" />
         <aside class="egh-card" style="margin:18px 0;padding:16px">
             <strong>No live fare showing?</strong>
             <p>Submit a manual flight enquiry. Our team will confirm the current BDT fare including airline taxes. No seat or ticket is reserved at this stage.</p>

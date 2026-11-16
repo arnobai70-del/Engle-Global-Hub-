@@ -17,9 +17,8 @@ class TravelPageContent
 
         foreach ($defaults as $key => $value) {
             $storedValue = $stored[$prefix.$key] ?? null;
-            if (is_string($storedValue) && trim($storedValue) !== '') {
-                $defaults[$key] = $storedValue;
-            }
+            // Owner-edited text is shown exactly as entered; built-in defaults follow the site language.
+            $defaults[$key] = is_string($storedValue) && trim($storedValue) !== '' ? $storedValue : __($value);
         }
 
         return $defaults;

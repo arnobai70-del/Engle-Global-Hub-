@@ -87,6 +87,7 @@ class RolePermissionSeeder extends Seeder
             'content.approve',
             'forums.moderate',
             'rewards.manage',
+            'menus.manage',
 
             'reports.view',
 
@@ -149,6 +150,8 @@ class RolePermissionSeeder extends Seeder
 
         $admin->syncPermissions([
             'dashboard.view',
+
+            'menus.manage',
 
             'users.view',
             'users.manage',

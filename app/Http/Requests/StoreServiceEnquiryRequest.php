@@ -47,9 +47,9 @@ class StoreServiceEnquiryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone.regex' => 'Enter a valid phone number, for example +8801712345678.',
-            'destination_country_id.in' => 'Please choose one of the listed destinations.',
-            'consent.accepted' => 'Please agree to be contacted about your enquiry.',
+            'phone.regex' => __('Enter a valid phone number, for example +8801712345678.'),
+            'destination_country_id.in' => __('Please choose one of the listed destinations.'),
+            'consent.accepted' => __('Please agree to be contacted about your enquiry.'),
         ];
     }
 
@@ -62,7 +62,7 @@ class StoreServiceEnquiryRequest extends FormRequest
     public static function destinationsFor(BusinessService $service): Collection
     {
         $managed = Country::query()
-            ->select('countries.id', 'countries.name')
+            ->select('countries.id', 'countries.name', 'countries.iso2')
             ->join('service_destinations', 'service_destinations.country_id', '=', 'countries.id')
             ->where('service_destinations.service', $service->value)
             ->where('service_destinations.is_active', true)
@@ -74,7 +74,7 @@ class StoreServiceEnquiryRequest extends FormRequest
             return $managed;
         }
 
-        return Country::query()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        return Country::query()->where('is_active', true)->orderBy('name')->get(['id', 'name', 'iso2']);
     }
 
     protected function prepareForValidation(): void

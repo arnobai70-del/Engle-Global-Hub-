@@ -6,16 +6,16 @@
 
 @section('content')
     <div class="egho-auth-head">
-        <span class="egho-eyebrow">WELCOME BACK</span>
-        <h2>Login</h2>
-        <p>Sign in to continue to your Eagle Global Hub LTD account.</p>
+        <span class="egho-eyebrow">{{ __('WELCOME BACK') }}</span>
+        <h2>{{ __('Login') }}</h2>
+        <p>{{ __('Sign in to continue to your Eagle Global Hub LTD account.') }}</p>
     </div>
 
     <form method="POST" action="{{ route('login.store') }}" class="egho-auth-form">
         @csrf
 
         <label class="egho-field" for="email">
-            <span>Email Address</span>
+            <span>{{ __('Email Address') }}</span>
 
             <input
                 id="email"
@@ -30,14 +30,14 @@
         </label>
 
         <label class="egho-field" for="password">
-            <span>Password</span>
+            <span>{{ __('Password') }}</span>
 
             <input
                 id="password"
                 type="password"
                 name="password"
                 autocomplete="current-password"
-                placeholder="Enter your password"
+                placeholder="{{ __('Enter your password') }}"
                 required
             >
         </label>
@@ -51,21 +51,30 @@
                     @checked(old('remember'))
                 >
 
-                <span>Remember me</span>
+                <span>{{ __('Remember me') }}</span>
             </label>
 
             <a href="{{ route('password.request') }}">
-                Forgot password?
+                {{ __('Forgot password?') }}
             </a>
         </div>
 
         <button type="submit" class="egho-btn egho-btn-primary egho-auth-submit">
-            Login
+            {{ __('Login') }}
         </button>
 
         <p class="egho-auth-alt">
-            Don't have an account?
-            <a href="{{ route('register') }}">Create account</a>
+            {{ __('Don\'t have an account?') }}
+            <a href="{{ route('register') }}">{{ __('Create account') }}</a>
         </p>
     </form>
+
+    <section class="sg-login-roles" aria-labelledby="login-roles">
+        <h2 id="login-roles">{{ __('One secure sign-in for everyone') }}</h2>
+        <ul>
+            <li><strong>{{ __('Student Login') }}</strong> {{ __('Opens your Student Portal: applications, documents, appointments and messages.') }}</li>
+            <li><strong>{{ __('Agent Login') }}</strong> {{ __('Approved agents and Egabe B2B partners reach the Agent Portal.') }} <a href="{{ route('b2b.register') }}">{{ __('Become a partner') }}</a></li>
+            <li><strong>{{ __('Tourist Login') }}</strong> {{ __('Travellers see their enquiries, bookings and notifications.') }}</li>
+        </ul>
+    </section>
 @endsection

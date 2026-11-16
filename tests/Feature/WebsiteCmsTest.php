@@ -90,11 +90,11 @@ class WebsiteCmsTest extends TestCase
     {
         $this->get(route('about'))->assertOk()
             ->assertSee('class="egho-switch" href="'.route('about', ['lang' => 'bn']).'"', false)
-            ->assertSee('data-locale-switch>EN</a>', false)
+            ->assertSee('aria-current="true" data-locale-switch>EN</a>', false)
             ->assertSee('Quick Links');
 
         $this->get(route('about', ['lang' => 'bn']))->assertOk()
-            ->assertSee('data-locale-switch>বাং</a>', false)
+            ->assertSee('aria-current="true" data-locale-switch>বাংলা</a>', false)
             ->assertSee('দ্রুত লিংক')
             ->assertSee(route('about', ['lang' => 'en']), false);
 
@@ -119,7 +119,7 @@ class WebsiteCmsTest extends TestCase
     public function test_navigation_connects_new_pages_through_existing_menus(): void
     {
         $this->get(route('home'))->assertOk()
-            ->assertSee('class="egho-topbar-item" href="'.route('offers.index').'"', false)
+            ->assertSee('href="'.route('offers.index').'"', false)
             ->assertSee(route('explore-bangladesh.index'), false)
             ->assertSee(route('reviews.index'), false)
             ->assertSee(route('search'), false)

@@ -182,6 +182,7 @@
     </style>
 
     @stack('head')
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-sg-admin.css') }}">
 </head>
 
 @php
@@ -207,12 +208,12 @@
     >
         <div class="admin-brand">
             <div class="admin-brand-mark" aria-hidden="true">
-                <span class="admin-brand-plane-glyph">✈</span>
+                <img src="{{ rescue(fn () => app(\App\Services\HomepageContentService::class)->mediaUrl(app(\App\Services\SettingService::class)->get('general', 'logo_path'), asset('images/eagle-global-hub-logo.png')), asset('images/eagle-global-hub-logo.png'), false) }}" alt="" width="240" height="241">
             </div>
 
             <div class="admin-brand-copy">
-                <strong>Eagle Global Hub LTD</strong>
-                <span>Smart Travel Booking</span>
+                <strong>Eagle Global Hub</strong>
+                <span>Admin Panel</span>
             </div>
         </div>
 
@@ -419,6 +420,16 @@
                         >
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>
                             <span>Content Approval</span>
+                        </a>
+                    @endcan
+
+                    @can('menus.manage')
+                        <a
+                            href="{{ route('admin.menus.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                            <span>Menus &amp; Branding</span>
                         </a>
                     @endcan
 

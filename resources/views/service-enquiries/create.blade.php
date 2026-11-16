@@ -30,7 +30,7 @@
                             <label class="egho-field"><span>{{ __('Type of request') }}</span><select name="category" required><option value="">{{ __('Select an option') }}</option>@foreach(\App\Models\ServiceEnquiry::CATEGORIES[$service->value] as $value => $label)<option value="{{ $value }}" @selected(old('category', request('category')) === $value)>{{ __($label) }}</option>@endforeach</select></label>
                         @endif
                         @if($service->hasDestinations())
-                            <label class="egho-field"><span>{{ __('Destination country') }}</span><select name="destination_country_id" required><option value="">{{ __('Select a country') }}</option>@foreach($destinations as $country)<option value="{{ $country->id }}" @selected((string) old('destination_country_id') === (string) $country->id)>{{ $country->name }}</option>@endforeach</select></label>
+                            <label class="egho-field"><span>{{ __('Destination country') }}</span><select name="destination_country_id" required><option value="">{{ __('Select a country') }}</option>@foreach($destinations as $country)<option value="{{ $country->id }}" @selected((string) old('destination_country_id', $country->iso2 === strtoupper((string) request('destination')) ? $country->id : '') === (string) $country->id)>{{ __($country->name) }}</option>@endforeach</select></label>
                         @else
                             <label class="egho-field"><span>{{ __('Route or destination') }}</span><input name="route_or_destination" value="{{ old('route_or_destination') }}" maxlength="200" placeholder="e.g. Dhaka to Cox's Bazar"></label>
                         @endif
@@ -48,7 +48,7 @@
                 <h2 id="other-services">{{ __('Other services') }}</h2>
                 <ul>
                     @foreach($services as $other)
-                        @if($other !== $service)<li><a href="{{ route('service-enquiries.create', \App\Models\ServiceEnquiry::slugFor($other)) }}">{{ $other->label() }}</a></li>@endif
+                        @if($other !== $service)<li><a href="{{ route('service-enquiries.create', \App\Models\ServiceEnquiry::slugFor($other)) }}">{{ __($other->label()) }}</a></li>@endif
                     @endforeach
                     @feature('student-consultancy')<li><a href="{{ route('consultancy.singapore') }}">{{ __('Student Visa — Study in Singapore') }}</a></li>@endfeature
                 </ul>

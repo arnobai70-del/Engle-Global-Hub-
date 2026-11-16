@@ -4,6 +4,7 @@
 @section('body_class', 'account-body egho-page-body')
 
 @section('content')
+<x-site.portal active="account" kind="student">
 
     <main class="egho-page">
         <div class="egho-shell">
@@ -310,4 +311,5 @@
         </div>
     </main>
 
+</x-site.portal>
 @endsection

@@ -3,6 +3,7 @@
     <section class="dashboard-welcome">
 
         <div>
+            @unless($inPortal ?? false)
             <span class="dashboard-kicker">
                 WELCOME BACK
             </span>
@@ -15,6 +16,7 @@
                 Search flights, review your account details and continue
                 your travel journey from one secure dashboard.
             </p>
+            @endunless
 
             <div class="dashboard-welcome-actions">
 

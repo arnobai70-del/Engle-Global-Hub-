@@ -12,6 +12,9 @@
     @if ($isAdminDashboard)
         @include('dashboard.admin')
     @else
-        @include('dashboard.customer')
+        <x-site.portal active="dashboard">
+            @include('dashboard._portal-summary')
+            @include('dashboard.customer', ['inPortal' => true])
+        </x-site.portal>
     @endif
 @endsection
