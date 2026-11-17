@@ -55,7 +55,12 @@ class StudentEnquiryConverter
 
     private function findOrCreateStudent(StudentEnquiry $enquiry): Student
     {
-        $email = Str::lower(trim($enquiry->email));
+        $email = Str::lower(trim((string) $enquiry->email));
+        if ($email === '') {
+            throw ValidationException::withMessages([
+                'email' => 'This lead has no email address. Ask the student for it and add it to the enquiry before opening an application (the student portal login uses it).',
+            ]);
+        }
         $student = Student::query()->where('email', $email)->first();
 
         if ($student === null) {

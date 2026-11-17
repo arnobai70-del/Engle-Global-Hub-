@@ -32,6 +32,8 @@ final class FlightTravellerDetailsUiContractTest extends TestCase
         $this->seed(
             RolePermissionSeeder::class
         );
+        // The search screen is shown once the flight provider is live.
+        $this->makeFlightsLive();
     }
 
     public function test_traveller_step_ships_a_journey_rail_the_script_can_move(): void

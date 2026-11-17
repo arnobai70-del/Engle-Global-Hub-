@@ -37,7 +37,7 @@ class TravelServicesController extends Controller
                 $card('tourist-visa', 'Tourist Visa', 'passport', 'Checklist and document preparation for 21 destinations.', $enquiry, route('services.show', 'tourist-visa'), 'View tourist visa'),
                 $card('business-visa', 'Business Visa', 'briefcase', 'Preparation support for business visits and conferences.', $enquiry, route('services.show', 'business-visa'), 'View business visa'),
                 $visible('visa') ? $card('work-visa', 'Work Visa', 'visa', 'Work permit and job visa information with a consultation.', $enquiry, route('work-visa.index'), 'View work visa') : null,
-                $card('student-visa', 'Student Visa', 'cap', 'Study abroad consultancy, with Singapore as our main destination.', $enquiry, route('services.show', 'student-visa'), 'View student visa'),
+                $card('student-visa', 'Student Visa', 'cap', 'Study abroad consultancy, with Malaysia as our main destination, then Singapore.', $enquiry, route('services.show', 'student-visa'), 'View student visa'),
                 $visible('visa') ? $card('visa-info', 'Visa information', 'globe', 'Live, trip-specific visa requirements need a visa information provider.', $status->of('visa', $user), route('visa.index'), 'View visa information') : null,
             ])),
             'Transport' => [

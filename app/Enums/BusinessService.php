@@ -22,6 +22,7 @@ enum BusinessService: string
     case ExportImport = 'export_import';
     case CivilConstruction = 'civil_construction';
     case ForeignerSupport = 'foreigner_support';
+    case General = 'general';
 
     public function label(): string
     {
@@ -40,6 +41,7 @@ enum BusinessService: string
             self::ExportImport => 'Export & Import',
             self::CivilConstruction => 'Civil & Construction Work',
             self::ForeignerSupport => 'Foreigner Support',
+            self::General => 'General question',
         };
     }
 

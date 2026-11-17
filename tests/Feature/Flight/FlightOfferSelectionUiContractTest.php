@@ -18,6 +18,8 @@ final class FlightOfferSelectionUiContractTest extends TestCase
         $this->seed(
             RolePermissionSeeder::class
         );
+        // The search screen is shown once the flight provider is live.
+        $this->makeFlightsLive();
     }
 
     public function test_flight_page_exposes_secure_offer_selection_endpoint(): void

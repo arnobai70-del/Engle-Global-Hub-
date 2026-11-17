@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Destination;
+use App\Services\Consultancy\StudyCountries;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -36,8 +37,13 @@ class ContentPageController extends Controller
 
     public function show(Request $request, string $slug): View
     {
-        $type = $this->typeForRoute((string) $request->route()?->getName());
-        $entry = ContentEntry::query()->published($type)->where('slug', $slug)->with(['cover', 'gallery'])->firstOrFail();
+        $routeName = (string) $request->route()?->getName();
+        $type = $routeName === 'consultancy.malaysia.guides.show' ? ContentType::Guide : $this->typeForRoute($routeName);
+        $query = ContentEntry::query()->published($type)->where('slug', $slug)->with(['cover', 'gallery']);
+        if ($type === ContentType::Guide) {
+            app(StudyCountries::class)->scopeGuides($query, $routeName === 'consultancy.malaysia.guides.show' ? 'MY' : 'SG');
+        }
+        $entry = $query->firstOrFail();
 
         return view('content.show', [
             'entry' => $entry,

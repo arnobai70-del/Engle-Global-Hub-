@@ -23,14 +23,14 @@ class HotelFoundationTest extends TestCase
     {
         $this->get(route('hotels.index'))
             ->assertOk()
-            ->assertSee('Waiting for API')
-            ->assertSee(route('service-enquiries.create', 'hotel-booking'), false);
+            ->assertSee('id="quote-form"', false)
+            ->assertSee(route('leads.quote', 'hotels'), false);
     }
 
     public function test_verified_customer_sees_waiting_for_api_without_sample_prices_when_provider_is_unavailable(): void
     {
         $this->actingAs($this->customer())->get(route('hotels.index'))
-            ->assertOk()->assertSee('Waiting for API')->assertSee('Send a hotel enquiry')
+            ->assertOk()->assertSee('id="quote-form"', false)->assertSee('Send an enquiry')
             ->assertDontSee('Sample from price')->assertDontSee('Sample rating')->assertDontSee('USD 145')
             ->assertDontSee('booking confirmed');
     }
@@ -42,7 +42,7 @@ class HotelFoundationTest extends TestCase
         $this->actingAs($user)
             ->get(route('hotels.index'))
             ->assertOk()
-            ->assertSee('Waiting for API');
+            ->assertSee('id="quote-form"', false);
 
         $this->actingAs($user)
             ->post(route('hotels.search'), $this->validSearch())

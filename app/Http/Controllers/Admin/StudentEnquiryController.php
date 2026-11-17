@@ -76,7 +76,11 @@ class StudentEnquiryController extends Controller
             'assigned_to_user_id' => ['nullable', 'integer', Rule::in(StoreStudentApplicationRequest::staffUserIds())],
             'follow_up_at' => ['nullable', 'date'],
             'internal_notes' => ['nullable', 'string', 'max:5000'],
+            'email' => ['sometimes', 'nullable', 'email', 'max:254'],
         ]);
+        if (array_key_exists('email', $data)) {
+            $data['email'] = filled($data['email']) ? strtolower(trim((string) $data['email'])) : $enquiry->email;
+        }
 
         // A converted enquiry keeps its converted status; only CRM fields stay editable.
         if ($enquiry->status === StudentEnquiry::STATUS_CONVERTED) {

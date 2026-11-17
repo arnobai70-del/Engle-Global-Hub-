@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Country;
 use App\Models\Destination;
@@ -44,7 +45,26 @@ class ProductionSeederTest extends TestCase
         $this->assertSame('Live site name', DB::table('settings')->where('group', 'general')->where('key', 'site_name')->value('value'));
 
         $this->assertFalse(User::query()->where('email', 'test@example.com')->exists());
-        $this->assertSame(0, ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->count());
+        // Only the claim-free starter content (Why Us text and general FAQs) is published;
+        // every draft that needs the owner's review stays unpublished.
+        $published = ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->get();
+        $this->assertNotEmpty($published);
+        foreach ($published as $entry) {
+            $this->assertNull($entry->review_status);
+            if ($entry->type === ContentType::Guide) {
+                // Malaysia guides may be published only with official EMGS sources.
+                $this->assertSame('Malaysia', $entry->location);
+                $this->assertNotEmpty($entry->source_urls);
+                foreach ($entry->source_urls as $url) {
+                    $this->assertMatchesRegularExpression('#^https://(visa\.)?educationmalaysia\.gov\.my/#', $url);
+                }
+
+                continue;
+            }
+            $this->assertContains($entry->type, [ContentType::PageSection, ContentType::Faq]);
+            $this->assertStringStartsWith('Starter content', (string) $entry->review_notes);
+        }
+        $this->assertSame(0, ContentEntry::query()->whereNotNull('review_status')->where('status', ContentEntry::STATUS_PUBLISHED)->count());
         $this->assertSame(0, TeamMember::query()->where('is_published', true)->count());
         $this->assertSame(0, Destination::query()->where('is_published', true)->count());
     }

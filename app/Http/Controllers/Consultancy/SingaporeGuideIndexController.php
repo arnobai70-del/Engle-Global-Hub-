@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Consultancy;
 use App\Enums\ContentType;
 use App\Http\Controllers\Controller;
 use App\Models\ContentEntry;
+use App\Services\Consultancy\StudyCountries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
- * Public index of Singapore study guides. Only published entries are listed;
+ * Public index of study guides for one destination (Malaysia or Singapore). Only published entries are listed;
  * drafts and entries still under review are never shown.
  */
 class SingaporeGuideIndexController extends Controller
@@ -36,9 +37,10 @@ class SingaporeGuideIndexController extends Controller
         'general' => 'General',
     ];
 
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, StudyCountries $countries, string $country = 'SG'): View
     {
-        $guides = ContentEntry::query()->published(ContentType::Guide)
+        $study = $countries->get($country);
+        $guides = $countries->scopeGuides(ContentEntry::query()->published(ContentType::Guide), $study['code'])
             ->where(fn ($query) => $query->whereNull('review_status')->orWhere('review_status', ContentEntry::REVIEW_APPROVED))
             ->get()
             ->map(fn (ContentEntry $guide): array => ['entry' => $guide, 'topic' => $this->topicOf($guide)]);
@@ -57,6 +59,7 @@ class SingaporeGuideIndexController extends Controller
             'topics' => $topics,
             'filters' => ['q' => $search, 'topic' => $topic],
             'total' => $guides->count(),
+            'study' => $study,
         ]);
     }
 

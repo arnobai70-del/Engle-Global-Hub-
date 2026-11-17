@@ -4,6 +4,7 @@ namespace App\Services\Navigation;
 
 use App\Models\MenuItem;
 use App\Models\User;
+use App\Services\Content\PublicPageAvailability;
 use App\Services\Feature\FeatureManager;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -18,13 +19,13 @@ class MenuService
     /** @var array<string, list<array<string, mixed>>|null> */
     private array $cache = [];
 
-    public function __construct(private MenuTargets $targets, private FeatureManager $features) {}
+    public function __construct(private MenuTargets $targets, private FeatureManager $features, private PublicPageAvailability $availability) {}
 
     /**
      * Visible items for a location, or null when the location has no managed items
      * (the built-in navigation is used instead).
      *
-     * @return list<array{label: string, url: ?string, new_tab: bool, icon: ?string, children: list<array<string, mixed>>}>|null
+     * @return list<array{key: ?string, label: string, url: ?string, new_tab: bool, icon: ?string, children: list<array<string, mixed>>}>|null
      */
     public function tree(string $location): ?array
     {
@@ -69,7 +70,7 @@ class MenuService
 
     /**
      * @param  list<array<string, mixed>>  $children
-     * @return array{label: string, url: ?string, new_tab: bool, icon: ?string, children: list<array<string, mixed>>}|null
+     * @return array{key: ?string, label: string, url: ?string, new_tab: bool, icon: ?string, children: list<array<string, mixed>>}|null
      */
     private function node(MenuItem $item, array $children = []): ?array
     {
@@ -79,6 +80,7 @@ class MenuService
         }
 
         return [
+            'key' => $item->key,
             'label' => $item->label(),
             'url' => $url,
             'new_tab' => $item->open_in_new_tab && str_starts_with((string) $item->target, 'url:'),
@@ -89,6 +91,10 @@ class MenuService
 
     private function visible(MenuItem $item, ?User $user): bool
     {
+        $routeName = $this->targets->routeName($item->target);
+        if ($routeName !== null && ! $this->availability->isAvailable($routeName)) {
+            return false;
+        }
         foreach (array_filter([$item->feature, $this->targets->featureFor($item->target)]) as $feature) {
             if (! $this->features->isVisibleTo($feature, $user)) {
                 return false;

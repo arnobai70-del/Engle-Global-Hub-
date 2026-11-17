@@ -1,7 +1,23 @@
 @extends('layouts.site')
 
-@section('title', __('Institutions in Singapore'))
-@section('meta_description', __('Singapore institutions verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.'))
+@php
+    $isMalaysia = ($study['code'] ?? 'SG') === 'MY';
+    $text = $isMalaysia ? [
+        'title' => __('Institutions in Malaysia'),
+        'description' => __('Malaysian universities and colleges verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.'),
+        'eyebrow' => __('MALAYSIA STUDENT CONSULTANCY'),
+        'notice' => __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and Student Pass approval by Malaysia\'s Immigration Department through EMGS.'),
+        'study' => __('Study in Malaysia'), 'guides' => __('Malaysia Guides'),
+    ] : [
+        'title' => __('Institutions in Singapore'),
+        'description' => __('Singapore institutions verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.'),
+        'eyebrow' => __('SINGAPORE STUDENT CONSULTANCY'),
+        'notice' => __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and Student\'s Pass decisions by Singapore\'s Immigration & Checkpoints Authority (ICA).'),
+        'study' => __('Study in Singapore'), 'guides' => __('Singapore Guides'),
+    ];
+@endphp
+@section('title', $text['title'])
+@section('meta_description', $text['description'])
 @section('body_class', 'public-page-body egho-page-body')
 
 @section('content')
@@ -10,15 +26,15 @@
     <div class="egho-shell">
         <section class="egho-contact-hero">
             <div>
-                <span class="egho-eyebrow">{{ __('SINGAPORE STUDENT CONSULTANCY') }}</span>
+                <span class="egho-eyebrow">{{ $text['eyebrow'] }}</span>
                 <h1>{{ __('Institutions') }}</h1>
                 <p>{{ __('Polytechnics, universities and colleges whose details our team has checked against the institution\'s official website, with their active courses and open intakes.') }}</p>
             </div>
         </section>
 
-        <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <a href="{{ route('consultancy.singapore') }}">{{ __('Study in Singapore') }}</a> › <span aria-current="page">{{ __('Institutions') }}</span></nav>
+        <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <a href="{{ route($study['page']) }}">{{ $text['study'] }}</a> › <span aria-current="page">{{ __('Institutions') }}</span></nav>
 
-        <p class="sg-card sg-notice" role="note">{{ __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and Student\'s Pass decisions by Singapore\'s Immigration & Checkpoints Authority (ICA).') }}</p>
+        <p class="sg-card sg-notice" role="note">{{ $text['notice'] }}</p>
 
         <section class="sg-section-tight" aria-labelledby="institutions-title">
             <h2 id="institutions-title" class="sg-visually-hidden">{{ __('Institutions') }}</h2>
@@ -26,7 +42,7 @@
                 <div class="sg-card sg-empty">
                     <h2>{{ __('Institution details are being verified') }}</h2>
                     <p>{{ __('We publish an institution only after checking its details against its official website. Ask our consultants about polytechnics, universities and private institutions in the meantime.') }}</p>
-                    <a class="sg-btn sg-btn-red" href="{{ route('consultancy.singapore') }}#consultation">{{ __('Request a free consultation') }}</a>
+                    <a class="sg-btn sg-btn-red" href="{{ route($study['page']) }}#apply">{{ __('Request a free consultation') }}</a>
                 </div>
             @else
                 <div class="sg-grid sg-grid-2">
@@ -52,7 +68,7 @@
                             @else
                                 <p class="sg-note">{{ __('Courses for this institution have not been added yet.') }}</p>
                             @endif
-                            <a class="sg-btn sg-btn-red sg-btn-sm" href="{{ route('consultancy.singapore') }}#consultation">{{ __('Ask about this institution') }}</a>
+                            <a class="sg-btn sg-btn-red sg-btn-sm" href="{{ route($study['page']) }}#apply">{{ __('Ask about this institution') }}</a>
                         </article>
                     @endforeach
                 </div>
@@ -68,7 +84,7 @@
                     <p>{{ __('Our consultants explain entry requirements, documents and timelines for each institution.') }}</p>
                 @endif
             </div>
-            <div class="sg-cta-actions"><a class="sg-btn sg-btn-red" href="{{ route('consultancy.singapore') }}#consultation">{{ __('Free Consultation') }}</a><a class="sg-btn sg-btn-outline" href="{{ route('consultancy.guides.index') }}">{{ __('Singapore Guides') }}</a></div>
+            <div class="sg-cta-actions"><a class="sg-btn sg-btn-red" href="{{ route($study['page']) }}#apply">{{ __('Free Consultation') }}</a><a class="sg-btn sg-btn-outline" href="{{ route($study['guides']) }}">{{ $text['guides'] }}</a></div>
         </section>
     </div>
 </main>

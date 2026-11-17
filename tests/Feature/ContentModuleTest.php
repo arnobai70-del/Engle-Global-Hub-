@@ -135,14 +135,14 @@ class ContentModuleTest extends TestCase
 
     public function test_page_sections_and_faqs_replace_defaults_only_when_published(): void
     {
-        $this->get(route('about'))->assertSee('flight-first travel experience');
+        $this->get(route('about'))->assertSee('helping Bangladeshi students study in Malaysia');
         $this->get(route('terms'))->assertSee('Flight Availability');
 
         $editor = $this->user('content-editor');
         $about = $this->create($editor, ContentType::PageSection, ['slug' => 'about-intro', 'title' => 'About intro', 'body' => 'We are a travel and study consultancy in Dhaka.']);
-        $this->get(route('about'))->assertSee('flight-first travel experience');
+        $this->get(route('about'))->assertSee('helping Bangladeshi students study in Malaysia');
         $this->publish($editor, $about)->assertSessionHasNoErrors();
-        $this->get(route('about'))->assertSee('We are a travel and study consultancy in Dhaka.')->assertDontSee('flight-first travel experience');
+        $this->get(route('about'))->assertSee('We are a travel and study consultancy in Dhaka.')->assertDontSee('helping Bangladeshi students study in Malaysia');
 
         $terms = $this->create($editor, ContentType::PageSection, ['slug' => 'terms', 'title' => 'Terms and Conditions', 'body' => 'Owner approved terms.']);
         $this->publish($editor, $terms);

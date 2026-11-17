@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             SeoSettingsSeeder::class,
             SingaporeGuideSeeder::class,
             ContentDraftSeeder::class,
+            StarterContentSeeder::class,
+            MalaysiaGuidesSeeder::class,
             MenuSeeder::class,
         ]);
 

@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', __('Travel Services'))
-@section('meta_description', __('Flights, hotels, tours and visa support from Eagle Global Hub LTD. Each service shows whether it uses a live provider, a demo preview or a personal enquiry.'))
+@section('meta_description', __('Visas, air tickets, hotels, tours and transport from Eagle Global Hub LTD in Dhaka. Send an enquiry and our team replies with options and a written quote.'))
 @section('body_class', 'public-page-body egho-page-body')
 
 @section('content')
@@ -11,18 +11,11 @@
             <div>
                 <span class="egho-eyebrow">{{ __('TRAVEL SERVICES') }}</span>
                 <h1>{{ __('Travel Services') }}</h1>
-                <p>{{ __('Flights, stays, tours and visa support in one place. Each service is labelled so you know whether results come from a live provider, a demo preview or a personal enquiry to our team.') }}</p>
+                <p>{{ __('Visas, air tickets, hotels, tours and transport in one place. Send an enquiry and our team replies with options and a written quote before you pay anything.') }}</p>
             </div>
         </section>
 
         <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <span aria-current="page">{{ __('Travel Services') }}</span></nav>
-
-        <ul class="sg-legend" aria-label="{{ __('What the labels mean') }}">
-            <li><x-site.provider-badge state="live" /> {{ __('Results come from a connected and tested supplier.') }}</li>
-            <li><x-site.provider-badge state="waiting" /> {{ __('Available after the provider API is connected; use an enquiry for now.') }}</li>
-            <li><x-site.provider-badge state="enquiry" /> {{ __('Send your details and a consultant replies personally.') }}</li>
-            <li><x-site.provider-badge state="demo" /> {{ __('Local demo data only; never live.') }}</li>
-        </ul>
 
         @foreach($groups as $groupTitle => $services)
             @if($services !== [])
@@ -35,7 +28,7 @@
                             <h3>{{ __($service['title']) }}</h3>
                             <p>{{ __($service['summary']) }}</p>
                             <x-site.provider-badge :state="$service['state']" />
-                            <a class="sg-link-arrow" href="{{ $service['href'] }}">{{ __($service['cta']) }} <x-site.icon name="arrow" /></a>
+                            <a class="sg-link-arrow" href="{{ $service['href'] }}">{{ $service['state'] === 'live' ? __($service['cta']) : __('Send an enquiry') }} <x-site.icon name="arrow" /></a>
                         </article>
                     @endforeach
                 </div>
@@ -44,7 +37,7 @@
         @endforeach
         <section class="sg-card sg-cta-row">
             <div><h2>{{ __('Not sure which service you need?') }}</h2><p>{{ __('Visa decisions are made by the relevant authority and fares by the airline or supplier. We help you prepare and keep you informed.') }}</p></div>
-            <div class="sg-cta-actions">@if($visaInfoVisible)<a class="sg-btn sg-btn-outline" href="{{ route('visa.index') }}">{{ __('Visa information') }}</a>@endif<a class="sg-btn sg-btn-red" href="{{ route('service-enquiries.create', 'tourist-visa') }}">{{ __('Send an Enquiry') }}</a></div>
+            <div class="sg-cta-actions">@if($visaInfoVisible)<a class="sg-btn sg-btn-outline" href="{{ route('visa.index') }}">{{ __('Visa information') }}</a>@endif<a class="sg-btn sg-btn-red" href="{{ route('support') }}#contact-form">{{ __('Send an enquiry') }}</a></div>
         </section>
     </div>
 </main>
