@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ContentType;
+use App\Models\ContentEntry;
 use App\Models\MediaAsset;
 use App\Models\TeamMember;
 use App\Services\Content\PageContent;
@@ -27,12 +29,15 @@ class AboutController extends Controller
             ];
             $team = TeamMember::query()->published()->get(['id', 'name', 'role_title', 'bio', 'photo_path']);
             $officeGallery = MediaAsset::query()->publishedIn('office_gallery')->get(['id', 'path', 'alt_text', 'caption', 'width', 'height']);
+            // /company now redirects here, so published company profiles are listed on this page.
+            $companyProfiles = ContentEntry::query()->published(ContentType::CompanyProfile)->get();
         } catch (QueryException) {
             $company = ['mission' => '', 'vision' => '', 'why_choose_us_bn' => ''];
             $team = collect();
             $officeGallery = collect();
+            $companyProfiles = collect();
         }
 
-        return view('public.about', compact('company', 'team', 'officeGallery'));
+        return view('public.about', compact('company', 'team', 'officeGallery', 'companyProfiles'));
     }
 }

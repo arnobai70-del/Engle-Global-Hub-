@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'account_type'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -21,6 +21,18 @@ class User extends Authenticatable implements MustVerifyEmail
      * Roles that work in the admin panel, as a role-middleware string.
      */
     public const BACK_OFFICE_ROLES = 'super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager';
+
+    /**
+     * What a visitor said they are when signing up. It only chooses the welcome
+     * path; access still comes from roles (agents must be approved by admin).
+     *
+     * @var array<string, string>
+     */
+    public const ACCOUNT_TYPES = [
+        'student' => 'Student',
+        'traveller' => 'Traveller',
+        'agent' => 'Agent / B2B partner',
+    ];
 
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;

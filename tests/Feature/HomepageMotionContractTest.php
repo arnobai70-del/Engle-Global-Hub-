@@ -2,12 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Services\SettingService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class HomepageMotionContractTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_homepage_wires_the_seamless_news_ticker(): void
     {
+        app(SettingService::class)->set('homepage', 'news_text', 'January intake applications are open.', 'string', true);
         $html = $this->get(route('home'))
             ->assertOk()
             ->getContent();

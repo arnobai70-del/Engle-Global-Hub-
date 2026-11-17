@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\ServiceDestinationController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
+use App\Http\Controllers\Admin\SiteFactsController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SuccessPipelineController;
 use App\Http\Controllers\Admin\SystemLogPageController;
@@ -67,6 +68,7 @@ use App\Http\Controllers\FlightBookingController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Hotel\HotelSearchController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ReviewController;
@@ -98,6 +100,17 @@ Route::view('/support', 'public.support')
 Route::view('/terms', 'public.terms')
     ->name('terms');
 
+Route::view('/why-us', 'public.why-us')
+    ->name('why-us');
+
+Route::view('/privacy', 'public.privacy')
+    ->name('privacy');
+
+Route::redirect('/contact', '/support', 301)->name('contact');
+
+Route::view('/b2b', 'public.b2b')
+    ->name('b2b.info');
+
 /*
  * Work visa pages.
  *
@@ -107,11 +120,21 @@ Route::view('/terms', 'public.terms')
  * visibility. Both pages state plainly that work visa processing is not
  * connected yet.
  */
-Route::view('/work-visa', 'work-visa.index')
+Route::get('/work-visa', [ServicePageController::class, 'workVisa'])
     ->middleware('feature:visa')
     ->name('work-visa.index');
 
-Route::view('/work-visa/apply', 'work-visa.apply')
+/*
+ * Public service pages (one template, quote form). The online searches behind them
+ * (POST routes below) still require a signed-in customer with the right permission.
+ */
+Route::get('/flights', [ServicePageController::class, 'flights'])->middleware('feature:flights')->name('flights.index');
+Route::get('/hotels', HotelController::class)->middleware('feature:hotels')->name('hotels.index');
+Route::get('/tours', TourController::class)->middleware('feature:tours')->name('tours.index');
+Route::get('/visa', VisaController::class)->middleware('feature:visa')->name('visa.index');
+
+// The old disabled preview form now goes to the real quote form on the work visa page.
+Route::get('/work-visa/apply', static fn () => redirect()->to(route('work-visa.index').'#quote-form', 301))
     ->middleware('feature:visa')
     ->name('work-visa.apply');
 
@@ -124,14 +147,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/account', 'account.overview')
         ->middleware('feature:account')
         ->name('account.overview');
-
-    Route::view('/flights', 'flights.search')
-        ->middleware(['feature:flights', 'permission:flights.search'])
-        ->name('flights.index');
-
-    Route::get('/hotels', HotelController::class)
-        ->middleware(['feature:hotels', 'permission:hotels.search'])
-        ->name('hotels.index');
 
     Route::post('/hotels/search', HotelSearchController::class)
         ->middleware(['feature:hotels', 'permission:hotels.search'])
@@ -154,17 +169,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['feature:hotels', 'permission:hotels.search'])
         ->name('hotels.booking');
 
-    Route::get('/tours', TourController::class)
-        ->middleware(['feature:tours', 'permission:tours.search'])
-        ->name('tours.index');
-
     Route::post('/tours/search', TourSearchController::class)
         ->middleware(['feature:tours', 'permission:tours.search'])
         ->name('tours.search');
-
-    Route::get('/visa', VisaController::class)
-        ->middleware(['feature:visa', 'permission:visa.view'])
-        ->name('visa.index');
 
     Route::post('/visa/requirements', VisaRequirementController::class)
         ->middleware(['feature:visa', 'permission:visa.view'])
@@ -1011,6 +1018,13 @@ Route::get('/enquiries/{service}', [ServiceEnquiryController::class, 'create'])
     ->where('service', '[a-z]+(?:-[a-z]+)*')->name('service-enquiries.create');
 Route::post('/enquiries/{service}', [ServiceEnquiryController::class, 'store'])
     ->where('service', '[a-z]+(?:-[a-z]+)*')->middleware('throttle:5,1')->name('service-enquiries.store');
+
+/*
+ * Short website lead forms (consultation, quote, contact). Saved in the CRM; the team is emailed.
+ */
+Route::post('/consultation', [LeadController::class, 'consultation'])->middleware('throttle:5,1')->name('leads.consultation');
+Route::post('/quote/{service}', [LeadController::class, 'quote'])->where('service', '[a-z]+(?:-[a-z]+)*')->middleware('throttle:5,1')->name('leads.quote');
+Route::post('/contact', [LeadController::class, 'contact'])->middleware('throttle:5,1')->name('leads.contact');
 Route::get('/my-enquiries', [ServiceEnquiryController::class, 'mine'])
     ->middleware(['auth', 'verified'])->name('service-enquiries.mine');
 
@@ -1134,8 +1148,9 @@ Route::get('/search', SearchController::class)
  * Published admin-managed content (company, business services, restaurants,
  * inspiration, success stories, Singapore guides). Drafts are never served.
  */
+// The company page is merged into About (DESIGN_BRIEF.md); single profiles keep their own URL.
+Route::redirect('/company', '/about', 301)->name('company.index');
 foreach ([
-    'company' => ['/company', 'company'],
     'business-services' => ['/business-services', 'business-services'],
     'restaurants' => ['/restaurants', 'restaurants'],
     'inspiration' => ['/get-inspired', 'inspiration'],
@@ -1187,6 +1202,10 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
             Route::post('/contact-directory', [ContactDirectoryController::class, 'store'])->name('contact-directory.store');
             Route::patch('/contact-directory/{entry}', [ContactDirectoryController::class, 'update'])->whereNumber('entry')->name('contact-directory.update');
             Route::delete('/contact-directory/{entry}', [ContactDirectoryController::class, 'destroy'])->whereNumber('entry')->name('contact-directory.destroy');
+        });
+        Route::middleware('can:settings.manage')->group(function () {
+            Route::get('/business-facts', [SiteFactsController::class, 'edit'])->name('facts.edit');
+            Route::patch('/business-facts', [SiteFactsController::class, 'update'])->name('facts.update');
         });
         Route::middleware('can:menus.manage')->group(function () {
             Route::get('/menus', [MenuItemController::class, 'index'])->name('menus.index');

@@ -38,6 +38,18 @@ class ProviderStatus
         self::DISABLED => 'Disabled',
     ];
 
+    /**
+     * What visitors see. Technical states (waiting for an API, demo data) are
+     * never shown on the public website; admins still see LABELS.
+     */
+    public const PUBLIC_LABELS = [
+        self::LIVE => 'Book online',
+        self::WAITING => 'Coming soon',
+        self::ENQUIRY => 'Enquiry only',
+        self::DEMO => 'Coming soon',
+        self::DISABLED => 'Unavailable',
+    ];
+
     /** Capabilities that need an external provider, with the feature switch that controls them. */
     public const CAPABILITIES = [
         'flights' => ['feature' => 'flights', 'label' => 'Live flight search and booking'],

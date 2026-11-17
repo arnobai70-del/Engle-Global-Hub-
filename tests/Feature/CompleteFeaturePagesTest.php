@@ -35,11 +35,12 @@ class CompleteFeaturePagesTest extends TestCase
         foreach (app(ServiceCatalog::class)->all() as $slug => $service) {
             $html = (string) $this->get(route('services.show', $slug))->assertOk()->getContent();
 
-            $this->assertStringContainsString('<h1>'.e($service['title']).'</h1>', $html, $slug);
-            $this->assertStringContainsString('class="sg-breadcrumb"', $html, $slug);
-            $this->assertStringContainsString('data-provider-state=', $html, $slug);
+            $this->assertMatchesRegularExpression('/<h1 id="service-title">[^<]+<\/h1>/', $html, $slug);
+            $this->assertStringContainsString('class="v2-crumbs"', $html, $slug);
+            $this->assertStringContainsString('Enquiry service', $html, $slug);
             $this->assertStringNotContainsString('href="#"', $html, $slug);
-            $this->assertMatchesRegularExpression('/class="sg-btn sg-btn-red" href="(?!#)[^"]+"/', $html, $slug.' has no primary action');
+            $this->assertStringContainsString('class="v2-btn v2-btn-red" href="#quote-form"', $html, $slug.' has no primary action');
+            $this->assertStringContainsString('action="'.route('leads.quote', $slug).'"', $html, $slug);
         }
 
         $this->get(route('services.show', 'not-a-service'))->assertNotFound();
@@ -52,15 +53,47 @@ class CompleteFeaturePagesTest extends TestCase
         foreach (['India', 'Sri Lanka', 'Thailand', 'Malaysia', 'Singapore', 'China', 'Philippines', 'Egypt', 'Dubai (United Arab Emirates)', 'Vietnam', 'South Korea', 'Pakistan', 'Indonesia', 'Cambodia', 'Canada', 'Germany', 'Sweden', 'United Kingdom', 'United States', 'France', 'Austria'] as $country) {
             $this->assertStringContainsString($country, $tourist);
         }
-        $this->assertStringContainsString(route('service-enquiries.create', 'tourist-visa').'?destination=TH', $tourist);
+        $this->assertStringContainsString('<option value="Thailand"', $tourist);
 
         $student = (string) $this->get(route('services.show', 'student-visa'))->getContent();
         foreach (['Malaysia', 'Bulgaria', 'United Kingdom', 'Japan', 'South Korea', 'Cyprus'] as $country) {
             $this->assertStringContainsString($country, $student);
         }
 
-        $this->get(route('services.show', 'group-tours'))->assertSee(route('service-enquiries.create', ['service' => 'tour-package', 'category' => 'group_tour']), false);
+        $this->get(route('services.show', 'group-tours'))->assertSee('action="'.route('leads.quote', 'group-tours').'"', false);
         $this->get(route('service-enquiries.create', ['service' => 'tourist-visa', 'destination' => 'TH']))->assertOk()->assertSee('selected', false);
+    }
+
+    public function test_api_dependent_pages_never_show_technical_status_and_offer_an_enquiry(): void
+    {
+        foreach (['trains', 'air-ticket'] as $slug) {
+            $this->get(route('services.show', $slug))->assertOk()
+                ->assertDontSee('Waiting for API')
+                ->assertSee('Enquiry service')
+                ->assertSee('action="'.route('leads.quote', $slug).'"', false);
+        }
+
+        $this->get(route('map'))->assertOk()->assertDontSee('Waiting for API')->assertSee('Coming soon')->assertSee('Interactive map');
+        $this->get(route('mobile-app'))->assertOk()->assertDontSee('Waiting for API')->assertSee('Coming soon')->assertSee('disabled', false);
+    }
+
+    public function test_travel_pages_only_claim_a_live_provider_after_a_connection_test(): void
+    {
+        config()->set('travel_services.services.hotels.enabled', true);
+        config()->set('travel_services.services.hotels.provider', 'test-provider');
+        config()->set('travel_services.services.hotels.providers.test-provider', UntestedHotelSearchProvider::class);
+        config()->set('travel_services.services.hotels.provider_requirements.test-provider', ['credentials.api_key']);
+        config()->set('travel_services.services.hotels.credentials.api_key', 'configured-but-untested');
+
+        $customer = $this->user('customer');
+        $this->actingAs($customer)->get(route('hotels.index'))->assertOk()->assertSee('id="quote-form"', false)->assertDontSee('Live provider connected')->assertDontSee('Search online');
+
+        app(ProviderStatus::class)->recordVerified('hotels');
+        $this->actingAs($customer)->get(route('hotels.index'))->assertOk()->assertSee('Live provider connected')->assertDontSee('data-api-notice="hotels"', false);
+
+        $this->actingAs($this->user('super-admin'))->get(route('flights.index'))->assertOk()
+            ->assertDontSee('data-api-notice="flights"', false)
+            ->assertSee('action="'.route('leads.quote', 'air-ticket').'"', false);
     }
 
     public function test_provider_status_is_never_live_without_a_recorded_connection_test(): void
@@ -82,36 +115,6 @@ class CompleteFeaturePagesTest extends TestCase
 
         config(['flight.search_provider' => 'fixture']);
         $this->assertSame(ProviderStatus::DEMO, $status->of('flights'), 'fixture data is only ever a demo');
-    }
-
-    public function test_api_dependent_pages_show_waiting_for_api_with_an_enquiry_fallback(): void
-    {
-        $this->get(route('services.show', 'trains'))->assertOk()
-            ->assertSee('Waiting for API')
-            ->assertSee('Live train, bus, car and bike booking')
-            ->assertSee(route('service-enquiries.create', 'train'), false);
-
-        $this->get(route('services.show', 'air-ticket'))->assertOk()->assertSee('Waiting for API')->assertSee('Online payment');
-        $this->get(route('map'))->assertOk()->assertSee('Waiting for API')->assertSee('Interactive map');
-        $this->get(route('mobile-app'))->assertOk()->assertSee('Waiting for API')->assertSee('Download — not available yet')->assertSee('disabled', false);
-    }
-
-    public function test_travel_pages_only_claim_a_live_provider_after_a_connection_test(): void
-    {
-        config()->set('travel_services.services.hotels.enabled', true);
-        config()->set('travel_services.services.hotels.provider', 'test-provider');
-        config()->set('travel_services.services.hotels.providers.test-provider', UntestedHotelSearchProvider::class);
-        config()->set('travel_services.services.hotels.provider_requirements.test-provider', ['credentials.api_key']);
-        config()->set('travel_services.services.hotels.credentials.api_key', 'configured-but-untested');
-
-        $this->get(route('hotels.index'))->assertOk()->assertSee('Waiting for API')->assertDontSee('Live provider connected');
-
-        app(ProviderStatus::class)->recordVerified('hotels');
-        $this->get(route('hotels.index'))->assertOk()->assertSee('Live provider connected')->assertDontSee('data-api-notice="hotels"', false);
-
-        $this->actingAs($this->user('super-admin'))->get(route('flights.index'))->assertOk()
-            ->assertSee('data-api-notice="flights"', false)
-            ->assertSee(route('flights.enquiries.create'), false);
     }
 
     public function test_admin_sees_the_public_provider_status_of_every_api_feature(): void

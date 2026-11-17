@@ -1,237 +1,125 @@
 @extends('layouts.site')
 
-@section('title', 'Contact & Support')
-@section(
-    'meta_description',
-    'Contact Eagle Global Hub LTD in Shahjadpur, Gulshan, Dhaka for travel account, booking and service support.'
-)
-@section('body_class', 'public-page-body egho-page-body')
+@section('title', __('Contact Us'))
+@section('meta_description', __('Talk to Eagle Global Hub LTD in Gulshan, Dhaka: WhatsApp, call, email or send a message for study in Singapore, visa and travel help.'))
+@section('body_class', 'sg-body-v2')
+
+@php
+    $pageContent = app(\App\Services\Content\PageContent::class);
+    $facts = app(\App\Services\SiteFacts::class);
+    $supportIntro = $pageContent->section('support-intro');
+    $supportContacts = $pageContent->contacts();
+    $supportFaqs = $pageContent->published(\App\Enums\ContentType::Faq);
+    $siteContact = $siteContact ?? [];
+    $email = data_get($siteContact, 'email');
+    $address = data_get($siteContact, 'address');
+    $hours = $facts->get('office_hours') ?? data_get($siteContact, 'hours');
+    $whatsappUrl = $facts->whatsappUrl(__('Hello Eagle Global Hub, I have a question.'));
+    $directionsUrl = filled($address) ? 'https://www.google.com/maps/search/?api=1&query='.urlencode((string) $address) : null;
+    $topics = \App\Http\Controllers\LeadController::CONTACT_TOPICS;
+@endphp
 
 @section('content')
-@php($pageContent = app(\App\Services\Content\PageContent::class))
-@php($supportIntro = $pageContent->section('support-intro'))
-@php($supportContacts = $pageContent->contacts())
-@php($supportFaqs = $pageContent->published(\App\Enums\ContentType::Faq))
+<main class="v2-contact">
+    <div class="v2-shell">
+        <nav class="v2-crumbs" aria-label="{{ __('Breadcrumb') }}"><a href="{{ route('home') }}">{{ __('Home') }}</a> / <span aria-current="page">{{ __('Contact Us') }}</span></nav>
+        <header class="v2-contact-head">
+            <h1>{{ __('Talk to us') }}</h1>
+            @if($supportIntro)
+                @foreach(preg_split('/\R{2,}/', trim((string) $supportIntro->localized('body'))) as $paragraph)<p>{!! nl2br(e($paragraph)) !!}</p>@endforeach
+            @else
+                <p>{{ $whatsappUrl ? __('Fastest reply on WhatsApp. Or call, email, or visit our office in Gulshan, Dhaka.') : __('Call, email, or visit our office in Gulshan, Dhaka.') }}</p>
+            @endif
+        </header>
 
-    <main class="egho-page">
-        <div class="egho-shell">
+        <section aria-labelledby="contact-information">
+            <h2 id="contact-information" class="sg-visually-hidden">{{ __('Contact information') }}</h2>
+            <div class="v2-contact-cards">
+                @if($whatsappUrl)
+                    <a class="v2-contact-card is-whatsapp" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer">
+                        <span>WhatsApp</span><strong>{{ $facts->whatsappNumber() }}</strong><small>{{ __('Tap to start a chat') }}</small>
+                    </a>
+                @endif
+                @if($facts->phone())
+                    <a class="v2-contact-card" href="{{ $facts->telUrl() }}">
+                        <span>{{ __('Call') }}</span><strong>{{ $facts->phone() }}</strong>@if($hours)<small>{{ $hours }}</small>@endif
+                    </a>
+                @endif
+                @if(filled($email))
+                    <a class="v2-contact-card" href="mailto:{{ $email }}">
+                        <span>{{ __('Email') }}</span><strong>{{ $email }}</strong>@if($facts->get('reply_time'))<small>{{ __('Reply: :time', ['time' => $facts->get('reply_time')]) }}</small>@endif
+                    </a>
+                @endif
+            </div>
+        </section>
 
-            <section class="egho-contact-hero">
-                <div>
-                    <span class="egho-eyebrow">{{ __('CONTACT & SUPPORT') }}</span>
-                    <h1>{{ __('Get in touch with Eagle Global Hub LTD') }}</h1>
-                    @if($supportIntro)
-                        @foreach(preg_split('/\R{2,}/', trim((string) $supportIntro->localized('body'))) as $paragraph)<p>{!! nl2br(e($paragraph)) !!}</p>@endforeach
-                    @else
-                    <p>
-                        {{ __('Contact our Dhaka office for travel account, booking status and service enquiries using the official phone, email and office address below.') }}
-                    </p>
-                    @endif
-                </div>
-
-                <div class="egho-contact-hero-media">
-                    <img
-                        src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=85"
-                        srcset="
-                            https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=85 1x,
-                            https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1800&q=85 2x
-                        "
-                        alt="{{ __('Eagle Global Hub customer support') }}"
-                        loading="lazy"
-                        width="1400"
-                        height="933"
-                    >
-                </div>
+        <div class="v2-contact-grid">
+            <section class="v2-form-card v2-contact-form" id="contact-form" aria-labelledby="contact-form-title">
+                <form method="POST" action="{{ route('leads.contact') }}" class="v2-form" novalidate>
+                    @csrf
+                    <input type="hidden" name="return_anchor" value="contact-form">
+                    <h2 id="contact-form-title">{{ __('Send a message') }}</h2>
+                    <x-site.lead-success />
+                    @if($errors->any())<ul class="v2-errors" role="alert">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>@endif
+                    <div class="v2-row-2">
+                        <label class="v2-field" for="contact-name">{{ __('Full name') }}<input id="contact-name" name="full_name" autocomplete="name" required maxlength="150" value="{{ old('full_name') }}"></label>
+                        <label class="v2-field" for="contact-phone">{{ __('Phone / WhatsApp') }}<input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="32" value="{{ old('phone') }}" placeholder="01XXXXXXXXX"></label>
+                    </div>
+                    <label class="v2-field" for="contact-email">{{ __('Email (optional)') }}<input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" value="{{ old('email') }}"></label>
+                    <label class="v2-field" for="contact-topic">{{ __('Topic') }}<select id="contact-topic" name="topic" required>@foreach($topics as $value => $label)<option value="{{ $value }}" @selected(old('topic', 'study') === $value)>{{ __($label) }}</option>@endforeach</select></label>
+                    <label class="v2-field" for="contact-message">{{ __('Message') }}<textarea id="contact-message" name="message" required maxlength="2000">{{ old('message') }}</textarea></label>
+                    <label class="v2-hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+                    <label class="v2-check"><input type="checkbox" name="consent" value="1" required @checked(old('consent'))><span>{{ __('I agree to be contacted about my enquiry.') }} <a href="{{ route('privacy') }}">{{ __('Privacy Policy') }}</a></span></label>
+                    <button type="submit" class="v2-btn v2-btn-red v2-btn-block">{{ __('Send message') }}</button>
+                    <p class="v2-form-note">{{ __('Your message goes straight to our team. We reply by phone, WhatsApp or email.') }}</p>
+                </form>
             </section>
 
-            <div class="egho-contact-grid">
-
-                <section class="egho-contact-card">
-                    <h2>{{ __('Contact information') }}</h2>
-
-                    <div class="egho-contact-row">
-                        <span class="egho-contact-icon" aria-hidden="true">
-                            &#9993;
-                        </span>
-                        <div>
-                            <strong>{{ __('Support email') }}</strong>
-                            <a href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}">
-                                {{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="egho-contact-row">
-                        <span class="egho-contact-icon" aria-hidden="true">
-                            &#9742;
-                        </span>
-                        <div>
-                            <strong>{{ __('Mobile') }}</strong>
-                            <a href="tel:{{ preg_replace('/[^+0-9]/', '', data_get($siteContact, 'phone', '01953626481')) }}">
-                                {{ data_get($siteContact, 'phone', '01953626481') }}
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="egho-contact-row">
-                        <span class="egho-contact-icon" aria-hidden="true">
-                            &#127968;
-                        </span>
-                        <div>
-                            <strong>{{ __('Office address') }}</strong>
-                            <span>{{ data_get($siteContact, 'address', 'Mysha Chowdhury Tower, Ga-30/B, Pragati Sharani, Shahjadpur, Gulshan, Dhaka-1212') }}</span>
-                        </div>
-                    </div>
-
-                    @if(data_get($siteContact, 'hours'))
-                    <div class="egho-contact-row">
-                        <span class="egho-contact-icon" aria-hidden="true">
-                            &#128337;
-                        </span>
-                        <div>
-                            <strong>{{ __('Support hours') }}</strong>
-                            <span>{{ data_get($siteContact, 'hours') }}</span>
-                        </div>
-                    </div>
-                    @endif
-
-                    <div class="egho-map-panel" role="note" aria-label="{{ __('Eagle Global Hub office address') }}">
-                        <span class="egho-map-canvas" aria-hidden="true"></span>
-
-                        <div class="egho-map-panel-inner egho-map-panel-copy">
-                            <span class="egho-map-pin" aria-hidden="true">
-                                &#128205;
-                            </span>
-                            <span>
-                                <strong>{{ __('Dhaka office') }}</strong><br>
-                                {{ __('Mysha Chowdhury Tower') }}<br>
-                                {{ __('Ga-30/B, Pragati Sharani, Shahjadpur,') }}<br>
-                                {{ __('Gulshan, Dhaka-1212') }}
-                            </span>
-                        </div>
-                    </div>
+            <div class="v2-contact-side">
+                @if($facts->mapEmbedUrl())
+                    <iframe class="v2-map" src="{{ $facts->mapEmbedUrl() }}" title="{{ __('Map of our office') }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                @endif
+                <section class="v2-card" aria-labelledby="office-address">
+                    <h2 id="office-address" class="v2-card-title">{{ __('Office address') }}</h2>
+                    @if(filled($address))<p>{{ $address }}</p>@endif
+                    @if($hours)<p class="v2-muted">{{ $hours }}</p>@endif
+                    @if($directionsUrl)<a class="v2-link" href="{{ $directionsUrl }}" target="_blank" rel="noopener noreferrer">{{ __('Get directions') }} →</a>@endif
                 </section>
-
-                <section class="egho-contact-card">
-                    <h2>{{ __('Send us a message') }}</h2>
-
-                    <div class="egho-sample-note">
-                        <span aria-hidden="true">&#9432;</span>
-                        <span>
-                            <strong>{{ __('The website message form is not connected yet.') }}</strong>
-                            {{ __('Please contact us directly at') }}
-                            <a href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}">
-                                {{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}
-                            </a>
-                            {{ __('or call') }}
-                            <a href="tel:{{ preg_replace('/[^+0-9]/', '', data_get($siteContact, 'phone', '01953626481')) }}">
-                                {{ data_get($siteContact, 'phone', '01953626481') }}
-                            </a>.
-                        </span>
-                    </div>
-
-                    <div class="egho-form-grid">
-                        <label class="egho-field">
-                            <span>{{ __('Full name') }}</span>
-                            <input type="text" disabled>
-                        </label>
-
-                        <label class="egho-field">
-                            <span>{{ __('Email address') }}</span>
-                            <input type="email" disabled>
-                        </label>
-
-                        <label class="egho-field">
-                            <span>{{ __('Phone number') }}</span>
-                            <input type="tel" disabled>
-                        </label>
-
-                        <label class="egho-field">
-                            <span>{{ __('Subject') }}</span>
-                            <select disabled>
-                                <option>{{ __('Select a topic') }}</option>
-                            </select>
-                        </label>
-
-                        <label class="egho-field egho-field-wide">
-                            <span>{{ __('Message') }}</span>
-                            <textarea class="egho-textarea" disabled></textarea>
-                        </label>
-                    </div>
-
-                    <div class="egho-form-foot">
-                        <a
-                            href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}"
-                            class="egho-btn egho-btn-primary"
-                        >
-                            {{ __('Email support') }}
-                        </a>
-                        <small>
-                            {{ __('For booking status, signed-in customers can also use their account and My Bookings pages.') }}
-                        </small>
-                    </div>
-                </section>
-
+                @if($facts->get('office_photo_url'))
+                    <img class="v2-photo" src="{{ $facts->get('office_photo_url') }}" alt="{{ __('Our office reception') }}" loading="lazy" decoding="async">
+                @endif
             </div>
-
-            <div class="egho-contact-grid" style="margin-top:20px">
-                <article class="egho-contact-card">
-                    <h2>{{ __('Booking Status') }}</h2>
-                    <p class="egho-result-summary">
-                        {{ __('Signed-in customers can open My Bookings to review stored order and payment status for their own flight booking attempts.') }}
-                    </p>
-                </article>
-
-                <article class="egho-contact-card">
-                    <h2>{{ __('Account Access') }}</h2>
-                    <p class="egho-result-summary">
-                        {{ __('If you cannot access protected pages, confirm that your email address is verified and that you are signed in with the account used for the booking.') }}
-                    </p>
-                </article>
-
-                <article class="egho-contact-card">
-                    <h2>{{ __('Official Contact Channels') }}</h2>
-                    <p class="egho-result-summary">
-                        {{ __('Mobile:') }} <a href="tel:{{ preg_replace('/[^+0-9]/', '', data_get($siteContact, 'phone', '01953626481')) }}">{{ data_get($siteContact, 'phone', '01953626481') }}</a><br>
-                        {{ __('Email:') }} <a href="mailto:{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}">{{ data_get($siteContact, 'email', 'info@eagleglobalhub.com') }}</a><br>
-                        {{ data_get($siteContact, 'address', 'Mysha Chowdhury Tower, Ga-30/B, Pragati Sharani, Shahjadpur, Gulshan, Dhaka-1212') }}
-                    </p>
-                </article>
-            </div>
-
-            @if($supportContacts->isEmpty())
-                <section class="egho-contact-card" id="directory" style="margin-top:20px" aria-labelledby="contact-directory-empty"><h2 id="contact-directory-empty">{{ __('Phone directory') }}</h2><p>{{ __('Our department numbers and the 24/7 IP calling line are being confirmed. Please use the official phone and email above in the meantime.') }}</p></section>
-            @endif
-            @if($supportContacts->isNotEmpty())
-                <section class="egho-contact-card" id="directory" style="margin-top:20px" aria-labelledby="contact-directory">
-                    <h2 id="contact-directory">{{ __('Phone directory') }}</h2>
-                    @foreach($supportContacts as $line)
-                        <div class="egho-contact-row">
-                            <span class="egho-contact-icon" aria-hidden="true">{{ $line->kind === 'ip_24x7' ? '24' : '☎' }}</span>
-                            <div>
-                                <strong>{{ $line->label }}@if($line->kind === 'ip_24x7') — {{ __('24/7 IP calling') }}@endif</strong>
-                                <a href="tel:{{ preg_replace('/[^+0-9]/', '', $line->phone) }}">{{ $line->phone }}</a>
-                                @if($line->contact_name || $line->department)<span>{{ trim($line->contact_name.' '.($line->department ? '· '.$line->department : ''), ' ·') }}</span>@endif
-                                @if($line->availability)<span>{{ $line->availability }}</span>@endif
-                            </div>
-                        </div>
-                    @endforeach
-                </section>
-            @endif
-
-            @if($supportFaqs->isNotEmpty())
-                <section class="egho-contact-card" style="margin-top:20px" aria-labelledby="support-faqs">
-                    <h2 id="support-faqs">{{ __('Frequently asked questions') }}</h2>
-                    @foreach($supportFaqs as $faq)
-                        <details><summary>{{ $faq->localized('title') }}</summary><p style="white-space:pre-line">{{ $faq->localized('body') ?: $faq->localized('summary') }}</p></details>
-                    @endforeach
-                </section>
-                @push('head')
-                <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $supportFaqs->map(fn ($faq) => ['@type' => 'Question', 'name' => $faq->title, 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq->body ?: $faq->summary]])->values()->all()], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
-                @endpush
-            @endif
-
         </div>
-    </main>
 
+        @if($supportContacts->isNotEmpty())
+            <section class="v2-card v2-directory" id="directory" aria-labelledby="contact-directory">
+                <h2 id="contact-directory" class="v2-card-title">{{ __('Phone directory') }}</h2>
+                <ul>
+                    @foreach($supportContacts as $line)
+                        <li>
+                            <strong>{{ $line->label }}@if($line->kind === 'ip_24x7') — {{ __('24/7 IP calling') }}@endif</strong>
+                            <a href="tel:{{ preg_replace('/[^+0-9]/', '', $line->phone) }}">{{ $line->phone }}</a>
+                            @if($line->contact_name || $line->department)<span>{{ trim($line->contact_name.' '.($line->department ? '· '.$line->department : ''), ' ·') }}</span>@endif
+                            @if($line->availability)<span>{{ $line->availability }}</span>@endif
+                        </li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
+
+        @if($supportFaqs->isNotEmpty())
+            <section class="v2-contact-faq" aria-labelledby="support-faqs">
+                <h2 id="support-faqs" class="v2-h2">{{ __('Frequently asked questions') }}</h2>
+                <div class="sg-faq">
+                    @foreach($supportFaqs as $faq)
+                        <details><summary>{{ $faq->localized('title') }}</summary><div class="sg-faq-answer"><x-content-body :text="$faq->localized('body') ?: $faq->localized('summary')" /></div></details>
+                    @endforeach
+                </div>
+            </section>
+            @push('head')
+            <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $supportFaqs->map(fn ($faq) => ['@type' => 'Question', 'name' => $faq->title, 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq->body ?: $faq->summary]])->values()->all()], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+            @endpush
+        @endif
+    </div>
+</main>
 @endsection

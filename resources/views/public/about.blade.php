@@ -1,137 +1,129 @@
 @extends('layouts.site')
 
-@section('title', 'About')
-@section(
-    'meta_description',
-    'Learn about the Eagle Global Hub LTD flight-first travel booking experience.'
-)
-@section('body_class', 'public-page-body')
+@section('title', __('About Us'))
+@section('meta_description', __('Eagle Global Hub LTD is a Singapore student consultancy and travel agency in Gulshan, Dhaka. Meet the team, see how we work and visit our office.'))
+@section('body_class', 'sg-body-v2')
+
+@php
+    $facts = app(\App\Services\SiteFacts::class);
+    $pageContent = app(\App\Services\Content\PageContent::class);
+    $siteContact = $siteContact ?? [];
+    $founded = $facts->get('founded_year');
+    $story = $facts->get('about_story');
+    $teamPhoto = $facts->get('team_photo_url') ?? $officeGallery->first()?->url();
+    $companyFacts = array_values(array_filter([
+        ['label' => __('Registered as'), 'value' => $siteName ?? 'Eagle Global Hub LTD'],
+        $facts->get('trade_licence_no') ? ['label' => __('Trade licence'), 'value' => $facts->get('trade_licence_no')] : null,
+        filled(data_get($siteContact, 'address')) ? ['label' => __('Office'), 'value' => __('Gulshan, Dhaka')] : null,
+        $founded ? ['label' => __('Founded'), 'value' => $founded] : null,
+    ]));
+    $values = $pageContent->points('about-values') ?: [
+        ['title' => __('Honest advice'), 'text' => __('We tell you if a course or visa is not a good fit, even if it means no fee for us.')],
+        ['title' => __('Written quotes'), 'text' => __('Every fee is agreed in writing before you pay anything.')],
+        ['title' => __('One consultant'), 'text' => __('The same person follows your file from first call to arrival.')],
+    ];
+    $officeLine = collect([__('Gulshan, Dhaka'), $facts->get('office_hours')])->filter()->implode(' · ');
+@endphp
 
 @section('content')
-@php($aboutIntro = app(\App\Services\Content\PageContent::class)->section('about-intro'))
-
-    <main class="egho-doc">
-
-        <div class="egho-shell">
-
-            <section class="egho-doc-hero">
-                <span class="egho-eyebrow">
-                    {{ __('ABOUT') }}
-                </span>
-
-                <h1>
-                    {{ __('Eagle Global Hub LTD') }}
-                </h1>
-
-                @if($aboutIntro)
-                    @foreach(preg_split('/\R{2,}/', trim((string) $aboutIntro->localized('body'))) as $paragraph)<p>{!! nl2br(e($paragraph)) !!}</p>@endforeach
+<main class="v2-about">
+    <section class="v2-about-hero" aria-labelledby="about-title">
+        <div class="v2-shell {{ $teamPhoto ? 'v2-split' : 'v2-about-single' }}">
+            <div>
+                <span class="v2-eyebrow">{{ __('About us') }}</span>
+                <h1 id="about-title">{{ $founded ? __('A Dhaka team helping students and travellers since :year', ['year' => $founded]) : __('A Dhaka team helping students and travellers') }}</h1>
+                @if($intro = $pageContent->section('about-intro'))
+                    <div class="v2-lead"><x-content-body :text="$intro->localized('body')" heading-tag="h3" /></div>
+                @elseif($story)
+                    <p class="v2-lead">{{ $story }}</p>
                 @else
-                <p>
-                    {{ __('Eagle Global Hub LTD provides a flight-first travel experience built around clear search, careful review, secure account access and visible booking progress.') }}
-                </p>
+                    <p class="v2-lead">{{ __('Eagle Global Hub LTD is a study consultancy and travel agency in Gulshan, Dhaka. Our main focus is helping Bangladeshi students study in Singapore, with visa and travel support from the same team.') }}</p>
                 @endif
-
-                <div class="egho-doc-badges">
-                    <span>{{ __('Flight first') }}</span>
-                    <span>{{ __('Secure accounts') }}</span>
-                    <span>{{ __('Honest availability') }}</span>
-                </div>
-            </section>
-
-            <section class="egho-doc-grid">
-
-                <article class="egho-doc-card">
-                    <span class="egho-doc-card-num" aria-hidden="true">01</span>
-
-                    <h2>{{ __('What We Support') }}</h2>
-
-                    <p>
-                        {{ __('The current website focuses on flight search, traveler review, order status, payment status and customer booking confirmation pages where stored data is available.') }}
-                    </p>
-                </article>
-
-                <article class="egho-doc-card">
-                    <span class="egho-doc-card-num" aria-hidden="true">02</span>
-
-                    <h2>{{ __('How We Present Travel Data') }}</h2>
-
-                    <p>
-                        {{ __('Availability and execution depend on the configured flight data source. Development and fixture results are labelled separately from live supplier inventory.') }}
-                    </p>
-                </article>
-
-                <article class="egho-doc-card">
-                    <span class="egho-doc-card-num" aria-hidden="true">03</span>
-
-                    <h2>{{ __('Additional Services') }}</h2>
-
-                    <p>
-                        {{ __('Hotels, tours and visa discovery is shown as available only when its provider integration is configured. Transactional booking or application access is not implied.') }}
-                    </p>
-                </article>
-
-            </section>
-
-            @if(($company['mission'] ?? '') !== '' || ($company['vision'] ?? '') !== '')
-                <section class="egho-doc-grid" aria-label="{{ __('Mission and vision') }}">
-                    @if($company['mission'] !== '')
-                        <article class="egho-doc-card">
-                            <h2>{{ __('Our Mission') }}</h2>
-                            <x-content-body :text="$company['mission']" heading-tag="h3" />
-                        </article>
-                    @endif
-                    @if($company['vision'] !== '')
-                        <article class="egho-doc-card">
-                            <h2>{{ __('Our Vision') }}</h2>
-                            <x-content-body :text="$company['vision']" heading-tag="h3" />
-                        </article>
-                    @endif
-                </section>
-            @endif
-
-            @if(($company['why_choose_us_bn'] ?? '') !== '')
-                <section class="egho-doc-grid">
-                    <article class="egho-doc-card">
-                        <h2>{{ __('What makes us different') }}</h2>
-                        <x-content-body :text="$company['why_choose_us_bn']" heading-tag="h3" />
-                    </article>
-                </section>
-            @endif
-
-            @if(! isset($team) || $team->isEmpty())
-                <section class="egho-doc-card sg-empty-inline" id="team" aria-labelledby="team-empty"><h2 id="team-empty">{{ __('Our Employees') }}</h2><p>{{ __('Team profiles are being verified and will be published soon.') }}</p></section>
-            @endif
-            @if(isset($team) && $team->isNotEmpty())
-                <section class="egho-doc-grid" id="team" aria-label="{{ __('Our team') }}">
-                    @foreach($team as $member)
-                        <article class="egho-doc-card">
-                            @if($member->photo_path)
-                                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->photo_path) }}" alt="{{ $member->name }}" loading="lazy" width="120" height="120" style="width:96px;height:96px;object-fit:cover;border-radius:50%">
-                            @endif
-                            <h2>{{ $member->name }}</h2>
-                            <p><strong>{{ $member->role_title }}</strong></p>
-                            @if($member->bio)<p>{{ $member->bio }}</p>@endif
-                        </article>
-                    @endforeach
-                </section>
-            @endif
-
-            @if(! isset($officeGallery) || $officeGallery->isEmpty())
-                <section class="egho-doc-card sg-empty-inline" id="office" aria-labelledby="office-empty"><h2 id="office-empty">{{ __('Our Office Environments') }}</h2><p>{{ __('Office photos will be added soon. You are welcome to visit our Dhaka office.') }}</p></section>
-            @endif
-            @if(isset($officeGallery) && $officeGallery->isNotEmpty())
-                <section class="egho-doc-grid" id="office" aria-label="{{ __('Our office') }}">
-                    @foreach($officeGallery as $image)
-                        <figure class="egho-doc-card" style="margin:0">
-                            <img src="{{ $image->url() }}" alt="{{ $image->alt_text }}" loading="lazy" @if($image->width) width="{{ $image->width }}" height="{{ $image->height }}" @endif style="width:100%;height:auto;border-radius:12px">
-                            @if($image->caption)<figcaption>{{ $image->caption }}</figcaption>@endif
-                        </figure>
-                    @endforeach
-                </section>
-            @endif
-
+                <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ route('consultancy.singapore') }}#apply">{{ __('Book a free consultation') }}</a><a class="v2-btn v2-btn-outline" href="{{ route('support') }}">{{ __('Contact Us') }}</a></div>
+            </div>
+            @if($teamPhoto)<img class="v2-about-photo" src="{{ $teamPhoto }}" alt="{{ __('Our team in the office') }}" loading="eager" decoding="async">@endif
         </div>
+    </section>
 
-    </main>
+    <section class="v2-section-tight v2-section-white" aria-label="{{ __('Company facts') }}">
+        <div class="v2-shell">
+            <dl class="v2-facts">
+                @foreach($companyFacts as $fact)<div><dt>{{ $fact['label'] }}</dt><dd>{{ $fact['value'] }}</dd></div>@endforeach
+            </dl>
+        </div>
+    </section>
 
+    <section class="v2-section" aria-labelledby="values-title">
+        <div class="v2-shell">
+            <h2 id="values-title" class="v2-h2">{{ __('How we work') }}</h2>
+            <div class="v2-values">
+                @foreach($values as $value)
+                    <article class="v2-card"><h3>{{ $value['title'] }}</h3>@if($value['text'] !== '')<p>{{ $value['text'] }}</p>@endif</article>
+                @endforeach
+            </div>
+
+            @if(($company['mission'] ?? '') !== '' || ($company['vision'] ?? '') !== '' || ($company['why_choose_us_bn'] ?? '') !== '')
+            <div class="v2-statements">
+                @if(($company['mission'] ?? '') !== '')
+                    <section class="v2-card"><h2 class="v2-card-title">{{ __('Our Mission') }}</h2><x-content-body :text="$company['mission']" heading-tag="h3" /></section>
+                @endif
+                @if(($company['vision'] ?? '') !== '')
+                    <section class="v2-card"><h2 class="v2-card-title">{{ __('Our Vision') }}</h2><x-content-body :text="$company['vision']" heading-tag="h3" /></section>
+                @endif
+                @if(($company['why_choose_us_bn'] ?? '') !== '')
+                    <section class="v2-card"><h2 class="v2-card-title">{{ __('What makes us different') }}</h2><x-content-body :text="$company['why_choose_us_bn']" heading-tag="h3" /></section>
+                @endif
+            </div>
+            @endif
+        </div>
+    </section>
+
+    @if($team->isNotEmpty())
+    <section class="v2-section v2-section-white" id="team" aria-labelledby="team-title">
+        <div class="v2-shell">
+            <h2 id="team-title" class="v2-h2">{{ __('Our team') }}</h2>
+            <ul class="v2-team v2-team-wide">
+                @foreach($team as $member)
+                    <li>
+                        @if($member->photo_path)<img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->photo_path) }}" alt="{{ $member->name }}" loading="lazy" decoding="async">@else<span class="v2-team-initial" aria-hidden="true">{{ mb_substr($member->name, 0, 1) }}</span>@endif
+                        <strong>{{ $member->name }}</strong><span>{{ $member->role_title }}</span>
+                        @if($member->bio)<p>{{ $member->bio }}</p>@endif
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </section>
+    @endif
+
+    @if($officeGallery->isNotEmpty())
+    <section class="v2-section" id="office" aria-labelledby="office-title">
+        <div class="v2-shell">
+            <h2 id="office-title" class="v2-h2">{{ __('Our office') }}</h2>
+            <div class="v2-gallery">
+                @foreach($officeGallery as $image)
+                    <figure><img src="{{ $image->url() }}" alt="{{ $image->alt_text }}" loading="lazy" @if($image->width) width="{{ $image->width }}" height="{{ $image->height }}" @endif>@if($image->caption)<figcaption>{{ $image->caption }}</figcaption>@endif</figure>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    @if($companyProfiles->isNotEmpty())
+    <section class="v2-section v2-section-white" id="company" aria-labelledby="company-title">
+        <div class="v2-shell">
+            <h2 id="company-title" class="v2-h2">{{ __('Company profile') }}</h2>
+            <div class="v2-related">@foreach($companyProfiles as $profile)<a href="{{ $profile->publicUrl() }}">{{ $profile->localized('title') }} <span aria-hidden="true">→</span></a>@endforeach</div>
+        </div>
+    </section>
+    @endif
+
+    <section class="v2-section" aria-labelledby="meet-title">
+        <div class="v2-shell">
+            <div class="v2-cta-band">
+                <div><h2 id="meet-title">{{ __('Meet us at the office') }}</h2>@if($officeLine !== '')<p>{{ $officeLine }}</p>@endif</div>
+                <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ route('support') }}">{{ __('Contact us') }}</a><a class="v2-btn v2-btn-white" href="{{ route('consultancy.singapore') }}#apply">{{ __('Free consultation') }}</a></div>
+            </div>
+        </div>
+    </section>
+</main>
 @endsection

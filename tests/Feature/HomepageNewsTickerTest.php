@@ -10,14 +10,12 @@ class HomepageNewsTickerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_homepage_shows_the_news_ticker_by_default(): void
+    public function test_homepage_never_repeats_the_default_welcome_text_as_news(): void
     {
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('egho-news-ticker', false)
-            ->assertSee('Latest News')
-            ->assertSee('Welcome to Eagle Global Hub LTD')
-            ->assertSee('css/egh-news-ticker.css', false);
+            ->assertDontSee('egho-news-ticker', false)
+            ->assertDontSee('Welcome to Eagle Global Hub LTD');
     }
 
     public function test_homepage_news_ticker_uses_existing_homepage_settings(): void

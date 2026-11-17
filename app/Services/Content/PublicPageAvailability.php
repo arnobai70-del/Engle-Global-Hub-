@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Services\Content;
+
+use App\Enums\ContentType;
+use App\Models\ContentEntry;
+use App\Models\Destination;
+use App\Models\ForumThread;
+use App\Models\Institution;
+use App\Models\Offer;
+use App\Models\Review;
+use App\Models\RewardProgram;
+use App\Services\SettingService;
+use Throwable;
+
+/**
+ * Whether a public listing page has anything published yet. Pages without content
+ * stay reachable by URL but are left out of menus, the footer and the sitemap;
+ * they come back automatically once an admin publishes the first item.
+ */
+class PublicPageAvailability
+{
+    /** Route names this service decides about. Every other route is always available. */
+    public const ROUTES = [
+        'company.index', 'success-stories.index', 'offers.index', 'forums.index', 'reviews.index',
+        'rewards.index', 'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index',
+        'consultancy.guides.index', 'consultancy.institutions.index', 'mobile-app',
+    ];
+
+    public function __construct(private SettingService $settings) {}
+
+    public function isAvailable(string $routeName): bool
+    {
+        if (! in_array($routeName, self::ROUTES, true)) {
+            return true;
+        }
+
+        // Remembered for the current request only, so a page appears as soon as content is published.
+        $request = request();
+        $cache = (array) $request->attributes->get('egh.page_availability', []);
+        if (! array_key_exists($routeName, $cache)) {
+            $cache[$routeName] = $this->check($routeName);
+            $request->attributes->set('egh.page_availability', $cache);
+        }
+
+        return $cache[$routeName];
+    }
+
+    private function check(string $routeName): bool
+    {
+        try {
+            return match ($routeName) {
+                'company.index' => $this->hasPublished(ContentType::CompanyProfile),
+                'success-stories.index' => $this->hasPublished(ContentType::SuccessStory),
+                'restaurants.index' => $this->hasPublished(ContentType::Restaurant),
+                'inspiration.index' => $this->hasPublished(ContentType::Inspiration),
+                'consultancy.guides.index' => $this->hasPublished(ContentType::Guide),
+                'offers.index' => Offer::query()->current()->exists(),
+                'reviews.index' => Review::query()->where('status', Review::STATUS_APPROVED)->exists(),
+                'rewards.index' => RewardProgram::query()->live()->exists(),
+                'forums.index' => ForumThread::query()->whereHas('category', fn ($query) => $query->where('is_active', true))->exists(),
+                'explore-bangladesh.index' => Destination::query()->published()->exists(),
+                'consultancy.institutions.index' => Institution::query()->publiclyListed()->exists(),
+                'map' => Destination::query()->published()->exists()
+                    || ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->whereNotNull('latitude')->whereNotNull('longitude')->exists(),
+                'mobile-app' => $this->hasAppStoreLink(),
+                default => true,
+            };
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    private function hasPublished(ContentType $type): bool
+    {
+        return ContentEntry::query()->published($type)->exists();
+    }
+
+    private function hasAppStoreLink(): bool
+    {
+        $homepage = $this->settings->group('homepage');
+
+        return filter_var($homepage['google_play_url'] ?? null, FILTER_VALIDATE_URL) !== false
+            || filter_var($homepage['app_store_url'] ?? null, FILTER_VALIDATE_URL) !== false;
+    }
+}

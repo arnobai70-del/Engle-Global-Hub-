@@ -423,6 +423,16 @@
                         </a>
                     @endcan
 
+                    @can('settings.manage')
+                        <a
+                            href="{{ route('admin.facts.edit') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.facts.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4"/></svg>
+                            <span>Business Facts</span>
+                        </a>
+                    @endcan
+
                     @can('menus.manage')
                         <a
                             href="{{ route('admin.menus.index') }}"

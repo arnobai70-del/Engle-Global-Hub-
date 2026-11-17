@@ -20,13 +20,13 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Flights')
+            ->assertSee('Air tickets')
             ->assertSee('Hotels')
             ->assertSee('Tours')
             ->assertSee('Visa')
-            ->assertSee('Waiting for API')
+            ->assertDontSee('Waiting for API')
             ->assertSee('href="'.route('hotels.index').'"', false)
-            ->assertSee('href="'.route('tours.index').'"', false)
+            ->assertSee('href="'.route('services.show', 'holiday-packages').'"', false)
             ->assertSee('href="'.route('visa.index').'"', false)
             ->assertDontSee('MetaFore');
     }
@@ -46,7 +46,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
-            ->assertSee('Waiting for API')
+            ->assertDontSee('Waiting for API')
             ->assertSee('href="'.route('hotels.index').'"', false);
     }
 
@@ -88,7 +88,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
-            ->assertSee('Waiting for API')
+            ->assertDontSee('Waiting for API')
             ->assertDontSee('Live Provider')
             ->assertSee('href="'.route('hotels.index').'"', false)
             ->assertDontSee('homepage-must-never-render-this-secret');
@@ -97,7 +97,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('Live Provider')
+            ->assertSee('href="'.route('hotels.index').'"', false)->assertDontSee('Waiting for API')
             ->assertDontSee('homepage-must-never-render-this-secret');
     }
 
@@ -120,7 +120,7 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
         $response
             ->assertOk()
             ->assertSee('href="'.route('hotels.index').'"', false)
-            ->assertSee('href="'.route('tours.index').'"', false)
+            ->assertSee('href="'.route('services.show', 'holiday-packages').'"', false)
             ->assertSee('href="'.route('visa.index').'"', false);
 
         foreach ([

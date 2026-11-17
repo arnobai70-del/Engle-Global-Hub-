@@ -39,11 +39,21 @@ class HomepageSettingsSeeder extends Seeder
             ['homepage', 'journey_background', 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2000&q=85'],
             ['app', 'app_title', 'Download Our Mobile App'],
             ['app', 'app_subtitle', 'Book on the go, anytime, anywhere. Store links appear when published builds are configured.'],
-            ['seo', 'home_meta_title', 'Eagle Global Hub | Flights, Hotels, Tours & Visa Services'],
-            ['seo', 'home_meta_description', 'Search flights and explore hotels, tours, visa and work visa services with Eagle Global Hub.'],
+            ['seo', 'home_meta_title', 'Study in Singapore from Bangladesh | Eagle Global Hub'],
+            ['seo', 'home_meta_description', 'Free consultation for studying in Singapore: course choice, admission, Student\'s Pass, air ticket and housing support from our office in Gulshan, Dhaka.'],
             ['seo', 'home_robots', 'index,follow'],
             ['seo', 'home_twitter_card', 'summary_large_image'],
         ];
+
+        // The site now leads with Singapore study. Update the old default homepage title and
+        // description, but only if an admin has not already written their own.
+        foreach ([
+            'home_meta_title' => ['Eagle Global Hub | Flights, Hotels, Tours & Visa Services', 'Study in Singapore from Bangladesh | Eagle Global Hub'],
+            'home_meta_description' => ['Search flights and explore hotels, tours, visa and work visa services with Eagle Global Hub.', 'Free consultation for studying in Singapore: course choice, admission, Student\'s Pass, air ticket and housing support from our office in Gulshan, Dhaka.'],
+        ] as $key => [$oldDefault, $newDefault]) {
+            DB::table('settings')->where('group', 'seo')->where('key', $key)->where('value', $oldDefault)
+                ->update(['value' => $newDefault, 'updated_at' => now()]);
+        }
 
         foreach ($settings as [$group, $key, $value]) {
             DB::table('settings')->insertOrIgnore([

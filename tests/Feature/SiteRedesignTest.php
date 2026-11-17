@@ -65,11 +65,11 @@ class SiteRedesignTest extends TestCase
         $html = (string) $this->get(route('home'))->assertOk()->getContent();
 
         $this->assertStringNotContainsString('&amp;amp;', $html);
-        $this->assertMatchesRegularExpression('/<title>[^<]*&amp; Visa[^<]*<\/title>/', $html);
+        $this->assertStringContainsString('<title>Study in Singapore from Bangladesh | Eagle Global Hub</title>', $html);
 
-        $support = (string) $this->get(route('support'))->assertOk()->getContent();
-        $this->assertStringNotContainsString('&amp;amp;', $support);
-        $this->assertStringContainsString('<meta property="og:title" content="Contact &amp; Support">', $support);
+        $terms = (string) $this->get(route('terms'))->assertOk()->getContent();
+        $this->assertStringNotContainsString('&amp;amp;', $terms);
+        $this->assertStringContainsString('<meta property="og:title" content="Terms &amp; Policies">', $terms);
     }
 
     public function test_public_layout_loads_the_design_system_without_inline_scripts(): void

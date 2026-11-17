@@ -51,10 +51,11 @@ final class RemainingScreensUiContractTest extends TestCase
     public function test_remaining_screens_each_open_with_exactly_one_page_heading(): void
     {
         $screens = [
-            'hotels.index' => 'Find the right stay for every journey',
+            // Without a live provider, customers get the service template for hotels and tours.
+            'hotels.index' => 'Hotels and student housing',
             'hotels.rooms' => 'Choose the room and rate for your stay',
             'hotels.booking' => 'Guest details for your stay',
-            'tours.index' => 'Turn every destination into an experience',
+            'tours.index' => 'Tours and holiday packages',
         ];
 
         foreach ($screens as $routeName => $heading) {
@@ -83,14 +84,15 @@ final class RemainingScreensUiContractTest extends TestCase
 
     public function test_work_visa_application_page_opens_with_its_own_heading(): void
     {
-        $html = $this->get(route('work-visa.apply'))
+        $this->get(route('work-visa.apply'))->assertRedirect(route('work-visa.index').'#quote-form');
+        $html = $this->get(route('work-visa.index'))
             ->assertOk()
             ->getContent();
 
         $this->assertIsString($html);
 
         $this->assertStringContainsString(
-            'Prepare for a work visa consultation',
+            'Work visa guidance',
             $html,
         );
 
@@ -132,7 +134,7 @@ final class RemainingScreensUiContractTest extends TestCase
 
     public function test_hotel_screens_load_their_own_page_scoped_stylesheet(): void
     {
-        foreach (['hotels.index', 'hotels.rooms', 'hotels.booking'] as $routeName) {
+        foreach (['hotels.rooms', 'hotels.booking'] as $routeName) {
             $this->actingAs($this->customer())
                 ->get(route($routeName))
                 ->assertOk()

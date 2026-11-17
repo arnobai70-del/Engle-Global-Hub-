@@ -91,27 +91,27 @@ class WebsiteCmsTest extends TestCase
         $this->get(route('about'))->assertOk()
             ->assertSee('class="egho-switch" href="'.route('about', ['lang' => 'bn']).'"', false)
             ->assertSee('aria-current="true" data-locale-switch>EN</a>', false)
-            ->assertSee('Quick Links');
+            ->assertSee('More from us');
 
         $this->get(route('about', ['lang' => 'bn']))->assertOk()
             ->assertSee('aria-current="true" data-locale-switch>বাংলা</a>', false)
-            ->assertSee('দ্রুত লিংক')
+            ->assertSee('আমাদের আরও সেবা')
             ->assertSee(route('about', ['lang' => 'en']), false);
 
         $editor = $this->user('content-editor');
-        $this->actingAs($editor)->get(route('admin.translations.index', ['search' => 'Quick Links']))->assertOk()->assertSee('দ্রুত লিংক');
+        $this->actingAs($editor)->get(route('admin.translations.index', ['search' => 'More from us']))->assertOk()->assertSee('আমাদের আরও সেবা');
         $this->actingAs($editor)->patch(route('admin.translations.update'), [
-            'locale' => 'bn', 'source_hash' => hash('sha256', 'Quick Links'), 'value' => 'দরকারি লিংক <b>x</b>',
+            'locale' => 'bn', 'source_hash' => hash('sha256', 'More from us'), 'value' => 'দরকারি লিংক <b>x</b>',
         ])->assertRedirect();
         $this->assertSame('দরকারি লিংক x', TranslationOverride::query()->sole()->value);
 
         $this->flushSession();
         // Each real request starts fresh; in tests the translator keeps loaded lines in memory.
         app('translator')->setLoaded([]);
-        $this->get(route('about', ['lang' => 'bn']))->assertSee('দরকারি লিংক x')->assertDontSee('দ্রুত লিংক');
+        $this->get(route('about', ['lang' => 'bn']))->assertSee('দরকারি লিংক x')->assertDontSee('আমাদের আরও সেবা');
 
         $this->actingAs($editor)->patch(route('admin.translations.update'), ['locale' => 'bn', 'source_hash' => hash('sha256', 'Not a key'), 'value' => 'x'])->assertNotFound();
-        $this->actingAs($editor)->patch(route('admin.translations.update'), ['locale' => 'bn', 'source_hash' => hash('sha256', 'Quick Links'), 'value' => ''])->assertRedirect();
+        $this->actingAs($editor)->patch(route('admin.translations.update'), ['locale' => 'bn', 'source_hash' => hash('sha256', 'More from us'), 'value' => ''])->assertRedirect();
         $this->assertDatabaseCount('translation_overrides', 0);
         $this->actingAs($this->user('crm-staff'))->get(route('admin.translations.index'))->assertForbidden();
     }
@@ -119,13 +119,16 @@ class WebsiteCmsTest extends TestCase
     public function test_navigation_connects_new_pages_through_existing_menus(): void
     {
         $this->get(route('home'))->assertOk()
-            ->assertSee('href="'.route('offers.index').'"', false)
-            ->assertSee(route('explore-bangladesh.index'), false)
-            ->assertSee(route('reviews.index'), false)
+            // Listing pages without published content stay out of the menus until something is published.
+            ->assertDontSee('href="'.route('offers.index').'"', false)
+            ->assertDontSee('href="'.route('reviews.index').'"', false)
+            ->assertSee(route('services.show', 'export-import'), false)
+            ->assertSee(route('b2b.info'), false)
             ->assertSee(route('search'), false)
-            ->assertSee(route('service-enquiries.create', 'tourist-visa'), false);
+            ->assertSee(route('services.show', 'tourist-visa'), false);
 
-        $this->get(route('work-visa.apply'))->assertOk()->assertSee(route('service-enquiries.create', 'work-visa'), false);
+        $this->get(route('work-visa.apply'))->assertRedirect(route('work-visa.index').'#quote-form');
+        $this->get(route('work-visa.index'))->assertOk()->assertSee('action="'.route('leads.quote', 'work-visa').'"', false);
     }
 
     public function test_global_search_covers_public_content_only(): void

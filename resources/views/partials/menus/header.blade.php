@@ -1,6 +1,6 @@
 {{-- Admin-managed header menu (Admin › Menus). Same markup as the built-in menu, so desktop and mobile stay in sync. --}}
 @php($currentUrl = url()->current())
-@php($isCurrent = static fn (?string $url): bool => $url !== null && rtrim(strtok($url, '#?'), '/') === rtrim($currentUrl, '/'))
+@php($isCurrent = static fn (?string $url): bool => $url !== null && ! str_contains($url, '#') && rtrim(strtok($url, '?'), '/') === rtrim($currentUrl, '/'))
 @foreach($items as $item)
     @if($item['children'] === [])
         <a href="{{ $item['url'] }}" class="sg-nav-link" @if($isCurrent($item['url'])) aria-current="page" @endif @if($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>

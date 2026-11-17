@@ -11,8 +11,30 @@
         <p>{{ __('Join us and start your journey.') }}</p>
     </div>
 
+    @php
+        $accountTypes = [
+            'student' => ['icon' => 'cap', 'title' => __('Student'), 'text' => __('Study in Singapore: track your application, documents and messages.')],
+            'traveller' => ['icon' => 'plane', 'title' => __('Traveller'), 'text' => __('Visa, air tickets, hotels and tours: follow your enquiries and bookings.')],
+            'agent' => ['icon' => 'group', 'title' => __('Agent / B2B partner'), 'text' => __('Refer students and clients. Your partner application is reviewed by our team.')],
+        ];
+        $selectedType = old('account_type', request('type'));
+    @endphp
+
     <form method="POST" action="{{ route('register.store') }}" class="egho-auth-form">
         @csrf
+
+        <fieldset class="sg-account-types">
+            <legend>{{ __('I am creating an account as a') }}</legend>
+            @foreach($accountTypes as $value => $type)
+                <label class="sg-account-type">
+                    <input type="radio" name="account_type" value="{{ $value }}" @checked($selectedType === $value) required>
+                    <span class="sg-account-type-card">
+                        <x-site.art :name="$type['icon']" />
+                        <span><strong>{{ $type['title'] }}</strong><small>{{ $type['text'] }}</small></span>
+                    </span>
+                </label>
+            @endforeach
+        </fieldset>
 
         <label class="egho-field" for="name">
             <span>{{ __('Full Name') }}</span>

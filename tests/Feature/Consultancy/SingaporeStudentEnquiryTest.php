@@ -55,8 +55,8 @@ class SingaporeStudentEnquiryTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.route('consultancy.singapore').'">', false)
             ->assertSee('application/ld+json', false)
             ->assertSee('Immigration &amp; Checkpoints Authority (ICA)', false)
-            ->assertSee("cannot guarantee admission or a Student's Pass")
-            ->assertSee('<option value="SG" selected>Singapore</option>', false)
+            ->assertSee('cannot guarantee admission or a Student&#039;s Pass', false)
+            ->assertSee('action="'.route('leads.consultation').'"', false)
             ->assertSee('Bulgaria')
             ->assertSee('Cyprus');
     }
@@ -77,7 +77,7 @@ class SingaporeStudentEnquiryTest extends TestCase
         $this->assertMatchesRegularExpression('/^EGH-SE-[A-Z0-9]{10}$/', $enquiry->reference);
 
         $this->followingRedirects()->post(route('consultancy.enquiries.store'), $this->payload(['email' => 'second@example.com']))
-            ->assertSee('your enquiry has been received');
+            ->assertSee('Thank you, we received your request.');
     }
 
     public function test_enquiry_rejects_missing_consent_bad_destination_bad_phone_and_honeypot(): void

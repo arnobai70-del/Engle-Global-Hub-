@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', data_get($homeContent, 'seo.title', 'Flights & Travel'))
+@section('title', data_get($homeContent, 'seo.title', 'Study in Singapore from Bangladesh | Eagle Global Hub'))
 @section('meta_description', data_get($homeContent, 'seo.description'))
 @section('canonical', data_get($homeContent, 'seo.canonical') ?: url()->current())
 @section('robots', data_get($homeContent, 'seo.robots', 'index,follow'))
@@ -8,277 +8,289 @@
 @section('og_description', data_get($homeContent, 'seo.og_description'))
 @section('og_image', data_get($homeContent, 'seo.og_image'))
 @section('twitter_card', data_get($homeContent, 'seo.twitter_card', 'summary_large_image'))
-@section('body_class', 'sg-home-body')
+@section('body_class', 'sg-home-body sg-body-v2')
 
 @php
     $settings = data_get($homeContent, 'settings', []);
-    $newsEnabledValue = data_get($settings, 'news_enabled', true);
-    $newsEnabled = is_bool($newsEnabledValue)
-        ? $newsEnabledValue
-        : ! in_array(strtolower(trim((string) $newsEnabledValue)), ['0', 'false', 'off', 'no'], true);
-    $newsLabel = trim((string) data_get($settings, 'news_label', 'Latest News'));
-    $newsText = trim((string) data_get($settings, 'news_text', 'Welcome to Eagle Global Hub LTD — Travel & Visa Services.'));
-    $newsUrl = trim((string) data_get($settings, 'news_url', ''));
-    $newsLinkLabel = trim((string) data_get($settings, 'news_link_label', 'Learn More'));
-    $newsTickerDuration = max(8, min(120, (int) data_get($settings, 'news_ticker_duration', 20)));
-    $showSection = static fn (string $section): bool => ! in_array(strtolower(trim((string) data_get($settings, 'show_'.$section, '1'))), ['0', 'false', 'off', 'no'], true);
-
-    $travelServices = $travelServices ?? [];
-    $serviceLink = static function (string $key) use ($travelServices): ?string {
-        $routeName = $travelServices[$key]['page_route_name'] ?? $travelServices[$key]['route_name'] ?? null;
-
-        return is_string($routeName) && \Illuminate\Support\Facades\Route::has($routeName) ? route($routeName) : null;
-    };
-    $flightsVisible = app(\App\Services\Feature\FeatureManager::class)->isVisibleTo('flights', auth()->user());
-    $flightsUrl = auth()->check() ? (auth()->user()->can('flights.search') ? route('flights.index') : route('dashboard')) : route('login');
-    $providerStatus = app(\App\Services\Integrations\ProviderStatus::class);
-    $serviceStatus = static fn (string $key): string => $providerStatus->of($key);
-    $studyUrl = route('consultancy.singapore');
-    $consultationUrl = $studyUrl.'#consultation';
-
+    $facts = app(\App\Services\SiteFacts::class);
     $pageContent = app(\App\Services\Content\PageContent::class);
-    $guides = $pageContent->published(\App\Enums\ContentType::Guide)->take(4);
-    $studentsPassGuide = $guides->firstWhere('slug', 'students-pass-guidance');
-    $destinations = rescue(fn () => \App\Models\Destination::query()->published()->limit(3)->get(), collect(), false);
-    $img = static fn (string $id, int $width = 1200): string => 'https://images.unsplash.com/photo-'.$id.'?auto=format&fit=crop&w='.$width.'&q=80';
-    $heroImage = $img('1565967511849-76a60a516170', 1920);
-    $guideImages = ['1496939376851-89342e90adcd', '1508964942454-1a56651d54ac', '1525625293386-3f8f99389edd', '1541339907198-e08756dedf3f'];
+    $siteContact = $siteContact ?? [];
+    $studyUrl = route('consultancy.singapore');
+    $whatsappUrl = $facts->whatsappUrl(__('Hello Eagle Global Hub, I would like a free consultation.'));
 
-    $pageAssetVersion = static function (string $file): string {
-        $modifiedAt = @filemtime(public_path($file));
+    // News ticker: only real news written by an admin, never the default welcome line.
+    $newsEnabledValue = data_get($settings, 'news_enabled', true);
+    $newsEnabled = is_bool($newsEnabledValue) ? $newsEnabledValue : ! in_array(strtolower(trim((string) $newsEnabledValue)), ['', '0', 'false', 'off', 'no'], true);
+    $newsText = trim((string) data_get($settings, 'news_text', ''));
+    $showNews = $newsEnabled && $newsText !== '' && ! str_starts_with($newsText, 'Welcome to Eagle Global Hub');
+    $newsLabel = trim((string) data_get($settings, 'news_label', '')) ?: __('Latest News');
+    $newsUrl = trim((string) data_get($settings, 'news_url', ''));
+    $newsLinkLabel = trim((string) data_get($settings, 'news_link_label', '')) ?: __('Learn More');
+    $newsTickerDuration = max(8, min(120, (int) data_get($settings, 'news_ticker_duration', 20)));
+    $pageAssetVersion = static fn (string $file): string => ($modifiedAt = @filemtime(public_path($file))) ? '?v='.$modifiedAt : '';
 
-        return $modifiedAt ? '?v='.$modifiedAt : '';
-    };
+    // Hero numbers: shown only when the owner has entered them.
+    $stats = array_values(array_filter([
+        $facts->get('students_guided') ? ['value' => $facts->get('students_guided').'+', 'label' => __('students guided')] : null,
+        $facts->get('partner_institutions') ? ['value' => $facts->get('partner_institutions'), 'label' => __('partner institutions')] : null,
+        $facts->get('founded_year') ? ['value' => $facts->get('founded_year'), 'label' => __('serving since')] : null,
+    ]));
+
+    $trust = array_values(array_filter([
+        $facts->get('trade_licence_no') ? ['icon' => 'shield', 'text' => __('Registered company · Trade licence :number', ['number' => $facts->get('trade_licence_no')])] : null,
+        filled(data_get($siteContact, 'address')) ? ['icon' => 'pin', 'text' => __('Walk-in office in Gulshan, Dhaka')] : null,
+        ['icon' => 'doc', 'text' => __('Written fee quote before you pay')],
+        ['icon' => 'chat', 'text' => __('Bangla & English support')],
+    ]));
+
+    // Six service cards: titles, icons and links come from Admin › Menus (homepage tiles).
+    $serviceText = [
+        'tile-study' => [__('Course and institution shortlist, admission application and document check.'), __('Start here')],
+        'tile-students-pass' => [__('Step-by-step ICA application preparation and status follow-up.'), __('Learn more')],
+        'tile-visa' => [__('Tourist, business and student visa guidance with a document checklist.'), __('Ask about a visa')],
+        'tile-flights' => [__('Student fares and group bookings. Send your dates, we reply with options.'), __('Get a fare quote')],
+        'tile-housing' => [__('Student hostels, shared rooms and airport arrival guidance.'), __('Ask about housing')],
+        'tile-tours' => [__('Holiday and group tour packages in Bangladesh and abroad.'), __('Get a package')],
+    ];
+    $tileMenu = app(\App\Services\Navigation\MenuService::class)->tree('home_tiles');
+    $services = $tileMenu !== null
+        ? collect($tileMenu)->map(fn (array $tile): array => ['title' => $tile['label'], 'url' => $tile['url'], 'icon' => $tile['icon'] ?? 'globe', 'key' => $tile['key'] ?? null, 'new_tab' => $tile['new_tab']])->all()
+        : [
+            ['key' => 'tile-study', 'title' => __('Study in Singapore'), 'url' => $studyUrl, 'icon' => 'cap', 'new_tab' => false],
+            ['key' => 'tile-students-pass', 'title' => __('Student\'s Pass (ICA)'), 'url' => route('services.show', 'student-visa'), 'icon' => 'id', 'new_tab' => false],
+            ['key' => 'tile-visa', 'title' => __('Visa services'), 'url' => route('services.show', 'tourist-visa'), 'icon' => 'passport', 'new_tab' => false],
+            ['key' => 'tile-flights', 'title' => __('Air tickets'), 'url' => route('services.show', 'air-ticket'), 'icon' => 'plane', 'new_tab' => false],
+            ['key' => 'tile-housing', 'title' => __('Housing & arrival'), 'url' => route('hotels.index'), 'icon' => 'bed', 'new_tab' => false],
+            ['key' => 'tile-tours', 'title' => __('Tours & holidays'), 'url' => route('services.show', 'holiday-packages'), 'icon' => 'mountain', 'new_tab' => false],
+        ];
+
+    // How it works: editable as the page section "how-it-works" ("- Title: text | time" per line).
+    $steps = collect($pageContent->points('how-it-works'))->map(function (array $step): array {
+        [$text, $time] = array_pad(array_map('trim', explode('|', $step['text'], 2)), 2, '');
+
+        return ['title' => $step['title'], 'text' => $text, 'time' => $time];
+    })->all() ?: [
+        ['title' => __('Free consultation'), 'text' => __('Goals, budget and eligibility check.'), 'time' => __('Day 1')],
+        ['title' => __('Course shortlist'), 'text' => __('Institutions, intakes and written cost estimate.'), 'time' => __('Week 1')],
+        ['title' => __('Admission'), 'text' => __('Application, documents and offer letter.'), 'time' => __('2–6 weeks')],
+        ['title' => __('Student\'s Pass'), 'text' => __('ICA application prepared and tracked.'), 'time' => __('2–5 weeks')],
+        ['title' => __('Fly & settle'), 'text' => __('Ticket, housing and arrival support.'), 'time' => __('Before intake')],
+    ];
+
+    $costs = $facts->rows([
+        'cost_tuition' => __('Tuition (diploma, private)'),
+        'cost_housing' => __('Housing (shared room)'),
+        'cost_food' => __('Food & transport'),
+        'cost_pass' => __('Student\'s Pass & medical'),
+    ]);
+    if ($facts->get('our_fee')) {
+        $costs[] = ['label' => __('Our service fee'), 'value' => (preg_match('/^[\d.,\s–-]+$/u', $facts->get('our_fee')) === 1 ? 'BDT ' : '').$facts->get('our_fee')];
+    }
+    $costTotal = $facts->get('cost_total');
+
+    $stories = $pageContent->published(\App\Enums\ContentType::SuccessStory)->take(3);
+    $googleRating = $facts->googleRating();
+    $team = rescue(fn () => \App\Models\TeamMember::query()->published()->limit(4)->get(), collect(), false);
+    $faqs = $pageContent->published(\App\Enums\ContentType::Faq)->take(5);
+    $address = data_get($siteContact, 'address');
+    $directionsUrl = filled($address) ? 'https://www.google.com/maps/search/?api=1&query='.urlencode((string) $address) : null;
     $organizationSchema = array_filter([
         '@context' => 'https://schema.org',
-        '@type' => 'TravelAgency',
+        '@type' => ['TravelAgency', 'EducationalOrganization'],
         'name' => $siteName ?? 'Eagle Global Hub LTD',
         'url' => route('home'),
         'logo' => $siteLogo ?? null,
-        'email' => data_get($siteContact ?? [], 'email'),
-        'telephone' => data_get($siteContact ?? [], 'phone'),
-        'address' => data_get($siteContact ?? [], 'address') ? ['@type' => 'PostalAddress', 'streetAddress' => data_get($siteContact, 'address')] : null,
+        'email' => data_get($siteContact, 'email'),
+        'telephone' => data_get($siteContact, 'phone'),
+        'address' => $address ? ['@type' => 'PostalAddress', 'streetAddress' => $address] : null,
     ]);
-    $icons = [
-        'cap' => '<path d="M2 9.5 12 5l10 4.5-10 4.5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/><path d="M22 9.5V15"/>',
-        'id' => '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h4M14 13.5h4"/>',
-        'passport' => '<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="3.2"/><path d="M8.8 10h6.4M12 6.8c1 .9 1.4 2 1.4 3.2s-.4 2.3-1.4 3.2c-1-.9-1.4-2-1.4-3.2s.4-2.3 1.4-3.2M9 17h6"/>',
-        'plane' => '<path d="M10.5 13.5 3 11l1.5-1.5 7.5.8 4.5-4.8a2 2 0 0 1 2.8 2.8L14.5 12.8l.8 7.5L13.8 22l-2.5-7.5"/>',
-        'bed' => '<path d="M3 18V7M3 14h18v4M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',
-        'mountain' => '<path d="m3 19 6-9 4 5 2.5-3L21 19z"/><circle cx="16.5" cy="6.5" r="1.8"/>',
-        'leaf' => '<path d="M12 21V11"/><path d="M12 11c-4 0-7-2.5-7-7 4.5 0 7 3 7 7zM12 14c3.5 0 6-2 6-6-4 0-6 2.5-6 6z"/><path d="M5 21h14"/>',
-        'doc' => '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
-        'support' => '<path d="M4 13a8 8 0 0 1 16 0"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.5-2 2.5-5 2.5"/>',
-        'pin' => '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
-        'visa' => '<path d="M6 3h9l4 4v14H6z"/><path d="M14.5 3v4.5H19"/><path d="M9 13h6M9 16.5h4"/>',
-        'briefcase' => '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/>',
-        'tag' => '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
-        'arrow' => '<path d="M5 12h14M13 6l6 6-6 6"/>',
-    ];
-    $svg = static fn (string $name): string => '<svg viewBox="0 0 24 24" aria-hidden="true">'.$icons[$name].'</svg>';
 @endphp
 
 @push('head')
-    <link rel="preload" as="image" href="{{ $heroImage }}">
-    <link rel="stylesheet" href="{{ asset('css/egh-news-ticker.css').$pageAssetVersion('css/egh-news-ticker.css') }}">
-    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
 @endpush
 
 @section('content')
-@if($newsEnabled && $newsText !== '')
-<section class="egho-news-ticker" style="--egho-news-duration: {{ $newsTickerDuration }}s" aria-label="{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}">
+@if($showNews)
+@push('head')<link rel="stylesheet" href="{{ asset('css/egh-news-ticker.css').$pageAssetVersion('css/egh-news-ticker.css') }}">@endpush
+<section class="egho-news-ticker" style="--egho-news-duration: {{ $newsTickerDuration }}s" aria-label="{{ $newsLabel }}">
     <div class="egho-shell egho-news-ticker-inner">
-        <strong class="egho-news-ticker-label">{{ $newsLabel !== '' ? $newsLabel : 'Latest News' }}</strong>
+        <strong class="egho-news-ticker-label">{{ $newsLabel }}</strong>
         <div class="egho-news-ticker-viewport">
             <div class="egho-news-ticker-track">
                 @foreach ([false, true] as $duplicateGroup)
                     <div class="egho-news-ticker-group" @if($duplicateGroup) aria-hidden="true" @endif>
-                        @for ($tickerRepeat = 0; $tickerRepeat < 6; $tickerRepeat++)
+                        @for ($tickerRepeat = 0; $tickerRepeat < 4; $tickerRepeat++)
                             <span @if($duplicateGroup || $tickerRepeat > 0) aria-hidden="true" @endif>{{ $newsText }}</span>
                         @endfor
                     </div>
                 @endforeach
             </div>
         </div>
-        @if($newsUrl !== '')
-            <a class="egho-news-ticker-link" href="{{ $newsUrl }}">{{ $newsLinkLabel !== '' ? $newsLinkLabel : 'Learn More' }}</a>
-        @endif
+        @if($newsUrl !== '')<a class="egho-news-ticker-link" href="{{ $newsUrl }}">{{ $newsLinkLabel }}</a>@endif
     </div>
 </section>
 @endif
 
-<main class="sg-home">
-    <section class="sg-hero" style="--sg-home-hero: url('{{ $heroImage }}')" aria-labelledby="sg-hero-title">
-        <div class="sg-shell">
-            <div class="sg-hero-copy">
-                <span class="sg-badge">{{ __('Singapore Student Consultancy') }}</span>
-                <h1 id="sg-hero-title">{{ __('Your Gateway to Study in Singapore') }}</h1>
-                <p class="sg-hero-lead">{{ __('From admission to arrival — we support your entire study journey to Singapore.') }}</p>
-                <ul class="sg-checklist sg-checklist-light">
-                    <li>{{ __('Admission & Institution Support') }}</li>
-                    <li>{{ __('Student\'s Pass (ICA) Guidance') }}</li>
-                    <li>{{ __('Documents & Application Support') }}</li>
-                    <li>{{ __('Air Ticket & Accommodation') }}</li>
-                    <li>{{ __('Arrival & Post-Arrival Support') }}</li>
+<main class="v2-home">
+    <section class="v2-hero" aria-labelledby="hero-title">
+        <div class="v2-shell v2-hero-grid">
+            <div class="v2-hero-copy">
+                <span class="v2-pill v2-pill-light">{{ __('Singapore student consultancy from Bangladesh') }}</span>
+                <h1 id="hero-title">{{ __('Study in Singapore, with a team that walks every step with you.') }}</h1>
+                <p>{{ __('Course and institution choice, admission documents, Student\'s Pass guidance, air ticket and housing — one office in Gulshan, one consultant from start to arrival.') }}</p>
+                <div class="v2-actions">
+                    <a class="v2-btn v2-btn-red" href="#consultation-form">{{ __('Book a free consultation') }}</a>
+                    @if($whatsappUrl)<a class="v2-btn v2-btn-ghost-light" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 20l1.3-3.8A8 8 0 1 1 8 19.2z"/></svg>{{ __('Chat on WhatsApp') }}</a>@endif
+                </div>
+                @if($stats !== [])
+                <dl class="v2-stats">
+                    @foreach($stats as $stat)<div><dt>{{ $stat['label'] }}</dt><dd>{{ $stat['value'] }}</dd></div>@endforeach
+                </dl>
+                @endif
+            </div>
+            <x-site.consultation-form source="home" anchor="consultation-form" />
+        </div>
+    </section>
+
+    <section class="v2-trust" aria-label="{{ __('Why you can trust us') }}">
+        <ul class="v2-shell">
+            @foreach($trust as $item)<li><x-site.art :name="$item['icon']" />{{ $item['text'] }}</li>@endforeach
+        </ul>
+    </section>
+
+    @if(! in_array(strtolower(trim((string) data_get($settings, 'show_services', '1'))), ['0', 'false', 'off', 'no'], true))
+    <section class="v2-section" aria-labelledby="services-title">
+        <div class="v2-shell">
+            <div class="v2-head">
+                <div><span class="v2-eyebrow">{{ __('What we do') }}</span><h2 id="services-title" class="v2-h2">{{ __('Everything you need to study abroad') }}</h2></div>
+                <a class="v2-link" href="{{ route('travel-services.index') }}">{{ __('All services') }} →</a>
+            </div>
+            <div class="v2-services">
+                @foreach($services as $service)
+                    @php([$serviceBody, $serviceCta] = $serviceText[$service['key'] ?? ''] ?? ['', __('Learn more')])
+                    <a class="v2-service-card" href="{{ $service['url'] }}" @if($service['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
+                        <span class="v2-service-top"><x-site.art :name="$service['icon']" /><span class="v2-service-no" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span></span>
+                        <h3>{{ $service['title'] }}</h3>
+                        @if($serviceBody !== '')<p>{{ $serviceBody }}</p>@endif
+                        <span class="v2-service-cta">{{ $serviceCta }} →</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <section class="v2-section v2-section-navy" id="how-it-works" aria-labelledby="how-title">
+        <div class="v2-shell">
+            <div class="v2-head-center"><span class="v2-eyebrow">{{ __('How it works') }}</span><h2 id="how-title" class="v2-h2">{{ __('From first call to landing in Singapore') }}</h2></div>
+            <ol class="v2-timeline">
+                @foreach($steps as $step)
+                    <li><span class="v2-step-no" aria-hidden="true">{{ $loop->iteration }}</span><strong>{{ $step['title'] }}</strong>@if($step['text'] !== '')<p>{{ $step['text'] }}</p>@endif @if($step['time'] !== '')<small>{{ $step['time'] }}</small>@endif</li>
+                @endforeach
+            </ol>
+            <p class="v2-disclaimer">{{ __('Admission is decided by each institution. Student\'s Pass is decided by Singapore\'s ICA. We prepare and guide — we never promise approval.') }}</p>
+        </div>
+    </section>
+
+    <section class="v2-section v2-section-white" aria-labelledby="costs-title">
+        <div class="v2-shell v2-split">
+            <div>
+                <span class="v2-eyebrow">{{ __('Clear costs') }}</span>
+                <h2 id="costs-title" class="v2-h2">{{ __('Know the budget before you start') }}</h2>
+                <p class="v2-lead">{{ $costs !== [] ? __('A rough yearly estimate for a diploma student. Your consultant gives a written quote for your exact course.') : __('Costs depend on the course and institution. Your consultant gives you a written estimate for tuition, living costs and our fee before you pay anything.') }}</p>
+                <a class="v2-link" href="#consultation-form">{{ __('Get my exact estimate') }} →</a>
+            </div>
+            @if($costs !== [])
+            <table class="v2-costs">
+                <caption class="sg-visually-hidden">{{ __('Estimated yearly costs') }}</caption>
+                <tbody>
+                    @foreach($costs as $row)<tr><th scope="row">{{ $row['label'] }}</th><td>{{ $row['value'] }}</td></tr>@endforeach
+                </tbody>
+                @if($costTotal)<tfoot><tr><th scope="row">{{ __('Estimated total / year') }}</th><td>{{ preg_match('/^[\d.,\s–-]+$/u', $costTotal) === 1 ? 'SGD ' : '' }}{{ $costTotal }}</td></tr></tfoot>@endif
+            </table>
+            @else
+            <div class="v2-estimate">
+                <strong>{{ __('Tuition · Housing · Living costs · Student\'s Pass · Our fee') }}</strong>
+                <p>{{ __('All five in one written estimate for your course, free and before you decide.') }}</p>
+                <a class="v2-btn v2-btn-red" href="#consultation-form">{{ __('Ask for my estimate') }}</a>
+            </div>
+            @endif
+        </div>
+    </section>
+
+    @if($stories->isNotEmpty() || $googleRating)
+    <section class="v2-section" aria-labelledby="stories-title">
+        <div class="v2-shell">
+            <span class="v2-eyebrow">{{ __('Success stories') }}</span>
+            <h2 id="stories-title" class="v2-h2">{{ __('Students who made it') }}</h2>
+            @if($stories->isNotEmpty())
+            <div class="v2-stories">
+                @foreach($stories as $story)
+                    <figure class="v2-story">
+                        <blockquote>“{{ \Illuminate\Support\Str::limit((string) ($story->localized('summary') ?: strip_tags((string) $story->localized('body'))), 220) }}”</blockquote>
+                        <figcaption><strong>{{ $story->localized('title') }}</strong>@if($story->category)<span>{{ $story->category }}</span>@endif</figcaption>
+                    </figure>
+                @endforeach
+            </div>
+            @endif
+            @if($googleRating)
+                <p class="v2-rating"><strong>{{ __('Google rating :rating ★', ['rating' => $googleRating['rating']]) }}</strong> · {{ __('from :count reviews', ['count' => $googleRating['count']]) }} · <a href="{{ $googleRating['url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Read on Google') }}</a></p>
+            @endif
+        </div>
+    </section>
+    @endif
+
+    @if($team->isNotEmpty() || $faqs->isNotEmpty())
+    <section class="v2-section v2-section-white" aria-label="{{ __('Team and questions') }}">
+        <div class="v2-shell {{ $team->isNotEmpty() && $faqs->isNotEmpty() ? 'v2-split v2-split-top' : '' }}">
+            @if($team->isNotEmpty())
+            <div>
+                <span class="v2-eyebrow">{{ __('Meet your consultants') }}</span>
+                <h2 class="v2-h2">{{ __('Real people, real office') }}</h2>
+                <ul class="v2-team">
+                    @foreach($team as $member)
+                        <li>
+                            @if($member->photo_path)<img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->photo_path) }}" alt="{{ $member->name }}" loading="lazy" decoding="async">@else<span class="v2-team-initial" aria-hidden="true">{{ mb_substr($member->name, 0, 1) }}</span>@endif
+                            <strong>{{ $member->name }}</strong><span>{{ $member->role_title }}</span>
+                        </li>
+                    @endforeach
                 </ul>
-                <div class="sg-hero-actions">
-                    <a href="{{ $consultationUrl }}" class="sg-btn sg-btn-red">{{ __('Apply Now') }} {!! $svg('arrow') !!}</a>
-                    <a href="{{ $consultationUrl }}" class="sg-btn sg-btn-white">{!! $svg('support') !!} {{ __('Free Consultation') }}</a>
+            </div>
+            @endif
+            @if($faqs->isNotEmpty())
+            <div>
+                <span class="v2-eyebrow">{{ __('FAQ') }}</span>
+                <h2 class="v2-h2">{{ __('Common questions') }}</h2>
+                <div class="sg-faq">
+                    @foreach($faqs as $faq)
+                        <details @if($loop->first) open @endif><summary>{{ $faq->localized('title') }}</summary><div class="sg-faq-answer"><x-content-body :text="$faq->localized('body')" /></div></details>
+                    @endforeach
                 </div>
             </div>
-        </div>
-        <div class="sg-hero-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-    </section>
-
-    <div class="sg-shell sg-tiles-wrap">
-        <nav class="sg-tiles" aria-label="{{ __('Our Services') }}">
-            @php($tileMenu = app(\App\Services\Navigation\MenuService::class)->tree('home_tiles'))
-            @if($tileMenu !== null)
-                @foreach($tileMenu as $tile)<a class="sg-tile{{ $loop->first ? ' is-featured' : '' }}" href="{{ $tile['url'] }}" @if($tile['new_tab']) target="_blank" rel="noopener noreferrer" @endif><x-site.icon :name="$tile['icon'] ?? 'globe'" /><span>{{ $tile['label'] }}</span></a>@endforeach
-            @else
-            <a class="sg-tile is-featured" href="{{ $studyUrl }}">{!! $svg('cap') !!}<span>{{ __('Study in Singapore') }}</span></a>
-            <a class="sg-tile" href="{{ $studentsPassGuide?->publicUrl() ?? $studyUrl.'#guides' }}">{!! $svg('id') !!}<span>{{ __('Student\'s Pass (ICA)') }}</span></a>
-            <a class="sg-tile" href="{{ route('visa.index') }}">{!! $svg('passport') !!}<span>{{ __('Visa Services') }}</span></a>
-            @if($flightsVisible)<a class="sg-tile" href="{{ $flightsUrl }}">{!! $svg('plane') !!}<span>{{ __('Flight Services') }}</span></a>@endif
-            <a class="sg-tile" href="{{ $serviceLink('hotels') ?? route('service-enquiries.create', 'hotel-booking') }}">{!! $svg('bed') !!}<span>{{ __('Hotels & Homes') }}</span></a>
-            <a class="sg-tile" href="{{ $serviceLink('tours') ?? route('service-enquiries.create', 'tour-package') }}">{!! $svg('mountain') !!}<span>{{ __('Tour Packages') }}</span></a>
-            <a class="sg-tile" href="{{ route('explore-bangladesh.index') }}">{!! $svg('leaf') !!}<span>{{ __('Explore Bangladesh') }}</span></a>
             @endif
-        </nav>
-    </div>
-
-    <section class="sg-section sg-section-white" aria-labelledby="sg-consultancy-title">
-        <div class="sg-shell sg-split">
-            <a class="sg-media-card" href="{{ $studyUrl }}" aria-label="{{ __('Study in Singapore') }}">
-                <img src="{{ $img('1525625293386-3f8f99389edd', 1200) }}" alt="{{ __('Marina Bay, Singapore') }}" width="1200" height="750" loading="lazy" decoding="async">
-                <span class="sg-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span>
-            </a>
-            <div>
-                <h2 id="sg-consultancy-title">{{ __('Complete Student Consultancy for') }} <span class="sg-accent">{{ __('Singapore') }}</span></h2>
-                <p>{{ __('A complete, reliable and transparent support system for Bangladeshi students who want to study in Singapore.') }}</p>
-                <ul class="sg-checklist">
-                    <li>{{ __('Choose the right course and institution') }}</li>
-                    <li>{{ __('Application and admission support') }}</li>
-                    <li>{{ __('Student\'s Pass (ICA) guidance') }}</li>
-                    <li>{{ __('Travel, accommodation and arrival support') }}</li>
-                </ul>
-                <a href="{{ $studyUrl }}" class="sg-btn sg-btn-ghost-red">{{ __('Learn More') }} {!! $svg('arrow') !!}</a>
-            </div>
-        </div>
-    </section>
-
-    @if($showSection('services'))
-    <section class="sg-section" aria-labelledby="sg-services-title">
-        <div class="sg-shell">
-            <div class="sg-section-head">
-                <h2 id="sg-services-title">{{ __('Our Complete Services') }}</h2>
-                <p>{{ __('End-to-end solutions for your study, visa and travel needs.') }}</p>
-            </div>
-            <div class="sg-grid sg-grid-6">
-                <a class="sg-card sg-feature" href="{{ $studyUrl }}"><span class="sg-icon">{!! $svg('cap') !!}</span><h3>{{ __('Admission Support') }}</h3><p>{{ __('Course and institution selection, application guidance.') }}</p></a>
-                <a class="sg-card sg-feature" href="{{ $studentsPassGuide?->publicUrl() ?? $studyUrl.'#guides' }}"><span class="sg-icon sg-icon-navy">{!! $svg('id') !!}</span><h3>{{ __('Student\'s Pass (ICA) Support') }}</h3><p>{{ __('Application preparation and formalities support.') }}</p></a>
-                <a class="sg-card sg-feature" href="{{ $consultationUrl }}"><span class="sg-icon sg-icon-navy">{!! $svg('doc') !!}</span><h3>{{ __('Documents Support') }}</h3><p>{{ __('Document checklist, preparation and verification.') }}</p></a>
-                <a class="sg-card sg-feature" href="{{ $flightsVisible ? $flightsUrl : $consultationUrl }}"><span class="sg-icon">{!! $svg('plane') !!}</span><h3>{{ __('Air Ticket Booking') }}</h3><p>{{ __('Flight search, booking and itinerary support.') }}</p></a>
-                <a class="sg-card sg-feature" href="{{ route('service-enquiries.create', 'hotel-booking') }}"><span class="sg-icon">{!! $svg('bed') !!}</span><h3>{{ __('Accommodation') }}</h3><p>{{ __('Safe and student-friendly housing options.') }}</p></a>
-                <a class="sg-card sg-feature" href="{{ $consultationUrl }}"><span class="sg-icon sg-icon-green">{!! $svg('pin') !!}</span><h3>{{ __('Arrival Support') }}</h3><p>{{ __('Pre-departure briefing and arrival guidance.') }}</p></a>
-            </div>
-        </div>
-    </section>
-
-    @endif
-
-    @if($showSection('benefits'))
-    <section class="sg-section sg-band" aria-labelledby="sg-steps-title">
-        <div class="sg-shell">
-            <div class="sg-section-head">
-                <span class="sg-eyebrow">{{ __('How it works') }}</span>
-                <h2 id="sg-steps-title">{{ __('Your journey to Singapore, step by step') }}</h2>
-            </div>
-            <ol class="sg-steps">
-                <li><strong>{{ __('Free consultation') }}</strong>{{ __('Eligibility review and goals.') }}</li>
-                <li><strong>{{ __('Course & institution') }}</strong>{{ __('Shortlist, intake and budget.') }}</li>
-                <li><strong>{{ __('Admission') }}</strong>{{ __('Application and documents.') }}</li>
-                <li><strong>{{ __('Student\'s Pass') }}</strong>{{ __('Preparation and tracking with ICA.') }}</li>
-                <li><strong>{{ __('Departure & arrival') }}</strong>{{ __('Ticket, housing and arrival help.') }}</li>
-            </ol>
-            <p class="sg-note">{{ __('Admission decisions are made by the institution, and Student\'s Pass decisions by Singapore\'s Immigration & Checkpoints Authority (ICA).') }}</p>
-        </div>
-    </section>
-
-    @endif
-
-    @if($guides->isNotEmpty())
-    <section class="sg-section sg-section-white" aria-labelledby="sg-guides-title">
-        <div class="sg-shell sg-split">
-            <div>
-                <span class="sg-eyebrow">{{ __('Singapore Guides') }}</span>
-                <h2 id="sg-guides-title">{{ __('Step-by-step, official-source guides') }}</h2>
-                <p>{{ __('Checked against official Singapore sources such as ICA and MOE.') }}</p>
-                <a href="{{ route('consultancy.guides.index') }}" class="sg-btn sg-btn-ghost-red">{{ __('View all guides') }} {!! $svg('arrow') !!}</a>
-            </div>
-            <div class="sg-guide-list">
-                @foreach($guides as $guide)
-                    <a class="sg-card sg-guide" href="{{ $guide->publicUrl() }}">
-                        <img src="{{ $img($guideImages[$loop->index % count($guideImages)], 300) }}" alt="" width="96" height="68" loading="lazy" decoding="async">
-                        <span><strong>{{ $guide->localized('title') }}</strong><span>{{ \Illuminate\Support\Str::limit((string) $guide->localized('summary'), 80) }}</span></span>
-                        {!! $svg('arrow') !!}
-                    </a>
-                @endforeach
-            </div>
         </div>
     </section>
     @endif
 
-    @if($showSection('service_panels'))
-    <section class="sg-section" aria-labelledby="sg-more-title">
-        <div class="sg-shell">
-            <div class="sg-section-head">
-                <h2 id="sg-more-title">{{ __('Visa & Travel Services') }}</h2>
-                <p>{{ __('Beyond study: visas, flights, hotels and tours from one team.') }}</p>
-            </div>
-            <div class="sg-grid sg-grid-3">
-                @feature('visa')<a class="sg-card sg-feature sg-feature-left" href="{{ route('visa.index') }}"><span class="sg-icon sg-icon-navy">{!! $svg('visa') !!}</span><h3>{{ __('Visa Services') }}</h3><p>{{ __('Tourist, business and student visa guidance and document help.') }}</p><x-site.provider-badge :state="$serviceStatus('visa')" /></a>
-                <a class="sg-card sg-feature sg-feature-left" href="{{ route('work-visa.index') }}"><span class="sg-icon sg-icon-navy">{!! $svg('briefcase') !!}</span><h3>{{ __('Work Visa') }}</h3><p>{{ __('Job visa and work permit information.') }}</p></a>@endfeature
-                @if($flightsVisible)<a class="sg-card sg-feature sg-feature-left" href="{{ $flightsUrl }}"><span class="sg-icon">{!! $svg('plane') !!}</span><h3>{{ __('Flights') }}</h3><p>{{ __('Search fares or send a flight enquiry.') }}</p><x-site.provider-badge :state="$serviceStatus('flights')" /></a>@endif
-                <a class="sg-card sg-feature sg-feature-left" href="{{ $serviceLink('hotels') ?? route('service-enquiries.create', 'hotel-booking') }}"><span class="sg-icon">{!! $svg('bed') !!}</span><h3>{{ __('Hotels & Homes') }}</h3><p>{{ __('Stays in Singapore, Bangladesh and abroad.') }}</p><x-site.provider-badge :state="$serviceStatus('hotels')" /></a>
-                <a class="sg-card sg-feature sg-feature-left" href="{{ $serviceLink('tours') ?? route('service-enquiries.create', 'tour-package') }}"><span class="sg-icon sg-icon-green">{!! $svg('mountain') !!}</span><h3>{{ __('Tour Packages') }}</h3><p>{{ __('Holiday and group tour packages.') }}</p><x-site.provider-badge :state="$serviceStatus('tours')" /></a>
-                @if($showSection('promotions'))@feature('about')<a class="sg-card sg-feature sg-feature-left" href="{{ route('offers.index') }}"><span class="sg-icon">{!! $svg('tag') !!}</span><h3>{{ __('Offers & Promotions') }}</h3><p>{{ __('Current offers from Eagle Global Hub.') }}</p></a>@endfeature @endif
-            </div>
-        </div>
-    </section>
-
-    @endif
-
-    @if($showSection('destinations') && $destinations->isNotEmpty())
-    <section class="sg-section sg-section-white" aria-labelledby="sg-bd-title">
-        <div class="sg-shell">
-            <div class="sg-section-head">
-                <h2 id="sg-bd-title">{{ __('Explore Bangladesh') }}</h2>
-                <p>{{ __('Discover the natural beauty, culture and heritage of Bangladesh.') }}</p>
-            </div>
-            <div class="sg-grid sg-grid-3">
-                @foreach($destinations as $destination)
-                    <a class="sg-photo-card" href="{{ route('explore-bangladesh.show', $destination->slug) }}">
-                        @if($destination->cover_image_path)<img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($destination->cover_image_path) }}" alt="{{ $destination->cover_image_alt ?? $destination->name }}" loading="lazy" decoding="async">@endif
-                        <div><strong>{{ $destination->name }}</strong><span>{{ \Illuminate\Support\Str::limit((string) $destination->summary, 70) }}</span></div>
-                    </a>
-                @endforeach
+    <section class="v2-section" aria-labelledby="visit-title">
+        <div class="v2-shell">
+            <div class="v2-contact-band">
+                <div>
+                    <h2 id="visit-title">{{ __('Visit us or call today') }}</h2>
+                    @if(filled($address))<p>{{ $address }}</p>@endif
+                    @if($facts->get('office_hours'))<p>{{ $facts->get('office_hours') }}</p>@endif
+                    <div class="v2-actions">
+                        @if($facts->phone())<a class="v2-btn v2-btn-white" href="{{ $facts->telUrl() }}">{{ __('Call :phone', ['phone' => $facts->phone()]) }}</a>@endif
+                        @if($whatsappUrl)<a class="v2-btn v2-btn-navy" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer">{{ __('WhatsApp us') }}</a>@endif
+                        @if(! $facts->mapEmbedUrl() && $directionsUrl)<a class="v2-btn v2-btn-ghost-light" href="{{ $directionsUrl }}" target="_blank" rel="noopener noreferrer">{{ __('Get directions') }}</a>@endif
+                    </div>
+                </div>
+                @if($facts->mapEmbedUrl())
+                    <iframe class="v2-map" src="{{ $facts->mapEmbedUrl() }}" title="{{ __('Map of our office') }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                @endif
             </div>
         </div>
     </section>
-    @endif
-
-    @if($showSection('newsletter'))
-    <section class="sg-section-tight" aria-labelledby="sg-newsletter-title">
-        <div class="sg-shell">
-            <div class="sg-card sg-newsletter">
-                <div><h2 id="sg-newsletter-title">{{ __((string) data_get($settings, 'newsletter_title', data_get($settings, 'journey_title'))) }}</h2><p>{{ __((string) data_get($settings, 'newsletter_subtitle', data_get($settings, 'journey_copy'))) }}</p></div>
-                <form method="POST" action="{{ route('newsletter.subscribe') }}">@csrf<label class="sg-visually-hidden" for="newsletter-email">{{ __('Email address') }}</label><input id="newsletter-email" type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('Enter your email address') }}" autocomplete="email" required><button type="submit" class="sg-btn sg-btn-red">{{ __('Subscribe') }}</button></form>
-            </div>
-            @if(session('newsletter_status'))<p class="sg-note" role="status">{{ session('newsletter_status') }}</p>@endif
-            @error('email')<p class="sg-note" role="alert">{{ $message }}</p>@enderror
-        </div>
-    </section>
-    @endif
 </main>
 @endsection

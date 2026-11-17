@@ -26,6 +26,8 @@ final class FlightResultsPageUiContractTest extends TestCase
         $this->seed(
             RolePermissionSeeder::class
         );
+        // The search screen is shown once the flight provider is live.
+        $this->makeFlightsLive();
     }
 
     public function test_result_page_exposes_summary_count_and_filter_controls(): void

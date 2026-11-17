@@ -127,7 +127,8 @@ class NewPublicPagesTest extends TestCase
             $this->assertStringContainsString('<h3>'.$service.'</h3>', $html);
         }
         $this->assertStringContainsString('Enquiry only', $html);
-        $this->assertStringContainsString('Waiting for API', $html);
+        $this->assertStringNotContainsString('Waiting for API', $html);
+        $this->assertStringContainsString('Coming soon', $html);
         $this->assertStringContainsString(route('services.show', 'trains'), $html);
         $this->assertStringContainsString(route('services.show', 'business-visa'), $html);
         $this->assertStringContainsString(route('services.show', 'business-class'), $html);
