@@ -27,7 +27,7 @@
             $user?->can('flights.book') ? ['key' => 'bookings', 'label' => __('Manage Booking'), 'href' => route('bookings.index'), 'icon' => 'bookings'] : null,
             ['key' => 'notifications', 'label' => __('Notifications'), 'href' => route('notifications.index'), 'icon' => 'notifications'],
             ['key' => 'account', 'label' => __('My Account'), 'href' => route('account.overview'), 'icon' => 'profile'],
-            ['key' => 'study', 'label' => __('Study in Singapore'), 'href' => route('consultancy.singapore'), 'icon' => 'study'],
+            ['key' => 'study', 'label' => __('Study in Malaysia'), 'href' => route('consultancy.malaysia'), 'icon' => 'study'],
         ]));
     $title = match ($kind) {
         'agent' => __('Agent Portal'),

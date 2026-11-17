@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Agent\AgentPortalController;
 use App\Http\Controllers\Agent\PartnerRegistrationController;
 use App\Http\Controllers\Consultancy\InstitutionDirectoryController;
+use App\Http\Controllers\Consultancy\MalaysiaStudyController;
 use App\Http\Controllers\Consultancy\SingaporeGuideIndexController;
 use App\Http\Controllers\Consultancy\SingaporeStudyController;
 use App\Http\Controllers\Consultancy\StudentEnquiryController;
@@ -883,6 +884,17 @@ Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
  * and applications. Statuses are manual staff records: no institution or ICA
  * system is called, and no admission or Student's Pass outcome is implied.
  */
+/*
+ * Study destinations: Malaysia (main) and Singapore. Guides and institutions share
+ * one controller each; the route's "country" default selects the destination.
+ */
+Route::middleware('feature:student-consultancy')->group(function () {
+    Route::get('/study-in-malaysia', MalaysiaStudyController::class)->name('consultancy.malaysia');
+    Route::get('/study-in-malaysia/guides', SingaporeGuideIndexController::class)->defaults('country', 'MY')->name('consultancy.malaysia.guides.index');
+    Route::get('/study-in-malaysia/institutions', InstitutionDirectoryController::class)->defaults('country', 'MY')->name('consultancy.malaysia.institutions.index');
+});
+Route::get('/study-in-malaysia/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('consultancy.malaysia.guides.show');
+
 Route::get('/study-in-singapore', SingaporeStudyController::class)
     ->middleware('feature:student-consultancy')
     ->name('consultancy.singapore');
@@ -898,8 +910,8 @@ Route::get('/study-in-singapore/institutions', InstitutionDirectoryController::c
 Route::get('/travel-services', TravelServicesController::class)->name('travel-services.index');
 Route::get('/services', [ServicePageController::class, 'index'])->name('services.index');
 Route::get('/services/{slug}', [ServicePageController::class, 'show'])->where('slug', '[a-z]+(?:-[a-z]+)*')->name('services.show');
-Route::get('/map', [FeaturePageController::class, 'map'])->name('map');
-Route::get('/mobile-app', [FeaturePageController::class, 'mobileApp'])->name('mobile-app');
+Route::get('/map', [FeaturePageController::class, 'map'])->middleware('has-content')->name('map');
+Route::get('/mobile-app', [FeaturePageController::class, 'mobileApp'])->middleware('has-content')->name('mobile-app');
 
 Route::post('/study-in-singapore/enquiries', [StudentEnquiryController::class, 'store'])
     ->middleware(['feature:student-consultancy', 'throttle:5,1'])
@@ -1056,7 +1068,8 @@ Route::middleware(['auth', 'verified'])
  * Offers (staff-written) and reviews (customer-written, moderated).
  */
 Route::get('/offers', OfferController::class)->name('offers.index');
-Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+// Signed-in customers can still open the page to write the first review.
+Route::get('/reviews', [ReviewController::class, 'index'])->middleware('has-content:guests')->name('reviews.index');
 Route::post('/reviews', [ReviewController::class, 'store'])
     ->middleware(['auth', 'verified', 'throttle:3,10'])->name('reviews.store');
 
@@ -1156,7 +1169,9 @@ foreach ([
     'inspiration' => ['/get-inspired', 'inspiration'],
     'success-stories' => ['/success-stories', 'success-stories'],
 ] as $listing => [$path, $name]) {
-    Route::get($path, [ContentPageController::class, 'index'])->defaults('listing', $listing)->name($name.'.index');
+    // Success stories redirect to the homepage until the first one is published.
+    Route::get($path, [ContentPageController::class, 'index'])->defaults('listing', $listing)
+        ->middleware($listing === 'success-stories' ? ['has-content'] : [])->name($name.'.index');
 }
 Route::get('/company/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('company.show');
 Route::get('/business-services/projects/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('business-services.projects.show');

@@ -38,6 +38,7 @@ class ProductionSeeder extends Seeder
             SingaporeGuideSeeder::class,
             ContentDraftSeeder::class,
             StarterContentSeeder::class,
+            MalaysiaGuidesSeeder::class,
             MenuSeeder::class,
         ]);
     }

@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', __('About Us'))
-@section('meta_description', __('Eagle Global Hub LTD is a Singapore student consultancy and travel agency in Gulshan, Dhaka. Meet the team, see how we work and visit our office.'))
+@section('meta_description', __('Eagle Global Hub LTD is a Malaysia and Singapore student consultancy and travel agency in Gulshan, Dhaka. Meet the team, see how we work and visit our office.'))
 @section('body_class', 'sg-body-v2')
 
 @php
@@ -37,9 +37,9 @@
                 @elseif($story)
                     <p class="v2-lead">{{ $story }}</p>
                 @else
-                    <p class="v2-lead">{{ __('Eagle Global Hub LTD is a study consultancy and travel agency in Gulshan, Dhaka. Our main focus is helping Bangladeshi students study in Singapore, with visa and travel support from the same team.') }}</p>
+                    <p class="v2-lead">{{ __('Eagle Global Hub LTD is a study consultancy and travel agency in Gulshan, Dhaka. Our main focus is helping Bangladeshi students study in Malaysia, and in Singapore, with visa and travel support from the same team.') }}</p>
                 @endif
-                <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ route('consultancy.singapore') }}#apply">{{ __('Book a free consultation') }}</a><a class="v2-btn v2-btn-outline" href="{{ route('support') }}">{{ __('Contact Us') }}</a></div>
+                <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ route('consultancy.malaysia') }}#apply">{{ __('Book a free consultation') }}</a><a class="v2-btn v2-btn-outline" href="{{ route('support') }}">{{ __('Contact Us') }}</a></div>
             </div>
             @if($teamPhoto)<img class="v2-about-photo" src="{{ $teamPhoto }}" alt="{{ __('Our team in the office') }}" loading="eager" decoding="async">@endif
         </div>
@@ -121,7 +121,7 @@
         <div class="v2-shell">
             <div class="v2-cta-band">
                 <div><h2 id="meet-title">{{ __('Meet us at the office') }}</h2>@if($officeLine !== '')<p>{{ $officeLine }}</p>@endif</div>
-                <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ route('support') }}">{{ __('Contact us') }}</a><a class="v2-btn v2-btn-white" href="{{ route('consultancy.singapore') }}#apply">{{ __('Free consultation') }}</a></div>
+                <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ route('support') }}">{{ __('Contact us') }}</a><a class="v2-btn v2-btn-white" href="{{ route('consultancy.malaysia') }}#apply">{{ __('Free consultation') }}</a></div>
             </div>
         </div>
     </section>

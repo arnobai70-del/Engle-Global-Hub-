@@ -18,7 +18,7 @@ class ServiceCatalog
         return [
             'student-visa' => [
                 'title' => 'Student Visa', 'group' => 'study', 'icon' => 'cap', 'image' => '1541339907198-e08756dedf3f',
-                'summary' => 'Study abroad consultancy with Singapore as our main destination, plus Malaysia, Bulgaria, the UK, Japan, South Korea and Cyprus.',
+                'summary' => 'Study abroad consultancy with Malaysia as our main destination, then Singapore, plus Bulgaria, the UK, Japan, South Korea and Cyprus.',
                 'points' => ['Course and institution shortlisting', 'Admission application and document checklist', 'Student visa or Student\'s Pass preparation', 'Air ticket, accommodation and arrival support'],
                 'countries' => 'student_visa', 'country_link' => 'consultation',
                 'actions' => [['label' => 'Free Consultation', 'route' => ['consultancy.singapore'], 'fragment' => 'consultation', 'primary' => true], ['label' => 'Study in Singapore', 'route' => ['consultancy.singapore']], ['label' => 'Singapore Guides', 'route' => ['consultancy.guides.index']]],

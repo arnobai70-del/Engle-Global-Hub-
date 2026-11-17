@@ -65,7 +65,7 @@ class SiteRedesignTest extends TestCase
         $html = (string) $this->get(route('home'))->assertOk()->getContent();
 
         $this->assertStringNotContainsString('&amp;amp;', $html);
-        $this->assertStringContainsString('<title>Study in Singapore from Bangladesh | Eagle Global Hub</title>', $html);
+        $this->assertStringContainsString('<title>Study in Malaysia from Bangladesh | Eagle Global Hub</title>', $html);
 
         $terms = (string) $this->get(route('terms'))->assertOk()->getContent();
         $this->assertStringNotContainsString('&amp;amp;', $terms);
@@ -78,7 +78,7 @@ class SiteRedesignTest extends TestCase
 
         $this->assertStringContainsString('css/egh-sg.css?v=', $html);
         $this->assertStringContainsString('js/egh-sg-nav.js?v=', $html);
-        $this->assertStringContainsString('Your Gateway to Study in Singapore', $html);
+        $this->assertStringContainsString('Your Gateway to Study in Malaysia', $html);
         $this->assertStringNotContainsString('<script>', $html);
     }
 }

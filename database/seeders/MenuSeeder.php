@@ -59,13 +59,19 @@ class MenuSeeder extends Seeder
         return [
             // At most six top-level items (DESIGN_BRIEF.md). Pages without published content hide themselves.
             'header' => [
+                ['key' => 'study-malaysia', 'label' => 'Study in Malaysia', 'feature' => 'student-consultancy', 'children' => [
+                    ['key' => 'malaysia-main', 'label' => 'Study in Malaysia', 'target' => $r('consultancy.malaysia')],
+                    ['key' => 'malaysia-guides', 'label' => 'Malaysia Guides', 'target' => $r('consultancy.malaysia.guides.index')],
+                    ['key' => 'malaysia-institutions', 'label' => 'Institutions in Malaysia', 'target' => $r('consultancy.malaysia.institutions.index')],
+                    ['key' => 'malaysia-apply', 'label' => 'Free Consultation', 'target' => $r('consultancy.malaysia'), 'fragment' => 'apply'],
+                    ['key' => 'study-applications', 'label' => 'My Applications', 'target' => $r('student.applications.index'), 'visibility' => 'auth'],
+                ]],
                 ['key' => 'study', 'label' => 'Study in Singapore', 'feature' => 'student-consultancy', 'children' => [
                     ['key' => 'study-main', 'label' => 'Study in Singapore', 'target' => $r('consultancy.singapore')],
                     ['key' => 'study-student-visa', 'label' => 'Student Visa', 'target' => $r('services.show', 'student-visa')],
                     ['key' => 'study-guides', 'label' => 'Singapore Guides', 'target' => $r('consultancy.guides.index')],
                     ['key' => 'study-institutions', 'label' => 'Institutions', 'target' => $r('consultancy.institutions.index')],
                     ['key' => 'study-apply', 'label' => 'Free Consultation', 'target' => $r('consultancy.singapore'), 'fragment' => 'apply'],
-                    ['key' => 'study-applications', 'label' => 'My Applications', 'target' => $r('student.applications.index'), 'visibility' => 'auth'],
                 ]],
                 ['key' => 'travel', 'label' => 'Visa & Travel', 'children' => [
                     ['key' => 'travel-tourist-visa', 'label' => 'Tourist Visa', 'target' => $r('services.show', 'tourist-visa')],
@@ -79,7 +85,6 @@ class MenuSeeder extends Seeder
                     ['key' => 'travel-all', 'label' => 'All travel services', 'target' => $r('travel-services.index')],
                 ]],
                 ['key' => 'how-it-works', 'label' => 'How it works', 'target' => $r('home'), 'fragment' => 'how-it-works'],
-                ['key' => 'success', 'label' => 'Success stories', 'target' => $r('success-stories.index')],
                 ['key' => 'about', 'label' => 'About', 'children' => [
                     ['key' => 'about-us', 'label' => 'About Us', 'target' => $r('about')],
                     ['key' => 'about-why-us', 'label' => 'Why Us', 'target' => $r('why-us')],
@@ -88,6 +93,7 @@ class MenuSeeder extends Seeder
             ],
             'footer' => [
                 ['key' => 'footer-study', 'label' => 'Study', 'children' => [
+                    ['key' => 'footer-malaysia', 'label' => 'Study in Malaysia', 'target' => $r('consultancy.malaysia')],
                     ['key' => 'footer-singapore', 'label' => 'Study in Singapore', 'target' => $r('consultancy.singapore')],
                     ['key' => 'footer-institutions', 'label' => 'Institutions', 'target' => $r('consultancy.institutions.index')],
                     ['key' => 'footer-students-pass', 'label' => 'Student\'s Pass', 'target' => $r('services.show', 'student-visa')],
@@ -125,15 +131,15 @@ class MenuSeeder extends Seeder
             ],
             // The six service cards on the homepage (title, icon and link; the short text is built in).
             'home_tiles' => [
-                ['key' => 'tile-study', 'label' => 'Study in Singapore', 'target' => $r('consultancy.singapore'), 'icon' => 'cap'],
-                ['key' => 'tile-students-pass', 'label' => "Student's Pass (ICA)", 'target' => $r('services.show', 'student-visa'), 'icon' => 'id'],
+                ['key' => 'tile-malaysia', 'label' => 'Study in Malaysia', 'target' => $r('consultancy.malaysia'), 'icon' => 'cap'],
+                ['key' => 'tile-student-pass-my', 'label' => 'Student Pass (EMGS)', 'target' => $r('consultancy.malaysia'), 'fragment' => 'student-pass', 'icon' => 'id'],
+                ['key' => 'tile-singapore', 'label' => 'Study in Singapore', 'target' => $r('consultancy.singapore'), 'icon' => 'globe'],
                 ['key' => 'tile-visa', 'label' => 'Visa services', 'target' => $r('services.show', 'tourist-visa'), 'icon' => 'passport'],
                 ['key' => 'tile-flights', 'label' => 'Air tickets', 'target' => $r('services.show', 'air-ticket'), 'icon' => 'plane'],
                 ['key' => 'tile-housing', 'label' => 'Housing & arrival', 'target' => $r('hotels.index'), 'icon' => 'bed'],
-                ['key' => 'tile-tours', 'label' => 'Tours & holidays', 'target' => $r('services.show', 'holiday-packages'), 'icon' => 'mountain'],
             ],
             'header_cta' => [
-                ['key' => 'cta-consultation', 'label' => 'Free Consultation', 'target' => $r('consultancy.singapore'), 'fragment' => 'apply'],
+                ['key' => 'cta-consultation', 'label' => 'Free Consultation', 'target' => $r('consultancy.malaysia'), 'fragment' => 'apply'],
             ],
         ];
     }

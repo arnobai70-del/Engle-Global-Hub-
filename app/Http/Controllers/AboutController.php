@@ -27,7 +27,8 @@ class AboutController extends Controller
                 'vision' => trim((string) ($content->section('vision')?->localized('body') ?? $settings->get('company', 'vision', ''))),
                 'why_choose_us_bn' => trim((string) ($content->section('why-different')?->localized('body') ?? $settings->get('company', 'why_choose_us_bn', ''))),
             ];
-            $team = TeamMember::query()->published()->get(['id', 'name', 'role_title', 'bio', 'photo_path']);
+            // Only members with a real photo are shown; without any, the team section is hidden.
+            $team = TeamMember::query()->published()->whereNotNull('photo_path')->where('photo_path', '!=', '')->get(['id', 'name', 'role_title', 'bio', 'photo_path']);
             $officeGallery = MediaAsset::query()->publishedIn('office_gallery')->get(['id', 'path', 'alt_text', 'caption', 'width', 'height']);
             // /company now redirects here, so published company profiles are listed on this page.
             $companyProfiles = ContentEntry::query()->published(ContentType::CompanyProfile)->get();

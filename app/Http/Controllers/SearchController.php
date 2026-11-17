@@ -37,6 +37,7 @@ class SearchController extends Controller
         $matches = fn (string ...$texts): bool => str_contains(mb_strtolower(implode(' ', $texts)), $needle);
 
         $pages = collect([
+            ['consultancy.malaysia', 'student-consultancy', __('Study in Malaysia from Bangladesh'), __('Malaysian universities, the EMGS Student Pass and eVAL'), 'study malaysia student pass emgs eval kuala lumpur university college'],
             ['consultancy.singapore', 'student-consultancy', __('Study in Singapore from Bangladesh'), __('Student consultancy, admission and Student\'s Pass guidance'), 'study singapore student visa admission university college pass consultation'],
             ['about', 'about', __('About Us'), __('About Eagle Global Hub LTD, mission, vision and team'), 'about company team mission vision'],
             ['support', 'support', __('Contact & Support'), __('Office address, phone and email'), 'contact support help phone email office address'],

@@ -13,7 +13,7 @@
 
     @php
         $accountTypes = [
-            'student' => ['icon' => 'cap', 'title' => __('Student'), 'text' => __('Study in Singapore: track your application, documents and messages.')],
+            'student' => ['icon' => 'cap', 'title' => __('Student'), 'text' => __('Study in Malaysia or Singapore: track your application, documents and messages.')],
             'traveller' => ['icon' => 'plane', 'title' => __('Traveller'), 'text' => __('Visa, air tickets, hotels and tours: follow your enquiries and bookings.')],
             'agent' => ['icon' => 'group', 'title' => __('Agent / B2B partner'), 'text' => __('Refer students and clients. Your partner application is reviewed by our team.')],
         ];

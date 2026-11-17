@@ -9,6 +9,7 @@ use App\Models\ContentEntry;
 use App\Models\Course;
 use App\Models\Institution;
 use App\Models\ServiceDestination;
+use App\Services\Consultancy\StudyCountries;
 use App\Services\SiteFacts;
 use Illuminate\Database\QueryException;
 use Illuminate\View\View;
@@ -24,10 +25,11 @@ class SingaporeStudyController extends Controller
     {
         try {
             $courses = Course::query()->where('is_active', true)
-                ->whereIn('institution_id', Institution::query()->publiclyListed()->select('id'))
+                ->whereIn('institution_id', Institution::query()->publiclyListed()
+                    ->where(fn ($query) => $query->whereNull('country_id')->orWhereHas('country', fn ($country) => $country->where('iso2', '!=', 'MY')))->select('id'))
                 ->with(['institution:id,name', 'intakes' => fn ($query) => $query->where('is_open', true)->where('starts_on', '>=', now()->toDateString())->orderBy('starts_on')])
                 ->orderBy('name')->get();
-            $guides = ContentEntry::query()->published(ContentType::Guide)->limit(4)->get();
+            $guides = app(StudyCountries::class)->scopeGuides(ContentEntry::query()->published(ContentType::Guide), 'SG')->limit(4)->get();
             // Other study destinations staff manage in Admin › Services & Destinations (Singapore first).
             $destinations = ServiceDestination::query()->where('service', BusinessService::StudentVisa->value)->where('is_active', true)
                 ->with('country:id,name,iso2')->orderBy('sort_order')->get()->pluck('country')->filter()->values();

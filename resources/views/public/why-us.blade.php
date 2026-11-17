@@ -11,20 +11,20 @@
     $promises = $whyUs->promises();
     $steps = $whyUs->steps();
     $faqs = app(\App\Services\Content\PageContent::class)->published(\App\Enums\ContentType::Faq)->take(6);
-    $consultationUrl = route('consultancy.singapore').'#consultation';
+    $consultationUrl = route('consultancy.malaysia').'#apply';
     $services = [
-        ['url' => route('consultancy.singapore'), 'icon' => 'cap', 'title' => __('Study in Singapore')],
+        ['url' => route('consultancy.malaysia'), 'icon' => 'cap', 'title' => __('Study in Malaysia')],
+        ['url' => route('consultancy.singapore'), 'icon' => 'globe', 'title' => __('Study in Singapore')],
         ['url' => route('services.show', 'student-visa'), 'icon' => 'id', 'title' => __('Student Visa')],
         ['url' => route('services.show', 'tourist-visa'), 'icon' => 'passport', 'title' => __('Tourist Visa')],
         ['url' => route('work-visa.index'), 'icon' => 'briefcase', 'title' => __('Work Visa')],
         ['url' => route('services.show', 'air-ticket'), 'icon' => 'plane', 'title' => __('Air Ticket')],
-        ['url' => route('services.show', 'holiday-packages'), 'icon' => 'mountain', 'title' => __('Holiday Packages')],
     ];
 @endphp
 
 @section('content')
 <main>
-    <section class="sg-page-hero" style="--sg-page-hero: url('https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1800&q=80')" aria-labelledby="why-title">
+    <section class="sg-page-hero" style="--sg-page-hero: url('{{ asset('images/malaysia/kuala-lumpur-day.webp') }}')" aria-labelledby="why-title">
         <div class="sg-shell">
             <nav class="sg-crumbs" aria-label="{{ __('Breadcrumb') }}"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <span aria-current="page">{{ __('Why Us') }}</span></nav>
             <h1 id="why-title">{{ __('Why choose Eagle Global Hub') }}</h1>

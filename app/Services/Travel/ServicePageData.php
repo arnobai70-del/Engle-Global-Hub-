@@ -41,7 +41,7 @@ class ServicePageData
             'title' => 'Hotels', 'group' => 'travel', 'route' => 'hotels.index', 'capability' => 'hotels',
             'headline' => 'Hotels and student housing',
             'intro' => 'Tell us the city, dates and budget. Our team suggests hotels, shared rooms or student hostels and confirms the details with you before anything is booked.',
-            'included' => ['Hotels for holidays and business trips', 'Shared rooms and student hostels in Singapore', 'Hotel bookings for visa applications', 'Airport arrival guidance'],
+            'included' => ['Hotels for holidays and business trips', 'Shared rooms and student hostels in Malaysia and Singapore', 'Hotel bookings for visa applications', 'Airport arrival guidance'],
             'related' => ['holiday-packages', 'air-ticket', 'tourist-visa'],
         ],
         'tours' => [
@@ -56,7 +56,7 @@ class ServicePageData
             'headline' => 'Air tickets for students, families and business trips',
             'intro' => 'Send your route and dates. Our team compares airlines and replies with fare options, baggage rules and the total price before you pay.',
             'included' => ['One-way, return and multi-city tickets', 'Student fares and extra baggage where airlines offer them', 'Business class quotes', 'Date changes and booking support'],
-            'topic_label' => 'From – to (for example Dhaka – Singapore)',
+            'topic_label' => 'From – to (for example Dhaka – Kuala Lumpur)',
             'related' => ['business-class', 'hotels', 'tourist-visa'],
         ],
     ];
@@ -65,7 +65,7 @@ class ServicePageData
     private const SERVICES = [
         'student-visa' => [
             'headline' => 'Student visa and Student\'s Pass support',
-            'intro' => 'Singapore is our main study destination. We help you choose a course, apply for admission and prepare your Student\'s Pass application with ICA, step by step.',
+            'intro' => 'Malaysia is our main study destination, followed by Singapore. We help you choose a course, apply for admission and prepare your student visa application (the EMGS Student Pass for Malaysia, the Student\'s Pass with ICA for Singapore), step by step.',
         ],
         'tourist-visa' => [
             'headline' => 'Tourist visa help',
@@ -81,7 +81,7 @@ class ServicePageData
             'headline' => 'Air tickets for students, families and business trips',
             'intro' => 'Send your route and dates. Our team compares airlines and replies with fare options, baggage rules and the total price before you pay.',
             'included' => ['One-way, return and multi-city tickets', 'Student and family travel', 'Business class quotes', 'Date changes and booking support'],
-            'topic_label' => 'From – to (for example Dhaka – Singapore)',
+            'topic_label' => 'From – to (for example Dhaka – Kuala Lumpur)',
         ],
         'business-class' => [
             'headline' => 'Business class fares',
@@ -103,9 +103,9 @@ class ServicePageData
     /** Defaults per service group. */
     private const GROUPS = [
         'study' => [
-            'steps' => [['Offer letter', 'The institution issues your offer and registers you with ICA.'], ['eForm 16', 'We help you complete the online application.'], ['In-principle approval', 'ICA reviews it; you pay the issuance fee.'], ['Arrival', 'Medical check and Student\'s Pass card in Singapore.']],
-            'documents' => ['Passport (valid 6+ months)', 'SSC & HSC certificates and transcripts', 'Degree certificate (if any)', 'English test result', 'Bank statement / sponsor letter', 'Passport-size photos'],
-            'disclaimer' => 'Admission is decided by each institution and the Student\'s Pass by Singapore\'s ICA. We prepare a complete application; we never promise approval.',
+            'steps' => [['Free consultation', 'Goals, budget and the right destination for you.'], ['Offer letter', 'Admission application to your chosen institution.'], ['Student visa', 'Application prepared with you: EMGS for Malaysia, ICA for Singapore.'], ['Arrival', 'Travel, then the steps the destination requires after arrival.']],
+            'documents' => ['Valid passport', 'SSC & HSC certificates and transcripts', 'Degree certificate (if any)', 'English test result', 'Bank statement / sponsor letter', 'Passport-size photos'],
+            'disclaimer' => 'Admission is decided by each institution, and the student visa by the destination\'s authority (the Immigration Department of Malaysia through EMGS, or Singapore\'s ICA). We prepare a complete application; we never promise approval.',
             'topic_label' => 'Study level or course',
             'pay' => 'Consultation is free',
         ],

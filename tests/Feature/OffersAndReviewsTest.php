@@ -53,9 +53,11 @@ class OffersAndReviewsTest extends TestCase
     public function test_customer_reviews_require_login_and_moderation(): void
     {
         $this->post(route('reviews.store'), [])->assertRedirect(route('login'));
-        $this->get(route('reviews.index'))->assertOk()->assertSee('Sign in')->assertSee('No reviews have been published yet.');
+        // While nothing is published, guests go to the homepage; signed-in customers can still write a review.
+        $this->get(route('reviews.index'))->assertRedirect(route('home'));
 
         $customer = $this->user('customer');
+        $this->actingAs($customer)->get(route('reviews.index'))->assertOk()->assertSee('No reviews have been published yet.');
         $this->actingAs($customer)->post(route('reviews.store'), [
             'rating' => 5, 'title' => 'Helpful team', 'display_name' => 'Rahim',
             'body' => 'They explained every step of my visa file clearly.',
@@ -63,7 +65,7 @@ class OffersAndReviewsTest extends TestCase
 
         $review = Review::query()->sole();
         $this->assertSame(Review::STATUS_PENDING, $review->status);
-        $this->get(route('reviews.index'))->assertDontSee('Helpful team');
+        $this->actingAs($customer)->get(route('reviews.index'))->assertDontSee('Helpful team');
 
         $this->actingAs($customer)->patch(route('admin.reviews.update', $review), ['status' => 'approved'])->assertForbidden();
 
@@ -71,7 +73,8 @@ class OffersAndReviewsTest extends TestCase
         $this->actingAs($admin)->get(route('admin.reviews.index'))->assertOk()->assertSee('Helpful team');
         $this->actingAs($admin)->patch(route('admin.reviews.update', $review), ['status' => 'approved'])->assertRedirect();
 
-        $this->get(route('reviews.index'))->assertSee('Helpful team')->assertSee('Rahim')->assertDontSee($customer->email);
+        $this->app['auth']->forgetGuards();
+        $this->get(route('reviews.index'))->assertOk()->assertSee('Helpful team')->assertSee('Rahim')->assertDontSee($customer->email);
     }
 
     public function test_review_validation(): void

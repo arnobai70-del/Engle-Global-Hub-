@@ -50,9 +50,19 @@ class ProductionSeederTest extends TestCase
         $published = ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->get();
         $this->assertNotEmpty($published);
         foreach ($published as $entry) {
+            $this->assertNull($entry->review_status);
+            if ($entry->type === ContentType::Guide) {
+                // Malaysia guides may be published only with official EMGS sources.
+                $this->assertSame('Malaysia', $entry->location);
+                $this->assertNotEmpty($entry->source_urls);
+                foreach ($entry->source_urls as $url) {
+                    $this->assertMatchesRegularExpression('#^https://(visa\.)?educationmalaysia\.gov\.my/#', $url);
+                }
+
+                continue;
+            }
             $this->assertContains($entry->type, [ContentType::PageSection, ContentType::Faq]);
             $this->assertStringStartsWith('Starter content', (string) $entry->review_notes);
-            $this->assertNull($entry->review_status);
         }
         $this->assertSame(0, ContentEntry::query()->whereNotNull('review_status')->where('status', ContentEntry::STATUS_PUBLISHED)->count());
         $this->assertSame(0, TeamMember::query()->where('is_published', true)->count());

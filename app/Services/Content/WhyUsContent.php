@@ -17,7 +17,7 @@ class WhyUsContent
     public function reasons(): array
     {
         return $this->content->points('why-us', 'why-different') ?: [
-            ['title' => __('Honest advice'), 'text' => __('We explain what institutions and Singapore\'s authorities require, and we never promise admission or a Student\'s Pass.')],
+            ['title' => __('Honest advice'), 'text' => __('We explain what institutions and the authorities (EMGS in Malaysia, ICA in Singapore) require, and we never promise admission or a student visa.')],
             ['title' => __('One consultant for your file'), 'text' => __('Follow your progress, documents and messages in your own student portal.')],
             ['title' => __('Private documents'), 'text' => __('Your documents are stored privately and seen only by you and authorised staff.')],
             ['title' => __('Clear costs'), 'text' => __('We point you to official fee pages and explain every payment we receive in writing.')],

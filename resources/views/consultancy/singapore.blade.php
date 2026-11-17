@@ -41,7 +41,7 @@
                 </ul>
                 <div class="v2-actions"><a class="v2-btn v2-btn-red" href="#apply">{{ __('Book a free consultation') }}</a></div>
             </div>
-            <img class="v2-sg-photo" src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1100&q=80" alt="{{ __('Marina Bay, Singapore') }}" width="1100" height="700" loading="eager" decoding="async">
+            <img class="v2-sg-photo" src="{{ asset('images/singapore/marina-bay.webp') }}" alt="{{ __('Marina Bay, Singapore') }}" width="1200" height="1500" loading="eager" decoding="async">
         </div>
     </section>
 
@@ -139,7 +139,7 @@
                     <p class="v2-lead-light">{{ __('Living costs depend on your area, housing and lifestyle. Your consultant gives you a written monthly estimate with your course shortlist.') }}</p>
                 @endif
             </div>
-            <x-site.consultation-form source="singapore" anchor="apply" :title="__('Apply for a free consultation')" :qualification="true" />
+            <x-site.consultation-form destination="SG" source="singapore" anchor="apply" :title="__('Apply for a free consultation')" :qualification="true" />
         </div>
     </section>
 </main>

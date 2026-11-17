@@ -17,21 +17,29 @@ use Illuminate\Database\Seeder;
  */
 class StarterContentSeeder extends Seeder
 {
-    private const VERSION = '1';
+    /** Version 2 added the Malaysia FAQs (Malaysia became the main destination). */
+    private const VERSION = 2;
 
     private const NOTE = 'Starter content added by the web team so the website is not empty. Edit or delete it in Admin › Website Content.';
 
     public function run(SettingService $settings): void
     {
-        if (rescue(fn () => (string) $settings->get('content', 'starter_content_version'), '', false) === self::VERSION) {
+        $done = (int) rescue(fn () => (string) $settings->get('content', 'starter_content_version'), '0', false);
+        if ($done >= self::VERSION) {
             return;
         }
 
+        // Only entries introduced after the version already seeded are added, so content an
+        // admin edited or deleted earlier is never brought back.
         foreach ($this->entries() as $position => $entry) {
-            $this->publish($entry, $position);
+            $since = $entry['since'] ?? 1;
+            unset($entry['since']);
+            if ($since > $done) {
+                $this->publish($entry, $position);
+            }
         }
 
-        $settings->set('content', 'starter_content_version', self::VERSION);
+        $settings->set('content', 'starter_content_version', (string) self::VERSION);
     }
 
     /**
@@ -73,7 +81,7 @@ class StarterContentSeeder extends Seeder
                 'slug' => 'why-us',
                 'title' => 'Why Us: reasons (one "- Title: text" per line)',
                 'body' => <<<'TXT'
-- Honest advice: We explain what institutions and Singapore's authorities require, and we never promise admission or a Student's Pass.
+- Honest advice: We explain what institutions and the authorities (EMGS in Malaysia, ICA in Singapore) require, and we never promise admission or a student visa.
 - One consultant for your file: Follow your progress, documents and messages in your own student portal.
 - Private documents: Your documents are stored privately and seen only by you and authorised staff.
 - Clear costs: We point you to official fee pages and explain every payment we receive in writing.
@@ -140,7 +148,7 @@ TXT,
 
         return [
             $faq('how-to-start', 'How do I start?',
-                'Book a free consultation using the form on the Study in Singapore page, call us, or visit our office. We look at your results, goals and budget and explain your options before you decide anything.',
+                'Book a free consultation using the form on the Study in Malaysia page, call us, or visit our office. We look at your results, goals and budget and explain your options before you decide anything.',
                 'আমি কীভাবে শুরু করব?',
                 'স্টাডি ইন সিঙ্গাপুর পেজের ফর্ম দিয়ে বিনামূল্যে পরামর্শ বুক করুন, আমাদের ফোন করুন বা অফিসে আসুন। কোনো সিদ্ধান্ত নেওয়ার আগেই আমরা আপনার ফলাফল, লক্ষ্য ও বাজেট দেখে বিকল্পগুলো ব্যাখ্যা করি।'),
             $faq('consultation-free', 'Is the first consultation really free?',
@@ -156,7 +164,7 @@ TXT,
                 'আমার কি IELTS লাগবে?',
                 'এটা প্রতিষ্ঠান ও কোর্সের ওপর নির্ভর করে। কেউ IELTS বা সমমানের পরীক্ষা চায়, কেউ ইংরেজির অন্য প্রমাণ গ্রহণ করে। আবেদনের আগে আমরা প্রতিষ্ঠানের বর্তমান শর্ত যাচাই করি।'),
             $faq('how-long', 'How long does the process take?',
-                'It depends on the intake and the institution. Start several months before the intake you want, so there is time for admission, the Student\'s Pass and travel. After your consultation we give you a timeline for your own case.',
+                'It depends on the intake and the institution. Start several months before the intake you want, so there is time for admission, the student visa and travel. After your consultation we give you a timeline for your own case.',
                 'পুরো প্রক্রিয়ায় কত সময় লাগে?',
                 'এটা ইনটেক ও প্রতিষ্ঠানের ওপর নির্ভর করে। পছন্দের ইনটেকের কয়েক মাস আগে শুরু করুন, যাতে ভর্তি, স্টুডেন্টস পাস ও যাত্রার জন্য সময় থাকে। পরামর্শের পর আপনার নিজের জন্য একটি সময়সূচি দিই।'),
             $faq('travel-help', 'Do you help with travel, not only study?',
@@ -171,6 +179,15 @@ TXT,
                 'Yes. You can talk to us in Bangla or English, and you can switch this website to বাংলা from the top of any page.',
                 'আমি কি বাংলায় কথা বলতে পারি?',
                 'হ্যাঁ। বাংলা বা ইংরেজিতে কথা বলতে পারেন, আর যেকোনো পেজের ওপর থেকে এই ওয়েবসাইট বাংলায় দেখতে পারেন।'),
+            // Version 2: Malaysia is the main destination. Facts only from official EMGS pages.
+            $faq('malaysia-student-pass-time', 'How long does the Malaysia Student Pass take?',
+                'EMGS says its client charter is 14 working days for a complete application; incomplete or incorrect documents take longer. Your eVAL (visa approval letter) is valid for 6 months, and you may only enter Malaysia after you receive it.',
+                'মালয়েশিয়ার স্টুডেন্ট পাসে কত সময় লাগে?',
+                'EMGS জানায়, সম্পূর্ণ আবেদনের জন্য তাদের ক্লায়েন্ট চার্টার ১৪ কর্মদিবস; অসম্পূর্ণ বা ভুল কাগজপত্রে বেশি সময় লাগে। আপনার eVAL (ভিসা অনুমোদন পত্র) ৬ মাস বৈধ, এবং এটি পাওয়ার পরই শুধু মালয়েশিয়ায় প্রবেশ করা যায়।') + ['since' => 2, 'sort_order' => 5],
+            $faq('malaysia-after-arrival', 'What happens after I arrive in Malaysia?',
+                'You attend a medical screening at an EMGS panel clinic within 7 working days of arrival. After that, Malaysian Immigration endorses your Student Pass, and your institution helps you with this step.',
+                'মালয়েশিয়ায় পৌঁছানোর পর কী হয়?',
+                'পৌঁছানোর ৭ কর্মদিবসের মধ্যে EMGS প্যানেল ক্লিনিকে মেডিকেল স্ক্রিনিং করাতে হয়। এরপর মালয়েশিয়ান ইমিগ্রেশন আপনার স্টুডেন্ট পাস এনডোর্স করে, আর এই ধাপে আপনার প্রতিষ্ঠান সাহায্য করে।') + ['since' => 2, 'sort_order' => 6],
         ];
     }
 }

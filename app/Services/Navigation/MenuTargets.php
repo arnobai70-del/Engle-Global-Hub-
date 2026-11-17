@@ -19,6 +19,9 @@ class MenuTargets
     /** Public pages without required parameters, with the feature switch that hides them. */
     private const ROUTES = [
         'home' => ['Home', null],
+        'consultancy.malaysia' => ['Study in Malaysia', 'student-consultancy'],
+        'consultancy.malaysia.guides.index' => ['Malaysia Guides', 'student-consultancy'],
+        'consultancy.malaysia.institutions.index' => ['Institutions in Malaysia', 'student-consultancy'],
         'consultancy.singapore' => ['Study in Singapore', 'student-consultancy'],
         'consultancy.guides.index' => ['Singapore Guides', 'student-consultancy'],
         'consultancy.institutions.index' => ['Institutions', 'student-consultancy'],

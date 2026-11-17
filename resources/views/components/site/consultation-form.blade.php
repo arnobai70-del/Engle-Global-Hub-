@@ -1,4 +1,4 @@
-@props(['source' => 'home', 'title' => null, 'subtitle' => null, 'anchor' => 'consultation-form', 'qualification' => false])
+@props(['destination' => 'MY', 'source' => 'home', 'title' => null, 'subtitle' => null, 'anchor' => 'consultation-form', 'qualification' => false])
 @php
     $facts = app(\App\Services\SiteFacts::class);
     $levels = \App\Models\StudentEnquiry::STUDY_LEVELS;
@@ -8,6 +8,7 @@
     <form method="POST" action="{{ route('leads.consultation') }}" class="v2-form" novalidate>
         @csrf
         <input type="hidden" name="form" value="{{ $source }}">
+        <input type="hidden" name="destination" value="{{ $destination }}">
         <input type="hidden" name="return_anchor" value="{{ $anchor }}">
         <h2>{{ $title ?? __('Free consultation') }}</h2>
         <p>{{ $subtitle ?? ($facts->get('reply_time') ? __('A consultant calls you back: :time.', ['time' => $facts->get('reply_time')]) : __('A consultant calls you back to discuss your options.')) }}</p>

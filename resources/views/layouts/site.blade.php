@@ -6,7 +6,7 @@
         $siteName=$siteName??'Eagle Global Hub LTD';$siteTagline=$siteTagline??'Travel & Visa Services';$siteContact=$siteContact??[];$siteSocial=$siteSocial??[];$footerLinks=$footerLinks??[];
         $seoOverrides=app(\App\Services\SeoMetadata::class)->forRoute(request()->route()?->getName());$pageTitle=$seoOverrides['title']??trim($__env->yieldContent('title','Travel'));$pageDescription=$seoOverrides['description']??trim($__env->yieldContent('meta_description','Travel and booking services from '.$siteName.'.'));$canonical=trim($__env->yieldContent('canonical',url()->current()));$robots=trim($__env->yieldContent('robots','index,follow'));$ogTitle=trim($__env->yieldContent('og_title',$pageTitle));$ogDescription=trim($__env->yieldContent('og_description',$pageDescription));$ogImage=trim($__env->yieldContent('og_image',''));$twitterCard=trim($__env->yieldContent('twitter_card','summary_large_image'));$fullTitle=request()->routeIs('home')?$pageTitle:$pageTitle.' | '.$siteName;
         $decodeSection=static fn(string $value):string=>html_entity_decode($value,ENT_QUOTES|ENT_HTML5,'UTF-8');$pageTitle=$decodeSection($pageTitle);$pageDescription=$decodeSection($pageDescription);$canonical=$decodeSection($canonical);$ogTitle=$decodeSection(trim($__env->yieldContent('og_title')))?:$pageTitle;$ogDescription=$decodeSection(trim($__env->yieldContent('og_description')))?:$pageDescription;$ogImage=$decodeSection($ogImage);$twitterCard=$decodeSection($twitterCard);$fullTitle=request()->routeIs('home')?$pageTitle:$pageTitle.' | '.$siteName;
-        $bilingualRoutes=['home','consultancy.singapore','consultancy.guides.index','consultancy.institutions.index','travel-services.index','visa.index','work-visa.index','hotels.index','tours.index','support','terms','about','explore-bangladesh.index','offers.index','service-enquiries.create'];$hreflangBase=in_array(request()->route()?->getName(),$bilingualRoutes,true)&&str_starts_with($robots,'index')?(string) strtok($canonical,'?'):null;if($hreflangBase!==null&&app()->getLocale()==='bn'){$canonical=$hreflangBase.'?lang=bn';}
+        $bilingualRoutes=['home','consultancy.malaysia','consultancy.malaysia.guides.index','consultancy.malaysia.institutions.index','consultancy.singapore','consultancy.guides.index','consultancy.institutions.index','travel-services.index','visa.index','work-visa.index','hotels.index','tours.index','support','terms','about','explore-bangladesh.index','offers.index','service-enquiries.create'];$hreflangBase=in_array(request()->route()?->getName(),$bilingualRoutes,true)&&str_starts_with($robots,'index')?(string) strtok($canonical,'?'):null;if($hreflangBase!==null&&app()->getLocale()==='bn'){$canonical=$hreflangBase.'?lang=bn';}
         $themeCss=static function(string $file):string{$modifiedAt=@filemtime(public_path($file));return asset($file).($modifiedAt?'?v='.$modifiedAt:'');};
         $travelServices=$travelServices??[];
         $servicePageRouteName=static function(array $service):?string{
@@ -14,7 +14,7 @@
             return is_string($routeName)&&\Illuminate\Support\Facades\Route::has($routeName)?$routeName:null;
         };
         $brandName=trim(preg_replace('/\s+LTD\.?$/i','',$siteName));
-        $branding=rescue(fn()=>app(\App\Services\SettingService::class)->group('branding'),[],false);$headerTagline=app()->getLocale()==='bn'&&filled($branding['header_tagline_bn']??null)?$branding['header_tagline_bn']:(filled($branding['header_tagline']??null)?$branding['header_tagline']:__('Your Gateway to Study in Singapore'));$siteLogo=$siteLogo??asset('images/eagle-global-hub-logo.png');
+        $branding=rescue(fn()=>app(\App\Services\SettingService::class)->group('branding'),[],false);$headerTagline=app()->getLocale()==='bn'&&filled($branding['header_tagline_bn']??null)?$branding['header_tagline_bn']:(filled($branding['header_tagline']??null)?$branding['header_tagline']:__('Your Gateway to Study in Malaysia'));$siteLogo=$siteLogo??asset('images/eagle-global-hub-logo.png');
         $currentLocale=app()->getLocale();
         $routeName=(string) request()->route()?->getName();
         $flightsUrl=auth()->check()?(auth()->user()->can('flights.search')?route('flights.index'):route('dashboard')):route('login');
@@ -49,7 +49,7 @@
     $facts = app(\App\Services\SiteFacts::class);
     $pageAvailable = static fn (string $route): bool => app(\App\Services\Content\PublicPageAvailability::class)->isAvailable($route);
     $officeHours = $facts->get('office_hours') ?? data_get($siteContact, 'hours');
-    $consultationUrl = route('consultancy.singapore').'#apply';
+    $consultationUrl = route('consultancy.malaysia').'#apply';
     $whatsappUrl = $facts->whatsappUrl(__('Hello Eagle Global Hub, I would like a free consultation.'));
     $navActive = static fn (array $prefixes): bool => collect($prefixes)->contains(fn (string $prefix): bool => str_starts_with($routeName, $prefix));
 @endphp
@@ -83,15 +83,24 @@
                     @include('partials.menus.header', ['items' => $headerMenu])
                 @else
                 @feature('student-consultancy')
-                <details class="sg-dd" @if($navActive(['consultancy.', 'student.'])) data-active @endif>
+                <details class="sg-dd" @if($navActive(['consultancy.malaysia'])) data-active @endif>
+                    <summary>{{ __('Study in Malaysia') }}</summary>
+                    <div class="sg-dd-menu">
+                        <a href="{{ route('consultancy.malaysia') }}">{{ __('Study in Malaysia') }}</a>
+                        @if($pageAvailable('consultancy.malaysia.guides.index'))<a href="{{ route('consultancy.malaysia.guides.index') }}">{{ __('Malaysia Guides') }}</a>@endif
+                        @if($pageAvailable('consultancy.malaysia.institutions.index'))<a href="{{ route('consultancy.malaysia.institutions.index') }}">{{ __('Institutions in Malaysia') }}</a>@endif
+                        <a href="{{ $consultationUrl }}">{{ __('Free Consultation') }}</a>
+                        @auth<a href="{{ route('student.applications.index') }}">{{ __('My Applications') }}</a>@endauth
+                    </div>
+                </details>
+                <details class="sg-dd" @if($navActive(['consultancy.singapore', 'consultancy.guides.', 'consultancy.institutions.'])) data-active @endif>
                     <summary>{{ __('Study in Singapore') }}</summary>
                     <div class="sg-dd-menu">
                         <a href="{{ route('consultancy.singapore') }}">{{ __('Study in Singapore') }}</a>
                         <a href="{{ route('services.show', 'student-visa') }}">{{ __('Student Visa') }}</a>
                         @if($pageAvailable('consultancy.guides.index'))<a href="{{ route('consultancy.guides.index') }}">{{ __('Singapore Guides') }}</a>@endif
                         @if($pageAvailable('consultancy.institutions.index'))<a href="{{ route('consultancy.institutions.index') }}">{{ __('Institutions') }}</a>@endif
-                        <a href="{{ $consultationUrl }}">{{ __('Free Consultation') }}</a>
-                        @auth<a href="{{ route('student.applications.index') }}">{{ __('My Applications') }}</a>@endauth
+                        <a href="{{ route('consultancy.singapore') }}#apply">{{ __('Free Consultation') }}</a>
                     </div>
                 </details>
                 @endfeature
@@ -108,7 +117,6 @@
                     </div>
                 </details>
                 <a href="{{ route('home') }}#how-it-works" class="sg-nav-link">{{ __('How it works') }}</a>
-                @if($pageAvailable('success-stories.index'))<a href="{{ route('success-stories.index') }}" class="sg-nav-link" @if($navActive(['success-stories.'])) aria-current="page" @endif>{{ __('Success stories') }}</a>@endif
                 <details class="sg-dd" @if(in_array($routeName, ['about', 'why-us', 'b2b.info'], true)) data-active @endif>
                     <summary>{{ __('About') }}</summary>
                     <div class="sg-dd-menu">
@@ -151,16 +159,16 @@
 <div id="main-content">@yield('content')</div>
 <footer class="sg-footer v2-footer">
     <div class="sg-shell">
-        @unless(request()->routeIs('home', 'consultancy.singapore'))
+        @unless(request()->routeIs('home', 'consultancy.malaysia', 'consultancy.singapore'))
         <div class="sg-footer-cta">
-            <div><h2>{{ __('Ready to study in Singapore?') }}</h2><p>{{ __('Talk to our consultants about courses, admission and the Student\'s Pass.') }}</p></div>
+            <div><h2>{{ __('Ready to study in Malaysia?') }}</h2><p>{{ __('Talk to our consultants about courses, admission and the EMGS Student Pass.') }}</p></div>
             <div class="sg-footer-cta-actions"><a href="{{ $consultationUrl }}" class="sg-btn sg-btn-red">{{ __('Free Consultation') }}</a>@if($whatsappUrl)<a href="{{ $whatsappUrl }}" class="sg-btn sg-btn-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>@endif</div>
         </div>
         @endunless
         <div class="sg-footer-main">
             <div class="sg-footer-about">
                 <a href="{{ route('home') }}" class="sg-brand sg-brand-light"><img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" loading="lazy" decoding="async"><span class="sg-brand-copy"><strong>{{ $siteName }}</strong></span></a>
-                <p>{{ filled($siteFooterDescription ?? null) ? __($siteFooterDescription) : __('Singapore student consultancy, visa and travel support from Dhaka.') }}</p>
+                <p>{{ filled($siteFooterDescription ?? null) ? __($siteFooterDescription) : __('Malaysia and Singapore student consultancy, visa and travel support from Dhaka.') }}</p>
                 <ul class="sg-footer-contact">@if(data_get($siteContact,'address'))<li>{{ data_get($siteContact,'address') }}</li>@endif @if($phoneHref)<li><a href="{{ $phoneHref }}">{{ data_get($siteContact,'phone') }}</a></li>@endif @if(data_get($siteContact,'email'))<li><a href="mailto:{{ data_get($siteContact,'email') }}">{{ data_get($siteContact,'email') }}</a></li>@endif</ul>
                 @if($siteSocial!==[])<div class="sg-footer-social">@foreach($siteSocial as $network=>$url)<a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}">{{ strtoupper(substr($network,0,2)) }}</a>@endforeach</div>@endif
             </div>
@@ -169,7 +177,7 @@
                 @include('partials.menus.footer', ['items' => $footerMenu])
             @else
             <div><h3>{{ __('Study') }}</h3><ul>
-                @feature('student-consultancy')<li><a href="{{ route('consultancy.singapore') }}">{{ __('Study in Singapore') }}</a></li>@endfeature
+                @feature('student-consultancy')<li><a href="{{ route('consultancy.malaysia') }}">{{ __('Study in Malaysia') }}</a></li><li><a href="{{ route('consultancy.singapore') }}">{{ __('Study in Singapore') }}</a></li>@endfeature
                 @if($pageAvailable('consultancy.institutions.index'))<li><a href="{{ route('consultancy.institutions.index') }}">{{ __('Institutions') }}</a></li>@endif
                 <li><a href="{{ route('services.show', 'student-visa') }}">{{ __('Student\'s Pass') }}</a></li>
                 @if($pageAvailable('consultancy.guides.index'))<li><a href="{{ route('consultancy.guides.index') }}">{{ __('Guides') }}</a></li>@endif

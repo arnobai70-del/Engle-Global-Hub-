@@ -49,7 +49,7 @@ final class HomepageMockupContractTest extends TestCase
         $this->assertStringContainsString('https://wa.me/8801953626481', $html);
         $this->assertStringNotContainsString('WAITING FOR API', $html);
         $this->assertStringNotContainsString('Waiting for API', $html);
-        $this->assertStringContainsString('<title>Study in Singapore from Bangladesh | Eagle Global Hub</title>', $html);
+        $this->assertStringContainsString('<title>Study in Malaysia from Bangladesh | Eagle Global Hub</title>', $html);
     }
 
     public function test_homepage_follows_the_design_section_order(): void
@@ -65,7 +65,7 @@ final class HomepageMockupContractTest extends TestCase
         $html = $this->home();
 
         $this->assertSame(6, substr_count($html, 'class="v2-service-card"'));
-        foreach (['Study in Singapore', 'Student&#039;s Pass (ICA)', 'Visa services', 'Air tickets', 'Housing &amp; arrival', 'Tours &amp; holidays'] as $service) {
+        foreach (['Study in Malaysia', 'Student Pass (EMGS)', 'Study in Singapore', 'Visa services', 'Air tickets', 'Housing &amp; arrival'] as $service) {
             $this->assertStringContainsString('<h3>'.$service.'</h3>', $html);
         }
         foreach (['Get a fare quote', 'Ask about housing', 'Ask about a visa'] as $action) {
@@ -82,7 +82,7 @@ final class HomepageMockupContractTest extends TestCase
         }
 
         $settings = app(SettingService::class);
-        foreach (['students_guided' => '120', 'founded_year' => '2019', 'trade_licence_no' => 'TRAD/DNCC/123', 'cost_tuition' => '18,000', 'google_rating' => '4.8', 'google_review_count' => '57', 'google_reviews_url' => 'https://g.page/example'] as $key => $value) {
+        foreach (['students_guided' => '120', 'founded_year' => '2019', 'trade_licence_no' => 'TRAD/DNCC/123', 'my_cost_tuition' => '18,000', 'google_rating' => '4.8', 'google_review_count' => '57', 'google_reviews_url' => 'https://g.page/example'] as $key => $value) {
             $settings->set('facts', $key, $value, 'string', true);
         }
 
@@ -90,7 +90,7 @@ final class HomepageMockupContractTest extends TestCase
         $this->assertStringContainsString('120+', $html);
         $this->assertStringContainsString('serving since', $html);
         $this->assertStringContainsString('TRAD/DNCC/123', $html);
-        $this->assertStringContainsString('SGD 18,000', $html);
+        $this->assertStringContainsString('MYR 18,000', $html);
         $this->assertStringContainsString('Google rating 4.8 ★', $html);
     }
 

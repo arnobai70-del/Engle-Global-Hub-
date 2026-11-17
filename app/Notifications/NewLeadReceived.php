@@ -55,7 +55,7 @@ class NewLeadReceived extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $lead = $this->lead;
-        $topic = $lead instanceof ServiceEnquiry ? $lead->service->label() : 'Study in Singapore';
+        $topic = $lead instanceof ServiceEnquiry ? $lead->service->label() : 'Study in '.($lead->destinationCountry?->name ?? 'Malaysia');
         $adminUrl = $lead instanceof ServiceEnquiry
             ? route('admin.service-enquiries.show', $lead)
             : route('admin.student-enquiries.show', $lead);

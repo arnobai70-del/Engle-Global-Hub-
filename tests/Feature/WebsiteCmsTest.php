@@ -48,7 +48,8 @@ class WebsiteCmsTest extends TestCase
             ->assertDontSee('Tajul Islam')->assertDontSee('Our Mission')->assertDontSee('Our Vision');
 
         app(SettingService::class)->set('company', 'mission', 'Owner approved mission text.', 'string', true);
-        TeamMember::query()->where('name', 'Tajul Islam')->update(['is_published' => true]);
+        // Team members appear only with a real photo.
+        TeamMember::query()->where('name', 'Tajul Islam')->update(['is_published' => true, 'photo_path' => 'team/tajul.webp']);
 
         $this->get(route('about'))->assertOk()
             ->assertSee('Our Mission')->assertSee('Owner approved mission text.')->assertDontSee('Our Vision')

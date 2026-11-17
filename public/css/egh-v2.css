@@ -422,3 +422,24 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
     .sg-body .sg-topbar .sg-locale a.egho-switch { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 .4rem; }
     .egho-auth-alt a { min-width: 44px; justify-content: center; }
 }
+
+/* ---------- Study in Malaysia ---------- */
+.v2-pass-8 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.v2-source { font-size: .82rem; font-weight: 600; color: var(--brand-navy); text-decoration: underline; white-space: nowrap; }
+.v2-sources { margin-top: 1.5rem; padding: 1rem 1.2rem; border-radius: 12px; background: #fff; border: 1px solid var(--line); }
+.v2-sources summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; color: var(--brand-navy); }
+.v2-sources ul { margin: .5rem 0 0; padding-left: 1.2rem; line-height: 1.9; }
+.v2-sources a { color: var(--brand-red); }
+
+/* Homepage hero: Kuala Lumpur photo under a navy overlay, so the text stays readable. */
+.v2-hero.v2-hero-photo {
+    background:
+        linear-gradient(90deg, rgba(10, 31, 68, .94) 0%, rgba(10, 31, 68, .86) 42%, rgba(10, 31, 68, .62) 72%, rgba(10, 31, 68, .5) 100%),
+        var(--v2-hero-image) center / cover no-repeat,
+        var(--brand-navy);
+}
+@media (max-width: 900px) {
+    .v2-hero.v2-hero-photo { background: linear-gradient(180deg, rgba(10, 31, 68, .9) 0%, rgba(10, 31, 68, .82) 100%), var(--v2-hero-image) center / cover no-repeat, var(--brand-navy); }
+}
+@media (max-width: 1000px) { .v2-pass-8 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .v2-pass-8 { grid-template-columns: 1fr; } .v2-source { white-space: normal; } }

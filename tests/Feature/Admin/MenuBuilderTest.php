@@ -161,7 +161,7 @@ final class MenuBuilderTest extends TestCase
 
     public function test_header_tagline_is_editable_in_english_and_bengali(): void
     {
-        $this->get(route('home'))->assertSee('Your Gateway to Study in Singapore');
+        $this->get(route('home'))->assertSee('Your Gateway to Study in Malaysia');
 
         $this->actingAs($this->userWithRole('admin'))->patch(route('admin.menus.branding'), ['header_tagline' => '<b>Study and travel</b>', 'header_tagline_bn' => 'পড়াশোনা ও ভ্রমণ'])->assertSessionHasNoErrors();
         auth()->logout();

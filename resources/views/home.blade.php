@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', data_get($homeContent, 'seo.title', 'Study in Singapore from Bangladesh | Eagle Global Hub'))
+@section('title', data_get($homeContent, 'seo.title', 'Study in Malaysia from Bangladesh | Eagle Global Hub'))
 @section('meta_description', data_get($homeContent, 'seo.description'))
 @section('canonical', data_get($homeContent, 'seo.canonical') ?: url()->current())
 @section('robots', data_get($homeContent, 'seo.robots', 'index,follow'))
@@ -15,7 +15,7 @@
     $facts = app(\App\Services\SiteFacts::class);
     $pageContent = app(\App\Services\Content\PageContent::class);
     $siteContact = $siteContact ?? [];
-    $studyUrl = route('consultancy.singapore');
+    $studyUrl = route('consultancy.malaysia');
     $whatsappUrl = $facts->whatsappUrl(__('Hello Eagle Global Hub, I would like a free consultation.'));
 
     // News ticker: only real news written by an admin, never the default welcome line.
@@ -45,8 +45,9 @@
 
     // Six service cards: titles, icons and links come from Admin › Menus (homepage tiles).
     $serviceText = [
-        'tile-study' => [__('Course and institution shortlist, admission application and document check.'), __('Start here')],
-        'tile-students-pass' => [__('Step-by-step ICA application preparation and status follow-up.'), __('Learn more')],
+        'tile-malaysia' => [__('Universities and colleges in Malaysia: course shortlist, admission application and document check.'), __('Start here')],
+        'tile-student-pass-my' => [__('Your EMGS Student Pass and eVAL application, prepared and followed with you.'), __('Learn more')],
+        'tile-singapore' => [__('Diplomas and degrees in Singapore, with Student\'s Pass (ICA) guidance.'), __('Explore Singapore')],
         'tile-visa' => [__('Tourist, business and student visa guidance with a document checklist.'), __('Ask about a visa')],
         'tile-flights' => [__('Student fares and group bookings. Send your dates, we reply with options.'), __('Get a fare quote')],
         'tile-housing' => [__('Student hostels, shared rooms and airport arrival guidance.'), __('Ask about housing')],
@@ -56,41 +57,44 @@
     $services = $tileMenu !== null
         ? collect($tileMenu)->map(fn (array $tile): array => ['title' => $tile['label'], 'url' => $tile['url'], 'icon' => $tile['icon'] ?? 'globe', 'key' => $tile['key'] ?? null, 'new_tab' => $tile['new_tab']])->all()
         : [
-            ['key' => 'tile-study', 'title' => __('Study in Singapore'), 'url' => $studyUrl, 'icon' => 'cap', 'new_tab' => false],
-            ['key' => 'tile-students-pass', 'title' => __('Student\'s Pass (ICA)'), 'url' => route('services.show', 'student-visa'), 'icon' => 'id', 'new_tab' => false],
+            ['key' => 'tile-malaysia', 'title' => __('Study in Malaysia'), 'url' => $studyUrl, 'icon' => 'cap', 'new_tab' => false],
+            ['key' => 'tile-student-pass-my', 'title' => __('Student Pass (EMGS)'), 'url' => $studyUrl.'#student-pass', 'icon' => 'id', 'new_tab' => false],
+            ['key' => 'tile-singapore', 'title' => __('Study in Singapore'), 'url' => route('consultancy.singapore'), 'icon' => 'globe', 'new_tab' => false],
             ['key' => 'tile-visa', 'title' => __('Visa services'), 'url' => route('services.show', 'tourist-visa'), 'icon' => 'passport', 'new_tab' => false],
             ['key' => 'tile-flights', 'title' => __('Air tickets'), 'url' => route('services.show', 'air-ticket'), 'icon' => 'plane', 'new_tab' => false],
             ['key' => 'tile-housing', 'title' => __('Housing & arrival'), 'url' => route('hotels.index'), 'icon' => 'bed', 'new_tab' => false],
-            ['key' => 'tile-tours', 'title' => __('Tours & holidays'), 'url' => route('services.show', 'holiday-packages'), 'icon' => 'mountain', 'new_tab' => false],
         ];
 
     // How it works: editable as the page section "how-it-works" ("- Title: text | time" per line).
+    // Default timings are our own process or EMGS's published figures; admission time is set by each institution.
     $steps = collect($pageContent->points('how-it-works'))->map(function (array $step): array {
         [$text, $time] = array_pad(array_map('trim', explode('|', $step['text'], 2)), 2, '');
 
         return ['title' => $step['title'], 'text' => $text, 'time' => $time];
     })->all() ?: [
         ['title' => __('Free consultation'), 'text' => __('Goals, budget and eligibility check.'), 'time' => __('Day 1')],
-        ['title' => __('Course shortlist'), 'text' => __('Institutions, intakes and written cost estimate.'), 'time' => __('Week 1')],
-        ['title' => __('Admission'), 'text' => __('Application, documents and offer letter.'), 'time' => __('2–6 weeks')],
-        ['title' => __('Student\'s Pass'), 'text' => __('ICA application prepared and tracked.'), 'time' => __('2–5 weeks')],
-        ['title' => __('Fly & settle'), 'text' => __('Ticket, housing and arrival support.'), 'time' => __('Before intake')],
+        ['title' => __('Course shortlist'), 'text' => __('Malaysian universities, intakes and written cost estimate.'), 'time' => __('Week 1')],
+        ['title' => __('Offer letter'), 'text' => __('Admission application and documents to your institution.'), 'time' => ''],
+        ['title' => __('Student Pass & eVAL'), 'text' => __('EMGS application prepared and tracked.'), 'time' => __('14 working days (EMGS charter)')],
+        ['title' => __('Fly & settle'), 'text' => __('Ticket, housing and the medical screening after arrival.'), 'time' => __('Screening within 7 working days')],
     ];
 
+    // Yearly costs in Malaysia (MYR), entered in Admin › Business facts.
     $costs = $facts->rows([
-        'cost_tuition' => __('Tuition (diploma, private)'),
-        'cost_housing' => __('Housing (shared room)'),
-        'cost_food' => __('Food & transport'),
-        'cost_pass' => __('Student\'s Pass & medical'),
-    ]);
+        'my_cost_tuition' => __('Tuition (diploma, private)'),
+        'my_cost_housing' => __('Housing (shared room)'),
+        'my_cost_food' => __('Food & transport'),
+        'my_cost_visa' => __('Student Pass, insurance & medical'),
+    ], 'MYR ');
     if ($facts->get('our_fee')) {
         $costs[] = ['label' => __('Our service fee'), 'value' => (preg_match('/^[\d.,\s–-]+$/u', $facts->get('our_fee')) === 1 ? 'BDT ' : '').$facts->get('our_fee')];
     }
-    $costTotal = $facts->get('cost_total');
+    $costTotal = $facts->get('my_cost_total');
 
     $stories = $pageContent->published(\App\Enums\ContentType::SuccessStory)->take(3);
     $googleRating = $facts->googleRating();
-    $team = rescue(fn () => \App\Models\TeamMember::query()->published()->limit(4)->get(), collect(), false);
+    // Only real team photos are shown; without any, the team section is hidden.
+    $team = rescue(fn () => \App\Models\TeamMember::query()->published()->whereNotNull('photo_path')->where('photo_path', '!=', '')->limit(4)->get(), collect(), false);
     $faqs = $pageContent->published(\App\Enums\ContentType::Faq)->take(5);
     $address = data_get($siteContact, 'address');
     $directionsUrl = filled($address) ? 'https://www.google.com/maps/search/?api=1&query='.urlencode((string) $address) : null;
@@ -107,6 +111,7 @@
 @endphp
 
 @push('head')
+    <link rel="preload" as="image" href="{{ asset('images/malaysia/petronas-towers-night.webp') }}" type="image/webp">
     <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
 @endpush
 
@@ -133,12 +138,12 @@
 @endif
 
 <main class="v2-home">
-    <section class="v2-hero" aria-labelledby="hero-title">
+    <section class="v2-hero v2-hero-photo" style="--v2-hero-image: url('{{ asset('images/malaysia/petronas-towers-night.webp') }}')" aria-labelledby="hero-title">
         <div class="v2-shell v2-hero-grid">
             <div class="v2-hero-copy">
-                <span class="v2-pill v2-pill-light">{{ __('Singapore student consultancy from Bangladesh') }}</span>
-                <h1 id="hero-title">{{ __('Study in Singapore, with a team that walks every step with you.') }}</h1>
-                <p>{{ __('Course and institution choice, admission documents, Student\'s Pass guidance, air ticket and housing — one office in Gulshan, one consultant from start to arrival.') }}</p>
+                <span class="v2-pill v2-pill-light">{{ __('Malaysia student consultancy from Bangladesh') }}</span>
+                <h1 id="hero-title">{{ __('Study in Malaysia, with a team that walks every step with you.') }}</h1>
+                <p>{{ __('University and college choice, admission documents, your EMGS Student Pass, air ticket and housing — one office in Gulshan, one consultant from start to arrival. Singapore too.') }}</p>
                 <div class="v2-actions">
                     <a class="v2-btn v2-btn-red" href="#consultation-form">{{ __('Book a free consultation') }}</a>
                     @if($whatsappUrl)<a class="v2-btn v2-btn-ghost-light" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 20l1.3-3.8A8 8 0 1 1 8 19.2z"/></svg>{{ __('Chat on WhatsApp') }}</a>@endif
@@ -183,13 +188,13 @@
 
     <section class="v2-section v2-section-navy" id="how-it-works" aria-labelledby="how-title">
         <div class="v2-shell">
-            <div class="v2-head-center"><span class="v2-eyebrow">{{ __('How it works') }}</span><h2 id="how-title" class="v2-h2">{{ __('From first call to landing in Singapore') }}</h2></div>
+            <div class="v2-head-center"><span class="v2-eyebrow">{{ __('How it works') }}</span><h2 id="how-title" class="v2-h2">{{ __('From first call to landing in Malaysia') }}</h2></div>
             <ol class="v2-timeline">
                 @foreach($steps as $step)
                     <li><span class="v2-step-no" aria-hidden="true">{{ $loop->iteration }}</span><strong>{{ $step['title'] }}</strong>@if($step['text'] !== '')<p>{{ $step['text'] }}</p>@endif @if($step['time'] !== '')<small>{{ $step['time'] }}</small>@endif</li>
                 @endforeach
             </ol>
-            <p class="v2-disclaimer">{{ __('Admission is decided by each institution. Student\'s Pass is decided by Singapore\'s ICA. We prepare and guide — we never promise approval.') }}</p>
+            <p class="v2-disclaimer">{{ __('Admission is decided by each institution. The Student Pass is approved by Malaysia\'s Immigration Department through EMGS. We prepare and guide — we never promise approval.') }}</p>
         </div>
     </section>
 
@@ -198,7 +203,7 @@
             <div>
                 <span class="v2-eyebrow">{{ __('Clear costs') }}</span>
                 <h2 id="costs-title" class="v2-h2">{{ __('Know the budget before you start') }}</h2>
-                <p class="v2-lead">{{ $costs !== [] ? __('A rough yearly estimate for a diploma student. Your consultant gives a written quote for your exact course.') : __('Costs depend on the course and institution. Your consultant gives you a written estimate for tuition, living costs and our fee before you pay anything.') }}</p>
+                <p class="v2-lead">{{ $costs !== [] ? __('A rough yearly estimate in Malaysian ringgit for a diploma student. Your consultant gives a written quote for your exact course.') : __('Costs depend on the course and institution. Your consultant gives you a written estimate for tuition, living costs and our fee before you pay anything.') }}</p>
                 <a class="v2-link" href="#consultation-form">{{ __('Get my exact estimate') }} →</a>
             </div>
             @if($costs !== [])
@@ -207,11 +212,11 @@
                 <tbody>
                     @foreach($costs as $row)<tr><th scope="row">{{ $row['label'] }}</th><td>{{ $row['value'] }}</td></tr>@endforeach
                 </tbody>
-                @if($costTotal)<tfoot><tr><th scope="row">{{ __('Estimated total / year') }}</th><td>{{ preg_match('/^[\d.,\s–-]+$/u', $costTotal) === 1 ? 'SGD ' : '' }}{{ $costTotal }}</td></tr></tfoot>@endif
+                @if($costTotal)<tfoot><tr><th scope="row">{{ __('Estimated total / year') }}</th><td>{{ preg_match('/^[\d.,\s–-]+$/u', $costTotal) === 1 ? 'MYR ' : '' }}{{ $costTotal }}</td></tr></tfoot>@endif
             </table>
             @else
             <div class="v2-estimate">
-                <strong>{{ __('Tuition · Housing · Living costs · Student\'s Pass · Our fee') }}</strong>
+                <strong>{{ __('Tuition · Housing · Living costs · Student Pass · Our fee') }}</strong>
                 <p>{{ __('All five in one written estimate for your course, free and before you decide.') }}</p>
                 <a class="v2-btn v2-btn-red" href="#consultation-form">{{ __('Ask for my estimate') }}</a>
             </div>

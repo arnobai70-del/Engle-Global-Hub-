@@ -26,7 +26,7 @@ final class EmptyPagesHiddenTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_empty_pages_are_not_linked_from_the_header_footer_or_sitemap_but_still_open(): void
+    public function test_empty_pages_are_not_linked_from_the_header_footer_or_sitemap_but_still_reachable_or_redirected(): void
     {
         $home = (string) $this->get(route('home'))->assertOk()->getContent();
         $sitemap = (string) $this->get(route('sitemap'))->assertOk()->getContent();
@@ -34,7 +34,10 @@ final class EmptyPagesHiddenTest extends TestCase
         foreach (self::EMPTY_PAGES as $page) {
             $this->assertStringNotContainsString('href="'.route($page).'"', $home, $page.' must not be linked while empty');
             $this->assertStringNotContainsString('<loc>'.route($page).'</loc>', $sitemap, $page.' must not be in the sitemap while empty');
-            $this->get(route($page))->assertOk();
+            // These four send visitors to the homepage until they have content; the rest still open.
+            in_array($page, ['success-stories.index', 'reviews.index', 'map', 'mobile-app'], true)
+                ? $this->get(route($page))->assertRedirect(route('home'))
+                : $this->get(route($page))->assertOk();
         }
 
         foreach (['consultancy.singapore', 'why-us', 'privacy', 'support', 'b2b.info'] as $page) {

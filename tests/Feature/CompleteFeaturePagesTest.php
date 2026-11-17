@@ -73,8 +73,9 @@ class CompleteFeaturePagesTest extends TestCase
                 ->assertSee('action="'.route('leads.quote', $slug).'"', false);
         }
 
-        $this->get(route('map'))->assertOk()->assertDontSee('Waiting for API')->assertSee('Coming soon')->assertSee('Interactive map');
-        $this->get(route('mobile-app'))->assertOk()->assertDontSee('Waiting for API')->assertSee('Coming soon')->assertSee('disabled', false);
+        // Without content these pages send visitors to the homepage instead of an empty page.
+        $this->get(route('map'))->assertRedirect(route('home'));
+        $this->get(route('mobile-app'))->assertRedirect(route('home'));
     }
 
     public function test_travel_pages_only_claim_a_live_provider_after_a_connection_test(): void

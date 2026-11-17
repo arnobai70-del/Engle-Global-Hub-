@@ -81,7 +81,7 @@ class HomepageContentService
                 'canonical' => $seo['home_canonical_url'] ?? null,
                 'og_title' => $seo['home_og_title'] ?? $seo['home_meta_title'],
                 'og_description' => $seo['home_og_description'] ?? $seo['home_meta_description'],
-                'og_image' => $this->mediaUrl($seo['home_og_image'] ?? null, $homepage['hero_image']),
+                'og_image' => $this->mediaUrl($seo['home_og_image'] ?? null, asset('images/malaysia/petronas-towers-night.webp')),
                 'robots' => $seo['home_robots'] ?? 'index,follow',
                 'twitter_card' => $seo['home_twitter_card'] ?? 'summary_large_image',
             ],
@@ -218,8 +218,8 @@ class HomepageContentService
     private function defaultSeo(): array
     {
         return [
-            'home_meta_title' => 'Study in Singapore from Bangladesh | Eagle Global Hub',
-            'home_meta_description' => 'Free consultation for studying in Singapore: course choice, admission, Student\'s Pass, air ticket and housing support from our office in Gulshan, Dhaka.',
+            'home_meta_title' => 'Study in Malaysia from Bangladesh | Eagle Global Hub',
+            'home_meta_description' => 'Free consultation for studying in Malaysia: university choice, admission, the EMGS Student Pass, air ticket and housing support from our office in Gulshan, Dhaka. Singapore too.',
             'home_canonical_url' => null,
             'home_og_title' => null,
             'home_og_description' => null,

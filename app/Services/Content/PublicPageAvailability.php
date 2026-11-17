@@ -10,6 +10,7 @@ use App\Models\Institution;
 use App\Models\Offer;
 use App\Models\Review;
 use App\Models\RewardProgram;
+use App\Services\Consultancy\StudyCountries;
 use App\Services\SettingService;
 use Throwable;
 
@@ -25,9 +26,10 @@ class PublicPageAvailability
         'company.index', 'success-stories.index', 'offers.index', 'forums.index', 'reviews.index',
         'rewards.index', 'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index',
         'consultancy.guides.index', 'consultancy.institutions.index', 'mobile-app',
+        'consultancy.malaysia.guides.index', 'consultancy.malaysia.institutions.index',
     ];
 
-    public function __construct(private SettingService $settings) {}
+    public function __construct(private SettingService $settings, private StudyCountries $countries) {}
 
     public function isAvailable(string $routeName): bool
     {
@@ -54,13 +56,15 @@ class PublicPageAvailability
                 'success-stories.index' => $this->hasPublished(ContentType::SuccessStory),
                 'restaurants.index' => $this->hasPublished(ContentType::Restaurant),
                 'inspiration.index' => $this->hasPublished(ContentType::Inspiration),
-                'consultancy.guides.index' => $this->hasPublished(ContentType::Guide),
+                'consultancy.guides.index' => $this->countries->scopeGuides(ContentEntry::query()->published(ContentType::Guide), 'SG')->exists(),
+                'consultancy.malaysia.guides.index' => $this->countries->scopeGuides(ContentEntry::query()->published(ContentType::Guide), 'MY')->exists(),
+                'consultancy.malaysia.institutions.index' => Institution::query()->publiclyListed()->whereHas('country', fn ($query) => $query->where('iso2', 'MY'))->exists(),
                 'offers.index' => Offer::query()->current()->exists(),
                 'reviews.index' => Review::query()->where('status', Review::STATUS_APPROVED)->exists(),
                 'rewards.index' => RewardProgram::query()->live()->exists(),
                 'forums.index' => ForumThread::query()->whereHas('category', fn ($query) => $query->where('is_active', true))->exists(),
                 'explore-bangladesh.index' => Destination::query()->published()->exists(),
-                'consultancy.institutions.index' => Institution::query()->publiclyListed()->exists(),
+                'consultancy.institutions.index' => Institution::query()->publiclyListed()->where(fn ($query) => $query->whereNull('country_id')->orWhereHas('country', fn ($country) => $country->where('iso2', '!=', 'MY')))->exists(),
                 'map' => Destination::query()->published()->exists()
                     || ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->whereNotNull('latitude')->whereNotNull('longitude')->exists(),
                 'mobile-app' => $this->hasAppStoreLink(),

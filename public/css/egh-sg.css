@@ -23,7 +23,7 @@
     --sg-shadow-lg: 0 24px 60px rgba(11, 31, 75, .16);
     --sg-heading: "Poppins", "Instrument Sans", "Hind Siliguri", system-ui, sans-serif;
     --sg-body: "Instrument Sans", "Hind Siliguri", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --sg-hero-image: url("https://images.unsplash.com/photo-1496939376851-89342e90adcd?auto=format&fit=crop&w=1800&q=80");
+    --sg-hero-image: url("../images/malaysia/kuala-lumpur-day.webp");
 }
 
 /* ---------- Base ---------- */
@@ -370,13 +370,8 @@ a.sg-feature:hover { transform: translateY(-3px); box-shadow: var(--sg-shadow-lg
 .sg-body .egh-travel-hero .egho-shell { padding: 0; }
 
 /* Page-specific banner photography */
-[data-route^="consultancy."], [data-route^="student."] { --sg-hero-image: url("https://images.unsplash.com/photo-1496939376851-89342e90adcd?auto=format&fit=crop&w=1800&q=80"); }
-[data-route^="consultancy.guides"] { --sg-hero-image: url("https://images.unsplash.com/photo-1508964942454-1a56651d54ac?auto=format&fit=crop&w=1800&q=80"); }
-[data-route^="explore-bangladesh"], [data-route^="inspiration"], [data-route^="restaurants"] { --sg-hero-image: url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1800&q=80"); }
-[data-route^="flights"], [data-route^="hotels"], [data-route^="tours"], [data-route^="offers"], [data-route^="bookings"], [data-route^="rewards"] { --sg-hero-image: url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=80"); }
-[data-route="about"], [data-route^="company"], [data-route^="business-services"], [data-route="support"], [data-route="terms"], [data-route^="b2b"], [data-route^="agent"] { --sg-hero-image: url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1800&q=80"); }
-[data-route^="success-stories"] { --sg-hero-image: url("https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1800&q=80"); }
-[data-route^="visa"], [data-route^="work-visa"], [data-route^="service-enquiries"] { --sg-hero-image: url("https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1800&q=80"); }
+[data-route^="consultancy."], [data-route^="student."] { --sg-hero-image: url("../images/malaysia/kuala-lumpur-day.webp"); }
+[data-route^="consultancy.guides"] { --sg-hero-image: url("../images/singapore/marina-bay.webp"); }
 
 /* ---------- Existing cards, forms and buttons → shared look ---------- */
 .sg-body .egho-page { background: transparent; padding-top: 0; }
@@ -460,7 +455,7 @@ a.sg-feature:hover { transform: translateY(-3px); box-shadow: var(--sg-shadow-lg
 .sg-auth-body h1, .sg-auth-body h2 { font-family: var(--sg-heading); }
 .sg-auth-body .egho-auth-visual {
     position: relative; isolation: isolate; color: #fff;
-    background: var(--sg-navy) url("https://images.unsplash.com/photo-1565967511849-76a60a516170?auto=format&fit=crop&w=1400&q=80") center / cover no-repeat !important;
+    background: var(--sg-navy) url("../images/malaysia/petronas-towers-night.webp") center / cover no-repeat !important;
 }
 .sg-auth-body .egho-auth-visual::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(160deg, rgba(8, 22, 58, .95) 0%, rgba(11, 31, 75, .82) 55%, rgba(11, 31, 75, .55) 100%); }
 .sg-auth-body .egho-auth-visual h1, .sg-auth-body .egho-auth-visual strong { color: #fff; }

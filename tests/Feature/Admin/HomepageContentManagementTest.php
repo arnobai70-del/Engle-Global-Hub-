@@ -64,7 +64,7 @@ class HomepageContentManagementTest extends TestCase
 
         $html = $this->get(route('home'))->assertOk()->getContent();
         $this->assertStringNotContainsString('Everything you need to study abroad', $html);
-        $this->assertStringContainsString('From first call to landing in Singapore', $html);
+        $this->assertStringContainsString('From first call to landing in Malaysia', $html);
     }
 
     public function test_super_admin_can_create_and_hide_repeatable_homepage_content(): void

@@ -25,7 +25,7 @@
         ]],
         [__('Who can see it'), [
             __('Only authorised Eagle Global Hub staff who work on your enquiry or application.'),
-            __('Institutions, embassies, Singapore\'s ICA or travel suppliers, only when you ask us to apply or book on your behalf and only the information that application needs.'),
+            __('Institutions, embassies, EMGS in Malaysia, Singapore\'s ICA or travel suppliers, only when you ask us to apply or book on your behalf and only the information that application needs.'),
             __('Service providers that run this website for us (hosting and email), under confidentiality.'),
         ]],
         [__('How we protect it'), [

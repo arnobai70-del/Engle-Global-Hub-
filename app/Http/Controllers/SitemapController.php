@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Destination;
-use App\Models\Institution;
 use App\Models\Offer;
 use App\Services\Content\PublicPageAvailability;
 use App\Services\Feature\FeatureManager;
@@ -28,7 +27,7 @@ class SitemapController extends Controller
             'about' => ['route' => 'about', 'priority' => '0.7'],
             'support' => ['route' => 'support', 'priority' => '0.6'],
             'visa' => ['route' => 'work-visa.index', 'priority' => '0.7'],
-            'student-consultancy' => ['route' => 'consultancy.singapore', 'priority' => '0.9'],
+            'student-consultancy' => ['route' => 'consultancy.malaysia', 'priority' => '0.9'],
         ] as $feature => $page) {
             if ($features->isVisibleTo($feature, null)) {
                 $urls[] = [
@@ -55,16 +54,16 @@ class SitemapController extends Controller
         }
 
         if ($features->isVisibleTo('student-consultancy', null)) {
-            if (ContentEntry::query()->published(ContentType::Guide)->exists()) {
-                $urls[] = ['loc' => route('consultancy.guides.index'), 'priority' => '0.8'];
-            }
-            if (Institution::query()->publiclyListed()->exists()) {
-                $urls[] = ['loc' => route('consultancy.institutions.index'), 'priority' => '0.7'];
+            $urls[] = ['loc' => route('consultancy.singapore'), 'priority' => '0.8'];
+            foreach (['consultancy.malaysia.guides.index' => '0.8', 'consultancy.malaysia.institutions.index' => '0.7', 'consultancy.guides.index' => '0.7', 'consultancy.institutions.index' => '0.6'] as $route => $priority) {
+                if ($availability->isAvailable($route)) {
+                    $urls[] = ['loc' => route($route), 'priority' => $priority];
+                }
             }
         }
 
         $published = ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)
-            ->whereNotIn('type', [ContentType::Faq->value, ContentType::PageSection->value])->get(['type', 'slug', 'updated_at', 'status', 'canonical_url']);
+            ->whereNotIn('type', [ContentType::Faq->value, ContentType::PageSection->value])->get(['type', 'slug', 'location', 'updated_at', 'status', 'canonical_url']);
         foreach (['business-services' => ContentType::BusinessService, 'restaurants' => ContentType::Restaurant, 'inspiration' => ContentType::Inspiration, 'success-stories' => ContentType::SuccessStory] as $listing => $type) {
             if ($published->contains(fn (ContentEntry $entry): bool => $entry->type === $type)) {
                 $urls[] = ['loc' => route($listing.'.index'), 'priority' => '0.5'];

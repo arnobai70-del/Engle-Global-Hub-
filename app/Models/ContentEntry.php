@@ -112,7 +112,9 @@ class ContentEntry extends Model
 
     public function publicUrl(): ?string
     {
-        $route = $this->type->publicRoute();
+        $route = $this->type === ContentType::Guide && $this->location === 'Malaysia'
+            ? 'consultancy.malaysia.guides.show'
+            : $this->type->publicRoute();
 
         return $route !== null && $this->status === self::STATUS_PUBLISHED ? route($route, $this->slug) : null;
     }

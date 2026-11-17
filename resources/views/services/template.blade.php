@@ -7,7 +7,7 @@
 @php
     $whatsappUrl = app(\App\Services\SiteFacts::class)->whatsappUrl(__('Hello, I would like help with :service.', ['service' => $page['title']]));
     $parent = in_array($page['group'], ['study'], true)
-        ? ['label' => __('Study in Singapore'), 'url' => route('consultancy.singapore')]
+        ? ['label' => __('Study in Malaysia'), 'url' => route('consultancy.malaysia')]
         : ['label' => __('Visa & Travel'), 'url' => route('travel-services.index')];
 @endphp
 

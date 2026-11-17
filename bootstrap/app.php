@@ -5,6 +5,7 @@ use App\Http\Controllers\Tour\TourController;
 use App\Http\Controllers\Visa\VisaController;
 use App\Http\Middleware\ApplyRedirects;
 use App\Http\Middleware\EnsureFeatureIsVisible;
+use App\Http\Middleware\RedirectWhenPageIsEmpty;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -57,6 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'feature' => EnsureFeatureIsVisible::class,
+            'has-content' => RedirectWhenPageIsEmpty::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,

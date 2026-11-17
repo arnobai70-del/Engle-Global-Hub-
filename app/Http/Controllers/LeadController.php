@@ -22,7 +22,8 @@ class LeadController extends Controller
 {
     /** Contact-page topics => where the lead is stored. */
     public const CONTACT_TOPICS = [
-        'study' => 'Study in Singapore',
+        'study' => 'Study in Malaysia',
+        'study-singapore' => 'Study in Singapore',
         'visa' => 'Visa',
         'air-ticket' => 'Air ticket',
         'hotel' => 'Hotel booking',
@@ -61,7 +62,8 @@ class LeadController extends Controller
             'preferred_intake' => ['nullable', 'string', 'max:40'],
             'highest_qualification' => ['nullable', 'string', 'max:120'],
             'message' => ['nullable', 'string', 'max:2000'],
-            'form' => ['nullable', Rule::in(['home', 'singapore', 'about', 'why-us'])],
+            'form' => ['nullable', Rule::in(['home', 'malaysia', 'singapore', 'about', 'why-us'])],
+            'destination' => ['nullable', Rule::in(['MY', 'SG'])],
         ], $this->messages());
 
         $lead = $this->studentLead($data, 'Free consultation form ('.($data['form'] ?? 'website').')');
@@ -106,8 +108,8 @@ class LeadController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ], $this->messages());
 
-        if ($data['topic'] === 'study') {
-            $lead = $this->studentLead($data, 'Contact page');
+        if (in_array($data['topic'], ['study', 'study-singapore'], true)) {
+            $lead = $this->studentLead([...$data, 'destination' => $data['topic'] === 'study-singapore' ? 'SG' : 'MY'], 'Contact page');
         } else {
             $lead = ServiceEnquiry::query()->create([
                 'reference' => $this->reference(ServiceEnquiry::class, 'EGH-SQ-'),
@@ -143,7 +145,8 @@ class LeadController extends Controller
             'full_name' => $data['full_name'],
             'email' => filled($data['email'] ?? null) ? strtolower(trim((string) $data['email'])) : null,
             'phone' => $data['phone'],
-            'destination_country_id' => Country::query()->where('iso2', 'SG')->value('id'),
+            // Malaysia is the main destination; the Singapore page sends SG.
+            'destination_country_id' => Country::query()->where('iso2', $data['destination'] ?? 'MY')->value('id'),
             'highest_qualification' => $data['highest_qualification'] ?? null,
             'study_level' => $data['study_level'] ?? null,
             'preferred_intake' => $data['preferred_intake'] ?? null,

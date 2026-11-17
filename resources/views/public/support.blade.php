@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', __('Contact Us'))
-@section('meta_description', __('Talk to Eagle Global Hub LTD in Gulshan, Dhaka: WhatsApp, call, email or send a message for study in Singapore, visa and travel help.'))
+@section('meta_description', __('Talk to Eagle Global Hub LTD in Gulshan, Dhaka: WhatsApp, call, email or send a message for study in Malaysia and Singapore, visa and travel help.'))
 @section('body_class', 'sg-body-v2')
 
 @php
