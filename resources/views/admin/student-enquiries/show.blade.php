@@ -7,7 +7,7 @@
 <div class="egh-card">
 <dl class="stu-show">
 <dt>Name</dt><dd>{{ $enquiry->full_name }}</dd>
-<dt>Email</dt><dd>{{ $enquiry->email }}</dd>
+<dt>Email</dt><dd>{{ $enquiry->email ?: "Not given (phone / WhatsApp lead)" }}</dd>
 <dt>Phone</dt><dd>{{ $enquiry->phone }}</dd>
 <dt>Destination</dt><dd>{{ $enquiry->destinationCountry?->name ?? 'Not specified' }}</dd>
 <dt>Study level</dt><dd>{{ $studyLevels[$enquiry->study_level] ?? 'Not specified' }}</dd>
@@ -33,6 +33,7 @@
 <label>Status<select name="status">@foreach($statuses as $status)<option value="{{ $status }}" @selected(old('status', $enquiry->status) === $status)>{{ ucwords(str_replace('_', ' ', $status)) }}</option>@endforeach</select></label>
 @endif
 <label>Assigned to<select name="assigned_to_user_id"><option value="">Unassigned</option>@foreach($staff as $member)<option value="{{ $member->id }}" @selected((string) old('assigned_to_user_id', $enquiry->assigned_to_user_id) === (string) $member->id)>{{ $member->name }}</option>@endforeach</select></label>
+<label>Email (needed before opening an application)<input type="email" name="email" maxlength="254" value="{{ old('email', $enquiry->email) }}"></label>
 <label>Follow-up date<input type="datetime-local" name="follow_up_at" value="{{ old('follow_up_at', $enquiry->follow_up_at?->format('Y-m-d\TH:i')) }}"></label>
 <label class="stu-full">Internal notes (staff only)<textarea name="internal_notes" maxlength="5000">{{ old('internal_notes', $enquiry->internal_notes) }}</textarea></label>
 </div>

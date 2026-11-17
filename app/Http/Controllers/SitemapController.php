@@ -7,16 +7,21 @@ use App\Models\ContentEntry;
 use App\Models\Destination;
 use App\Models\Institution;
 use App\Models\Offer;
+use App\Services\Content\PublicPageAvailability;
 use App\Services\Feature\FeatureManager;
+use App\Services\Travel\ServiceCatalog;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
-    public function __invoke(FeatureManager $features): Response
+    public function __invoke(FeatureManager $features, ServiceCatalog $catalog, PublicPageAvailability $availability): Response
     {
         $urls = [
             ['loc' => route('home'), 'priority' => '1.0'],
             ['loc' => route('terms'), 'priority' => '0.5'],
+            ['loc' => route('why-us'), 'priority' => '0.7'],
+            ['loc' => route('privacy'), 'priority' => '0.3'],
+            ['loc' => route('b2b.info'), 'priority' => '0.4'],
         ];
 
         foreach ([
@@ -33,8 +38,21 @@ class SitemapController extends Controller
             }
         }
 
-        $urls[] = ['loc' => route('reviews.index'), 'priority' => '0.4'];
         $urls[] = ['loc' => route('travel-services.index'), 'priority' => '0.7'];
+        foreach (['visa' => 'visa.index', 'hotels' => 'hotels.index', 'tours' => 'tours.index'] as $feature => $route) {
+            if ($features->isVisibleTo($feature, null)) {
+                $urls[] = ['loc' => route($route), 'priority' => '0.7'];
+            }
+        }
+        foreach (array_keys($catalog->all()) as $slug) {
+            $urls[] = ['loc' => route('services.show', $slug), 'priority' => '0.7'];
+        }
+        // Listing pages appear only once they have something published.
+        foreach (['reviews.index' => '0.4', 'forums.index' => '0.4', 'rewards.index' => '0.4', 'map' => '0.3', 'mobile-app' => '0.3'] as $route => $priority) {
+            if ($availability->isAvailable($route)) {
+                $urls[] = ['loc' => route($route), 'priority' => $priority];
+            }
+        }
 
         if ($features->isVisibleTo('student-consultancy', null)) {
             if (ContentEntry::query()->published(ContentType::Guide)->exists()) {
@@ -47,7 +65,7 @@ class SitemapController extends Controller
 
         $published = ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)
             ->whereNotIn('type', [ContentType::Faq->value, ContentType::PageSection->value])->get(['type', 'slug', 'updated_at', 'status', 'canonical_url']);
-        foreach (['company' => ContentType::CompanyProfile, 'business-services' => ContentType::BusinessService, 'restaurants' => ContentType::Restaurant, 'inspiration' => ContentType::Inspiration, 'success-stories' => ContentType::SuccessStory] as $listing => $type) {
+        foreach (['business-services' => ContentType::BusinessService, 'restaurants' => ContentType::Restaurant, 'inspiration' => ContentType::Inspiration, 'success-stories' => ContentType::SuccessStory] as $listing => $type) {
             if ($published->contains(fn (ContentEntry $entry): bool => $entry->type === $type)) {
                 $urls[] = ['loc' => route($listing.'.index'), 'priority' => '0.5'];
             }

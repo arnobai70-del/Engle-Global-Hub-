@@ -21,23 +21,24 @@ class WorkVisaPagesTest extends TestCase
 
     public function test_work_visa_pages_are_reachable_without_signing_in(): void
     {
-        $this->get(route('work-visa.index'))->assertOk()->assertSee('Work Visa Processing')->assertSee('Demo Preview');
-        $this->get(route('work-visa.apply'))->assertOk()->assertSee('WORK VISA CONSULTATION')->assertSee('Demo Preview');
+        $this->get(route('work-visa.index'))->assertOk()->assertSee('Work visa guidance')->assertSee('id="quote-form"', false)->assertDontSee('Demo Preview');
+        $this->get(route('work-visa.apply'))->assertRedirect(route('work-visa.index').'#quote-form');
     }
 
     public function test_work_visa_page_has_safe_service_and_destination_previews(): void
     {
-        $this->get(route('work-visa.index'))->assertOk()->assertSee('Skilled Worker')->assertSee('Employer Sponsored')->assertSee('Job Visa &amp; Work Permits', false)->assertDontSee('Sample destination')->assertSee('Work permit destinations')->assertSee('Belarus')->assertSee('Dubai (United Arab Emirates)')->assertSee('No guarantee')->assertDontSee('application submitted')->assertDontSee('guaranteed sponsorship');
+        $this->get(route('work-visa.index'))->assertOk()->assertDontSee('Sample destination')->assertSee('Countries we help with')->assertSee('Belarus')->assertSee('Dubai (United Arab Emirates)')->assertSee('we cannot guarantee approval')->assertDontSee('application submitted')->assertDontSee('guaranteed sponsorship');
     }
 
     public function test_work_visa_preview_does_not_claim_real_jobs_or_sponsorship(): void
     {
-        $this->get(route('work-visa.index'))->assertOk()->assertSee('No fake vacancies or employers are listed')->assertSee('do not promise employment, sponsorship, eligibility, visa approval or a processing time');
+        $this->get(route('work-visa.index'))->assertOk()->assertSee('We never sell jobs or visas')->assertDontSee('vacancies available');
     }
 
     public function test_work_visa_consultation_preview_is_disabled_and_has_no_payment(): void
     {
-        $this->get(route('work-visa.apply'))->assertOk()->assertSee('Consultation information preview')->assertSee('disabled', false)->assertSee('Nothing entered here is submitted, stored, charged')->assertDontSee('BDT 75,000')->assertDontSee('payment successful');
+        $this->get(route('work-visa.apply'))->assertRedirect(route('work-visa.index').'#quote-form');
+        $this->get(route('work-visa.index'))->assertOk()->assertSee('Free. Nothing is booked or charged.')->assertDontSee('BDT 75,000')->assertDontSee('payment successful');
     }
 
     public function test_work_visa_pages_follow_visa_feature_visibility(): void

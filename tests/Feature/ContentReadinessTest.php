@@ -132,12 +132,12 @@ class ContentReadinessTest extends TestCase
     public function test_english_interface_text_can_be_edited_from_admin(): void
     {
         $editor = $this->user('content-editor');
-        $this->actingAs($editor)->get(route('admin.translations.index', ['locale' => 'en', 'search' => 'Quick Links']))->assertOk()->assertSee('Quick Links');
-        $this->actingAs($editor)->patch(route('admin.translations.update'), ['locale' => 'en', 'source_hash' => hash('sha256', 'Quick Links'), 'value' => 'Useful Links'])->assertRedirect();
+        $this->actingAs($editor)->get(route('admin.translations.index', ['locale' => 'en', 'search' => 'More from us']))->assertOk()->assertSee('More from us');
+        $this->actingAs($editor)->patch(route('admin.translations.update'), ['locale' => 'en', 'source_hash' => hash('sha256', 'More from us'), 'value' => 'Useful Links'])->assertRedirect();
 
         $this->flushSession();
         app('translator')->setLoaded([]);
-        $this->get(route('about'))->assertSee('Useful Links')->assertDontSee('Quick Links');
+        $this->get(route('about'))->assertSee('Useful Links')->assertDontSee('More from us');
     }
 
     public function test_queue_health_warns_about_stuck_and_failed_jobs(): void

@@ -21,18 +21,18 @@ class TourFoundationTest extends TestCase
 
     public function test_guest_can_browse_tour_landing_page(): void
     {
-        $this->get(route('tours.index'))->assertOk()->assertSee('Demo Preview');
+        $this->get(route('tours.index'))->assertOk()->assertSee('id="quote-form"', false)->assertDontSee('Demo Preview');
     }
 
     public function test_verified_customer_sees_waiting_for_api_when_provider_is_unavailable(): void
     {
-        $this->actingAs($this->customer())->get(route('tours.index'))->assertOk()->assertSee('Waiting for API')->assertSee('Send a tour enquiry')->assertDontSee('Sample from price');
+        $this->actingAs($this->customer())->get(route('tours.index'))->assertOk()->assertSee('id="quote-form"', false)->assertSee('Send an enquiry')->assertDontSee('Sample from price');
     }
 
     public function test_user_without_permission_can_browse_landing_but_cannot_search(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
-        $this->actingAs($user)->get(route('tours.index'))->assertOk()->assertSee('Demo Preview');
+        $this->actingAs($user)->get(route('tours.index'))->assertOk()->assertSee('id="quote-form"', false);
         $this->actingAs($user)->post(route('tours.search'), $this->validSearch())->assertForbidden();
     }
 

@@ -25,25 +25,25 @@ class VisaFoundationTest extends TestCase
 
     public function test_guest_can_browse_visa_landing_page(): void
     {
-        $this->get(route('visa.index'))->assertOk()->assertSee('Demo Preview');
+        $this->get(route('visa.index'))->assertOk()->assertSee('id="quote-form"', false)->assertDontSee('Demo Preview');
     }
 
     public function test_verified_customer_sees_demo_preview_and_authority_disclaimer(): void
     {
-        $this->actingAs($this->customer())->get(route('visa.index'))->assertOk()->assertSee('Demo Preview')->assertSee('Visa approval')->assertSee('relevant government authority');
+        $this->actingAs($this->customer())->get(route('visa.index'))->assertOk()->assertSee('id="quote-form"', false)->assertSee('Visa decisions are made by the embassy');
     }
 
     public function test_user_without_permission_can_browse_landing_but_cannot_lookup_requirements(): void
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
-        $this->actingAs($user)->get(route('visa.index'))->assertOk()->assertSee('Demo Preview');
+        $this->actingAs($user)->get(route('visa.index'))->assertOk()->assertSee('id="quote-form"', false);
         $this->actingAs($user)->post(route('visa.requirements'), $this->validRequest())->assertForbidden();
     }
 
     public function test_unconfigured_requirement_lookup_never_returns_sample_guidance(): void
     {
         $this->actingAs($this->customer())->post(route('visa.requirements'), $this->validRequest())->assertRedirect(route('visa.index'))->assertSessionHas('api_waiting');
-        $this->actingAs($this->customer())->get(route('visa.index'))->assertSee('Waiting for API')->assertSee(route('services.show', 'tourist-visa'), false);
+        $this->actingAs($this->customer())->get(route('visa.index'))->assertSee('Online search is waiting for the provider API')->assertSee('id="quote-form"', false);
     }
 
     public function test_configured_source_can_return_an_honest_no_data_state(): void
@@ -58,6 +58,7 @@ class VisaFoundationTest extends TestCase
     public function test_configured_service_shows_real_trip_context_fields(): void
     {
         $this->configureProvider();
+        app(ProviderStatus::class)->recordVerified('visa');
         $this->actingAs($this->customer())->get(route('visa.index'))->assertOk()->assertSee('Passport nationality')->assertSee('Origin country')->assertSee('Destination country')->assertSee('Departure')->assertSee('Arrival')->assertDontSee('server-only-test-key');
     }
 

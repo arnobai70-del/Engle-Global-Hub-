@@ -165,6 +165,7 @@ final class FeatureVisibilityTest extends TestCase
     public function test_enabled_feature_receives_existing_normal_access(): void
     {
         $customer = $this->userWithRole('customer');
+        $this->makeFlightsLive();
 
         $this->actingAs($customer)
             ->get(route('flights.index'))
@@ -211,7 +212,8 @@ final class FeatureVisibilityTest extends TestCase
             ->get(route('hotels.index'))
             ->assertOk()
             ->assertSee('Super Admin Preview:')
-            ->assertSee('Waiting for API');
+            ->assertSee('id="quote-form"', false)
+            ->assertDontSee('Waiting for API');
 
         $this->actingAs($superAdmin)
             ->postJson(route('hotels.search'), [])

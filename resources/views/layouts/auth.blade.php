@@ -43,7 +43,10 @@
 
     <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}">
     <link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">
+    <link rel="preload" href="{{ asset('fonts/inter-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/poppins-700-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ $themeCss('css/egh-sg.css') }}">
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-v2.css') }}">
     <style>
         .egho-auth-brand{display:inline-flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important;min-width:0;max-width:100%}
         .egho-auth-brand-logo{display:block!important;width:112px!important;height:68px!important;object-fit:cover!important;object-position:center 44%!important;flex:0 0 112px!important}
@@ -179,5 +182,6 @@
 
     </main>
 
+    <x-site.whatsapp-float />
 </body>
 </html>

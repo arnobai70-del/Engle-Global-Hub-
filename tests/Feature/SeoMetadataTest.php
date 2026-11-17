@@ -44,7 +44,8 @@ class SeoMetadataTest extends TestCase
     public function test_sitemap_lists_public_pages_and_current_offers_only(): void
     {
         $this->get(route('sitemap'))->assertOk()
-            ->assertSee(route('reviews.index'), false)
+            ->assertDontSee(route('reviews.index'), false)
+            ->assertSee(route('services.show', 'tourist-visa'), false)
             ->assertDontSee(route('offers.index'), false)
             ->assertDontSee('/admin', false)
             ->assertDontSee('/my-applications', false);

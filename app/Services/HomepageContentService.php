@@ -218,8 +218,8 @@ class HomepageContentService
     private function defaultSeo(): array
     {
         return [
-            'home_meta_title' => 'Eagle Global Hub | Flights, Hotels, Tours & Visa Services',
-            'home_meta_description' => 'Search flights and explore hotels, tours, visa and work visa services with Eagle Global Hub.',
+            'home_meta_title' => 'Study in Singapore from Bangladesh | Eagle Global Hub',
+            'home_meta_description' => 'Free consultation for studying in Singapore: course choice, admission, Student\'s Pass, air ticket and housing support from our office in Gulshan, Dhaka.',
             'home_canonical_url' => null,
             'home_og_title' => null,
             'home_og_description' => null,

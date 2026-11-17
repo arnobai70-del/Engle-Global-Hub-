@@ -16,12 +16,15 @@ class FlightSearchPageTest extends TestCase
         parent::setUp();
 
         $this->seed(RolePermissionSeeder::class);
+        $this->makeFlightsLive();
     }
 
-    public function test_guest_cannot_view_flight_search_page(): void
+    public function test_guest_sees_the_public_flight_enquiry_page_not_the_search(): void
     {
         $this->get(route('flights.index'))
-            ->assertRedirect(route('login'));
+            ->assertOk()
+            ->assertSee('action="'.route('leads.quote', 'air-ticket').'"', false)
+            ->assertDontSee('data-flight-search-form', false);
     }
 
     public function test_verified_customer_can_view_flight_search_page(): void
@@ -38,7 +41,7 @@ class FlightSearchPageTest extends TestCase
             ->assertDontSee('name="cabin"', false);
     }
 
-    public function test_verified_user_without_permission_cannot_view_page(): void
+    public function test_verified_user_without_permission_gets_the_enquiry_page_instead_of_the_search(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
@@ -46,7 +49,19 @@ class FlightSearchPageTest extends TestCase
 
         $this->actingAs($user)
             ->get(route('flights.index'))
-            ->assertForbidden();
+            ->assertOk()
+            ->assertDontSee('data-flight-search-form', false);
+    }
+
+    public function test_customer_gets_the_enquiry_page_until_the_flight_provider_is_live(): void
+    {
+        config(['flight.duffel.access_token' => 'a-new-untested-token']);
+
+        $this->actingAs($this->customer())
+            ->get(route('flights.index'))
+            ->assertOk()
+            ->assertDontSee('data-flight-search-form', false)
+            ->assertSee('action="'.route('leads.quote', 'air-ticket').'"', false);
     }
 
     public function test_customer_dashboard_links_to_flight_search(): void

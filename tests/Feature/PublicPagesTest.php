@@ -10,7 +10,7 @@ class PublicPagesTest extends TestCase
     {
         $pages = [
             route('about') => 'Eagle Global Hub LTD',
-            route('support') => 'Official Contact Channels',
+            route('support') => 'Talk to us',
             route('terms') => 'Website terms and booking notices',
         ];
 

@@ -94,7 +94,7 @@ final class MenuBuilderTest extends TestCase
     public function test_header_renders_managed_items_with_role_visibility_and_hides_inactive_items(): void
     {
         $study = $this->menuItem(['label_en' => 'Managed Study', 'target' => null]);
-        $this->menuItem(['label_en' => 'Managed Guides', 'parent_id' => $study->id, 'target' => 'route:consultancy.guides.index']);
+        $this->menuItem(['label_en' => 'Managed Guides', 'parent_id' => $study->id, 'target' => 'route:visa.index']);
         $this->menuItem(['label_en' => 'Managed Hidden', 'target' => 'route:tours.index', 'is_active' => false]);
         $this->menuItem(['label_en' => 'Managed Agents', 'target' => 'route:dashboard', 'visibility' => 'roles', 'roles' => ['visa-officer']]);
         $this->menuItem(['label_en' => 'Managed Partner', 'target' => 'url:https://partner.example.com', 'open_in_new_tab' => true]);
@@ -103,7 +103,7 @@ final class MenuBuilderTest extends TestCase
             ->assertOk()
             ->assertSee('Managed Study')
             ->assertSee('Managed Guides')
-            ->assertSee(route('consultancy.guides.index'), false)
+            ->assertSee(route('visa.index'), false)
             ->assertSee('https://partner.example.com', false)->assertSee('target="_blank" rel="noopener noreferrer"', false)
             ->assertDontSee('Managed Hidden')
             ->assertDontSee('Managed Agents');
@@ -123,16 +123,23 @@ final class MenuBuilderTest extends TestCase
 
     public function test_built_in_navigation_is_used_until_menus_exist_and_seeded_menus_render_in_bengali(): void
     {
-        $this->get(route('home'))->assertOk()->assertSee('Study in Singapore')->assertSee('Apply Now');
+        $this->get(route('home'))->assertOk()->assertSee('Study in Singapore')->assertSee('Free Consultation');
 
         $this->seed(MenuSeeder::class);
         $this->seed(MenuSeeder::class);
-        $this->assertSame(1, MenuItem::query()->where('key', 'home')->count());
+        $this->assertSame(1, MenuItem::query()->where('key', 'contact')->count());
 
         $this->get(route('home', ['lang' => 'bn']))
             ->assertOk()
-            ->assertSee(MenuItem::query()->where('key', 'visa')->value('label_bn'))
-            ->assertSee(route('consultancy.singapore').'#consultation', false);
+            ->assertSee(MenuItem::query()->where('key', 'travel')->value('label_bn'))
+            ->assertSee(route('consultancy.singapore').'#apply', false);
+    }
+
+    public function test_items_without_a_bengali_label_use_the_site_translation(): void
+    {
+        $this->menuItem(['label_en' => 'Visa services', 'label_bn' => null, 'target' => 'route:visa.index']);
+
+        $this->get(route('home', ['lang' => 'bn']))->assertOk()->assertSee('ভিসা সেবা');
     }
 
     public function test_homepage_tiles_and_header_button_follow_the_managed_menus(): void

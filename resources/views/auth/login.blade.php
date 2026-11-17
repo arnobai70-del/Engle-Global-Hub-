@@ -72,9 +72,9 @@
     <section class="sg-login-roles" aria-labelledby="login-roles">
         <h2 id="login-roles">{{ __('One secure sign-in for everyone') }}</h2>
         <ul>
-            <li><strong>{{ __('Student Login') }}</strong> {{ __('Opens your Student Portal: applications, documents, appointments and messages.') }}</li>
-            <li><strong>{{ __('Agent Login') }}</strong> {{ __('Approved agents and Egabe B2B partners reach the Agent Portal.') }} <a href="{{ route('b2b.register') }}">{{ __('Become a partner') }}</a></li>
-            <li><strong>{{ __('Tourist Login') }}</strong> {{ __('Travellers see their enquiries, bookings and notifications.') }}</li>
+            <li><strong>{{ __('Student Login') }}</strong> {{ __('Opens your Student Portal: applications, documents, appointments and messages.') }} <a href="{{ route('register', ['type' => 'student']) }}">{{ __('Create a student account') }}</a></li>
+            <li><strong>{{ __('Agent Login') }}</strong> {{ __('Approved agents and Egabe B2B partners reach the Agent Portal.') }} <a href="{{ route('register', ['type' => 'agent']) }}">{{ __('Become a partner') }}</a></li>
+            <li><strong>{{ __('Tourist Login') }}</strong> {{ __('Travellers see their enquiries, bookings and notifications.') }} <a href="{{ route('register', ['type' => 'traveller']) }}">{{ __('Create a traveller account') }}</a></li>
         </ul>
     </section>
 @endsection

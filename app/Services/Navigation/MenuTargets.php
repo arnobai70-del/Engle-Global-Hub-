@@ -37,9 +37,11 @@ class MenuTargets
         'forums.index' => ['Forums', null],
         'map' => ['Map', null],
         'about' => ['About Us', 'about'],
-        'company.index' => ['Company Profile', null],
+        'why-us' => ['Why Us', null],
+        'privacy' => ['Privacy Policy', null],
         'business-services.index' => ['Business Services', null],
-        'b2b.register' => ['Egabe B2B', null],
+        'b2b.register' => ['Egabe B2B (partner application)', null],
+        'b2b.info' => ['B2B partners (information)', null],
         'support' => ['Contact & Support', 'support'],
         'terms' => ['Terms & Conditions', null],
         'search' => ['Search', null],
@@ -130,6 +132,14 @@ class MenuTargets
         }
 
         return $url.(filled($fragment) ? '#'.$fragment : '');
+    }
+
+    /**
+     * The route name of an internal target, or null for external links and headings.
+     */
+    public function routeName(?string $target): ?string
+    {
+        return $target !== null && str_starts_with($target, 'route:') ? explode('|', substr($target, 6), 2)[0] : null;
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Models\ContactDirectoryEntry;
 use App\Models\ContentEntry;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Published admin content for existing pages. Every lookup returns nothing
@@ -27,6 +28,39 @@ class PageContent
         }
 
         return $this->sections[$slug];
+    }
+
+    /**
+     * A published page section written as a bulleted list ("- Title: text" per line),
+     * returned as cards in the visitor's language. Empty when the section is not published.
+     *
+     * @return list<array{title: string, text: string}>
+     */
+    public function points(string ...$slugs): array
+    {
+        foreach ($slugs as $slug) {
+            $section = $this->section($slug);
+            if ($section === null) {
+                continue;
+            }
+
+            $points = collect(preg_split('/\R/', (string) $section->localized('body')) ?: [])
+                ->map(fn (string $line): string => trim((string) preg_replace('/^[-*•]\s*/u', '', trim($line))))
+                ->filter()
+                ->map(function (string $line): array {
+                    [$title, $text] = str_contains($line, ':') ? array_map('trim', explode(':', $line, 2)) : [$line, ''];
+
+                    return ['title' => Str::ucfirst($title), 'text' => Str::ucfirst($text)];
+                })
+                ->values()
+                ->all();
+
+            if ($points !== []) {
+                return $points;
+            }
+        }
+
+        return [];
     }
 
     /**

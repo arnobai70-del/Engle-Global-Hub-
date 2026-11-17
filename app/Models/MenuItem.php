@@ -54,6 +54,11 @@ class MenuItem extends Model
 
     public function label(): string
     {
-        return app()->getLocale() === 'bn' && filled($this->label_bn) ? (string) $this->label_bn : (string) $this->label_en;
+        if (app()->getLocale() === 'bn') {
+            // Without a Bengali label, use the site translation of the English label when one exists.
+            return filled($this->label_bn) ? (string) $this->label_bn : (string) __((string) $this->label_en);
+        }
+
+        return (string) $this->label_en;
     }
 }
