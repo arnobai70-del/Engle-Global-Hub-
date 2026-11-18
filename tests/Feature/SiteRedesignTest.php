@@ -81,4 +81,28 @@ class SiteRedesignTest extends TestCase
         $this->assertStringContainsString('Your Gateway to Study in Malaysia', $html);
         $this->assertStringNotContainsString('<script>', $html);
     }
+
+    public function test_full_desktop_menu_shows_from_1180px_and_motion_respects_reduced_motion(): void
+    {
+        $siteCss = (string) file_get_contents(public_path('css/egh-sg.css'));
+        $v2Css = (string) file_get_contents(public_path('css/egh-v2.css'));
+        $script = (string) file_get_contents(public_path('js/egh-sg-nav.js'));
+
+        $this->assertStringContainsString('@media (max-width: 1179px) {', $siteCss, 'the burger menu is only for screens narrower than 1180px');
+        $this->assertStringNotContainsString('@media (max-width: 1280px) {', $siteCss);
+        $this->assertStringContainsString('(pointer: fine) and (min-width: 1180px)', $script, 'hover dropdowns start where the full menu starts');
+        $this->assertStringContainsString('@media (min-width: 1180px) and (max-width: 1365px) {', $v2Css, 'laptop widths get compact menu spacing');
+
+        $this->assertStringContainsString('@media (prefers-reduced-motion: no-preference) {', $v2Css);
+        $this->assertStringContainsString("matchMedia('(prefers-reduced-motion: reduce)').matches) return;", $script, 'scroll reveal is skipped for reduced motion');
+        $this->assertStringContainsString('@media print { .egh-reveal { opacity: 1 !important;', $v2Css, 'printed pages never hide unrevealed blocks');
+    }
+
+    public function test_footer_logo_sits_on_a_white_tile_so_it_is_visible_on_navy(): void
+    {
+        $html = (string) $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('class="sg-brand sg-brand-light"><img class="sg-brand-logo"', $html);
+        $this->assertMatchesRegularExpression('/\.sg-brand-light \.sg-brand-logo \{[^}]*background: #fff;/', (string) file_get_contents(public_path('css/egh-v2.css')));
+    }
 }

@@ -118,14 +118,14 @@
 .sg-burger { display: none; margin-left: auto; width: 44px; height: 44px; border: 1px solid var(--sg-line); border-radius: 10px; background: #fff; color: var(--sg-ink); cursor: pointer; }
 .sg-burger svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-/* Compact desktop header at every width; the menu collapses to the burger below 1280px,
+/* Compact desktop header at every width; the menu collapses to the burger below 1180px,
    or earlier whenever the items do not fit (egh-sg-nav.js adds .sg-nav-collapsed, e.g. longer Bengali labels). */
 .sg-nav-link, .sg-dd > summary { padding: .55rem .48rem; font-size: .92rem; }
 .sg-brand-copy strong { font-size: 1.35rem; }
 .sg-brand-logo { width: 48px; }
 .sg-nav-actions { gap: .45rem; margin-left: .35rem; }
 .sg-account-name { display: none; }
-@media (max-width: 1280px) {
+@media (max-width: 1179px) {
     .sg-burger { display: inline-grid; place-items: center; }
     .sg-nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: .25rem; padding: 1rem 16px 1.25rem; background: #fff; border-top: 1px solid var(--sg-line); box-shadow: var(--sg-shadow-lg); max-height: calc(100vh - 120px); overflow-y: auto; }
     .sg-nav.is-open { display: flex; }
@@ -641,7 +641,7 @@ a.sg-feature:hover { transform: translateY(-3px); box-shadow: var(--sg-shadow-lg
 }
 
 /* ---------- Desktop dropdowns open on hover ---------- */
-@media (hover: hover) and (pointer: fine) and (min-width: 1281px) {
+@media (hover: hover) and (pointer: fine) and (min-width: 1180px) {
     .sg-header:not(.sg-nav-collapsed) .sg-dd-menu { animation: sg-dd-in .16s ease-out; }
     .sg-header:not(.sg-nav-collapsed) .sg-dd::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
 }
