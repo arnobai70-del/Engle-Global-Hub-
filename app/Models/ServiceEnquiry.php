@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BusinessService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
@@ -116,6 +117,16 @@ class ServiceEnquiry extends Model
     public function destinationCountry(): BelongsTo
     {
         return $this->belongsTo(Country::class, 'destination_country_id');
+    }
+
+    /**
+     * Explore Bangladesh destinations a "Plan my trip" enquiry asks about.
+     *
+     * @return BelongsToMany<Destination, $this>
+     */
+    public function destinations(): BelongsToMany
+    {
+        return $this->belongsToMany(Destination::class);
     }
 
     public function assignedTo(): BelongsTo

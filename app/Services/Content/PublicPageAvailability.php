@@ -22,13 +22,15 @@ use Throwable;
  * Whether a public listing page has anything published yet. Pages without content
  * stay reachable by URL but are left out of menus, the footer and the sitemap;
  * they come back automatically once an admin publishes the first item.
+ * Explore Bangladesh is always available: it has travel essentials and a trip form even before
+ * the first destination is published.
  */
 class PublicPageAvailability
 {
     /** Route names this service decides about. Every other route is always available. */
     public const ROUTES = [
         'company.index', 'success-stories.index', 'offers.index', 'forums.index', 'reviews.index',
-        'rewards.index', 'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index',
+        'rewards.index', 'restaurants.index', 'inspiration.index', 'map',
         'consultancy.guides.index', 'consultancy.institutions.index', 'mobile-app',
         'consultancy.malaysia.guides.index', 'consultancy.malaysia.institutions.index',
         'consultancy.malaysia.eligibility', 'consultancy.malaysia.cost-calculator', 'consultancy.malaysia.courses',
@@ -69,7 +71,6 @@ class PublicPageAvailability
                 'reviews.index' => Review::query()->where('status', Review::STATUS_APPROVED)->exists(),
                 'rewards.index' => RewardProgram::query()->live()->exists(),
                 'forums.index' => ForumThread::query()->whereHas('category', fn ($query) => $query->where('is_active', true))->exists(),
-                'explore-bangladesh.index' => Destination::query()->published()->exists(),
                 'consultancy.institutions.index' => Institution::query()->publiclyListed()->where(fn ($query) => $query->whereNull('country_id')->orWhereHas('country', fn ($country) => $country->where('iso2', '!=', 'MY')))->exists(),
                 'map' => Destination::query()->published()->exists()
                     || ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->whereNotNull('latitude')->whereNotNull('longitude')->exists(),

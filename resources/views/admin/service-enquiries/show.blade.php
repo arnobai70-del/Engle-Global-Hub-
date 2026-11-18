@@ -10,6 +10,7 @@
 @if($enquiry->referredByAgent)<dt>Referred by</dt><dd><a class="stu-link" href="{{ route('admin.agents.show', $enquiry->referredByAgent) }}">{{ $enquiry->referredByAgent->company_name ?: $enquiry->referredByAgent->name }}</a></dd>@endif
 <dt>Account</dt><dd>{{ $enquiry->user ? 'Signed-in customer' : 'Guest' }}</dd>
 <dt>Destination</dt><dd>{{ $enquiry->destinationCountry?->name ?? $enquiry->route_or_destination ?? 'Not specified' }}</dd>
+@if($enquiry->destinations->isNotEmpty())<dt>Places to visit</dt><dd>{{ $enquiry->destinations->pluck('name')->implode(', ') }}</dd>@endif
 <dt>Dates</dt><dd>{{ $enquiry->travel_date?->format('Y-m-d') ?? 'Flexible' }}@if($enquiry->return_date) → {{ $enquiry->return_date->format('Y-m-d') }}@endif</dd>
 <dt>Travellers</dt><dd>{{ $enquiry->travellers }}</dd>
 <dt>Message</dt><dd class="stu-notes">{{ $enquiry->message ?: 'None' }}</dd>

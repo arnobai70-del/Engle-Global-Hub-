@@ -17,7 +17,7 @@
         $branding=rescue(fn()=>app(\App\Services\SettingService::class)->group('branding'),[],false);$headerTagline=app()->getLocale()==='bn'&&filled($branding['header_tagline_bn']??null)?$branding['header_tagline_bn']:(filled($branding['header_tagline']??null)?$branding['header_tagline']:__('Your Gateway to Study in Malaysia'));$siteLogo=$siteLogo??asset('images/eagle-global-hub-logo.png');
         $currentLocale=app()->getLocale();
         $routeName=(string) request()->route()?->getName();
-        $leanPage=request()->routeIs('home','consultancy.malaysia','consultancy.singapore','consultancy.malaysia.guides.index','consultancy.guides.index','about','why-us','support','services.show','consultancy.malaysia.eligibility','consultancy.malaysia.courses','consultancy.malaysia.cost-calculator','appointments.book');
+        $leanPage=request()->routeIs('home','consultancy.malaysia','consultancy.singapore','consultancy.malaysia.guides.index','consultancy.guides.index','about','why-us','support','services.show','explore-bangladesh.index','explore-bangladesh.show','consultancy.malaysia.eligibility','consultancy.malaysia.courses','consultancy.malaysia.cost-calculator','appointments.book');
         $flightsUrl=auth()->check()?(auth()->user()->can('flights.search')?route('flights.index'):route('dashboard')):route('login');
         $phoneHref=data_get($siteContact,'phone')?'tel:'.preg_replace('/[^+0-9]/','',data_get($siteContact,'phone')):null;
     @endphp
@@ -161,10 +161,15 @@
 <footer class="sg-footer v2-footer">
     <div class="sg-shell">
         @unless(request()->routeIs('home', 'consultancy.malaysia', 'consultancy.singapore'))
+        {{-- Pages can replace this band with @section('footer_cta') (Explore Bangladesh uses a travel CTA). --}}
+        @hasSection('footer_cta')
+        @yield('footer_cta')
+        @else
         <div class="sg-footer-cta">
             <div><h2>{{ __('Ready to study in Malaysia?') }}</h2><p>{{ __('Talk to our consultants about courses, admission and the EMGS Student Pass.') }}</p></div>
             <div class="sg-footer-cta-actions"><a href="{{ $consultationUrl }}" class="sg-btn sg-btn-red">{{ __('Free Consultation') }}</a>@if($whatsappUrl)<a href="{{ $whatsappUrl }}" class="sg-btn sg-btn-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>@endif</div>
         </div>
+        @endif
         @endunless
         <div class="sg-footer-main">
             <div class="sg-footer-about">

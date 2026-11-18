@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\Destination;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -26,6 +27,16 @@ class SaveDestinationRequest extends FormRequest
             'name' => ['required', 'string', 'max:150', Rule::unique('destinations', 'name')->where('country_id', $this->input('country_id'))->ignore($destination)],
             'slug' => ['required', 'string', 'max:160', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('destinations', 'slug')->ignore($destination)],
             'region' => ['nullable', 'string', 'max:150'],
+            'name_bn' => ['nullable', 'string', 'max:150'],
+            'category' => ['nullable', Rule::in(array_keys(Destination::CATEGORIES))],
+            'summary_bn' => ['nullable', 'string', 'max:500'],
+            'description_bn' => ['nullable', 'string', 'max:20000'],
+            'best_time_to_visit' => ['nullable', 'string', 'max:150'],
+            'how_to_get_there' => ['nullable', 'string', 'max:5000'],
+            'travel_tips' => ['nullable', 'string', 'max:5000'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90', 'required_with:longitude'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180', 'required_with:latitude'],
+            'is_featured' => ['boolean'],
             'summary' => ['nullable', 'string', 'max:500'],
             'description' => ['nullable', 'string', 'max:20000'],
             'meta_title' => ['nullable', 'string', 'max:70'],
@@ -47,6 +58,8 @@ class SaveDestinationRequest extends FormRequest
         return [
             'cover_image_alt.required_with' => 'Describe the cover image for visitors using screen readers and for search engines.',
             'gallery_alt.required_with' => 'Describe the gallery image.',
+            'latitude.required_with' => 'Enter both latitude and longitude, or leave both empty.',
+            'longitude.required_with' => 'Enter both latitude and longitude, or leave both empty.',
         ];
     }
 
@@ -57,6 +70,7 @@ class SaveDestinationRequest extends FormRequest
         $this->merge([
             'slug' => $slug === '' ? Str::slug((string) $this->input('name', '')) : Str::lower($slug),
             'is_published' => $this->boolean('is_published'),
+            'is_featured' => $this->boolean('is_featured'),
             'sort_order' => $this->input('sort_order', 0),
         ]);
     }

@@ -40,6 +40,7 @@ class ProductionSeeder extends Seeder
             StarterContentSeeder::class,
             MalaysiaGuidesSeeder::class,
             MenuSeeder::class,
+            ExploreBangladeshMenuSeeder::class,
         ]);
     }
 

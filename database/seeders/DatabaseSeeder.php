@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             StarterContentSeeder::class,
             MalaysiaGuidesSeeder::class,
             MenuSeeder::class,
+            ExploreBangladeshMenuSeeder::class,
         ]);
 
         $user = User::query()->firstOrCreate(
