@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BusinessService;
-use App\Models\Country;
 use App\Models\ServiceEnquiry;
 use App\Models\StudentEnquiry;
 use App\Notifications\NewLeadReceived;
+use App\Services\Consultancy\StudentLeadRecorder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -140,24 +140,7 @@ class LeadController extends Controller
      */
     private function studentLead(array $data, string $source): StudentEnquiry
     {
-        $lead = StudentEnquiry::query()->create([
-            'reference' => $this->reference(StudentEnquiry::class, 'EGH-SE-'),
-            'full_name' => $data['full_name'],
-            'email' => filled($data['email'] ?? null) ? strtolower(trim((string) $data['email'])) : null,
-            'phone' => $data['phone'],
-            // Malaysia is the main destination; the Singapore page sends SG.
-            'destination_country_id' => Country::query()->where('iso2', $data['destination'] ?? 'MY')->value('id'),
-            'highest_qualification' => $data['highest_qualification'] ?? null,
-            'study_level' => $data['study_level'] ?? null,
-            'preferred_intake' => $data['preferred_intake'] ?? null,
-            'wants_consultation' => true,
-            'lead_source' => 'direct',
-            'message' => $data['message'] ?? null,
-            'consented_at' => now(),
-        ]);
-        NewLeadReceived::notifyTeam($lead, $source);
-
-        return $lead;
+        return app(StudentLeadRecorder::class)->record($data, $source);
     }
 
     /**

@@ -533,6 +533,13 @@
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
                             <span>Courses &amp; Intakes</span>
                         </a>
+                        <a
+                            href="{{ route('admin.eligibility-rules.index') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.eligibility-rules.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>
+                            <span>Eligibility rules</span>
+                        </a>
                     @endcan
 
                     @can('student-applications.view')

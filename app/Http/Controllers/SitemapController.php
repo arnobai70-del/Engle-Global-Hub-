@@ -10,6 +10,7 @@ use App\Services\Content\PublicPageAvailability;
 use App\Services\Feature\FeatureManager;
 use App\Services\Travel\ServiceCatalog;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
 
 class SitemapController extends Controller
 {
@@ -55,8 +56,12 @@ class SitemapController extends Controller
 
         if ($features->isVisibleTo('student-consultancy', null)) {
             $urls[] = ['loc' => route('consultancy.singapore'), 'priority' => '0.8'];
-            foreach (['consultancy.malaysia.guides.index' => '0.8', 'consultancy.malaysia.institutions.index' => '0.7', 'consultancy.guides.index' => '0.7', 'consultancy.institutions.index' => '0.6'] as $route => $priority) {
-                if ($availability->isAvailable($route)) {
+            foreach ([
+                'consultancy.malaysia.guides.index' => '0.8', 'consultancy.malaysia.institutions.index' => '0.7', 'consultancy.guides.index' => '0.7', 'consultancy.institutions.index' => '0.6',
+                // Planning tools appear once admin has entered the data they need.
+                'consultancy.malaysia.eligibility' => '0.7', 'consultancy.malaysia.courses' => '0.7', 'consultancy.malaysia.cost-calculator' => '0.6', 'appointments.book' => '0.6',
+            ] as $route => $priority) {
+                if (Route::has($route) && $availability->isAvailable($route)) {
                     $urls[] = ['loc' => route($route), 'priority' => $priority];
                 }
             }

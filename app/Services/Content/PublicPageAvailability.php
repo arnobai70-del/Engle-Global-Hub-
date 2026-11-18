@@ -5,6 +5,7 @@ namespace App\Services\Content;
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Destination;
+use App\Models\EligibilityRule;
 use App\Models\ForumThread;
 use App\Models\Institution;
 use App\Models\Offer;
@@ -27,6 +28,7 @@ class PublicPageAvailability
         'rewards.index', 'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index',
         'consultancy.guides.index', 'consultancy.institutions.index', 'mobile-app',
         'consultancy.malaysia.guides.index', 'consultancy.malaysia.institutions.index',
+        'consultancy.malaysia.eligibility',
     ];
 
     public function __construct(private SettingService $settings, private StudyCountries $countries) {}
@@ -68,6 +70,7 @@ class PublicPageAvailability
                 'map' => Destination::query()->published()->exists()
                     || ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->whereNotNull('latitude')->whereNotNull('longitude')->exists(),
                 'mobile-app' => $this->hasAppStoreLink(),
+                'consultancy.malaysia.eligibility' => EligibilityRule::query()->where('is_active', true)->exists(),
                 default => true,
             };
         } catch (Throwable) {
