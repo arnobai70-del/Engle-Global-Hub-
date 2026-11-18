@@ -520,3 +520,17 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 
 /* Footer: the original logo is dark on transparent, so it sits on a white tile to stay legible on navy. */
 .sg-brand-light .sg-brand-logo { width: 58px; padding: 6px; background: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); box-sizing: border-box; }
+
+/* Tighter header for long menus (egh-sg-nav.js adds .sg-nav-tight before falling back to the burger). */
+.sg-nav-tight .sg-brand-copy small { display: none; }
+.sg-header.sg-nav-tight .sg-brand-logo { width: 44px; }
+.sg-nav-tight .sg-brand-copy strong { font-size: 1.12rem; }
+.sg-nav-tight .sg-header-inner { gap: .4rem; }
+.sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-nav-link, .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-dd > summary { padding: .5rem .3rem; font-size: .86rem; }
+.sg-nav-tight .sg-dd > summary::after { margin-left: .05rem; width: 6px; height: 6px; }
+.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav-actions { gap: .35rem; margin-left: .25rem; }
+.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav-actions .sg-btn-sm { padding-inline: .7rem; font-size: .86rem; }
+@media (min-width: 1180px) {
+    .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-nav-link::before,
+    .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-dd > summary::before { left: .3rem; right: .3rem; }
+}

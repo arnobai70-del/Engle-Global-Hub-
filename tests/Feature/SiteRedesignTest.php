@@ -92,6 +92,9 @@ class SiteRedesignTest extends TestCase
         $this->assertStringNotContainsString('@media (max-width: 1280px) {', $siteCss);
         $this->assertStringContainsString('(pointer: fine) and (min-width: 1180px)', $script, 'hover dropdowns start where the full menu starts');
         $this->assertStringContainsString('@media (min-width: 1180px) and (max-width: 1365px) {', $v2Css, 'laptop widths get compact menu spacing');
+        $this->assertStringContainsString("header.classList.add('sg-nav-tight');
+        if (overflows()) header.classList.add('sg-nav-collapsed');", $script, 'a long menu tightens before it falls back to the burger');
+        $this->assertStringContainsString('.sg-nav-tight .sg-brand-copy small { display: none; }', $v2Css);
 
         $this->assertStringContainsString('@media (prefers-reduced-motion: no-preference) {', $v2Css);
         $this->assertStringContainsString("matchMedia('(prefers-reduced-motion: reduce)').matches) return;", $script, 'scroll reveal is skipped for reduced motion');
