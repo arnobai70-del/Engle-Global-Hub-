@@ -15,7 +15,7 @@ final class EmptyPagesHiddenTest extends TestCase
 
     private const EMPTY_PAGES = [
         'success-stories.index', 'offers.index', 'forums.index', 'reviews.index', 'rewards.index',
-        'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index', 'consultancy.guides.index',
+        'restaurants.index', 'inspiration.index', 'map', 'consultancy.guides.index',
         'consultancy.institutions.index', 'mobile-app',
     ];
 

@@ -53,7 +53,7 @@ class DestinationController extends Controller
     public function edit(Destination $destination): View
     {
         return view('admin.destinations.form', [
-            'destination' => $destination->load(['images', 'recommendations:id']),
+            'destination' => $destination->load(['images', 'recommendations:id', 'listings']),
             'countries' => $this->countries(),
             'otherDestinations' => Destination::query()->whereKeyNot($destination->getKey())->orderBy('name')->get(['id', 'name']),
         ]);

@@ -148,6 +148,6 @@ class BusinessModulesTest extends TestCase
         $this->get(route('explore-bangladesh.show', 'sylhet'))->assertOk()
             ->assertSee('Places You May Like')->assertSee(route('explore-bangladesh.show', 'kuakata'), false)
             ->assertDontSee(route('explore-bangladesh.show', 'coxs-bazar'), false);
-        $this->assertSame(2, Destination::query()->count() - 1);
+        $this->assertSame(count(BangladeshDestinationSeeder::destinations()), Destination::query()->count());
     }
 }

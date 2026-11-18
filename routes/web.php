@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CurrencyPageController;
 use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\Admin\DestinationListingController;
 use App\Http\Controllers\Admin\EligibilityRuleController;
 use App\Http\Controllers\Admin\FeatureControlController;
 use App\Http\Controllers\Admin\ForumModerationController;
@@ -850,11 +851,18 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
             Route::delete('/{destination}', [DestinationController::class, 'destroy'])->whereNumber('destination')->name('destroy');
             Route::delete('/{destination}/images/{image}', [DestinationController::class, 'destroyImage'])
                 ->whereNumber(['destination', 'image'])->name('images.destroy');
+            // Hotels, restaurants and experiences of a destination.
+            Route::post('/{destination}/listings', [DestinationListingController::class, 'store'])->whereNumber('destination')->name('listings.store');
+            Route::get('/{destination}/listings/{listing}/edit', [DestinationListingController::class, 'edit'])->whereNumber(['destination', 'listing'])->name('listings.edit');
+            Route::patch('/{destination}/listings/{listing}', [DestinationListingController::class, 'update'])->whereNumber(['destination', 'listing'])->name('listings.update');
+            Route::delete('/{destination}/listings/{listing}', [DestinationListingController::class, 'destroy'])->whereNumber(['destination', 'listing'])->name('listings.destroy');
         });
     });
 
 Route::get('/explore-bangladesh', [ExploreBangladeshController::class, 'index'])
     ->name('explore-bangladesh.index');
+Route::post('/explore-bangladesh/plan-my-trip', [ExploreBangladeshController::class, 'enquire'])
+    ->middleware('throttle:5,1')->name('explore-bangladesh.enquire');
 Route::get('/explore-bangladesh/{slug}', [ExploreBangladeshController::class, 'show'])
     ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('explore-bangladesh.show');
 

@@ -34,14 +34,15 @@ class ExploreBangladeshTest extends TestCase
 
     public function test_pdf_destinations_are_seeded_as_drafts_and_stay_hidden(): void
     {
-        $this->assertSame(['coxs-bazar', 'kuakata', 'sylhet'], Destination::query()->orderBy('slug')->pluck('slug')->all());
+        $expected = collect(BangladeshDestinationSeeder::destinations())->pluck('slug')->sort()->values()->all();
+        $this->assertSame($expected, Destination::query()->orderBy('slug')->pluck('slug')->all());
         $this->assertSame(0, Destination::query()->where('is_published', true)->count());
 
         $this->seed(BangladeshDestinationSeeder::class);
-        $this->assertSame(3, Destination::query()->count());
+        $this->assertSame(count($expected), Destination::query()->count());
 
         $this->get(route('explore-bangladesh.index'))->assertOk()
-            ->assertSee('Destination guides are being prepared')->assertDontSee("Cox's Bazar");
+            ->assertSee('Our destination guides are being prepared')->assertDontSee("Cox's Bazar");
         $this->get(route('explore-bangladesh.show', 'sylhet'))->assertNotFound();
         $this->get(route('sitemap'))->assertDontSee(route('explore-bangladesh.index'), false);
     }

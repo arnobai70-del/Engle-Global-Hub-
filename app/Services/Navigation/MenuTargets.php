@@ -2,6 +2,7 @@
 
 namespace App\Services\Navigation;
 
+use App\Models\Destination;
 use App\Models\ServiceEnquiry;
 use App\Services\Travel\ServiceCatalog;
 use Illuminate\Support\Facades\Route;
@@ -12,7 +13,8 @@ use Throwable;
  * list of public pages, so an admin can never create a link to a missing route;
  * external targets must be https URLs.
  *
- * Stored format: "route:{name}", "route:{name}|{parameter}" or "url:{https url}".
+ * Stored format: "route:{name}", "route:{name}|{parameter}", "route:{name}|{key}={value}" (a query
+ * string, used for the Explore Bangladesh categories) or "url:{https url}".
  */
 class MenuTargets
 {
@@ -86,7 +88,14 @@ class MenuTargets
             $enquiries['route:service-enquiries.create|'.$slug] = 'Enquiry form: '.ucwords(str_replace('_', ' ', $service));
         }
 
-        return ['Pages' => $pages, 'Service pages' => $services, 'Enquiry forms' => $enquiries];
+        $explore = [];
+        if (Route::has('explore-bangladesh.index')) {
+            foreach (Destination::CATEGORIES as $category => $label) {
+                $explore['route:explore-bangladesh.index|category='.$category] = 'Explore Bangladesh: '.$label;
+            }
+        }
+
+        return ['Pages' => $pages, 'Explore Bangladesh categories' => $explore, 'Service pages' => $services, 'Enquiry forms' => $enquiries];
     }
 
     public function isAllowed(?string $target): bool
@@ -129,7 +138,12 @@ class MenuTargets
         }
 
         try {
-            $url = $parameter === null ? route($name) : route($name, $parameter);
+            if ($parameter !== null && str_contains($parameter, '=')) {
+                parse_str($parameter, $query);
+                $url = route($name, $query);
+            } else {
+                $url = $parameter === null ? route($name) : route($name, $parameter);
+            }
         } catch (Throwable) {
             return null;
         }

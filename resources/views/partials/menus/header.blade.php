@@ -1,6 +1,7 @@
 {{-- Admin-managed header menu (Admin › Menus). Same markup as the built-in menu, so desktop and mobile stay in sync. --}}
 @php($currentUrl = url()->current())
-@php($isCurrent = static fn (?string $url): bool => $url !== null && ! str_contains($url, '#') && rtrim(strtok($url, '?'), '/') === rtrim($currentUrl, '/'))
+{{-- A link with a query string (Explore Bangladesh categories) is current only on that exact URL. --}}
+@php($isCurrent = static fn (?string $url): bool => $url !== null && ! str_contains($url, '#') && (str_contains($url, '?') ? $url === request()->fullUrl() : rtrim($url, '/') === rtrim($currentUrl, '/')))
 @php($malaysiaUrl = rtrim(route('consultancy.malaysia'), '/'))
 {{-- The study item (key study-malaysia or student-visa, or the dropdown that links to Study in Malaysia) becomes the Student Visa mega-menu. --}}
 @php($isMalaysia = static fn (array $item): bool => in_array($item['key'], ['study-malaysia', 'student-visa'], true) || collect($item['children'])->contains(fn ($child): bool => rtrim(strtok((string) $child['url'], '?#'), '/') === $malaysiaUrl))
