@@ -620,3 +620,10 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .v2-cost-total .v2-cost-hint { color: #C9D3EA; }
 .v2-cost-rate { margin: .4rem 0 0; font-size: .85rem; color: #C9D3EA; }
 @media (max-width: 520px) { .v2-cost-row { grid-template-columns: 1fr; } }
+.v2-finder-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: end; margin-bottom: 1.25rem; }
+.v2-finder-filters .v2-field { margin: 0; }
+.v2-finder-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.v2-finder-count { margin: 0 0 1rem; color: var(--muted); font-size: .92rem; }
+.v2-finder-bdt { display: block; font-weight: 400; color: var(--muted); font-size: .82rem; }
+.v2-finder-ask { max-width: 640px; margin: 2.5rem auto 0; scroll-margin-top: 120px; }
+.v2-pagination { margin-top: 1.5rem; }

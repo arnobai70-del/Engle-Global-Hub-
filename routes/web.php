@@ -44,6 +44,7 @@ use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Agent\AgentPortalController;
 use App\Http\Controllers\Agent\PartnerRegistrationController;
 use App\Http\Controllers\Consultancy\CostCalculatorController;
+use App\Http\Controllers\Consultancy\CourseFinderController;
 use App\Http\Controllers\Consultancy\EligibilityController;
 use App\Http\Controllers\Consultancy\InstitutionDirectoryController;
 use App\Http\Controllers\Consultancy\MalaysiaStudyController;
@@ -899,6 +900,8 @@ Route::middleware('feature:student-consultancy')->group(function () {
     Route::get('/study-in-malaysia/eligibility', [EligibilityController::class, 'show'])->middleware('has-content')->name('consultancy.malaysia.eligibility');
     Route::post('/study-in-malaysia/eligibility', [EligibilityController::class, 'store'])->middleware('throttle:5,1')->name('consultancy.malaysia.eligibility.store');
     Route::get('/study-in-malaysia/cost-calculator', CostCalculatorController::class)->middleware('has-content')->name('consultancy.malaysia.cost-calculator');
+    Route::get('/study-in-malaysia/courses', [CourseFinderController::class, 'index'])->middleware('has-content')->name('consultancy.malaysia.courses');
+    Route::post('/study-in-malaysia/courses/enquire', [CourseFinderController::class, 'enquire'])->middleware('throttle:5,1')->name('consultancy.malaysia.courses.enquire');
 });
 Route::get('/study-in-malaysia/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('consultancy.malaysia.guides.show');
 

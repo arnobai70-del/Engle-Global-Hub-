@@ -4,6 +4,7 @@ namespace App\Services\Content;
 
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
+use App\Models\Course;
 use App\Models\Destination;
 use App\Models\EligibilityRule;
 use App\Models\ForumThread;
@@ -29,7 +30,7 @@ class PublicPageAvailability
         'rewards.index', 'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index',
         'consultancy.guides.index', 'consultancy.institutions.index', 'mobile-app',
         'consultancy.malaysia.guides.index', 'consultancy.malaysia.institutions.index',
-        'consultancy.malaysia.eligibility', 'consultancy.malaysia.cost-calculator',
+        'consultancy.malaysia.eligibility', 'consultancy.malaysia.cost-calculator', 'consultancy.malaysia.courses',
     ];
 
     public function __construct(private SettingService $settings, private StudyCountries $countries) {}
@@ -73,6 +74,7 @@ class PublicPageAvailability
                 'mobile-app' => $this->hasAppStoreLink(),
                 'consultancy.malaysia.eligibility' => EligibilityRule::query()->where('is_active', true)->exists(),
                 'consultancy.malaysia.cost-calculator' => app(MalaysiaCostCalculator::class)->isAvailable(),
+                'consultancy.malaysia.courses' => Course::query()->where('is_active', true)->whereIn('institution_id', Institution::query()->publiclyListed()->whereHas('country', fn ($query) => $query->where('iso2', 'MY'))->select('id'))->exists(),
                 default => true,
             };
         } catch (Throwable) {
