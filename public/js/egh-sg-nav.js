@@ -17,7 +17,7 @@
     });
     /* Desktop with a mouse: open a dropdown on hover, close it shortly after the pointer leaves.
        Touch, keyboard and the collapsed (burger) menu keep the click behaviour. */
-    var hoverQuery = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1281px)') : null;
+    var hoverQuery = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1180px)') : null;
     var header = document.querySelector('.sg-header');
     var canHover = function () { return hoverQuery && hoverQuery.matches && !(header && header.classList.contains('sg-nav-collapsed')); };
     menus.forEach(function (menu) {
@@ -116,5 +116,56 @@
             window.print();
             setTimeout(function () { document.body.classList.remove('v2-print-checklist'); }, 500);
         });
+    });
+})();
+
+/* Header gets a deeper shadow once the page scrolls, so it reads as floating above content. */
+(function () {
+    var bar = document.querySelector('.sg-site-header');
+    if (!bar) return;
+    var ticking = false;
+    var update = function () { bar.classList.toggle('is-scrolled', window.scrollY > 8); ticking = false; };
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }, { passive: true });
+    update();
+})();
+
+/* Scroll reveal: section headings, cards and steps below the fold fade up as they enter the
+   viewport, siblings slightly staggered. Skipped when the visitor prefers reduced motion. */
+(function () {
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var selector = [
+        '.v2-section .v2-head', '.v2-section .v2-head-center', '.v2-services > *', '.v2-timeline > li',
+        '.v2-costs > *', '.v2-guides > *', '.v2-facts > *', '.v2-fact-tiles > *', '.v2-team > *', '.v2-stories > *',
+        '.v2-news > *', '.v2-values > *', '.v2-trust li', '.v2-cta-band', '.v2-reqs > *', '.v2-steps-list > li',
+        '.v2-directory > *', '.v2-course', '.v2-contact-card', '.v2-section .v2-card', '.v2-living > *', '.v2-split > *',
+        '.sg-section .sg-card', '.sg-steps > *', '.sg-tiles > *'
+    ].join(',');
+    var fold = window.innerHeight;
+    var items = [];
+    document.querySelectorAll(selector).forEach(function (element) {
+        // Skip blocks already on screen, and blocks nested inside one that is already revealed.
+        if (element.getBoundingClientRect().top <= fold * 0.92 || element.parentElement.closest('.egh-reveal')) return;
+        element.classList.add('egh-reveal');
+        items.push(element);
+    });
+    if (!items.length) return;
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var element = entry.target;
+            observer.unobserve(element);
+            element.classList.add('is-visible');
+            // Hand transitions back to the element's own hover styles once it has arrived.
+            setTimeout(function () {
+                element.classList.remove('egh-reveal', 'is-visible');
+                element.style.removeProperty('--egh-reveal-delay');
+            }, 1400);
+        });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    items.forEach(function (element) {
+        var siblings = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
+        element.style.setProperty('--egh-reveal-delay', (Math.min(siblings, 5) * 0.08) + 's');
+        observer.observe(element);
     });
 })();
