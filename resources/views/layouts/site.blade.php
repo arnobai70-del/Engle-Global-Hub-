@@ -91,26 +91,17 @@
                     @include('partials.menus.header', ['items' => $headerMenu])
                 @else
                 @feature('student-consultancy')
-                @include('partials.menus.malaysia-mega', [
-                    'label' => __('Study in Malaysia'),
-                    'active' => $navActive(['consultancy.malaysia']),
+                {{-- One "Student Visa" item: its mega-menu lists every study destination. --}}
+                @include('partials.menus.student-visa-mega', [
+                    'label' => __('Student Visa'),
+                    'active' => $navActive(['consultancy.']) || request()->is('services/student-visa'),
                     'links' => array_values(array_filter([
-                        ['label' => __('Study in Malaysia'), 'url' => route('consultancy.malaysia')],
                         $pageAvailable('consultancy.malaysia.guides.index') ? ['label' => __('Malaysia Guides'), 'url' => route('consultancy.malaysia.guides.index')] : null,
                         $pageAvailable('consultancy.malaysia.institutions.index') ? ['label' => __('Institutions in Malaysia'), 'url' => route('consultancy.malaysia.institutions.index')] : null,
+                        $pageAvailable('consultancy.guides.index') ? ['label' => __('Singapore Guides'), 'url' => route('consultancy.guides.index')] : null,
                         auth()->check() ? ['label' => __('My Applications'), 'url' => route('student.applications.index')] : null,
                     ])),
                 ])
-                <details class="sg-dd" @if($navActive(['consultancy.singapore', 'consultancy.guides.', 'consultancy.institutions.'])) data-active @endif>
-                    <summary>{{ __('Study in Singapore') }}</summary>
-                    <div class="sg-dd-menu">
-                        <a href="{{ route('consultancy.singapore') }}">{{ __('Study in Singapore') }}</a>
-                        <a href="{{ route('services.show', 'student-visa') }}">{{ __('Student Visa') }}</a>
-                        @if($pageAvailable('consultancy.guides.index'))<a href="{{ route('consultancy.guides.index') }}">{{ __('Singapore Guides') }}</a>@endif
-                        @if($pageAvailable('consultancy.institutions.index'))<a href="{{ route('consultancy.institutions.index') }}">{{ __('Institutions') }}</a>@endif
-                        <a href="{{ route('consultancy.singapore') }}#apply">{{ __('Free Consultation') }}</a>
-                    </div>
-                </details>
                 @endfeature
                 <details class="sg-dd" @if($navActive(['visa.', 'work-visa.', 'services.', 'travel-services.', 'hotels.', 'tours.', 'flights.', 'service-enquiries.'])) data-active @endif>
                     <summary>{{ __('Visa & Travel') }}</summary>

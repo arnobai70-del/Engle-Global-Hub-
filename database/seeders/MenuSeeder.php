@@ -59,19 +59,13 @@ class MenuSeeder extends Seeder
         return [
             // At most six top-level items (DESIGN_BRIEF.md). Pages without published content hide themselves.
             'header' => [
-                ['key' => 'study-malaysia', 'label' => 'Study in Malaysia', 'feature' => 'student-consultancy', 'children' => [
-                    ['key' => 'malaysia-main', 'label' => 'Study in Malaysia', 'target' => $r('consultancy.malaysia')],
+                // One "Student Visa" item; its mega-menu lists every study destination (Admin › Services & Destinations).
+                ['key' => 'study-malaysia', 'label' => 'Student Visa', 'target' => $r('services.show', 'student-visa'), 'feature' => 'student-consultancy', 'children' => [
                     ['key' => 'malaysia-guides', 'label' => 'Malaysia Guides', 'target' => $r('consultancy.malaysia.guides.index')],
                     ['key' => 'malaysia-institutions', 'label' => 'Institutions in Malaysia', 'target' => $r('consultancy.malaysia.institutions.index')],
-                    ['key' => 'malaysia-apply', 'label' => 'Free Consultation', 'target' => $r('consultancy.malaysia'), 'fragment' => 'apply'],
-                    ['key' => 'study-applications', 'label' => 'My Applications', 'target' => $r('student.applications.index'), 'visibility' => 'auth'],
-                ]],
-                ['key' => 'study', 'label' => 'Study in Singapore', 'feature' => 'student-consultancy', 'children' => [
-                    ['key' => 'study-main', 'label' => 'Study in Singapore', 'target' => $r('consultancy.singapore')],
-                    ['key' => 'study-student-visa', 'label' => 'Student Visa', 'target' => $r('services.show', 'student-visa')],
                     ['key' => 'study-guides', 'label' => 'Singapore Guides', 'target' => $r('consultancy.guides.index')],
                     ['key' => 'study-institutions', 'label' => 'Institutions', 'target' => $r('consultancy.institutions.index')],
-                    ['key' => 'study-apply', 'label' => 'Free Consultation', 'target' => $r('consultancy.singapore'), 'fragment' => 'apply'],
+                    ['key' => 'study-applications', 'label' => 'My Applications', 'target' => $r('student.applications.index'), 'visibility' => 'auth'],
                 ]],
                 ['key' => 'travel', 'label' => 'Visa & Travel', 'children' => [
                     ['key' => 'travel-tourist-visa', 'label' => 'Tourist Visa', 'target' => $r('services.show', 'tourist-visa')],

@@ -33,12 +33,12 @@ final class MalaysiaFirstSiteTest extends TestCase
         $this->seed(MenuSeeder::class);
 
         $this->assertSame(
-            ['Study in Malaysia', 'Study in Singapore', 'Visa & Travel', 'How it works', 'About', 'Contact'],
+            ['Student Visa', 'Visa & Travel', 'How it works', 'About', 'Contact'],
             MenuItem::query()->where('location', 'header')->whereNull('parent_id')->orderBy('sort_order')->orderBy('id')->pluck('label_en')->all(),
         );
 
         $html = (string) $this->get(route('home'))->getContent();
-        $this->assertLessThan(strpos($html, '<summary>Study in Singapore</summary>'), strpos($html, '<summary>Study in Malaysia</summary>'));
+        $this->assertStringContainsString('<summary>Student Visa</summary>', $html, 'one Student Visa item lists every study destination');
         $this->assertStringContainsString('href="'.route('consultancy.malaysia').'#apply" class="sg-btn sg-btn-red sg-btn-sm"', $html);
         $this->assertStringNotContainsString('<a href="'.route('success-stories.index').'" class="sg-nav-link"', $html);
     }
@@ -47,7 +47,8 @@ final class MalaysiaFirstSiteTest extends TestCase
     {
         $html = (string) $this->get(route('about'))->getContent();
 
-        $this->assertLessThan(strpos($html, '<summary>Study in Singapore</summary>'), strpos($html, '<summary>Study in Malaysia</summary>'));
+        $this->assertStringContainsString('<summary>Student Visa</summary>', $html);
+        $this->assertStringNotContainsString('<summary>Study in Singapore</summary>', $html);
         $this->assertStringContainsString('Ready to study in Malaysia?', $html);
         $footer = substr($html, (int) strpos($html, '<footer'));
         $this->assertLessThan(strpos($footer, '>Study in Singapore<'), strpos($footer, '>Study in Malaysia<'));

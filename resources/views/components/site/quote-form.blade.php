@@ -9,9 +9,9 @@
         @if($errors->any())<ul class="v2-errors" role="alert">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>@endif
         <label class="v2-field" for="{{ $anchor }}-topic">{{ $topicLabel ?? __('Destination or topic') }}
             @if($topics !== [])
-                <select id="{{ $anchor }}-topic" name="route_or_destination"><option value="">{{ __('Choose one') }}</option>@foreach($topics as $topic)<option value="{{ $topic }}" @selected(old('route_or_destination') === $topic)>{{ $topic }}</option>@endforeach</select>
+                <select id="{{ $anchor }}-topic" name="route_or_destination"><option value="">{{ __('Choose one') }}</option>@foreach($topics as $topic)<option value="{{ $topic }}" @selected(old('route_or_destination', request()->query('country')) === $topic)>{{ $topic }}</option>@endforeach</select>
             @else
-                <input id="{{ $anchor }}-topic" name="route_or_destination" maxlength="200" value="{{ old('route_or_destination') }}">
+                <input id="{{ $anchor }}-topic" name="route_or_destination" maxlength="200" value="{{ old('route_or_destination', is_string(request()->query('country')) ? request()->query('country') : '') }}">
             @endif
         </label>
         <label class="v2-field" for="{{ $anchor }}-month">{{ __('Travel month') }}<input id="{{ $anchor }}-month" type="month" name="travel_month" min="{{ now()->format('Y-m') }}" value="{{ old('travel_month') }}"></label>
