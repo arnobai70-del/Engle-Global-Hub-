@@ -83,16 +83,16 @@
                     @include('partials.menus.header', ['items' => $headerMenu])
                 @else
                 @feature('student-consultancy')
-                <details class="sg-dd" @if($navActive(['consultancy.malaysia'])) data-active @endif>
-                    <summary>{{ __('Study in Malaysia') }}</summary>
-                    <div class="sg-dd-menu">
-                        <a href="{{ route('consultancy.malaysia') }}">{{ __('Study in Malaysia') }}</a>
-                        @if($pageAvailable('consultancy.malaysia.guides.index'))<a href="{{ route('consultancy.malaysia.guides.index') }}">{{ __('Malaysia Guides') }}</a>@endif
-                        @if($pageAvailable('consultancy.malaysia.institutions.index'))<a href="{{ route('consultancy.malaysia.institutions.index') }}">{{ __('Institutions in Malaysia') }}</a>@endif
-                        <a href="{{ $consultationUrl }}">{{ __('Free Consultation') }}</a>
-                        @auth<a href="{{ route('student.applications.index') }}">{{ __('My Applications') }}</a>@endauth
-                    </div>
-                </details>
+                @include('partials.menus.malaysia-mega', [
+                    'label' => __('Study in Malaysia'),
+                    'active' => $navActive(['consultancy.malaysia']),
+                    'links' => array_values(array_filter([
+                        ['label' => __('Study in Malaysia'), 'url' => route('consultancy.malaysia')],
+                        $pageAvailable('consultancy.malaysia.guides.index') ? ['label' => __('Malaysia Guides'), 'url' => route('consultancy.malaysia.guides.index')] : null,
+                        $pageAvailable('consultancy.malaysia.institutions.index') ? ['label' => __('Institutions in Malaysia'), 'url' => route('consultancy.malaysia.institutions.index')] : null,
+                        auth()->check() ? ['label' => __('My Applications'), 'url' => route('student.applications.index')] : null,
+                    ])),
+                ])
                 <details class="sg-dd" @if($navActive(['consultancy.singapore', 'consultancy.guides.', 'consultancy.institutions.'])) data-active @endif>
                     <summary>{{ __('Study in Singapore') }}</summary>
                     <div class="sg-dd-menu">
@@ -126,6 +126,7 @@
                 </details>
                 @feature('support')<a href="{{ route('support') }}" class="sg-nav-link" @if($routeName === 'support') aria-current="page" @endif>{{ __('Contact') }}</a>@endfeature
                 @endif
+                <details class="sg-dd sg-dd-more" data-sg-more hidden><summary>{{ __('More') }}</summary><div class="sg-dd-menu sg-dd-menu-end" data-sg-more-menu></div></details>
                 <div class="sg-nav-actions">
                     @auth
                         <details class="sg-dd sg-dd-account">
@@ -140,11 +141,12 @@
                             </div>
                         </details>
                     @else
-                        <a href="{{ route('login') }}" class="sg-btn sg-btn-outline sg-btn-sm">{{ __('Login') }}</a>
+                        <a href="{{ route('login') }}" class="sg-icon-btn sg-login-btn" aria-label="{{ __('Login') }}" title="{{ __('Login') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="sg-login-label">{{ __('Login') }}</span></a>
                     @endauth
                     @php($ctaMenu = app(\App\Services\Navigation\MenuService::class)->tree('header_cta'))
                     @if($ctaMenu !== null)
-                        @foreach($ctaMenu as $button)<a href="{{ $button['url'] }}" class="sg-btn sg-btn-red sg-btn-sm" @if($button['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $button['label'] }}</a>@endforeach
+                        {{-- One red call-to-action keeps the header calm; extra admin buttons stay hidden here. --}}
+                        @foreach(array_slice($ctaMenu, 0, 1) as $button)<a href="{{ $button['url'] }}" class="sg-btn sg-btn-red sg-btn-sm" @if($button['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $button['label'] }}</a>@endforeach
                     @else
                     <a href="{{ $consultationUrl }}" class="sg-btn sg-btn-red sg-btn-sm">{{ __('Free Consultation') }}</a>
                     @endif

@@ -534,3 +534,53 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
     .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-nav-link::before,
     .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-dd > summary::before { left: .3rem; right: .3rem; }
 }
+
+/* ---------- Header: icon login, overflow "More", Malaysia mega-menu ---------- */
+.sg-login-btn { width: 40px; height: 40px; border: 1px solid var(--sg-line); }
+.sg-login-btn svg { width: 19px; height: 19px; }
+.sg-login-label { display: none; }
+.sg-overflowed { display: none !important; }
+.sg-dd-more[hidden] { display: none; }
+.sg-dd-more .sg-dd-menu { min-width: 240px; max-height: 70vh; overflow-y: auto; }
+.sg-more-group { margin: .5rem .8rem .2rem; font: 600 .74rem/1.2 var(--sg-body); letter-spacing: .06em; text-transform: uppercase; color: var(--sg-muted); }
+.sg-more-group:first-child { margin-top: .2rem; }
+
+.sg-mega-title { margin: 0 0 .35rem; padding: 0 .8rem; font: 600 .74rem/1.2 var(--sg-body); letter-spacing: .06em; text-transform: uppercase; color: var(--sg-muted); }
+.sg-mega-tool { display: grid !important; gap: .1rem; }
+.sg-mega-tool strong { font-weight: 600; color: var(--brand-navy); }
+.sg-mega-tool small { color: var(--sg-muted); font-size: .8rem; font-weight: 400; }
+.sg-mega-tool:hover strong { color: var(--sg-red); }
+.sg-mega-card { display: grid; align-content: start; gap: .6rem; padding: 1.1rem; border-radius: 12px; color: #DCE4F2;
+    background: linear-gradient(160deg, rgba(10, 31, 68, .92), rgba(20, 45, 98, .9)), url("../images/malaysia/kuala-lumpur-skyline.webp") center / cover; }
+.sg-mega-card strong { font: 600 1.05rem/1.3 var(--sg-heading); color: #fff; }
+.sg-mega-card p { margin: 0; font-size: .86rem; line-height: 1.5; }
+.sg-mega-cta { justify-self: start; display: inline-flex !important; width: auto !important; align-items: center; min-height: 40px; padding: .5rem 1rem !important; border-radius: 999px !important; background: #fff !important; color: var(--brand-navy) !important; font-weight: 600; text-decoration: none; }
+.sg-mega-cta:hover { background: #F1F4FA !important; }
+
+@media (min-width: 1180px) {
+    .sg-header:not(.sg-nav-collapsed) .sg-dd-mega { position: static; }
+    .sg-header:not(.sg-nav-collapsed) .sg-mega {
+        left: 50%; transform: translateX(-50%); width: min(860px, calc(100vw - 48px)); top: calc(100% - 6px);
+        grid-template-columns: 1fr 1.25fr 1fr; gap: 1rem; padding: 1.1rem; animation: none;
+    }
+    .sg-header:not(.sg-nav-collapsed) .sg-mega .sg-mega-col { display: grid; align-content: start; gap: 2px; }
+    @media (prefers-reduced-motion: no-preference) {
+        .sg-header:not(.sg-nav-collapsed) .sg-mega { animation: egh-mega-in .2s ease-out; }
+    }
+}
+@keyframes egh-mega-in { from { opacity: 0; transform: translate(-50%, -6px); } to { opacity: 1; transform: translateX(-50%); } }
+
+/* Burger menu: login shows its label, the mega-menu stacks into a plain list, no "More". */
+@media (max-width: 1179px) {
+    .sg-login-btn { width: auto; height: auto; min-height: 44px; padding: 0 1rem; gap: .5rem; border-radius: 10px; display: inline-flex; flex: 1 1 auto; justify-content: center; }
+    .sg-login-label { display: inline; font-weight: 600; }
+    .sg-mega-card { display: none; }
+    .sg-mega-col { display: grid; gap: 2px; }
+}
+.sg-nav-collapsed .sg-login-btn { width: auto; height: auto; min-height: 44px; padding: 0 1rem; gap: .5rem; border-radius: 10px; display: inline-flex; flex: 1 1 auto; justify-content: center; }
+.sg-nav-collapsed .sg-login-label { display: inline; font-weight: 600; }
+.sg-nav-collapsed .sg-mega-card { display: none; }
+.sg-nav-collapsed .sg-mega-col { display: grid; gap: 2px; }
+@media (min-width: 1180px) {
+    .sg-header:not(.sg-nav-collapsed) .sg-mega:not(:has(.sg-mega-tool)) { grid-template-columns: 1fr 1fr; width: min(600px, calc(100vw - 48px)); }
+}

@@ -50,23 +50,73 @@
     });
 })();
 
-/* Fit the desktop menu into one row: first try the tighter layout (.sg-nav-tight), and only
-   collapse into the burger when even that overflows (for example a long admin-managed menu or
-   longer Bengali labels). Re-checked on resize and after fonts load. */
+/* Fit the desktop menu into one row, however many items the admin menu has:
+   1. try the tighter layout (.sg-nav-tight);
+   2. move items from the end into the "More" dropdown until the row fits;
+   3. only if even that fails, collapse into the burger.
+   Phones and tablets (where CSS already shows the burger) keep the full list.
+   Re-checked on resize and after fonts load. */
 (function () {
     var header = document.querySelector('.sg-header');
     var inner = header ? header.querySelector('.sg-header-inner') : null;
-    if (!header || !inner) return;
-    var fit = function () {
-        var overflows = function () { return inner.scrollWidth > inner.clientWidth + 1; };
+    var nav = header ? header.querySelector('[data-sg-nav]') : null;
+    var burger = header ? header.querySelector('[data-sg-burger]') : null;
+    if (!header || !inner || !nav) return;
+    var more = nav.querySelector('[data-sg-more]');
+    var moreMenu = more ? more.querySelector('[data-sg-more-menu]') : null;
+    var overflows = function () { return inner.scrollWidth > inner.clientWidth + 1; };
+    var candidates = function () {
+        return Array.prototype.filter.call(nav.children, function (element) {
+            return element !== more && !element.classList.contains('sg-nav-actions') && !element.classList.contains('sg-dd-mega');
+        });
+    };
+    var copyInto = function (item, target) {
+        var fragment = document.createDocumentFragment();
+        var summary = item.querySelector(':scope > summary');
+        if (summary) {
+            var group = document.createElement('p');
+            group.className = 'sg-more-group';
+            group.textContent = summary.textContent.trim();
+            fragment.appendChild(group);
+            item.querySelectorAll('.sg-dd-menu a').forEach(function (link) { fragment.appendChild(link.cloneNode(true)); });
+        } else {
+            fragment.appendChild(item.cloneNode(true));
+        }
+        target.insertBefore(fragment, target.firstChild);
+    };
+    var reset = function () {
         header.classList.remove('sg-nav-collapsed', 'sg-nav-tight');
+        candidates().forEach(function (element) { element.classList.remove('sg-overflowed'); });
+        if (more) { more.hidden = true; more.open = false; moreMenu.innerHTML = ''; }
+    };
+    var fit = function () {
+        reset();
+        if (burger && getComputedStyle(burger).display !== 'none') return;
         if (!overflows()) return;
         header.classList.add('sg-nav-tight');
-        if (overflows()) header.classList.add('sg-nav-collapsed');
+        if (!overflows()) return;
+        if (more) {
+            more.hidden = false;
+            var visible = candidates();
+            // Keep at least the first item in the row; move the rest from the end.
+            for (var index = visible.length - 1; index >= 1 && overflows(); index--) {
+                visible[index].classList.add('sg-overflowed');
+                copyInto(visible[index], moreMenu);
+            }
+            if (!overflows()) return;
+            reset();
+            header.classList.add('sg-nav-tight');
+        }
+        header.classList.add('sg-nav-collapsed');
     };
     var timer;
     window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(fit, 120); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    // Web fonts (Bengali especially) can arrive after the first check and widen the labels.
+    if (document.fonts) {
+        if (document.fonts.ready) document.fonts.ready.then(fit);
+        if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', fit);
+    }
+    window.addEventListener('load', fit);
     fit();
 })();
 
