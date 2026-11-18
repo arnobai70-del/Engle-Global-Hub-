@@ -5,6 +5,7 @@ namespace App\Services\Travel;
 use App\Models\ServiceDestination;
 use App\Services\SiteFacts;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 use Throwable;
 
 /**
@@ -61,9 +62,15 @@ class ServicePageData
         ],
     ];
 
+    /** Pages that are not services but can be listed under "Related services". */
+    private const RELATED_PAGES = [
+        'explore-bangladesh' => ['title' => 'Explore Bangladesh', 'route' => 'explore-bangladesh.index'],
+    ];
+
     /** Per-service text for /services/{slug}. */
     private const SERVICES = [
         'student-visa' => [
+            'related' => ['hotels', 'air-ticket', 'foreigner-support'],
             'headline' => 'Student visa and Student\'s Pass support',
             'intro' => 'Malaysia is our main study destination, followed by Singapore. We help you choose a course, apply for admission and prepare your student visa application (the EMGS Student Pass for Malaysia, the Student\'s Pass with ICA for Singapore), step by step.',
         ],
@@ -95,9 +102,23 @@ class ServicePageData
         'bus' => ['headline' => 'Bus tickets', 'intro' => 'Operator and route advice for local and cross-border buses, with booking support.', 'topic_label' => 'From – to'],
         'cars' => ['headline' => 'Cars and airport transfers', 'intro' => 'Airport pick-up and drop-off, day hire and city transfers with a driver.', 'topic_label' => 'Pick-up and drop-off'],
         'bike' => ['headline' => 'Bike rental', 'intro' => 'Bike rental arranged through our team for local trips.', 'topic_label' => 'Where and when'],
-        'foreigner-support' => ['headline' => 'Support for foreigners in Bangladesh', 'intro' => 'Help for foreign visitors and students: travel, accommodation, local transport and visa information.', 'topic_label' => 'What do you need help with?'],
-        'export-import' => ['headline' => 'Export & import enquiries', 'intro' => 'Send your requirement and our team replies personally.', 'topic_label' => 'Product or requirement'],
-        'civil-construction' => ['headline' => 'Civil & construction work', 'intro' => 'Enquiries for civil construction and land-related work. Our team replies personally.', 'topic_label' => 'Project or location'],
+        // Foreigner support is a travel service for visitors to Bangladesh, not a business service:
+        // its own steps, documents and related pages (it sits in the "business" catalogue group).
+        'foreigner-support' => [
+            'headline' => 'Support for foreigners in Bangladesh',
+            'intro' => 'Help for foreign visitors and students: travel, accommodation, local transport and visa information.',
+            'topic_label' => 'What do you need help with?',
+            'steps' => [['Send enquiry', 'Your dates, travellers and the places you want to see.'], ['Get a plan', 'Hotels, transport and a guide, with the total price in writing.'], ['Confirm', 'You choose; we book and send the details.'], ['Travel', 'One contact person stays reachable during your stay.']],
+            'documents' => ['Passport copy', 'Travel dates', 'Number of travellers', 'The cities or places you want to visit', 'Your hotel and transport needs'],
+            'disclaimer' => 'Prices and availability are confirmed only in your written quote. Nothing is booked or charged until you confirm. Visa rules are set by the Government of Bangladesh; check the official information for your nationality.',
+            'related' => ['explore-bangladesh', 'tours', 'hotels', 'tourist-visa'],
+        ],
+        'export-import' => [
+            'headline' => 'Export & import enquiries', 'intro' => 'Send your requirement and our team replies personally.', 'topic_label' => 'Product or requirement',
+            'documents' => ['A short description of the product or requirement', 'Quantity and the origin or destination country', 'Any licences or certificates you already have'],
+            'related' => ['civil-construction'],
+        ],
+        'civil-construction' => ['headline' => 'Civil & construction work', 'intro' => 'Enquiries for civil construction and land-related work. Our team replies personally.', 'topic_label' => 'Project or location', 'related' => ['export-import']],
     ];
 
     /** Defaults per service group. */
@@ -153,7 +174,7 @@ class ServicePageData
 
     public function title(string $slug): ?string
     {
-        return self::STANDALONE[$slug]['title'] ?? $this->catalog->find($slug)['title'] ?? null;
+        return self::RELATED_PAGES[$slug]['title'] ?? self::STANDALONE[$slug]['title'] ?? $this->catalog->find($slug)['title'] ?? null;
     }
 
     /**
@@ -186,7 +207,7 @@ class ServicePageData
             'icon' => $service['icon'] ?? 'globe',
             'capability' => $service['capability'] ?? null,
             'included' => array_map('__', $service['included'] ?? $service['points'] ?? []),
-            'steps' => array_map(static fn (array $step): array => [__($step[0]), __($step[1])], $group['steps']),
+            'steps' => array_map(static fn (array $step): array => [__($step[0]), __($step[1])], $service['steps'] ?? $group['steps']),
             'documents' => array_map('__', $service['documents'] ?? $group['documents']),
             'disclaimer' => __($service['disclaimer'] ?? $group['disclaimer']),
             'topic_label' => __($service['topic_label'] ?? $group['topic_label']),
@@ -195,7 +216,7 @@ class ServicePageData
                 $this->facts->get('reply_time') !== null ? ['label' => __('Reply time'), 'value' => $this->facts->get('reply_time')] : null,
                 ['label' => __('Service fee'), 'value' => $fee !== null ? __('From BDT :amount', ['amount' => $fee]) : __('Free quote')],
                 $popular !== null ? ['label' => __('Popular'), 'value' => $popular] : null,
-                ['label' => __('Pay'), 'value' => __($group['pay'])],
+                ['label' => __('Pay'), 'value' => __($service['pay'] ?? $group['pay'])],
             ])),
             'related' => $this->related($slug, $service),
             'cms' => $service['cms'] ?? null,
@@ -220,11 +241,14 @@ class ServicePageData
             }
         }
 
-        return array_slice($related, 0, 3);
+        return array_slice($related, 0, 4);
     }
 
     public function url(string $slug): ?string
     {
+        if (isset(self::RELATED_PAGES[$slug])) {
+            return Route::has(self::RELATED_PAGES[$slug]['route']) ? route(self::RELATED_PAGES[$slug]['route']) : null;
+        }
         if (isset(self::STANDALONE[$slug])) {
             return route(self::STANDALONE[$slug]['route']);
         }

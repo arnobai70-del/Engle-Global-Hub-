@@ -24,6 +24,7 @@ class SaveInstitutionRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255', Rule::unique('institutions', 'email')->ignore($institution)],
             'phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[0-9\s().-]{7,32}$/'],
             'website_url' => ['nullable', 'url:http,https', 'max:2048'],
+            'logo_media_id' => ['nullable', 'integer', Rule::exists('media_assets', 'id')],
             'registration_number' => [
                 'nullable', 'string', 'max:100',
                 Rule::unique('institutions', 'registration_number')->ignore($institution),

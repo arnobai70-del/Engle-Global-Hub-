@@ -67,7 +67,7 @@
                     @if($errors->any())<ul class="v2-errors" role="alert">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>@endif
                     <div class="v2-row-2">
                         <label class="v2-field" for="contact-name">{{ __('Full name') }}<input id="contact-name" name="full_name" autocomplete="name" required maxlength="150" value="{{ old('full_name') }}"></label>
-                        <label class="v2-field" for="contact-phone">{{ __('Phone / WhatsApp') }}<input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="32" value="{{ old('phone') }}" placeholder="01XXXXXXXXX"></label>
+                        <label class="v2-field" for="contact-phone">{{ __('Phone / WhatsApp') }}<input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="32" value="{{ old('phone') }}" placeholder="01XXXXXXXXX" aria-describedby="contact-phone-hint"><small class="v2-field-hint" id="contact-phone-hint">{{ __('Include the country code if your number is not from Bangladesh.') }}</small></label>
                     </div>
                     <label class="v2-field" for="contact-email">{{ __('Email (optional)') }}<input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" value="{{ old('email') }}"></label>
                     <label class="v2-field" for="contact-topic">{{ __('Topic') }}<select id="contact-topic" name="topic" required>@foreach($topics as $value => $label)<option value="{{ $value }}" @selected(old('topic', 'study') === $value)>{{ __($label) }}</option>@endforeach</select></label>

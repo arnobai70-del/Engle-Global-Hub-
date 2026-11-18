@@ -48,25 +48,70 @@ class MenuService
             return $this->cache[$key] = null;
         }
 
-        $tree = [];
-        $seen = ['urls' => [], 'labels' => []];
+        // Pass 1: visible top-level items, without repeats of an earlier item's link or label.
+        $seen = ['urls' => [], 'labels' => [], 'links' => []];
+        $nodes = [];
         foreach ($items as $item) {
             if (! $this->visible($item, $user)) {
                 continue;
             }
             $children = [];
             foreach ($item->children as $child) {
-                if ($this->visible($child, $user) && ($node = $this->node($child)) !== null && $node['url'] !== null) {
-                    $children[] = $node;
+                if ($this->visible($child, $user) && ($childNode = $this->node($child)) !== null && $childNode['url'] !== null) {
+                    $children[] = $childNode;
                 }
             }
             $node = $this->node($item, $children);
             if ($node !== null && ($node['url'] !== null || $children !== []) && ! $this->repeatsEarlier($node, $seen)) {
-                $tree[] = $node;
+                $nodes[] = $node;
             }
         }
 
+        // Top-level links come first, so a dropdown never repeats one of them.
+        foreach ($nodes as $node) {
+            if ($node['children'] === []) {
+                $this->isNewLink($node['url'], $seen);
+            }
+        }
+
+        // Pass 2: a link already shown in this menu (in another dropdown or column) is not shown again.
+        $tree = [];
+        foreach ($nodes as $node) {
+            if ($node['children'] !== []) {
+                $children = [];
+                foreach ($node['children'] as $child) {
+                    if ($this->isNewLink($child['url'], $seen)) {
+                        $children[] = $child;
+                    }
+                }
+                if ($children === [] && $node['url'] === null) {
+                    continue;
+                }
+                $node['children'] = $children;
+            }
+            $tree[] = $node;
+        }
+
         return $this->cache[$key] = $tree;
+    }
+
+    /**
+     * Remembers a rendered link; false when the same link was already rendered in this menu.
+     *
+     * @param  array{urls: array<string, true>, labels: array<string, true>, links: array<string, true>}  $seen
+     */
+    private function isNewLink(?string $url, array &$seen): bool
+    {
+        if ($url === null) {
+            return true;
+        }
+        $link = strtolower(rtrim($url, '/'));
+        if (isset($seen['links'][$link])) {
+            return false;
+        }
+        $seen['links'][$link] = true;
+
+        return true;
     }
 
     /**
@@ -74,7 +119,7 @@ class MenuService
      * (for example two "Explore Bangladesh" items after an import or an old seeder run).
      *
      * @param  array{url: ?string, label: string}  $node
-     * @param  array{urls: array<string, true>, labels: array<string, true>}  $seen
+     * @param  array{urls: array<string, true>, labels: array<string, true>, links: array<string, true>}  $seen
      */
     private function repeatsEarlier(array $node, array &$seen): bool
     {

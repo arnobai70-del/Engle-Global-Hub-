@@ -39,7 +39,7 @@ class ContentEntry extends Model
     /** @var list<string> */
     protected $fillable = [
         'type', 'slug', 'title', 'summary', 'body', 'title_bn', 'summary_bn', 'body_bn',
-        'category', 'location', 'contact_phone', 'contact_email', 'website_url', 'latitude', 'longitude',
+        'category', 'location', 'intake', 'contact_phone', 'contact_email', 'website_url', 'latitude', 'longitude',
         'cover_media_id', 'source_urls', 'consent_reference', 'consent_recorded_at',
         'related_destination_ids', 'related_entry_ids',
         'seo_title', 'seo_description', 'canonical_url', 'sort_order',

@@ -27,15 +27,19 @@ class SiteFacts
         'office_photo_url' => ['Office photo (https link)', 'A photo of your reception or signboard, for the contact page.', 300, 'Contact'],
 
         'trade_licence_no' => ['Trade licence number', 'Shown in the trust strip, About page and footer.', 60, 'Company'],
+        'company_registration_no' => ['Company registration number (RJSC)', 'Shown on the About page and in the footer.', 60, 'Company'],
+        'memberships' => ['Association memberships', 'One per line, for example: ATAB member no. 1234. Only memberships you can prove.', 400, 'Company'],
         'founded_year' => ['Year founded', 'For example: 2019.', 4, 'Company'],
         'students_guided' => ['Students guided (number)', 'Only a number you can prove. Shown as "[number]+ students guided".', 7, 'Company'],
         'partner_institutions' => ['Partner institutions (number)', 'Only institutions you have a written agreement with.', 5, 'Company'],
+        'visa_files_processed' => ['Visa files processed (number)', 'Only a number you can prove. Shown as "[number]+ visa files processed".', 7, 'Company'],
         'about_story' => ['About us: your story', '2–3 sentences in your own words: why the company started, who you help, what makes you different.', 800, 'Company'],
         'team_photo_url' => ['Team photo (https link)', 'A real photo of the team in the office, for the About page.', 300, 'Company'],
 
         'google_rating' => ['Google rating', 'For example: 4.8. Shown only together with the review count and link.', 3, 'Reviews'],
         'google_review_count' => ['Number of Google reviews', 'For example: 120.', 6, 'Reviews'],
         'google_reviews_url' => ['Google reviews link (https)', 'The public link to your Google reviews.', 300, 'Reviews'],
+        'google_maps_url' => ['Google Maps link to the office (https)', 'Your Google Maps business page, shown on the About and Contact pages and in the footer.', 300, 'Reviews'],
 
         'my_intakes' => ['Malaysia intakes', 'For example: Jan · May · Sep. Shown on Study in Malaysia.', 80, 'Malaysia costs (MYR)'],
         'my_cost_tuition' => ['Tuition per year (MYR)', 'Diploma at a private institution, yearly estimate.', 20, 'Malaysia costs (MYR)'],
@@ -155,6 +159,42 @@ class SiteFacts
      *
      * @return array{rating: string, count: string, url: string}|null
      */
+    /**
+     * "Our numbers": only the figures the owner entered, never a default.
+     *
+     * @return list<array{value: string, label: string}>
+     */
+    public function numbers(): array
+    {
+        $founded = $this->get('founded_year');
+        $years = $founded !== null && ctype_digit($founded) ? (int) now()->format('Y') - (int) $founded : null;
+
+        return array_values(array_filter([
+            $this->get('students_guided') ? ['value' => $this->get('students_guided').'+', 'label' => __('students guided')] : null,
+            $years !== null && $years > 0 ? ['value' => (string) $years, 'label' => trans_choice('year in business|years in business', $years)] : null,
+            $this->get('partner_institutions') ? ['value' => (string) $this->get('partner_institutions'), 'label' => __('partner institutions')] : null,
+            $this->get('visa_files_processed') ? ['value' => $this->get('visa_files_processed').'+', 'label' => __('visa files processed')] : null,
+        ]));
+    }
+
+    /**
+     * Company credentials for the About page and footer, only those the owner entered.
+     *
+     * @return array{trade_licence: ?string, registration: ?string, memberships: list<string>, maps_url: ?string, reviews_url: ?string}
+     */
+    public function credentials(): array
+    {
+        $https = fn (string $key): ?string => ($url = $this->get($key)) !== null && str_starts_with($url, 'https://') ? $url : null;
+
+        return [
+            'trade_licence' => $this->get('trade_licence_no'),
+            'registration' => $this->get('company_registration_no'),
+            'memberships' => array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $this->get('memberships')) ?: []))),
+            'maps_url' => $https('google_maps_url'),
+            'reviews_url' => $https('google_reviews_url'),
+        ];
+    }
+
     public function googleRating(): ?array
     {
         $rating = $this->get('google_rating');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveInstitutionRequest;
 use App\Models\Country;
 use App\Models\Institution;
+use App\Models\MediaAsset;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class InstitutionController extends Controller
 
     public function create(): View
     {
-        return view('admin.institutions.create', ['countries' => $this->countries(), 'statuses' => Institution::STATUSES]);
+        return view('admin.institutions.create', ['countries' => $this->countries(), 'statuses' => Institution::STATUSES, 'logos' => $this->logos()]);
     }
 
     public function store(SaveInstitutionRequest $request): RedirectResponse
@@ -60,7 +61,7 @@ class InstitutionController extends Controller
     public function edit(Institution $institution): View
     {
         return view('admin.institutions.edit', [
-            'institution' => $institution, 'countries' => $this->countries(), 'statuses' => Institution::STATUSES,
+            'institution' => $institution, 'countries' => $this->countries(), 'statuses' => Institution::STATUSES, 'logos' => $this->logos(),
         ]);
     }
 
@@ -99,5 +100,15 @@ class InstitutionController extends Controller
     private function countries(): Collection
     {
         return Country::query()->orderBy('name')->get(['id', 'name', 'iso2']);
+    }
+
+    /**
+     * Images that can be an institution logo: the Media Library's "Partner logos" collection.
+     *
+     * @return \Illuminate\Support\Collection<int, MediaAsset>
+     */
+    private function logos(): \Illuminate\Support\Collection
+    {
+        return MediaAsset::query()->where('collection', 'partner_logos')->orderBy('alt_text')->get(['id', 'alt_text', 'path']);
     }
 }

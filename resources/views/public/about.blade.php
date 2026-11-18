@@ -50,6 +50,7 @@
             <dl class="v2-facts">
                 @foreach($companyFacts as $fact)<div><dt>{{ $fact['label'] }}</dt><dd>{{ $fact['value'] }}</dd></div>@endforeach
             </dl>
+            @include('partials.trust.numbers', ['numbers' => $facts->numbers()])
         </div>
     </section>
 
@@ -85,7 +86,7 @@
             <ul class="v2-team v2-team-wide">
                 @foreach($team as $member)
                     <li>
-                        @if($member->photo_path)<img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->photo_path) }}" alt="{{ $member->name }}" loading="lazy" decoding="async">@else<span class="v2-team-initial" aria-hidden="true">{{ mb_substr($member->name, 0, 1) }}</span>@endif
+                        @if($member->photo_path)<img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->photo_path) }}" alt="{{ $member->name }}" width="240" height="240" loading="lazy" decoding="async">@else<span class="v2-team-initial" aria-hidden="true">{{ mb_substr($member->name, 0, 1) }}</span>@endif
                         <strong>{{ $member->name }}</strong><span>{{ $member->role_title }}</span>
                         @if($member->bio)<p>{{ $member->bio }}</p>@endif
                     </li>
@@ -104,6 +105,17 @@
                     <figure><img src="{{ $image->url() }}" alt="{{ $image->alt_text }}" loading="lazy" @if($image->width) width="{{ $image->width }}" height="{{ $image->height }}" @endif>@if($image->caption)<figcaption>{{ $image->caption }}</figcaption>@endif</figure>
                 @endforeach
             </div>
+        </div>
+    </section>
+    @endif
+
+    {{-- The trade licence is already in the company facts above. --}}
+    @php($credentials = ['trade_licence' => null] + $facts->credentials())
+    @if(array_filter($credentials) !== [])
+    <section class="v2-section v2-section-white" id="credentials" aria-labelledby="credentials-title">
+        <div class="v2-shell">
+            <h2 id="credentials-title" class="v2-h2">{{ __('Registered and accountable') }}</h2>
+            @include('partials.trust.credentials', ['credentials' => $credentials])
         </div>
     </section>
     @endif

@@ -85,6 +85,8 @@
                         src="{{ $officialLogo }}"
                         alt="{{ __('Eagle Global Hub LTD logo') }}"
                         class="egho-auth-brand-logo"
+                        width="240"
+                        height="241"
                     >
                     <span class="egho-auth-brand-copy">
                         <strong>{{ __('Eagle Global Hub LTD') }}</strong>

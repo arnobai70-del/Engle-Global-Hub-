@@ -66,6 +66,25 @@ final class HomepageServiceCardsTest extends TestCase
         $this->assertDatabaseHas('menu_items', ['label_en' => 'Work visa', 'description_en' => 'Work permits and job offers checked.', 'description_bn' => 'ওয়ার্ক পারমিট যাচাই।']);
     }
 
+    public function test_first_release_tiles_have_descriptions_and_no_admin_warning(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+        $this->tile(['key' => 'tile-study', 'label_en' => 'Study in Singapore', 'target' => 'route:consultancy.singapore', 'sort_order' => 1]);
+        $this->tile(['key' => 'tile-hotels', 'label_en' => 'Hotels & Homes', 'target' => 'route:hotels.index', 'sort_order' => 2]);
+        $this->tile(['label_en' => 'Work visa', 'target' => 'route:work-visa.index', 'sort_order' => 3]);
+
+        $html = (string) $this->get(route('home'))->assertOk()->getContent();
+        $this->assertStringContainsString('Diplomas and degrees in Singapore, with Student&#039;s Pass (ICA) guidance.', $html);
+        $this->assertStringContainsString('Hotels, student hostels and shared rooms, confirmed with you before booking.', $html);
+
+        $this->actingAs($admin)->get(route('admin.menus.index', ['location' => 'home_tiles']))->assertOk()
+            ->assertDontSee('Study in Singapore: No description')
+            ->assertDontSee('Hotels &amp; Homes: No description', false)
+            ->assertSee('Work visa: No description');
+    }
+
     /**
      * @param  array<string, mixed>  $attributes
      */

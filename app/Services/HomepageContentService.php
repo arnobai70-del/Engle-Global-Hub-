@@ -38,6 +38,7 @@ class HomepageContentService
                 'instagram' => $social['instagram_url'] ?? null,
                 'linkedin' => $social['linkedin_url'] ?? null,
                 'youtube' => $social['youtube_url'] ?? null,
+                'tiktok' => $social['tiktok_url'] ?? null,
             ]),
             'footerLinks' => Schema::hasTable('homepage_blocks')
                 ? $this->mapBlocks(

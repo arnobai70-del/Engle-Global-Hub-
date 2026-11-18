@@ -127,6 +127,7 @@ class ContentEntryController extends Controller
             'body_bn' => ['nullable', 'string', 'max:30000'],
             'category' => ['nullable', 'string', 'max:100'],
             'location' => ['nullable', 'string', 'max:200'],
+            'intake' => ['nullable', 'string', 'max:40'],
             'contact_phone' => ['nullable', 'string', 'regex:/^\+?[0-9\s().-]{7,32}$/'],
             'contact_email' => ['nullable', 'email', 'max:254'],
             'website_url' => ['nullable', 'url:https', 'max:2048'],
@@ -157,7 +158,7 @@ class ContentEntryController extends Controller
             throw ValidationException::withMessages(['review_status' => 'Only an owner can mark content as approved.']);
         }
 
-        foreach (['title', 'summary', 'body', 'title_bn', 'summary_bn', 'body_bn', 'category', 'location', 'consent_reference', 'seo_title', 'seo_description', 'review_notes'] as $field) {
+        foreach (['title', 'summary', 'body', 'title_bn', 'summary_bn', 'body_bn', 'category', 'location', 'intake', 'consent_reference', 'seo_title', 'seo_description', 'review_notes'] as $field) {
             if (isset($data[$field])) {
                 $data[$field] = trim(strip_tags($data[$field]));
             }

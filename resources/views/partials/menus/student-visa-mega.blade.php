@@ -18,7 +18,11 @@
         ]);
     $countryUrls = $countries->pluck('url')->map(fn (string $url): string => rtrim((string) strtok($url, '?#'), '/'))->all();
     // Extra links that do not repeat a country page (for example the old "Study in Malaysia" child).
-    $extraLinks = collect($links)->reject(fn (array $link): bool => in_array(rtrim((string) strtok($link['url'], '?#'), '/'), $countryUrls, true) && ! str_contains($link['url'], '#'))->values();
+    $consultationUrl = route('consultancy.malaysia').'#apply';
+    // The card below already has the Free Consultation button, so a menu link to the same place is not repeated.
+    $extraLinks = collect($links)->reject(fn (array $link): bool => (in_array(rtrim((string) strtok($link['url'], '?#'), '/'), $countryUrls, true) && ! str_contains($link['url'], '#'))
+        || rtrim($link['url'], '/') === $consultationUrl
+        || mb_strtolower(trim($link['label'])) === mb_strtolower(__('Free Consultation')))->values();
     $tools = collect([
         ['consultancy.malaysia.eligibility', __('Eligibility checker'), __('See which course level fits your results')],
         ['consultancy.malaysia.courses', __('Course finder'), __('Filter courses by level, subject, budget and intake')],
@@ -51,7 +55,7 @@
         <div class="sg-mega-card">
             <strong>{{ __('Not sure where to start?') }}</strong>
             <p>{{ __('Talk to a consultant for free. We explain the options, costs and visa steps for each country.') }}</p>
-            <a class="sg-mega-cta" href="{{ route('consultancy.malaysia') }}#apply">{{ __('Free Consultation') }}</a>
+            <a class="sg-mega-cta" href="{{ $consultationUrl }}">{{ __('Free Consultation') }}</a>
         </div>
     </div>
 </details>

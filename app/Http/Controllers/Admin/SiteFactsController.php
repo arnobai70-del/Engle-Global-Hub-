@@ -40,8 +40,9 @@ class SiteFactsController extends Controller
         $rules['partner_institutions'][] = 'regex:/^\d+$/';
         $rules['google_rating'][] = 'regex:/^[1-5](\.\d)?$/';
         $rules['google_review_count'][] = 'regex:/^\d+$/';
+        $rules['visa_files_processed'][] = 'regex:/^\d+$/';
         $rules['my_bdt_rate'][] = 'regex:/^\d{1,4}(\.\d{1,4})?$/';
-        foreach (['google_reviews_url', 'office_photo_url', 'team_photo_url'] as $urlKey) {
+        foreach (['google_reviews_url', 'google_maps_url', 'office_photo_url', 'team_photo_url'] as $urlKey) {
             $rules[$urlKey][] = 'url:https';
         }
         $rules['map_embed_url'][] = 'regex:#^https://(www\.)?google\.[a-z.]+/maps/embed\?#i';

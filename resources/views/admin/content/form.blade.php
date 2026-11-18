@@ -15,7 +15,7 @@
 @else
 <label>URL slug<input name="slug" value="{{ old('slug', $entry->slug) }}" maxlength="160" placeholder="generated from the title"></label>
 @endif
-<label>Category<input name="category" value="{{ old('category', $entry->category) }}" maxlength="100" placeholder="{{ $type === \App\Enums\ContentType::BusinessService ? 'export-import or civil-construction' : '' }}"></label>
+<label>{{ $type === \App\Enums\ContentType::SuccessStory ? 'Programme (for example Diploma in Business)' : 'Category' }}<input name="category" value="{{ old('category', $entry->category) }}" maxlength="100" placeholder="{{ $type === \App\Enums\ContentType::BusinessService ? 'export-import or civil-construction' : '' }}"></label>
 <label>Display order<input type="number" name="sort_order" min="0" value="{{ old('sort_order', $entry->sort_order ?? 0) }}" required></label>
 <label class="stu-full">Summary<textarea name="summary" maxlength="500" rows="2">{{ old('summary', $entry->summary) }}</textarea></label>
 <label class="stu-full">Body<textarea name="body" maxlength="30000" rows="10">{{ old('body', $entry->body) }}</textarea></label>
@@ -34,6 +34,9 @@
 <label>Gallery images<select name="gallery_media_ids[]" multiple size="5">@foreach($media as $asset)<option value="{{ $asset->id }}" @selected(collect(old('gallery_media_ids', $entry->exists ? $entry->gallery->pluck('id')->all() : []))->contains($asset->id))>{{ $asset->alt_text }}</option>@endforeach</select></label>
 <label class="stu-full">Sources (one https link per line{{ $type->requiresOfficialSource() ? '; required to publish' : '' }})<textarea name="source_urls_text" rows="3">{{ old('source_urls_text', implode("\n", $entry->source_urls ?? [])) }}</textarea></label>
 @if($type->requiresConsent())
+<p class="stu-full stu-muted">Testimonial: the title is the student's name as they agreed to be shown, the summary is their quote, and the cover image is their photo (only with their consent).</p>
+<label>University or college<input name="location" value="{{ old('location', $entry->location) }}" maxlength="200"></label>
+<label>Intake (for example September 2025)<input name="intake" value="{{ old('intake', $entry->intake) }}" maxlength="40"></label>
 <label>Consent reference (e.g. signed form ID)<input name="consent_reference" value="{{ old('consent_reference', $entry->consent_reference) }}" maxlength="200"></label>
 <label>Consent date<input type="date" name="consent_recorded_at" value="{{ old('consent_recorded_at', $entry->consent_recorded_at?->format('Y-m-d')) }}" max="{{ now()->toDateString() }}"></label>
 @endif
