@@ -49,6 +49,7 @@ class MenuService
         }
 
         $tree = [];
+        $seen = ['urls' => [], 'labels' => []];
         foreach ($items as $item) {
             if (! $this->visible($item, $user)) {
                 continue;
@@ -60,12 +61,34 @@ class MenuService
                 }
             }
             $node = $this->node($item, $children);
-            if ($node !== null && ($node['url'] !== null || $children !== [])) {
+            if ($node !== null && ($node['url'] !== null || $children !== []) && ! $this->repeatsEarlier($node, $seen)) {
                 $tree[] = $node;
             }
         }
 
         return $this->cache[$key] = $tree;
+    }
+
+    /**
+     * Defensive: a top-level item that repeats an earlier one's link or label is not shown twice
+     * (for example two "Explore Bangladesh" items after an import or an old seeder run).
+     *
+     * @param  array{url: ?string, label: string}  $node
+     * @param  array{urls: array<string, true>, labels: array<string, true>}  $seen
+     */
+    private function repeatsEarlier(array $node, array &$seen): bool
+    {
+        $url = $node['url'] !== null ? strtolower(rtrim($node['url'], '/')) : null;
+        $label = mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $node['label'])));
+        if (($url !== null && isset($seen['urls'][$url])) || ($label !== '' && isset($seen['labels'][$label]))) {
+            return true;
+        }
+        if ($url !== null) {
+            $seen['urls'][$url] = true;
+        }
+        $seen['labels'][$label] = true;
+
+        return false;
     }
 
     /**
