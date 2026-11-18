@@ -24,6 +24,7 @@ class UpdateHomepageSettingsRequest extends FormRequest
             'instagram_url' => ['nullable', 'url:http,https', 'max:500'],
             'linkedin_url' => ['nullable', 'url:http,https', 'max:500'],
             'youtube_url' => ['nullable', 'url:http,https', 'max:500'],
+            'tiktok_url' => ['nullable', 'url:http,https', 'max:500'],
             'footer_description' => ['nullable', 'string', 'max:1000'],
             'news_enabled' => ['nullable', 'boolean'],
             'news_label' => ['nullable', 'string', 'max:80'],

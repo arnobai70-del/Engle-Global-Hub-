@@ -20,7 +20,7 @@ class Institution extends Model
 
     /** @var list<string> */
     protected $fillable = [
-        'name', 'email', 'phone', 'website_url', 'registration_number',
+        'name', 'email', 'phone', 'website_url', 'logo_media_id', 'registration_number',
         'country_id', 'address', 'status', 'notes',
     ];
 
@@ -43,6 +43,16 @@ class Institution extends Model
     public function scopePubliclyListed(Builder $query): void
     {
         $query->where('is_public', true)->where('status', self::STATUS_ACTIVE)->orderBy('name');
+    }
+
+    /**
+     * Logo from the Media Library, for the partner logo strip.
+     *
+     * @return BelongsTo<MediaAsset, $this>
+     */
+    public function logo(): BelongsTo
+    {
+        return $this->belongsTo(MediaAsset::class, 'logo_media_id');
     }
 
     public function courses(): HasMany

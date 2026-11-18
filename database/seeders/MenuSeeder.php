@@ -86,7 +86,7 @@ class MenuSeeder extends Seeder
                 ['key' => 'contact', 'label' => 'Contact', 'target' => $r('support')],
             ],
             'footer' => [
-                ['key' => 'footer-study', 'label' => 'Study', 'children' => [
+                ['key' => 'footer-study', 'label' => 'Study Abroad', 'children' => [
                     ['key' => 'footer-malaysia', 'label' => 'Study in Malaysia', 'target' => $r('consultancy.malaysia')],
                     ['key' => 'footer-singapore', 'label' => 'Study in Singapore', 'target' => $r('consultancy.singapore')],
                     ['key' => 'footer-institutions', 'label' => 'Institutions', 'target' => $r('consultancy.institutions.index')],

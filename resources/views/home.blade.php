@@ -29,12 +29,8 @@
     $newsTickerDuration = max(8, min(120, (int) data_get($settings, 'news_ticker_duration', 20)));
     $pageAssetVersion = static fn (string $file): string => ($modifiedAt = @filemtime(public_path($file))) ? '?v='.$modifiedAt : '';
 
-    // Hero numbers: shown only when the owner has entered them.
-    $stats = array_values(array_filter([
-        $facts->get('students_guided') ? ['value' => $facts->get('students_guided').'+', 'label' => __('students guided')] : null,
-        $facts->get('partner_institutions') ? ['value' => $facts->get('partner_institutions'), 'label' => __('partner institutions')] : null,
-        $facts->get('founded_year') ? ['value' => $facts->get('founded_year'), 'label' => __('serving since')] : null,
-    ]));
+    // Hero numbers ("Our numbers", Admin › Business facts): shown only when the owner has entered them.
+    $stats = $facts->numbers();
 
     $trust = array_values(array_filter([
         $facts->get('trade_licence_no') ? ['icon' => 'shield', 'text' => __('Registered company · Trade licence :number', ['number' => $facts->get('trade_licence_no')])] : null,
@@ -73,6 +69,9 @@
     $costTotal = $facts->get('my_cost_total');
 
     $stories = $pageContent->published(\App\Enums\ContentType::SuccessStory)->take(3);
+    if ($stories instanceof \Illuminate\Database\Eloquent\Collection) {
+        $stories->load('cover');
+    }
     $googleRating = $facts->googleRating();
     // Only real team photos are shown; without any, the team section is hidden.
     $team = rescue(fn () => \App\Models\TeamMember::query()->published()->whereNotNull('photo_path')->where('photo_path', '!=', '')->limit(4)->get(), collect(), false);
@@ -137,6 +136,8 @@
             @foreach($trust as $item)<li><x-site.art :name="$item['icon']" />{{ $item['text'] }}</li>@endforeach
         </ul>
     </section>
+
+    @include('partials.trust.partners')
 
     @if(! in_array(strtolower(trim((string) data_get($settings, 'show_services', '1'))), ['0', 'false', 'off', 'no'], true))
     <section class="v2-section" aria-labelledby="services-title">
@@ -203,16 +204,7 @@
         <div class="v2-shell">
             <span class="v2-eyebrow">{{ __('Success stories') }}</span>
             <h2 id="stories-title" class="v2-h2">{{ __('Students who made it') }}</h2>
-            @if($stories->isNotEmpty())
-            <div class="v2-stories">
-                @foreach($stories as $story)
-                    <figure class="v2-story">
-                        <blockquote>“{{ \Illuminate\Support\Str::limit((string) ($story->localized('summary') ?: strip_tags((string) $story->localized('body'))), 220) }}”</blockquote>
-                        <figcaption><strong>{{ $story->localized('title') }}</strong>@if($story->category)<span>{{ $story->category }}</span>@endif</figcaption>
-                    </figure>
-                @endforeach
-            </div>
-            @endif
+            @include('partials.trust.stories', ['stories' => $stories])
             @if($googleRating)
                 <p class="v2-rating"><strong>{{ __('Google rating :rating ★', ['rating' => $googleRating['rating']]) }}</strong> · {{ __('from :count reviews', ['count' => $googleRating['count']]) }} · <a href="{{ $googleRating['url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Read on Google') }}</a></p>
             @endif

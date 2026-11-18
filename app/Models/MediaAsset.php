@@ -17,6 +17,7 @@ class MediaAsset extends Model
     public const COLLECTIONS = [
         'general' => 'General',
         'office_gallery' => 'Office environment gallery',
+        'partner_logos' => 'Partner institution logos',
     ];
 
     /** @var list<string> */

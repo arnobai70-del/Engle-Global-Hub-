@@ -176,7 +176,7 @@
                 <a href="{{ route('home') }}" class="sg-brand sg-brand-light"><img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" loading="lazy" decoding="async"><span class="sg-brand-copy"><strong>{{ $siteName }}</strong></span></a>
                 <p>{{ filled($siteFooterDescription ?? null) ? __($siteFooterDescription) : __('Malaysia and Singapore student consultancy, visa and travel support from Dhaka.') }}</p>
                 <ul class="sg-footer-contact">@if(data_get($siteContact,'address'))<li>{{ data_get($siteContact,'address') }}</li>@endif @if($phoneHref)<li><a href="{{ $phoneHref }}">{{ data_get($siteContact,'phone') }}</a></li>@endif @if(data_get($siteContact,'email'))<li><a href="mailto:{{ data_get($siteContact,'email') }}">{{ data_get($siteContact,'email') }}</a></li>@endif</ul>
-                @if($siteSocial!==[])<div class="sg-footer-social">@foreach($siteSocial as $network=>$url)<a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}">{{ strtoupper(substr($network,0,2)) }}</a>@endforeach</div>@endif
+                @include('partials.trust.social-links', ['links' => $siteSocial])
             </div>
             @php($footerMenu = app(\App\Services\Navigation\MenuService::class)->tree('footer'))
             @if($footerMenu !== null)
@@ -214,7 +214,8 @@
             </ul></div>
             @endif
         </div>
-        <div class="sg-footer-bottom"><small>&copy; {{ now()->year }} {{ $siteName }}@if($facts->get('trade_licence_no')) · {{ __('Trade licence :number', ['number' => $facts->get('trade_licence_no')]) }}@endif</small><small><a href="{{ route('privacy') }}">{{ __('Privacy Policy') }}</a> · <a href="{{ route('terms') }}">{{ __('Terms & Conditions') }}</a></small></div>
+        @php($credentials = $facts->credentials())
+        <div class="sg-footer-bottom"><small>&copy; {{ now()->year }} {{ $siteName }}@if($credentials['trade_licence']) · {{ __('Trade licence :number', ['number' => $credentials['trade_licence']]) }}@endif @if($credentials['registration']) · {{ __('Registration :number', ['number' => $credentials['registration']]) }}@endif @if($credentials['maps_url']) · <a href="{{ $credentials['maps_url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Find us on Google Maps') }}</a>@endif @if($credentials['reviews_url']) · <a href="{{ $credentials['reviews_url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Google reviews') }}</a>@endif</small><small><a href="{{ route('privacy') }}">{{ __('Privacy Policy') }}</a> · <a href="{{ route('terms') }}">{{ __('Terms & Conditions') }}</a></small></div>
     </div>
 </footer>
 <script src="{{ $themeCss('js/egh-sg-nav.js') }}" defer></script>

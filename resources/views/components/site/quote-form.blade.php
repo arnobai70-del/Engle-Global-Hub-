@@ -16,7 +16,7 @@
         </label>
         <label class="v2-field" for="{{ $anchor }}-month">{{ __('Travel month') }}<input id="{{ $anchor }}-month" type="month" name="travel_month" min="{{ now()->format('Y-m') }}" value="{{ old('travel_month') }}"></label>
         <label class="v2-field" for="{{ $anchor }}-name">{{ __('Full name') }}<input id="{{ $anchor }}-name" name="full_name" autocomplete="name" required maxlength="150" value="{{ old('full_name') }}"></label>
-        <label class="v2-field" for="{{ $anchor }}-phone">{{ __('Phone / WhatsApp') }}<input id="{{ $anchor }}-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="32" value="{{ old('phone') }}" placeholder="01XXXXXXXXX"></label>
+        <label class="v2-field" for="{{ $anchor }}-phone">{{ __('Phone / WhatsApp') }}<input id="{{ $anchor }}-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="32" value="{{ old('phone') }}" placeholder="{{ $service === 'student-visa' ? '01XXXXXXXXX' : '+44 7700 900123' }}" @if($service !== 'student-visa') aria-describedby="{{ $anchor }}-phone-hint" @endif>@if($service !== 'student-visa')<small class="v2-field-hint" id="{{ $anchor }}-phone-hint">{{ __('Include the country code if your number is not from Bangladesh.') }}</small>@endif</label>
         <label class="v2-hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
         <label class="v2-check"><input type="checkbox" name="consent" value="1" required @checked(old('consent'))><span>{{ __('I agree to be contacted about my enquiry.') }} <a href="{{ route('privacy') }}">{{ __('Privacy Policy') }}</a></span></label>
         <button type="submit" class="v2-btn v2-btn-red v2-btn-block">{{ __('Send enquiry') }}</button>

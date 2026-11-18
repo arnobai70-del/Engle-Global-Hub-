@@ -83,7 +83,7 @@
 <div class="home-field"><label>Address</label><input name="address" value="{{ old('address',$contact['address']??'') }}"></div>
 <div class="home-field"><label>Support hours</label><input name="hours" value="{{ old('hours',$contact['hours']??'') }}"></div>
 <div class="home-field wide"><label>Footer description</label><textarea name="footer_description">{{ old('footer_description',$general['footer_description']??'') }}</textarea></div>
-@foreach(['facebook'=>'Facebook','instagram'=>'Instagram','linkedin'=>'LinkedIn','youtube'=>'YouTube'] as $key=>$label)<div class="home-field"><label>{{ $label }} URL</label><input type="url" name="{{ $key }}_url" value="{{ old($key.'_url',$social[$key.'_url']??'') }}"></div>@endforeach
+@foreach(['facebook'=>'Facebook','instagram'=>'Instagram','linkedin'=>'LinkedIn','youtube'=>'YouTube','tiktok'=>'TikTok'] as $key=>$label)<div class="home-field"><label>{{ $label }} URL</label><input type="url" name="{{ $key }}_url" value="{{ old($key.'_url',$social[$key.'_url']??'') }}"></div>@endforeach
 <div class="home-subsection"><h3>Homepage News Ticker</h3><p>Controls the scrolling news / announcement bar directly below the main navigation.</p></div>
 <div class="home-field wide"><input type="hidden" name="news_enabled" value="0"><label class="home-check"><input type="checkbox" name="news_enabled" value="1" @checked(!in_array(strtolower((string) old('news_enabled',$homepage['news_enabled']??'1')),['0','false','off','no',''],true))> Show news ticker on homepage</label></div>
 <div class="home-field"><label>News label</label><input name="news_label" maxlength="80" value="{{ old('news_label',$homepage['news_label']??'Latest News') }}"></div>

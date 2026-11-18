@@ -123,6 +123,11 @@ class HomepageServiceCards
             'tile-flights' => [__('Student fares and group bookings. Send your dates, we reply with options.'), __('Get a fare quote')],
             'tile-housing' => [__('Student hostels, shared rooms and airport arrival guidance.'), __('Ask about housing')],
             'tile-tours' => [__('Holiday and group tour packages in Bangladesh and abroad.'), __('Get a package')],
+            // Keys of the first release's tiles, still present on older databases.
+            'tile-study' => [__('Diplomas and degrees in Singapore, with Student\'s Pass (ICA) guidance.'), __('Explore Singapore')],
+            'tile-students-pass' => [__('Singapore Student\'s Pass (ICA) guidance and a document checklist.'), __('Learn more')],
+            'tile-hotels' => [__('Hotels, student hostels and shared rooms, confirmed with you before booking.'), __('Ask about housing')],
+            'tile-explore' => [__('Historical sites, beaches, hills and forests, with help planning your trip.'), __('Explore Bangladesh')],
         ];
     }
 

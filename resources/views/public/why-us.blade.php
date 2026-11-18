@@ -22,6 +22,8 @@
     ];
 @endphp
 
+@push('head')<link rel="preload" as="image" href="{{ asset('images/malaysia/kuala-lumpur-day.webp') }}" type="image/webp" fetchpriority="high">@endpush
+
 @section('content')
 <main>
     <section class="sg-page-hero" style="--sg-page-hero: url('{{ asset('images/malaysia/kuala-lumpur-day.webp') }}')" aria-labelledby="why-title">
@@ -49,6 +51,21 @@
             </div>
         </div>
     </section>
+
+    {{-- Numbers and testimonials (Admin › Business facts and Admin › Website Content › Success stories); hidden when empty. --}}
+    @php($whyNumbers = app(\App\Services\SiteFacts::class)->numbers())
+    @php($whyStories = app(\App\Services\Content\PageContent::class)->published(\App\Enums\ContentType::SuccessStory)->take(9))
+    @php($whyStories instanceof \Illuminate\Database\Eloquent\Collection ? $whyStories->load('cover') : null)
+    @if($whyNumbers !== [] || $whyStories->isNotEmpty())
+    <section class="v2-section" aria-labelledby="why-proof-title">
+        <div class="v2-shell">
+            <span class="v2-eyebrow">{{ __('Success stories') }}</span>
+            <h2 id="why-proof-title" class="v2-h2">{{ __('Students who made it') }}</h2>
+            @include('partials.trust.numbers', ['numbers' => $whyNumbers])
+            @include('partials.trust.stories', ['stories' => $whyStories])
+        </div>
+    </section>
+    @endif
 
     <section class="sg-section" aria-labelledby="why-promise-title">
         <div class="sg-shell sg-split sg-split-top">

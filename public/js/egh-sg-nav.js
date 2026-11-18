@@ -222,7 +222,7 @@
                     return;
                 }
                 var position = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
-                element.style.setProperty('--egh-reveal-delay', (Math.min(position, 5) * 0.08) + 's');
+                element.style.setProperty('--egh-reveal-delay', (Math.min(position, 3) * 0.06) + 's');
                 element.classList.add('egh-reveal');
                 return;
             }
@@ -235,7 +235,15 @@
                 element.style.removeProperty('--egh-reveal-delay');
             }, 1400);
         });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    // Starts 25% below the screen with no threshold, so a block has faded in before it is in view.
+    }, { rootMargin: '0px 0px 25% 0px', threshold: 0 });
+    // Safety net: nothing may stay hidden (fast scrolling, anchors, printing, screenshots).
+    var revealAll = function () {
+        document.querySelectorAll('.egh-reveal').forEach(function (element) { element.classList.add('is-visible'); });
+    };
+    window.addEventListener('beforeprint', revealAll);
+    window.addEventListener('hashchange', revealAll);
+    window.addEventListener('load', function () { setTimeout(revealAll, 4000); });
     document.querySelectorAll(selector).forEach(function (element) { observer.observe(element); });
 })();
 

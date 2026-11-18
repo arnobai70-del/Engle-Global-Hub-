@@ -65,6 +65,7 @@ class HomepageContentController extends Controller
             'instagram_url' => $data['instagram_url'] ?? null,
             'linkedin_url' => $data['linkedin_url'] ?? null,
             'youtube_url' => $data['youtube_url'] ?? null,
+            'tiktok_url' => $data['tiktok_url'] ?? null,
         ]);
         $this->saveGroup('homepage', [
             'news_enabled' => $request->boolean('news_enabled') ? '1' : '0',
@@ -122,7 +123,9 @@ class HomepageContentController extends Controller
         ];
 
         foreach ($fileSettings as $field => [$group, $key, $directory]) {
-            if (! $request->hasFile($field)) continue;
+            if (! $request->hasFile($field)) {
+                continue;
+            }
             $oldPath = $this->settings->get($group, $key);
             $newPath = $request->file($field)->store($directory, 'public');
             $this->settings->set($group, $key, $newPath, 'string', true);
@@ -135,6 +138,7 @@ class HomepageContentController extends Controller
     public function store(UpsertHomepageBlockRequest $request): RedirectResponse
     {
         HomepageBlock::query()->create($this->blockPayload($request, $request->validated()));
+
         return back()->with('status', 'Homepage block created.');
     }
 
@@ -143,7 +147,10 @@ class HomepageContentController extends Controller
         $oldImage = $homepageBlock->image_path;
         $payload = $this->blockPayload($request, $request->validated(), $homepageBlock);
         $homepageBlock->update($payload);
-        if (($payload['image_path'] ?? $oldImage) !== $oldImage) $this->deleteManagedFile($oldImage);
+        if (($payload['image_path'] ?? $oldImage) !== $oldImage) {
+            $this->deleteManagedFile($oldImage);
+        }
+
         return back()->with('status', 'Homepage block updated.');
     }
 
@@ -152,13 +159,16 @@ class HomepageContentController extends Controller
         $image = $homepageBlock->image_path;
         $homepageBlock->delete();
         $this->deleteManagedFile($image);
+
         return back()->with('status', 'Homepage block deleted.');
     }
 
     /** @param array<string, mixed> $values */
     private function saveGroup(string $group, array $values): void
     {
-        foreach ($values as $key => $value) $this->settings->set($group, $key, $value, 'string', true);
+        foreach ($values as $key => $value) {
+            $this->settings->set($group, $key, $value, 'string', true);
+        }
     }
 
     /** @param array<string, mixed> $data @return array<string, mixed> */
@@ -189,7 +199,11 @@ class HomepageContentController extends Controller
 
     private function deleteManagedFile(?string $path): void
     {
-        if (! $path || Str::startsWith($path, ['http://', 'https://'])) return;
-        if (Str::startsWith($path, 'homepage/')) Storage::disk('public')->delete($path);
+        if (! $path || Str::startsWith($path, ['http://', 'https://'])) {
+            return;
+        }
+        if (Str::startsWith($path, 'homepage/')) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

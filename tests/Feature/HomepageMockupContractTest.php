@@ -88,7 +88,7 @@ final class HomepageMockupContractTest extends TestCase
 
         $html = $this->home();
         $this->assertStringContainsString('120+', $html);
-        $this->assertStringContainsString('serving since', $html);
+        $this->assertStringContainsString('years in business', $html, 'founded year is shown as years in business');
         $this->assertStringContainsString('TRAD/DNCC/123', $html);
         $this->assertStringContainsString('MYR 18,000', $html);
         $this->assertStringContainsString('Google rating 4.8 ★', $html);
