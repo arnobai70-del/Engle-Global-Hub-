@@ -50,15 +50,19 @@
     });
 })();
 
-/* Collapse the desktop menu into the burger whenever its items do not fit the header
-   (for example longer Bengali labels). Re-checked on resize and after fonts load. */
+/* Fit the desktop menu into one row: first try the tighter layout (.sg-nav-tight), and only
+   collapse into the burger when even that overflows (for example a long admin-managed menu or
+   longer Bengali labels). Re-checked on resize and after fonts load. */
 (function () {
     var header = document.querySelector('.sg-header');
     var inner = header ? header.querySelector('.sg-header-inner') : null;
     if (!header || !inner) return;
     var fit = function () {
-        header.classList.remove('sg-nav-collapsed');
-        if (inner.scrollWidth > inner.clientWidth + 1) header.classList.add('sg-nav-collapsed');
+        var overflows = function () { return inner.scrollWidth > inner.clientWidth + 1; };
+        header.classList.remove('sg-nav-collapsed', 'sg-nav-tight');
+        if (!overflows()) return;
+        header.classList.add('sg-nav-tight');
+        if (overflows()) header.classList.add('sg-nav-collapsed');
     };
     var timer;
     window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(fit, 120); });
