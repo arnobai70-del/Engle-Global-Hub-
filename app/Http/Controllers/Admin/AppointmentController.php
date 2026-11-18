@@ -8,7 +8,10 @@ use App\Models\Appointment;
 use App\Models\StudentApplication;
 use App\Models\StudentEnquiry;
 use App\Models\User;
+use App\Services\ActivityRecorder;
 use App\Services\Consultancy\AppointmentScheduler;
+use App\Services\Consultancy\BookingSlots;
+use App\Services\SettingService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,6 +37,8 @@ class AppointmentController extends Controller
                 ->orderBy('scheduled_at')->paginate(25)->withQueryString(),
             'status' => $status,
             'staff' => $this->staff(),
+            'booking' => app(BookingSlots::class)->settings(),
+            'bookingLive' => app(BookingSlots::class)->isConfigured(),
         ]);
     }
 
@@ -47,6 +52,39 @@ class AppointmentController extends Controller
         $this->scheduler->create($data, $data['status'], $request->user());
 
         return back()->with('status', 'Appointment saved.');
+    }
+
+    /**
+     * Opening hours for public booking (/book-appointment). Leaving any of them empty hides public booking.
+     */
+    public function bookingHours(Request $request, SettingService $settings, ActivityRecorder $activity): RedirectResponse
+    {
+        $data = $request->validate([
+            'days' => ['nullable', 'array'],
+            'days.*' => ['integer', Rule::in(array_keys(BookingSlots::WEEKDAYS))],
+            'start' => ['nullable', 'date_format:H:i'],
+            'end' => ['nullable', 'date_format:H:i', 'after:start'],
+            'slot_minutes' => ['nullable', 'integer', 'between:15,240'],
+            'days_ahead' => ['nullable', 'integer', 'between:1,90'],
+            'notice_hours' => ['nullable', 'integer', 'between:0,168'],
+            'modes' => ['nullable', 'array'],
+            'modes.*' => [Rule::in(array_keys(Appointment::MODES))],
+        ], ['end.after' => 'The closing time must be after the opening time.']);
+
+        foreach ([
+            'days' => implode(',', array_unique(array_map('intval', $data['days'] ?? []))),
+            'start' => (string) ($data['start'] ?? ''),
+            'end' => (string) ($data['end'] ?? ''),
+            'slot_minutes' => (string) ($data['slot_minutes'] ?? ''),
+            'days_ahead' => (string) ($data['days_ahead'] ?? ''),
+            'notice_hours' => (string) ($data['notice_hours'] ?? ''),
+            'modes' => implode(',', array_unique($data['modes'] ?? [])),
+        ] as $key => $value) {
+            $settings->set(BookingSlots::GROUP, $key, $value, 'string', false);
+        }
+        $activity->record($request->user(), 'booking-hours.updated', null, ['days' => $data['days'] ?? []]);
+
+        return back()->with('status', app(BookingSlots::class)->isConfigured() ? 'Booking hours saved. Public booking is on.' : 'Booking hours saved. Public booking stays hidden until days, hours, slot length, booking window and a meeting type are all set.');
     }
 
     public function update(Request $request, Appointment $appointment): RedirectResponse

@@ -15,4 +15,20 @@
 <td>@can('appointments.manage')@include('admin.appointments._update', ['appointment' => $appointment])@endcan</td>
 </tr>@empty<tr><td colspan="6">No appointments.</td></tr>@endforelse
 </tbody></table></div>@if($appointments->hasPages())<div class="admin-pagination">{{ $appointments->links() }}</div>@endif
+@can('appointments.manage')
+<section class="egh-card" aria-labelledby="booking-hours-title" id="booking-hours">
+    <h2 id="booking-hours-title">Public booking hours</h2>
+    <p class="stu-muted">Visitors can book a free consultation at <a class="stu-link" href="{{ url('/book-appointment') }}" target="_blank" rel="noopener">/book-appointment</a> in these hours (office time, Dhaka). Times already taken by a requested or confirmed appointment are not offered. Public bookings appear in this list as confirmed and unassigned, and the visitor gets a confirmation email. {{ $bookingLive ? 'Public booking is ON.' : 'Public booking is OFF until every field below is filled in.' }}</p>
+    <form method="POST" action="{{ route('admin.appointments.booking-hours') }}" class="stu-form-grid">@csrf @method('PATCH')
+        <fieldset class="stu-full"><legend>Open on</legend>@foreach(\App\Services\Consultancy\BookingSlots::WEEKDAYS as $day => $label)<label style="display:inline-flex;gap:6px;margin-right:14px"><input type="checkbox" name="days[]" value="{{ $day }}" @checked(in_array($day, old('days', $booking['days']), false))> {{ $label }}</label>@endforeach</fieldset>
+        <label>Opening time<input type="time" name="start" value="{{ old('start', $booking['start']) }}"></label>
+        <label>Closing time (last slot ends by then)<input type="time" name="end" value="{{ old('end', $booking['end']) }}"></label>
+        <label>Slot length (minutes)<input type="number" name="slot_minutes" min="15" max="240" value="{{ old('slot_minutes', $booking['slot_minutes']) }}"></label>
+        <label>Bookable days ahead<input type="number" name="days_ahead" min="1" max="90" value="{{ old('days_ahead', $booking['days_ahead']) }}"></label>
+        <label>Minimum notice (hours, optional)<input type="number" name="notice_hours" min="0" max="168" value="{{ old('notice_hours', $booking['notice_hours'] ?: '') }}"></label>
+        <fieldset class="stu-full"><legend>Meeting types offered</legend>@foreach(\App\Models\Appointment::MODES as $mode => $label)<label style="display:inline-flex;gap:6px;margin-right:14px"><input type="checkbox" name="modes[]" value="{{ $mode }}" @checked(in_array($mode, old('modes', $booking['modes']), true))> {{ $label }}</label>@endforeach</fieldset>
+        <div class="admin-form-actions"><button class="egh-button" type="submit">Save booking hours</button></div>
+    </form>
+</section>
+@endcan
 @endsection

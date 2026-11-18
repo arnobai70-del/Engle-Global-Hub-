@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Agent\AgentPortalController;
 use App\Http\Controllers\Agent\PartnerRegistrationController;
+use App\Http\Controllers\Consultancy\AppointmentBookingController;
 use App\Http\Controllers\Consultancy\CostCalculatorController;
 use App\Http\Controllers\Consultancy\CourseFinderController;
 use App\Http\Controllers\Consultancy\EligibilityController;
@@ -902,6 +903,8 @@ Route::middleware('feature:student-consultancy')->group(function () {
     Route::get('/study-in-malaysia/cost-calculator', CostCalculatorController::class)->middleware('has-content')->name('consultancy.malaysia.cost-calculator');
     Route::get('/study-in-malaysia/courses', [CourseFinderController::class, 'index'])->middleware('has-content')->name('consultancy.malaysia.courses');
     Route::post('/study-in-malaysia/courses/enquire', [CourseFinderController::class, 'enquire'])->middleware('throttle:5,1')->name('consultancy.malaysia.courses.enquire');
+    Route::get('/book-appointment', [AppointmentBookingController::class, 'show'])->middleware('has-content')->name('appointments.book');
+    Route::post('/book-appointment', [AppointmentBookingController::class, 'store'])->middleware('throttle:5,1')->name('appointments.book.store');
 });
 Route::get('/study-in-malaysia/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('consultancy.malaysia.guides.show');
 
@@ -1134,6 +1137,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
         Route::middleware('can:appointments.manage')->group(function () {
             Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
             Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update'])->whereNumber('appointment')->name('appointments.update');
+            Route::patch('/appointments/booking-hours', [AppointmentController::class, 'bookingHours'])->name('appointments.booking-hours');
         });
 
         Route::middleware('can:payments.view')->group(function () {

@@ -627,3 +627,25 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .v2-finder-bdt { display: block; font-weight: 400; color: var(--muted); font-size: .82rem; }
 .v2-finder-ask { max-width: 640px; margin: 2.5rem auto 0; scroll-margin-top: 120px; }
 .v2-pagination { margin-top: 1.5rem; }
+/* Public booking */
+.v2-book { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.v2-book > .v2-errors { grid-column: 1 / -1; }
+.v2-book-slots { border: 0; margin: 0; min-width: 0; }
+.v2-book-slots legend { display: flex; align-items: center; gap: .5rem; padding: 0; margin-bottom: .4rem; }
+.v2-book-details h2 { display: flex; align-items: center; gap: .5rem; }
+.v2-book-days { display: flex; gap: .5rem; overflow-x: auto; padding: .25rem 0 .75rem; scrollbar-width: thin; }
+.v2-book-day { flex: none; display: grid; gap: .1rem; min-width: 68px; min-height: 58px; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--brand-navy); font: inherit; cursor: pointer; text-align: center; transition: border-color .15s ease, background .15s ease; }
+.v2-book-day span { font-size: .78rem; color: var(--muted); }
+.v2-book-day[aria-selected="true"] { border-color: var(--brand-navy); background: var(--brand-navy); color: #fff; }
+.v2-book-day[aria-selected="true"] span { color: #C9D3EA; }
+.v2-book-times { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.v2-book-date { flex-basis: 100%; margin: .5rem 0 0; font-weight: 600; color: var(--brand-navy); }
+.v2-book.is-enhanced .v2-book-date { display: none; }
+.v2-book-time { position: relative; }
+.v2-book-time input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.v2-book-time span { display: inline-flex; align-items: center; justify-content: center; min-width: 92px; min-height: 44px; padding: 0 .8rem; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-weight: 600; color: var(--brand-navy); transition: background .15s ease, border-color .15s ease, color .15s ease; }
+.v2-book-time input:checked + span { background: var(--brand-red); border-color: var(--brand-red); color: #fff; }
+.v2-book-time input:focus-visible + span { outline: 3px solid #F5B400; outline-offset: 2px; }
+.v2-book-done { margin-bottom: 1.5rem; }
+@media (max-width: 900px) { .v2-book { grid-template-columns: 1fr; } }
+.v2-book-slots legend { float: left; width: 100%; margin-bottom: .6rem; } .v2-book-slots legend + * { clear: both; }

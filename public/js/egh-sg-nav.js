@@ -268,3 +268,23 @@
     form.addEventListener('submit', function (event) { event.preventDefault(); update(); });
     update();
 })();
+
+/* Booking page: with JavaScript, show the day buttons and one day's times at a time
+   (without it, every day is listed with its times). */
+(function () {
+    var form = document.querySelector('[data-booking]');
+    if (!form) return;
+    var tabs = form.querySelector('[data-booking-days]');
+    var days = form.querySelectorAll('[data-booking-day]');
+    var groups = form.querySelectorAll('[data-booking-times]');
+    if (!tabs || !days.length) return;
+    var show = function (date) {
+        days.forEach(function (day) { day.setAttribute('aria-selected', day.getAttribute('data-booking-day') === date ? 'true' : 'false'); });
+        groups.forEach(function (group) { group.hidden = group.getAttribute('data-booking-times') !== date; });
+    };
+    var checked = form.querySelector('input[name="slot"]:checked');
+    tabs.hidden = false;
+    form.classList.add('is-enhanced');
+    days.forEach(function (day) { day.addEventListener('click', function () { show(day.getAttribute('data-booking-day')); }); });
+    show(checked ? checked.value.split(' ')[0] : days[0].getAttribute('data-booking-day'));
+})();
