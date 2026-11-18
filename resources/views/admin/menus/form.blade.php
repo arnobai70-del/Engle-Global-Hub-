@@ -24,6 +24,8 @@
         <label>External link (https only)<input name="external_url" type="url" maxlength="290" placeholder="https://" value="{{ old('external_url', str_starts_with((string) $item->target, 'url:') ? substr((string) $item->target, 4) : '') }}"></label>
         <label>Section anchor (optional, e.g. consultation)<input name="fragment" maxlength="60" pattern="[A-Za-z0-9_-]+" value="{{ old('fragment', $item->fragment) }}"></label>
         @if($item->location === 'home_tiles')
+        <label class="stu-full">Card description (English)<textarea name="description_en" maxlength="300" rows="2" placeholder="One or two sentences: what this service does for the student.">{{ old('description_en', $item->description_en) }}</textarea></label>
+        <label class="stu-full">Card description (Bengali)<textarea name="description_bn" lang="bn" maxlength="300" rows="2">{{ old('description_bn', $item->description_bn) }}</textarea></label>
         <label>Icon<select name="icon" required><option value="">Choose an icon</option>@foreach(\App\Models\MenuItem::ICONS as $icon)<option value="{{ $icon }}" @selected(old('icon', $item->icon) === $icon)>{{ $icon }}</option>@endforeach</select></label>
         @endif
         <label>Hide when this feature is switched off (optional)<select name="feature"><option value="">No feature</option>@foreach($features as $feature)<option value="{{ $feature }}" @selected(old('feature', $item->feature) === $feature)>{{ $feature }}</option>@endforeach</select></label>

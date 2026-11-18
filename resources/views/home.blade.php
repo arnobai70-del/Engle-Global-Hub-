@@ -43,27 +43,8 @@
         ['icon' => 'chat', 'text' => __('Bangla & English support')],
     ]));
 
-    // Six service cards: titles, icons and links come from Admin › Menus (homepage tiles).
-    $serviceText = [
-        'tile-malaysia' => [__('Universities and colleges in Malaysia: course shortlist, admission application and document check.'), __('Start here')],
-        'tile-student-pass-my' => [__('Your EMGS Student Pass and eVAL application, prepared and followed with you.'), __('Learn more')],
-        'tile-singapore' => [__('Diplomas and degrees in Singapore, with Student\'s Pass (ICA) guidance.'), __('Explore Singapore')],
-        'tile-visa' => [__('Tourist, business and student visa guidance with a document checklist.'), __('Ask about a visa')],
-        'tile-flights' => [__('Student fares and group bookings. Send your dates, we reply with options.'), __('Get a fare quote')],
-        'tile-housing' => [__('Student hostels, shared rooms and airport arrival guidance.'), __('Ask about housing')],
-        'tile-tours' => [__('Holiday and group tour packages in Bangladesh and abroad.'), __('Get a package')],
-    ];
-    $tileMenu = app(\App\Services\Navigation\MenuService::class)->tree('home_tiles');
-    $services = $tileMenu !== null
-        ? collect($tileMenu)->map(fn (array $tile): array => ['title' => $tile['label'], 'url' => $tile['url'], 'icon' => $tile['icon'] ?? 'globe', 'key' => $tile['key'] ?? null, 'new_tab' => $tile['new_tab']])->all()
-        : [
-            ['key' => 'tile-malaysia', 'title' => __('Study in Malaysia'), 'url' => $studyUrl, 'icon' => 'cap', 'new_tab' => false],
-            ['key' => 'tile-student-pass-my', 'title' => __('Student Pass (EMGS)'), 'url' => $studyUrl.'#student-pass', 'icon' => 'id', 'new_tab' => false],
-            ['key' => 'tile-singapore', 'title' => __('Study in Singapore'), 'url' => route('consultancy.singapore'), 'icon' => 'globe', 'new_tab' => false],
-            ['key' => 'tile-visa', 'title' => __('Visa services'), 'url' => route('services.show', 'tourist-visa'), 'icon' => 'passport', 'new_tab' => false],
-            ['key' => 'tile-flights', 'title' => __('Air tickets'), 'url' => route('services.show', 'air-ticket'), 'icon' => 'plane', 'new_tab' => false],
-            ['key' => 'tile-housing', 'title' => __('Housing & arrival'), 'url' => route('hotels.index'), 'icon' => 'bed', 'new_tab' => false],
-        ];
+    // Service cards from Admin › Menus (homepage tiles); repeated links or titles are shown once.
+    $services = app(\App\Services\Content\HomepageServiceCards::class)->cards();
 
     // How it works: editable as the page section "how-it-works" ("- Title: text | time" per line).
     // Default timings are our own process or EMGS's published figures; admission time is set by each institution.
@@ -173,7 +154,7 @@
             </div>
             <div class="v2-services">
                 @foreach($services as $service)
-                    @php([$serviceBody, $serviceCta] = $serviceText[$service['key'] ?? ''] ?? ['', __('Learn more')])
+                    @php([$serviceBody, $serviceCta] = [$service['body'], $service['cta']])
                     <a class="v2-service-card" href="{{ $service['url'] }}" @if($service['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
                         <span class="v2-service-top"><x-site.art :name="$service['icon']" /><span class="v2-service-no" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span></span>
                         <h3>{{ $service['title'] }}</h3>

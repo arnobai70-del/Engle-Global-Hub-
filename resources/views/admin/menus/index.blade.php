@@ -13,6 +13,9 @@
     @endforeach
 </nav>
 
+@if($tileWarnings !== [])
+<div class="egho-alert is-warning" role="status" data-tile-warnings><strong>Homepage cards need attention</strong><ul class="admin-error-list">@foreach($items->whereIn('id', array_keys($tileWarnings)) as $tile)@foreach($tileWarnings[$tile->id] as $problem)<li>{{ $tile->label_en }}: {{ $problem }}</li>@endforeach @endforeach</ul></div>
+@endif
 <div class="egh-card admin-table-card">
     @if($items->isEmpty())
         <p>No items yet. The website uses its built-in {{ strtolower(\App\Models\MenuItem::LOCATIONS[$location]) }} until you add one. Run the menu seeder to start from the current menus.</p>
@@ -24,7 +27,7 @@
             @foreach([$item, ...$item->children] as $row)
                 @php($isChild = $row->parent_id !== null)
                 <tr data-menu-item="{{ $row->id }}">
-                    <td>@if($isChild)<span aria-hidden="true">↳ </span>@endif<strong>{{ $row->label_en }}</strong>@if($row->label_bn)<br><span class="stu-muted" lang="bn">{{ $row->label_bn }}</span>@endif @if($row->icon)<br><span class="stu-muted">Icon: {{ $row->icon }}</span>@endif</td>
+                    <td>@if($isChild)<span aria-hidden="true">↳ </span>@endif<strong>{{ $row->label_en }}</strong>@if($row->label_bn)<br><span class="stu-muted" lang="bn">{{ $row->label_bn }}</span>@endif @if($row->icon)<br><span class="stu-muted">Icon: {{ $row->icon }}</span>@endif @foreach($tileWarnings[$row->id] ?? [] as $problem)<br><span class="admin-warning-text" style="color:#9a5b00">⚠ {{ $problem }}</span>@endforeach</td>
                     <td>
                         @if($row->target === null)<span class="stu-muted">Heading (no link)</span>
                         @elseif($url = $targets->url($row->target, $row->fragment))<a class="stu-link" href="{{ $url }}" target="_blank" rel="noopener">{{ \Illuminate\Support\Str::limit(str_replace(url('/'), '', $url) ?: '/', 48) }}</a>
