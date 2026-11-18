@@ -605,3 +605,18 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .v2-tool-placeholder ol { margin: .5rem 0 0; }
 @media (max-width: 900px) { .v2-tool-grid { grid-template-columns: 1fr; } }
 .v2-h3 { font: 600 1.4rem/1.3 var(--sg-heading); color: var(--brand-navy); margin: 0; }
+.v2-cost-rows { display: grid; gap: .9rem; margin-bottom: 1rem; }
+.v2-cost-row { display: grid; grid-template-columns: minmax(0, 1fr) 170px; gap: .35rem 1rem; align-items: center; padding-bottom: .9rem; border-bottom: 1px solid var(--line); }
+.v2-cost-row .v2-check { margin: 0; }
+.v2-cost-amount { margin: 0; }
+.v2-cost-input { display: flex; align-items: center; gap: .4rem; border: 1px solid var(--line); border-radius: 10px; padding: 0 .7rem; background: #fff; }
+.v2-cost-input span { color: var(--muted); font-size: .82rem; font-weight: 600; }
+.v2-cost-input input { border: 0 !important; padding-left: 0 !important; box-shadow: none !important; min-width: 0; }
+.v2-cost-hint { grid-column: 1 / -1; color: var(--muted); font-size: .82rem; }
+.v2-cost-total { display: grid; gap: .35rem; padding: 1.6rem; background: var(--brand-navy); color: #DCE4F2; border: 0; }
+.v2-cost-total .v2-eyebrow { color: #F5B9C0; margin: 0; }
+.v2-cost-bdt { margin: 0; font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.15 var(--sg-heading); color: #fff; }
+.v2-cost-myr { margin: 0; font-size: 1.05rem; }
+.v2-cost-total .v2-cost-hint { color: #C9D3EA; }
+.v2-cost-rate { margin: .4rem 0 0; font-size: .85rem; color: #C9D3EA; }
+@media (max-width: 520px) { .v2-cost-row { grid-template-columns: 1fr; } }

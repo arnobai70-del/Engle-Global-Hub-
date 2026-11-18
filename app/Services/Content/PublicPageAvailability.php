@@ -11,6 +11,7 @@ use App\Models\Institution;
 use App\Models\Offer;
 use App\Models\Review;
 use App\Models\RewardProgram;
+use App\Services\Consultancy\MalaysiaCostCalculator;
 use App\Services\Consultancy\StudyCountries;
 use App\Services\SettingService;
 use Throwable;
@@ -28,7 +29,7 @@ class PublicPageAvailability
         'rewards.index', 'restaurants.index', 'inspiration.index', 'map', 'explore-bangladesh.index',
         'consultancy.guides.index', 'consultancy.institutions.index', 'mobile-app',
         'consultancy.malaysia.guides.index', 'consultancy.malaysia.institutions.index',
-        'consultancy.malaysia.eligibility',
+        'consultancy.malaysia.eligibility', 'consultancy.malaysia.cost-calculator',
     ];
 
     public function __construct(private SettingService $settings, private StudyCountries $countries) {}
@@ -71,6 +72,7 @@ class PublicPageAvailability
                     || ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->whereNotNull('latitude')->whereNotNull('longitude')->exists(),
                 'mobile-app' => $this->hasAppStoreLink(),
                 'consultancy.malaysia.eligibility' => EligibilityRule::query()->where('is_active', true)->exists(),
+                'consultancy.malaysia.cost-calculator' => app(MalaysiaCostCalculator::class)->isAvailable(),
                 default => true,
             };
         } catch (Throwable) {

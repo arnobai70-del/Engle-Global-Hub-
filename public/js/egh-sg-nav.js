@@ -238,3 +238,33 @@
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
     document.querySelectorAll(selector).forEach(function (element) { observer.observe(element); });
 })();
+
+/* Cost calculator (Study in Malaysia): live yearly total in MYR and Taka from the amounts
+   shown, the chosen number of years and the admin's exchange rate (data-rate). */
+(function () {
+    var form = document.querySelector('[data-cost-calculator]');
+    if (!form) return;
+    var rate = parseFloat(form.getAttribute('data-rate')) || 0;
+    var bdt = document.querySelector('[data-cost-bdt]');
+    var myr = document.querySelector('[data-cost-myr]');
+    var period = document.querySelector('[data-cost-period]');
+    var years = form.querySelector('[data-cost-years]');
+    var format = function (amount) { return Math.round(amount).toLocaleString('en-US'); };
+    var update = function () {
+        var total = 0;
+        form.querySelectorAll('[data-cost-row]').forEach(function (row) {
+            var include = row.querySelector('[data-cost-include]');
+            var amount = parseFloat(row.querySelector('[data-cost-amount]').value) || 0;
+            if (include && include.checked && amount > 0) total += amount;
+        });
+        var count = years ? parseInt(years.value, 10) || 1 : 1;
+        total *= count;
+        if (myr) myr.textContent = 'MYR ' + format(total);
+        if (bdt) bdt.textContent = 'BDT ' + format(total * rate);
+        if (period && years) period.textContent = years.options[years.selectedIndex].text;
+    };
+    form.addEventListener('input', update);
+    form.addEventListener('change', update);
+    form.addEventListener('submit', function (event) { event.preventDefault(); update(); });
+    update();
+})();

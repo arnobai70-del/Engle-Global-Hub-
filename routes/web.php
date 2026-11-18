@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Agent\AgentPortalController;
 use App\Http\Controllers\Agent\PartnerRegistrationController;
+use App\Http\Controllers\Consultancy\CostCalculatorController;
 use App\Http\Controllers\Consultancy\EligibilityController;
 use App\Http\Controllers\Consultancy\InstitutionDirectoryController;
 use App\Http\Controllers\Consultancy\MalaysiaStudyController;
@@ -897,6 +898,7 @@ Route::middleware('feature:student-consultancy')->group(function () {
     // Planning tools: each one redirects home until admin has entered the data it needs.
     Route::get('/study-in-malaysia/eligibility', [EligibilityController::class, 'show'])->middleware('has-content')->name('consultancy.malaysia.eligibility');
     Route::post('/study-in-malaysia/eligibility', [EligibilityController::class, 'store'])->middleware('throttle:5,1')->name('consultancy.malaysia.eligibility.store');
+    Route::get('/study-in-malaysia/cost-calculator', CostCalculatorController::class)->middleware('has-content')->name('consultancy.malaysia.cost-calculator');
 });
 Route::get('/study-in-malaysia/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('consultancy.malaysia.guides.show');
 

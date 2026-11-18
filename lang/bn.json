@@ -1676,5 +1676,18 @@
     "Your answers do not meet the entry rules we have on file. A consultant can still look at your case, for example a foundation route or a course after an English test.": "আপনার উত্তর আমাদের কাছে থাকা ভর্তির নিয়মের সাথে মেলেনি। তবু একজন কনসালট্যান্ট আপনার বিষয়টি দেখতে পারেন, যেমন ফাউন্ডেশন কোর্স বা ইংরেজি পরীক্ষার পরে কোনো কোর্স।",
     "Get a call about these options": "এই সুযোগগুলো নিয়ে ফোন পেতে চান",
     "SSC / O-Level": "এসএসসি / ও-লেভেল",
-    "HSC / A-Level": "এইচএসসি / এ-লেভেল"
+    "HSC / A-Level": "এইচএসসি / এ-লেভেল",
+    "Cost calculator: Study in Malaysia": "খরচের হিসাব: মালয়েশিয়ায় পড়াশোনা",
+    "Estimate the yearly cost of studying in Malaysia in Ringgit and Taka: tuition, housing, food and the Student Pass, using our current figures.": "আমাদের বর্তমান হিসাব দিয়ে মালয়েশিয়ায় পড়াশোনার বছরের খরচ রিংগিত ও টাকায় দেখুন: টিউশন, থাকা, খাবার ও স্টুডেন্ট পাস।",
+    "See the yearly cost of studying in Malaysia in Ringgit and in Taka. Change any amount to match your own plan.": "মালয়েশিয়ায় পড়াশোনার বছরের খরচ রিংগিত ও টাকায় দেখুন। আপনার পরিকল্পনা অনুযায়ী যেকোনো অঙ্ক বদলাতে পারেন।",
+    "Yearly costs": "বছরের খরচ",
+    "Our figure: :range": "আমাদের হিসাব: :range",
+    "Years of study": "পড়াশোনার বছর",
+    "Estimated total": "আনুমানিক মোট",
+    "With our full ranges: :range per year.": "আমাদের পুরো সীমা ধরলে: বছরে :range।",
+    "Rate used: 1 MYR = :rate BDT": "ব্যবহৃত রেট: ১ রিংগিত = :rate টাকা",
+    "checked on :date": ":date তারিখে যাচাই করা",
+    "An estimate, not a quote. Each institution sets its own tuition and EMGS sets the Student Pass fees; exchange rates change daily. Air ticket and our service fee are not included.": "এটি আনুমানিক হিসাব, চূড়ান্ত দর নয়। প্রতিটি প্রতিষ্ঠান নিজের টিউশন ঠিক করে এবং স্টুডেন্ট পাসের ফি ঠিক করে EMGS; বিনিময় হার প্রতিদিন বদলায়। বিমান টিকিট ও আমাদের সার্ভিস ফি এতে ধরা নেই।",
+    "Get an exact quote": "সঠিক খরচ জানতে যোগাযোগ করুন",
+    ":count year|:count years": ":count বছর|:count বছর"
 }
