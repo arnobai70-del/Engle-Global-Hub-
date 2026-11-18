@@ -123,7 +123,7 @@ final class MenuBuilderTest extends TestCase
 
     public function test_built_in_navigation_is_used_until_menus_exist_and_seeded_menus_render_in_bengali(): void
     {
-        $this->get(route('home'))->assertOk()->assertSee('Study in Singapore')->assertSee('Free Consultation');
+        $this->get(route('home'))->assertOk()->assertSee('<summary>Student Visa</summary>', false)->assertSee('Free Consultation');
 
         $this->seed(MenuSeeder::class);
         $this->seed(MenuSeeder::class);
@@ -132,7 +132,7 @@ final class MenuBuilderTest extends TestCase
         $this->get(route('home', ['lang' => 'bn']))
             ->assertOk()
             ->assertSee(MenuItem::query()->where('key', 'travel')->value('label_bn'))
-            ->assertSee(route('consultancy.singapore').'#apply', false);
+            ->assertSee('<summary>স্টুডেন্ট ভিসা</summary>', false);
     }
 
     public function test_items_without_a_bengali_label_use_the_site_translation(): void

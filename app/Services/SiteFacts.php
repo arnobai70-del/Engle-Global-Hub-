@@ -43,6 +43,8 @@ class SiteFacts
         'my_cost_food' => ['Food & transport per year (MYR)', '', 20, 'Malaysia costs (MYR)'],
         'my_cost_visa' => ['Student Pass, insurance & medical (MYR)', 'EMGS sets these fees; check the official EMGS fee calculator before entering a figure.', 20, 'Malaysia costs (MYR)'],
         'my_cost_total' => ['Estimated total per year (MYR)', '', 20, 'Malaysia costs (MYR)'],
+        'my_bdt_rate' => ['Exchange rate: 1 MYR in Taka (BDT)', 'For the cost calculator, for example 27.50. Update it when the rate moves. Leave empty to hide the calculator.', 10, 'Malaysia costs (MYR)'],
+        'my_bdt_rate_date' => ['Exchange rate checked on', 'Shown under the calculator, for example 18 Nov 2026.', 30, 'Malaysia costs (MYR)'],
         'my_living_room' => ['Monthly: shared room (MYR)', '', 20, 'Malaysia monthly living cost (MYR)'],
         'my_living_food' => ['Monthly: food (MYR)', '', 20, 'Malaysia monthly living cost (MYR)'],
         'my_living_transport' => ['Monthly: public transport (MYR)', '', 20, 'Malaysia monthly living cost (MYR)'],

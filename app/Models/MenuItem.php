@@ -32,7 +32,7 @@ class MenuItem extends Model
 
     /** @var list<string> */
     protected $fillable = [
-        'location', 'parent_id', 'key', 'label_en', 'label_bn', 'target', 'fragment', 'icon',
+        'location', 'parent_id', 'key', 'label_en', 'label_bn', 'description_en', 'description_bn', 'target', 'fragment', 'icon',
         'feature', 'visibility', 'roles', 'open_in_new_tab', 'is_active', 'sort_order',
     ];
 
@@ -60,5 +60,15 @@ class MenuItem extends Model
         }
 
         return (string) $this->label_en;
+    }
+
+    /**
+     * The tile description in the visitor's language: Bengali falls back to the English text.
+     */
+    public function description(): ?string
+    {
+        $text = app()->getLocale() === 'bn' && filled($this->description_bn) ? $this->description_bn : $this->description_en;
+
+        return filled($text) ? trim((string) $text) : null;
     }
 }

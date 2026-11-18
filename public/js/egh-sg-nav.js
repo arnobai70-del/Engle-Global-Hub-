@@ -50,23 +50,85 @@
     });
 })();
 
-/* Fit the desktop menu into one row: first try the tighter layout (.sg-nav-tight), and only
-   collapse into the burger when even that overflows (for example a long admin-managed menu or
-   longer Bengali labels). Re-checked on resize and after fonts load. */
+/* Fit the desktop menu into one row, however many items the admin menu has:
+   1. try the tighter layout (.sg-nav-tight);
+   2. move items from the end into the "More" dropdown until the row fits;
+   3. only if even that fails, collapse into the burger.
+   Phones and tablets (where CSS already shows the burger) keep the full list.
+   Re-checked on resize and after fonts load. */
 (function () {
     var header = document.querySelector('.sg-header');
     var inner = header ? header.querySelector('.sg-header-inner') : null;
-    if (!header || !inner) return;
-    var fit = function () {
-        var overflows = function () { return inner.scrollWidth > inner.clientWidth + 1; };
+    var nav = header ? header.querySelector('[data-sg-nav]') : null;
+    var burger = header ? header.querySelector('[data-sg-burger]') : null;
+    if (!header || !inner || !nav) return;
+    var more = nav.querySelector('[data-sg-more]');
+    var moreMenu = more ? more.querySelector('[data-sg-more-menu]') : null;
+    var overflows = function () { return inner.scrollWidth > inner.clientWidth + 1; };
+    var candidates = function () {
+        return Array.prototype.filter.call(nav.children, function (element) {
+            return element !== more && !element.classList.contains('sg-nav-actions') && !element.classList.contains('sg-dd-mega');
+        });
+    };
+    var copyInto = function (item, target) {
+        var fragment = document.createDocumentFragment();
+        var summary = item.querySelector(':scope > summary');
+        if (summary) {
+            var group = document.createElement('p');
+            group.className = 'sg-more-group';
+            group.textContent = summary.textContent.trim();
+            fragment.appendChild(group);
+            item.querySelectorAll('.sg-dd-menu a').forEach(function (link) { fragment.appendChild(link.cloneNode(true)); });
+        } else {
+            fragment.appendChild(item.cloneNode(true));
+        }
+        target.insertBefore(fragment, target.firstChild);
+    };
+    var reset = function () {
         header.classList.remove('sg-nav-collapsed', 'sg-nav-tight');
+        candidates().forEach(function (element) { element.classList.remove('sg-overflowed'); });
+        if (more) { more.hidden = true; more.open = false; moreMenu.innerHTML = ''; }
+    };
+    var smallScreen = window.matchMedia ? window.matchMedia('(max-width: 1179px)') : null;
+    var fitted = false;
+    var fit = function () {
+        if (smallScreen && smallScreen.matches) {
+            if (fitted) { reset(); fitted = false; }
+            return;
+        }
+        fitted = true;
+        reset();
+        if (burger && getComputedStyle(burger).display !== 'none') return;
         if (!overflows()) return;
         header.classList.add('sg-nav-tight');
-        if (overflows()) header.classList.add('sg-nav-collapsed');
+        if (!overflows()) return;
+        if (more) {
+            more.hidden = false;
+            var visible = candidates();
+            // Keep at least the first item in the row; move the rest from the end.
+            for (var index = visible.length - 1; index >= 1 && overflows(); index--) {
+                visible[index].classList.add('sg-overflowed');
+                copyInto(visible[index], moreMenu);
+            }
+            if (!overflows()) return;
+            reset();
+            header.classList.add('sg-nav-tight');
+        }
+        header.classList.add('sg-nav-collapsed');
     };
     var timer;
-    window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(fit, 120); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    var frame = 0;
+    var schedule = function () {
+        if (frame) return;
+        frame = window.requestAnimationFrame(function () { frame = 0; fit(); });
+    };
+    window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(schedule, 120); });
+    // Web fonts (Bengali especially) can arrive after the first check and widen the labels.
+    if (document.fonts) {
+        if (document.fonts.ready) document.fonts.ready.then(schedule);
+        if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', schedule);
+    }
+    window.addEventListener('load', schedule);
     fit();
 })();
 
@@ -130,7 +192,8 @@
     var ticking = false;
     var update = function () { bar.classList.toggle('is-scrolled', window.scrollY > 8); ticking = false; };
     window.addEventListener('scroll', function () { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }, { passive: true });
-    update();
+    // First check once the page has loaded (reading scrollY earlier would force an extra layout).
+    if (document.readyState === 'complete') { update(); } else { window.addEventListener('load', update); }
 })();
 
 /* Scroll reveal: section headings, cards and steps below the fold fade up as they enter the
@@ -145,19 +208,25 @@
         '.v2-directory > *', '.v2-course', '.v2-contact-card', '.v2-section .v2-card', '.v2-living > *', '.v2-split > *',
         '.sg-section .sg-card', '.sg-steps > *', '.sg-tiles > *'
     ].join(',');
-    var fold = window.innerHeight;
-    var items = [];
-    document.querySelectorAll(selector).forEach(function (element) {
-        // Skip blocks already on screen, and blocks nested inside one that is already revealed.
-        if (element.getBoundingClientRect().top <= fold * 0.92 || element.parentElement.closest('.egh-reveal')) return;
-        element.classList.add('egh-reveal');
-        items.push(element);
-    });
-    if (!items.length) return;
+    // IntersectionObserver reports after the browser's own layout, so nothing here forces a layout:
+    // its first report says which blocks start on screen (left alone) and which start below (hidden, then revealed).
+    var seen = typeof WeakSet === 'function' ? new WeakSet() : null;
+    if (!seen) return;
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
             var element = entry.target;
+            if (!seen.has(element)) {
+                seen.add(element);
+                if (entry.isIntersecting || entry.boundingClientRect.top < 0 || (element.parentElement && element.parentElement.closest('.egh-reveal'))) {
+                    observer.unobserve(element);
+                    return;
+                }
+                var position = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
+                element.style.setProperty('--egh-reveal-delay', (Math.min(position, 5) * 0.08) + 's');
+                element.classList.add('egh-reveal');
+                return;
+            }
+            if (!entry.isIntersecting) return;
             observer.unobserve(element);
             element.classList.add('is-visible');
             // Hand transitions back to the element's own hover styles once it has arrived.
@@ -167,9 +236,55 @@
             }, 1400);
         });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    items.forEach(function (element) {
-        var siblings = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
-        element.style.setProperty('--egh-reveal-delay', (Math.min(siblings, 5) * 0.08) + 's');
-        observer.observe(element);
-    });
+    document.querySelectorAll(selector).forEach(function (element) { observer.observe(element); });
+})();
+
+/* Cost calculator (Study in Malaysia): live yearly total in MYR and Taka from the amounts
+   shown, the chosen number of years and the admin's exchange rate (data-rate). */
+(function () {
+    var form = document.querySelector('[data-cost-calculator]');
+    if (!form) return;
+    var rate = parseFloat(form.getAttribute('data-rate')) || 0;
+    var bdt = document.querySelector('[data-cost-bdt]');
+    var myr = document.querySelector('[data-cost-myr]');
+    var period = document.querySelector('[data-cost-period]');
+    var years = form.querySelector('[data-cost-years]');
+    var format = function (amount) { return Math.round(amount).toLocaleString('en-US'); };
+    var update = function () {
+        var total = 0;
+        form.querySelectorAll('[data-cost-row]').forEach(function (row) {
+            var include = row.querySelector('[data-cost-include]');
+            var amount = parseFloat(row.querySelector('[data-cost-amount]').value) || 0;
+            if (include && include.checked && amount > 0) total += amount;
+        });
+        var count = years ? parseInt(years.value, 10) || 1 : 1;
+        total *= count;
+        if (myr) myr.textContent = 'MYR ' + format(total);
+        if (bdt) bdt.textContent = 'BDT ' + format(total * rate);
+        if (period && years) period.textContent = years.options[years.selectedIndex].text;
+    };
+    form.addEventListener('input', update);
+    form.addEventListener('change', update);
+    form.addEventListener('submit', function (event) { event.preventDefault(); update(); });
+    update();
+})();
+
+/* Booking page: with JavaScript, show the day buttons and one day's times at a time
+   (without it, every day is listed with its times). */
+(function () {
+    var form = document.querySelector('[data-booking]');
+    if (!form) return;
+    var tabs = form.querySelector('[data-booking-days]');
+    var days = form.querySelectorAll('[data-booking-day]');
+    var groups = form.querySelectorAll('[data-booking-times]');
+    if (!tabs || !days.length) return;
+    var show = function (date) {
+        days.forEach(function (day) { day.setAttribute('aria-selected', day.getAttribute('data-booking-day') === date ? 'true' : 'false'); });
+        groups.forEach(function (group) { group.hidden = group.getAttribute('data-booking-times') !== date; });
+    };
+    var checked = form.querySelector('input[name="slot"]:checked');
+    tabs.hidden = false;
+    form.classList.add('is-enhanced');
+    days.forEach(function (day) { day.addEventListener('click', function () { show(day.getAttribute('data-booking-day')); }); });
+    show(checked ? checked.value.split(' ')[0] : days[0].getAttribute('data-booking-day'));
 })();

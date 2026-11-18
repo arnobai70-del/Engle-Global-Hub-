@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MenuItem;
 use App\Services\ActivityRecorder;
+use App\Services\Content\HomepageServiceCards;
 use App\Services\Navigation\MenuTargets;
 use App\Services\SettingService;
 use Illuminate\Http\RedirectResponse;
@@ -24,13 +25,15 @@ class MenuItemController extends Controller
 {
     public function __construct(private MenuTargets $targets, private ActivityRecorder $activity) {}
 
-    public function index(Request $request, SettingService $settings): View
+    public function index(Request $request, SettingService $settings, HomepageServiceCards $cards): View
     {
         $location = array_key_exists((string) $request->query('location'), MenuItem::LOCATIONS) ? (string) $request->query('location') : 'header';
+        $items = MenuItem::query()->where('location', $location)->whereNull('parent_id')->with('children')->orderBy('sort_order')->orderBy('id')->get();
 
         return view('admin.menus.index', [
             'location' => $location,
-            'items' => MenuItem::query()->where('location', $location)->whereNull('parent_id')->with('children')->orderBy('sort_order')->orderBy('id')->get(),
+            'items' => $items,
+            'tileWarnings' => $location === 'home_tiles' ? $cards->adminWarnings($items->where('is_active', true)->values()) : [],
             'counts' => MenuItem::query()->selectRaw('location, count(*) as total')->groupBy('location')->pluck('total', 'location'),
             'targets' => $this->targets,
             'branding' => rescue(fn () => $settings->group('branding'), [], false),
@@ -133,6 +136,8 @@ class MenuItemController extends Controller
         $data = $request->validate([
             'label_en' => ['required', 'string', 'max:80'],
             'label_bn' => ['nullable', 'string', 'max:80'],
+            'description_en' => ['nullable', 'string', 'max:300'],
+            'description_bn' => ['nullable', 'string', 'max:300'],
             'parent_id' => ['nullable', 'integer', Rule::exists('menu_items', 'id')->where('location', $location)->whereNull('parent_id')],
             'link_type' => ['required', Rule::in($nested ? ['route', 'url', 'none'] : ['route', 'url'])],
             'route_target' => ['nullable', 'required_if:link_type,route', 'string', 'max:200'],
@@ -192,6 +197,8 @@ class MenuItemController extends Controller
             'parent_id' => $parentId,
             'label_en' => $label,
             'label_bn' => filled($data['label_bn'] ?? null) ? trim(strip_tags((string) $data['label_bn'])) : null,
+            'description_en' => $location === 'home_tiles' && filled($data['description_en'] ?? null) ? trim(strip_tags((string) $data['description_en'])) : null,
+            'description_bn' => $location === 'home_tiles' && filled($data['description_bn'] ?? null) ? trim(strip_tags((string) $data['description_bn'])) : null,
             'target' => $target,
             'fragment' => $fragment,
             'icon' => $data['icon'] ?? null,

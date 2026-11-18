@@ -25,7 +25,7 @@ class MenuService
      * Visible items for a location, or null when the location has no managed items
      * (the built-in navigation is used instead).
      *
-     * @return list<array{key: ?string, label: string, url: ?string, new_tab: bool, icon: ?string, children: list<array<string, mixed>>}>|null
+     * @return list<array{key: ?string, label: string, url: ?string, new_tab: bool, icon: ?string, description: ?string, children: list<array<string, mixed>>}>|null
      */
     public function tree(string $location): ?array
     {
@@ -70,7 +70,7 @@ class MenuService
 
     /**
      * @param  list<array<string, mixed>>  $children
-     * @return array{key: ?string, label: string, url: ?string, new_tab: bool, icon: ?string, children: list<array<string, mixed>>}|null
+     * @return array{key: ?string, label: string, url: ?string, new_tab: bool, icon: ?string, description: ?string, children: list<array<string, mixed>>}|null
      */
     private function node(MenuItem $item, array $children = []): ?array
     {
@@ -85,6 +85,7 @@ class MenuService
             'url' => $url,
             'new_tab' => $item->open_in_new_tab && str_starts_with((string) $item->target, 'url:'),
             'icon' => $item->icon,
+            'description' => $item->description(),
             'children' => $children,
         ];
     }

@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CurrencyPageController;
 use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\Admin\EligibilityRuleController;
 use App\Http\Controllers\Admin\FeatureControlController;
 use App\Http\Controllers\Admin\ForumModerationController;
 use App\Http\Controllers\Admin\InstitutionController;
@@ -42,6 +43,10 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Agent\AgentPortalController;
 use App\Http\Controllers\Agent\PartnerRegistrationController;
+use App\Http\Controllers\Consultancy\AppointmentBookingController;
+use App\Http\Controllers\Consultancy\CostCalculatorController;
+use App\Http\Controllers\Consultancy\CourseFinderController;
+use App\Http\Controllers\Consultancy\EligibilityController;
 use App\Http\Controllers\Consultancy\InstitutionDirectoryController;
 use App\Http\Controllers\Consultancy\MalaysiaStudyController;
 use App\Http\Controllers\Consultancy\SingaporeGuideIndexController;
@@ -892,6 +897,14 @@ Route::middleware('feature:student-consultancy')->group(function () {
     Route::get('/study-in-malaysia', MalaysiaStudyController::class)->name('consultancy.malaysia');
     Route::get('/study-in-malaysia/guides', SingaporeGuideIndexController::class)->defaults('country', 'MY')->name('consultancy.malaysia.guides.index');
     Route::get('/study-in-malaysia/institutions', InstitutionDirectoryController::class)->defaults('country', 'MY')->name('consultancy.malaysia.institutions.index');
+    // Planning tools: each one redirects home until admin has entered the data it needs.
+    Route::get('/study-in-malaysia/eligibility', [EligibilityController::class, 'show'])->middleware('has-content')->name('consultancy.malaysia.eligibility');
+    Route::post('/study-in-malaysia/eligibility', [EligibilityController::class, 'store'])->middleware('throttle:5,1')->name('consultancy.malaysia.eligibility.store');
+    Route::get('/study-in-malaysia/cost-calculator', CostCalculatorController::class)->middleware('has-content')->name('consultancy.malaysia.cost-calculator');
+    Route::get('/study-in-malaysia/courses', [CourseFinderController::class, 'index'])->middleware('has-content')->name('consultancy.malaysia.courses');
+    Route::post('/study-in-malaysia/courses/enquire', [CourseFinderController::class, 'enquire'])->middleware('throttle:5,1')->name('consultancy.malaysia.courses.enquire');
+    Route::get('/book-appointment', [AppointmentBookingController::class, 'show'])->middleware('has-content')->name('appointments.book');
+    Route::post('/book-appointment', [AppointmentBookingController::class, 'store'])->middleware('throttle:5,1')->name('appointments.book.store');
 });
 Route::get('/study-in-malaysia/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('consultancy.malaysia.guides.show');
 
@@ -1105,6 +1118,13 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
     ->prefix('admin')->name('admin.')
     ->group(function () {
         Route::get('/courses', [CourseController::class, 'index'])->middleware('can:courses.view')->name('courses.index');
+        Route::get('/eligibility-rules', [EligibilityRuleController::class, 'index'])->middleware('can:courses.view')->name('eligibility-rules.index');
+        Route::middleware('can:courses.manage')->group(function () {
+            Route::post('/eligibility-rules', [EligibilityRuleController::class, 'store'])->name('eligibility-rules.store');
+            Route::get('/eligibility-rules/{rule}/edit', [EligibilityRuleController::class, 'edit'])->whereNumber('rule')->name('eligibility-rules.edit');
+            Route::patch('/eligibility-rules/{rule}', [EligibilityRuleController::class, 'update'])->whereNumber('rule')->name('eligibility-rules.update');
+            Route::delete('/eligibility-rules/{rule}', [EligibilityRuleController::class, 'destroy'])->whereNumber('rule')->name('eligibility-rules.destroy');
+        });
         Route::middleware('can:courses.manage')->group(function () {
             Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
             Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->whereNumber('course')->name('courses.edit');
@@ -1117,6 +1137,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
         Route::middleware('can:appointments.manage')->group(function () {
             Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
             Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update'])->whereNumber('appointment')->name('appointments.update');
+            Route::patch('/appointments/booking-hours', [AppointmentController::class, 'bookingHours'])->name('appointments.booking-hours');
         });
 
         Route::middleware('can:payments.view')->group(function () {

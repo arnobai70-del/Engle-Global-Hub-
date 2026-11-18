@@ -141,7 +141,7 @@ final class HomepageMockupContractTest extends TestCase
     {
         $html = $this->home();
 
-        foreach (['Study in Singapore', 'Visa &amp; Travel', 'About'] as $menu) {
+        foreach (['Student Visa', 'Visa &amp; Travel', 'About'] as $menu) {
             $this->assertStringContainsString('<summary>'.$menu.'</summary>', $html);
         }
         $this->assertStringContainsString('How it works', $html);

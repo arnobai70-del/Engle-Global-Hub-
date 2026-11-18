@@ -40,6 +40,7 @@ class SiteFactsController extends Controller
         $rules['partner_institutions'][] = 'regex:/^\d+$/';
         $rules['google_rating'][] = 'regex:/^[1-5](\.\d)?$/';
         $rules['google_review_count'][] = 'regex:/^\d+$/';
+        $rules['my_bdt_rate'][] = 'regex:/^\d{1,4}(\.\d{1,4})?$/';
         foreach (['google_reviews_url', 'office_photo_url', 'team_photo_url'] as $urlKey) {
             $rules[$urlKey][] = 'url:https';
         }
@@ -48,6 +49,7 @@ class SiteFactsController extends Controller
         $data = $request->validate($rules, [
             'map_embed_url.regex' => 'Paste the Google Maps embed link (it starts with https://www.google.com/maps/embed?).',
             'google_rating.regex' => 'Enter the rating as shown on Google, for example 4.8.',
+            'my_bdt_rate.regex' => 'Enter the exchange rate as a number, for example 27.50.',
         ]);
 
         foreach ($data as $key => $value) {

@@ -98,6 +98,8 @@ class CourseController extends Controller
             'institution_id' => ['required', 'integer', Rule::exists('institutions', 'id')],
             'name' => ['required', 'string', 'max:200', Rule::unique('courses', 'name')->where('institution_id', $request->input('institution_id'))->ignore($course)],
             'study_level' => ['nullable', Rule::in(array_keys(StudentEnquiry::STUDY_LEVELS))],
+            'subject' => ['nullable', 'string', 'max:80'],
+            'tuition_fee_myr' => ['nullable', 'integer', 'min:1', 'max:10000000'],
             'duration_months' => ['nullable', 'integer', 'min:1', 'max:120'],
             'tuition_note' => ['nullable', 'string', 'max:300'],
             'source_url' => ['nullable', 'url:https', 'max:2048'],
