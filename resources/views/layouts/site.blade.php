@@ -5,8 +5,8 @@
     @php
         $siteName=$siteName??'Eagle Global Hub LTD';$siteTagline=$siteTagline??'Travel & Visa Services';$siteContact=$siteContact??[];$siteSocial=$siteSocial??[];$footerLinks=$footerLinks??[];
         $seoOverrides=app(\App\Services\SeoMetadata::class)->forRoute(request()->route()?->getName());$pageTitle=$seoOverrides['title']??trim($__env->yieldContent('title','Travel'));$pageDescription=$seoOverrides['description']??trim($__env->yieldContent('meta_description','Travel and booking services from '.$siteName.'.'));$canonical=trim($__env->yieldContent('canonical',url()->current()));$robots=trim($__env->yieldContent('robots','index,follow'));$ogTitle=trim($__env->yieldContent('og_title',$pageTitle));$ogDescription=trim($__env->yieldContent('og_description',$pageDescription));$ogImage=trim($__env->yieldContent('og_image',''));$twitterCard=trim($__env->yieldContent('twitter_card','summary_large_image'));$fullTitle=request()->routeIs('home')?$pageTitle:$pageTitle.' | '.$siteName;
-        $decodeSection=static fn(string $value):string=>html_entity_decode($value,ENT_QUOTES|ENT_HTML5,'UTF-8');$pageTitle=$decodeSection($pageTitle);$pageDescription=$decodeSection($pageDescription);$canonical=$decodeSection($canonical);$ogTitle=$decodeSection(trim($__env->yieldContent('og_title')))?:$pageTitle;$ogDescription=$decodeSection(trim($__env->yieldContent('og_description')))?:$pageDescription;$ogImage=$decodeSection($ogImage);$twitterCard=$decodeSection($twitterCard);$fullTitle=request()->routeIs('home')?$pageTitle:$pageTitle.' | '.$siteName;
-        $bilingualRoutes=['home','consultancy.malaysia','consultancy.malaysia.guides.index','consultancy.malaysia.institutions.index','consultancy.singapore','consultancy.guides.index','consultancy.institutions.index','travel-services.index','visa.index','work-visa.index','hotels.index','tours.index','support','terms','about','explore-bangladesh.index','offers.index','service-enquiries.create'];$hreflangBase=in_array(request()->route()?->getName(),$bilingualRoutes,true)&&str_starts_with($robots,'index')?(string) strtok($canonical,'?'):null;if($hreflangBase!==null&&app()->getLocale()==='bn'){$canonical=$hreflangBase.'?lang=bn';}
+        $decodeSection=static fn(string $value):string=>html_entity_decode($value,ENT_QUOTES|ENT_HTML5,'UTF-8');$pageTitle=$decodeSection($pageTitle);$pageDescription=$decodeSection($pageDescription);$canonical=$decodeSection($canonical);$ogTitle=$decodeSection(trim($__env->yieldContent('og_title')))?:$pageTitle;$ogDescription=$decodeSection(trim($__env->yieldContent('og_description')))?:$pageDescription;$ogImage=$decodeSection($ogImage)?:asset('images/malaysia/petronas-towers-night.webp');$twitterCard=$decodeSection($twitterCard);$fullTitle=request()->routeIs('home')?$pageTitle:$pageTitle.' | '.$siteName;
+        $hreflangBase=filled(request()->route()?->getName())&&str_starts_with($robots,'index')?(string) strtok($canonical,'?'):null;if($hreflangBase!==null&&app()->getLocale()==='bn'){$canonical=$hreflangBase.'?lang=bn';}
         $themeCss=static function(string $file):string{$modifiedAt=@filemtime(public_path($file));return asset($file).($modifiedAt?'?v='.$modifiedAt:'');};
         $travelServices=$travelServices??[];
         $servicePageRouteName=static function(array $service):?string{
@@ -17,6 +17,7 @@
         $branding=rescue(fn()=>app(\App\Services\SettingService::class)->group('branding'),[],false);$headerTagline=app()->getLocale()==='bn'&&filled($branding['header_tagline_bn']??null)?$branding['header_tagline_bn']:(filled($branding['header_tagline']??null)?$branding['header_tagline']:__('Your Gateway to Study in Malaysia'));$siteLogo=$siteLogo??asset('images/eagle-global-hub-logo.png');
         $currentLocale=app()->getLocale();
         $routeName=(string) request()->route()?->getName();
+        $leanPage=request()->routeIs('home','consultancy.malaysia','consultancy.singapore','consultancy.malaysia.guides.index','consultancy.guides.index','about','why-us','support','services.show','consultancy.malaysia.eligibility','consultancy.malaysia.courses','consultancy.malaysia.cost-calculator','appointments.book');
         $flightsUrl=auth()->check()?(auth()->user()->can('flights.search')?route('flights.index'):route('dashboard')):route('login');
         $phoneHref=data_get($siteContact,'phone')?'tel:'.preg_replace('/[^+0-9]/','',data_get($siteContact,'phone')):null;
     @endphp
@@ -24,8 +25,15 @@
     <meta property="og:type" content="website"><meta property="og:site_name" content="{{ $siteName }}"><meta property="og:title" content="{{ $ogTitle ?: $fullTitle }}"><meta property="og:description" content="{{ $ogDescription ?: $pageDescription }}"><meta property="og:url" content="{{ $canonical }}">@if($ogImage)<meta property="og:image" content="{{ $ogImage }}">@endif
     <meta name="twitter:card" content="{{ $twitterCard }}"><meta name="twitter:title" content="{{ $ogTitle ?: $fullTitle }}"><meta name="twitter:description" content="{{ $ogDescription ?: $pageDescription }}">@if($ogImage)<meta name="twitter:image" content="{{ $ogImage }}">@endif
     <link rel="icon" type="image/png" href="{{ $siteLogo }}">
+    {!! app(\App\Services\SiteSchema::class)->script([app(\App\Services\SiteSchema::class)->organization(['name' => $siteName, 'logo' => $siteLogo, 'email' => data_get($siteContact, 'email'), 'phone' => data_get($siteContact, 'phone'), 'social' => $siteSocial])]) !!}
+    {{-- Lean marketing pages skip app.css/app.js and the older stylesheets; egh-site-base.css carries the few rules they use. --}}
+    @if($leanPage)
+    <link rel="stylesheet" href="{{ $themeCss('css/egh-site-base.css') }}">
+    @else
     @vite(['resources/css/app.css','resources/js/app.js']) {{ Vite::fonts() }}
-    <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-chrome.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-home-dynamic.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-travel-pages.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">@stack('head')
+        <link rel="stylesheet" href="{{ $themeCss('css/egh-ota.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-workspace.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-chrome.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-home-dynamic.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-travel-pages.css') }}"><link rel="stylesheet" href="{{ $themeCss('css/egh-final-polish.css') }}">
+    @endif
+    @stack('head')
     <link rel="preload" href="{{ asset('fonts/inter-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ asset('fonts/poppins-700-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ $themeCss('css/egh-sg.css') }}">

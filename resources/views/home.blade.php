@@ -79,21 +79,14 @@
     $faqs = $pageContent->published(\App\Enums\ContentType::Faq)->take(5);
     $address = data_get($siteContact, 'address');
     $directionsUrl = filled($address) ? 'https://www.google.com/maps/search/?api=1&query='.urlencode((string) $address) : null;
-    $organizationSchema = array_filter([
-        '@context' => 'https://schema.org',
-        '@type' => ['TravelAgency', 'EducationalOrganization'],
-        'name' => $siteName ?? 'Eagle Global Hub LTD',
-        'url' => route('home'),
-        'logo' => $siteLogo ?? null,
-        'email' => data_get($siteContact, 'email'),
-        'telephone' => data_get($siteContact, 'phone'),
-        'address' => $address ? ['@type' => 'PostalAddress', 'streetAddress' => $address] : null,
-    ]);
+    $schema = app(\App\Services\SiteSchema::class);
+    $schemaContact = ['name' => $siteName ?? 'Eagle Global Hub LTD', 'logo' => $siteLogo ?? null, 'email' => data_get($siteContact, 'email'), 'phone' => data_get($siteContact, 'phone'), 'address' => $address];
 @endphp
 
 @push('head')
-    <link rel="preload" as="image" href="{{ asset('images/malaysia/petronas-towers-night.webp') }}" type="image/webp">
-    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+    <link rel="preload" as="image" href="{{ asset('images/malaysia/petronas-towers-night-mobile.webp') }}" type="image/webp" media="(max-width: 760px)" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ asset('images/malaysia/petronas-towers-night.webp') }}" type="image/webp" media="(min-width: 761px)" fetchpriority="high">
+    {!! $schema->script([$schema->localBusiness($schemaContact), $schema->faqPage($faqs)]) !!}
 @endpush
 
 @section('content')
@@ -119,7 +112,7 @@
 @endif
 
 <main class="v2-home">
-    <section class="v2-hero v2-hero-photo" style="--v2-hero-image: url('{{ asset('images/malaysia/petronas-towers-night.webp') }}')" aria-labelledby="hero-title">
+    <section class="v2-hero v2-hero-photo" style="--v2-hero-image: url('{{ asset('images/malaysia/petronas-towers-night.webp') }}'); --v2-hero-image-mobile: url('{{ asset('images/malaysia/petronas-towers-night-mobile.webp') }}')" aria-labelledby="hero-title">
         <div class="v2-shell v2-hero-grid">
             <div class="v2-hero-copy">
                 <span class="v2-pill v2-pill-light">{{ __('Malaysia student consultancy from Bangladesh') }}</span>

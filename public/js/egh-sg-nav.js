@@ -89,7 +89,14 @@
         candidates().forEach(function (element) { element.classList.remove('sg-overflowed'); });
         if (more) { more.hidden = true; more.open = false; moreMenu.innerHTML = ''; }
     };
+    var smallScreen = window.matchMedia ? window.matchMedia('(max-width: 1179px)') : null;
+    var fitted = false;
     var fit = function () {
+        if (smallScreen && smallScreen.matches) {
+            if (fitted) { reset(); fitted = false; }
+            return;
+        }
+        fitted = true;
         reset();
         if (burger && getComputedStyle(burger).display !== 'none') return;
         if (!overflows()) return;
@@ -110,13 +117,18 @@
         header.classList.add('sg-nav-collapsed');
     };
     var timer;
-    window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(fit, 120); });
+    var frame = 0;
+    var schedule = function () {
+        if (frame) return;
+        frame = window.requestAnimationFrame(function () { frame = 0; fit(); });
+    };
+    window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(schedule, 120); });
     // Web fonts (Bengali especially) can arrive after the first check and widen the labels.
     if (document.fonts) {
-        if (document.fonts.ready) document.fonts.ready.then(fit);
-        if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', fit);
+        if (document.fonts.ready) document.fonts.ready.then(schedule);
+        if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', schedule);
     }
-    window.addEventListener('load', fit);
+    window.addEventListener('load', schedule);
     fit();
 })();
 
@@ -180,7 +192,8 @@
     var ticking = false;
     var update = function () { bar.classList.toggle('is-scrolled', window.scrollY > 8); ticking = false; };
     window.addEventListener('scroll', function () { if (!ticking) { ticking = true; window.requestAnimationFrame(update); } }, { passive: true });
-    update();
+    // First check once the page has loaded (reading scrollY earlier would force an extra layout).
+    if (document.readyState === 'complete') { update(); } else { window.addEventListener('load', update); }
 })();
 
 /* Scroll reveal: section headings, cards and steps below the fold fade up as they enter the
@@ -195,19 +208,25 @@
         '.v2-directory > *', '.v2-course', '.v2-contact-card', '.v2-section .v2-card', '.v2-living > *', '.v2-split > *',
         '.sg-section .sg-card', '.sg-steps > *', '.sg-tiles > *'
     ].join(',');
-    var fold = window.innerHeight;
-    var items = [];
-    document.querySelectorAll(selector).forEach(function (element) {
-        // Skip blocks already on screen, and blocks nested inside one that is already revealed.
-        if (element.getBoundingClientRect().top <= fold * 0.92 || element.parentElement.closest('.egh-reveal')) return;
-        element.classList.add('egh-reveal');
-        items.push(element);
-    });
-    if (!items.length) return;
+    // IntersectionObserver reports after the browser's own layout, so nothing here forces a layout:
+    // its first report says which blocks start on screen (left alone) and which start below (hidden, then revealed).
+    var seen = typeof WeakSet === 'function' ? new WeakSet() : null;
+    if (!seen) return;
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
             var element = entry.target;
+            if (!seen.has(element)) {
+                seen.add(element);
+                if (entry.isIntersecting || entry.boundingClientRect.top < 0 || (element.parentElement && element.parentElement.closest('.egh-reveal'))) {
+                    observer.unobserve(element);
+                    return;
+                }
+                var position = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
+                element.style.setProperty('--egh-reveal-delay', (Math.min(position, 5) * 0.08) + 's');
+                element.classList.add('egh-reveal');
+                return;
+            }
+            if (!entry.isIntersecting) return;
             observer.unobserve(element);
             element.classList.add('is-visible');
             // Hand transitions back to the element's own hover styles once it has arrived.
@@ -217,9 +236,5 @@
             }, 1400);
         });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    items.forEach(function (element) {
-        var siblings = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
-        element.style.setProperty('--egh-reveal-delay', (Math.min(siblings, 5) * 0.08) + 's');
-        observer.observe(element);
-    });
+    document.querySelectorAll(selector).forEach(function (element) { observer.observe(element); });
 })();

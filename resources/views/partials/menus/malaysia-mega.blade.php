@@ -16,7 +16,7 @@
 @endphp
 <details class="sg-dd sg-dd-mega" @if($active) data-active @endif>
     <summary>{{ $label }}</summary>
-    <div class="sg-dd-menu sg-mega">
+    <div class="sg-dd-menu sg-mega @if($tools->isEmpty()) sg-mega-no-tools @endif">
         <div class="sg-mega-col">
             <p class="sg-mega-title">{{ $label }}</p>
             @foreach($links as $link)

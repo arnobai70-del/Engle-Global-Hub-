@@ -1,0 +1,297 @@
+/*
+ * Base styles for the lean marketing pages (home, Study in Malaysia/Singapore, About, Why Us,
+ * Contact, service pages, guides and the planning tools).
+ *
+ * These pages are styled by egh-sg.css and egh-v2.css. This file holds the only rules they
+ * still need from app.css (Tailwind's reset and a few site-* rules) and from the older
+ * egh-ota / egh-chrome / egh-home-dynamic / egh-travel-pages / egh-final-polish stylesheets,
+ * so those large files are not downloaded and parsed on these pages.
+ * It was extracted with browser CSS coverage; if a lean page starts using another old class,
+ * copy that rule here (or take the page off the lean list in layouts/site.blade.php).
+ */
+
+
+/* from /build/assets/app.css */
+@layer theme {
+:root,:host{--font-sans:"Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-red-500:oklch(63.7% .237 25.331);--color-red-600:oklch(57.7% .245 27.325);--color-amber-200:oklch(92.4% .12 95.746);--color-amber-300:oklch(87.9% .169 91.605);--color-amber-500:oklch(76.9% .188 70.08);--color-amber-600:oklch(66.6% .179 58.318);--color-amber-800:oklch(47.3% .137 46.201);--color-amber-900:oklch(41.4% .112 45.904);--color-amber-950:oklch(27.9% .077 45.635);--color-green-400:oklch(79.2% .209 151.711);--color-emerald-200:oklch(90.5% .093 164.15);--color-emerald-400:oklch(76.5% .177 163.223);--color-emerald-500:oklch(69.6% .17 162.48);--color-emerald-600:oklch(59.6% .145 163.225);--color-emerald-800:oklch(43.2% .095 166.913);--color-emerald-900:oklch(37.8% .077 168.94);--color-blue-100:oklch(93.2% .032 255.585);--color-blue-300:oklch(80.9% .105 251.813);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--color-blue-700:oklch(48.8% .243 264.376);--color-blue-800:oklch(42.4% .199 265.638);--color-blue-900:oklch(37.9% .146 265.522);--color-blue-950:oklch(28.2% .091 267.935);--color-rose-100:oklch(94.1% .03 12.58);--color-rose-200:oklch(89.2% .058 10.001);--color-rose-500:oklch(64.5% .246 16.439);--color-rose-600:oklch(58.6% .253 17.585);--color-rose-900:oklch(41% .159 10.272);--color-rose-950:oklch(27.1% .105 12.094);--color-gray-100:oklch(96.7% .003 264.542);--color-gray-200:oklch(92.8% .006 264.531);--color-gray-300:oklch(87.2% .01 258.338);--color-gray-400:oklch(70.7% .022 261.325);--color-gray-500:oklch(55.1% .027 264.364);--color-gray-600:oklch(44.6% .03 256.802);--color-gray-700:oklch(37.3% .034 259.733);--color-gray-800:oklch(27.8% .033 256.848);--color-gray-900:oklch(21% .034 264.665);--color-neutral-50:oklch(98.5% 0 none);--color-neutral-100:oklch(97% 0 none);--color-neutral-200:oklch(92.2% 0 none);--color-neutral-300:oklch(87% 0 none);--color-neutral-400:oklch(70.8% 0 none);--color-neutral-500:oklch(55.6% 0 none);--color-neutral-600:oklch(43.9% 0 none);--color-neutral-700:oklch(37.1% 0 none);--color-neutral-800:oklch(26.9% 0 none);--color-neutral-900:oklch(20.5% 0 none);--color-neutral-950:oklch(14.5% 0 none);--color-black:#000;--color-white:#fff;--spacing:.25rem;--container-md:28rem;--container-xl:36rem;--container-6xl:72rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--font-weight-light:300;--font-weight-medium:500;--font-weight-semibold:600;--tracking-tight:-.025em;--tracking-wider:.05em;--leading-relaxed:1.625;--radius-md:.375rem;--radius-lg:.5rem;--radius-xl:.75rem;--ease-in-out:cubic-bezier(.4, 0, .2, 1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0, 0, .2, 1) infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}
+}
+@layer base {
+*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}
+}
+@layer base {
+html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}
+}
+@layer base {
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+}
+@layer base {
+a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}
+}
+@layer base {
+b,strong{font-weight:bolder}
+}
+@layer base {
+small{font-size:80%}
+}
+@layer base {
+summary{display:list-item}
+}
+@layer base {
+ol,ul,menu{list-style:none}
+}
+@layer base {
+img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}
+}
+@layer base {
+img,video{max-width:100%;height:auto}
+}
+@layer base {
+button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}
+}
+@layer base {
+::placeholder{opacity:1}
+}
+@layer base {
+@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px) {
+::placeholder{color:currentColor}
+}
+}
+@layer base {
+@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px) {
+@supports (color:color-mix(in lab, red, red)) {
+::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}
+}
+}
+}
+@layer base {
+textarea{resize:vertical}
+}
+@layer base {
+::-webkit-datetime-edit{display:inline-flex}
+}
+@layer base {
+::-webkit-datetime-edit-fields-wrapper{padding:0}
+}
+@layer base {
+::-webkit-datetime-edit{padding-block:0}
+}
+@layer base {
+::-webkit-datetime-edit-year-field{padding-block:0}
+}
+@layer base {
+::-webkit-datetime-edit-month-field{padding-block:0}
+}
+@layer base {
+::-webkit-calendar-picker-indicator{line-height:1}
+}
+@layer base {
+button,input:where([type=button],[type=reset],[type=submit]){appearance:button}
+}
+@layer base {
+[hidden]:where(:not([hidden=until-found])){display:none!important}
+}
+:root{--eagle-navy:#0b1f3a;--eagle-blue:#1769e0;--eagle-blue-dark:#0f4fb0;--eagle-sky:#edf5ff;--eagle-ink:#172033;--eagle-muted:#667085;--eagle-border:#dce5f0;--eagle-page:#f5f8fc;--eagle-success:#137a52;--eagle-radius-sm:10px;--eagle-radius-md:16px;--eagle-radius-lg:24px;--eagle-shadow:0 18px 50px #0d224217}
+html{scroll-behavior:smooth}
+body.site-body{background:var(--eagle-page);min-height:100vh;color:var(--eagle-ink);margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif}
+.site-body *,.site-body :before,.site-body :after{box-sizing:border-box}
+.site-skip-link{z-index:9999;color:var(--eagle-navy);background:#fff;border-radius:8px;padding:10px 14px;position:fixed;top:8px;left:8px;transform:translateY(-150%)}
+.site-environment-banner{color:#6e4b13;text-align:center;background:#fff8e8;border-bottom:1px solid #f4d7a4;padding:10px 20px;font-size:12px;line-height:1.5}
+body.public-page-body{background:linear-gradient(#f6f9fc,#fff 48%,#f7fafc)}
+.public-page-body:not(.terms-page-body){background:#f5f8fc}
+
+/* from /css/egh-ota.css */
+:root {
+    --egho-blue: #1256a0;
+    --egho-blue-dark: #0b3c78;
+    --egho-navy: #0b2545;
+    --egho-navy-soft: #123a6b;
+    --egho-sky: #eaf2fd;
+    --egho-line: #dfe8f4;
+    --egho-text: #0f2a4a;
+    --egho-muted: #5d7290;
+    --egho-amber: #f59e0b;
+    --egho-surface: #f5f8fd;
+    --egho-radius: 16px;
+    --egho-shadow: 0 18px 45px rgba(11, 37, 69, 0.14);
+    --egho-shell: 1200px;
+}
+.egho-shell {
+    width: 100%;
+    max-width: var(--egho-shell);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.egho-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+.egho-field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+.egho-field > span,
+.egho-field > label {
+    color: var(--egho-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.egho-field input,
+.egho-field select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 13px;
+    border: 1px solid var(--egho-line);
+    border-radius: 11px;
+    background: #fff;
+    color: var(--egho-text);
+    font: inherit;
+    font-size: 14px;
+}
+.egho-eyebrow {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--egho-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.egho-page {
+    background: var(--egho-surface);
+    padding: 30px 0 60px;
+}
+.egho-contact-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 22px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+.egho-contact-hero h1 {
+    margin: 6px 0 10px;
+    font-size: 30px;
+    color: var(--egho-navy);
+}
+.egho-contact-hero p {
+    margin: 0;
+    max-width: 620px;
+    color: var(--egho-muted);
+    font-size: 15px;
+}
+@media (max-width: 1024px) {
+.egho-results-layout,
+    .egho-visa-grid,
+    .egho-contact-grid,
+    .egho-contact-hero {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 760px) {
+.egho-page-head h1,
+    .egho-visa-card h1,
+    .egho-contact-hero h1 {
+        font-size: 24px;
+    }
+}
+@media (max-width: 520px) {
+.egho-page {
+        padding: 22px 0 46px;
+    }
+}
+
+/* from /css/egh-chrome.css */
+.egho-switch {
+    border: 1px solid var(--egho-line);
+    background: var(--egho-sky);
+    color: var(--egho-navy);
+    cursor: default;
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+/* from /css/egh-home-dynamic.css */
+.site-body{overflow-x:hidden}
+@media(max-width:760px) {
+.egho-shell{padding-left:14px;padding-right:14px}
+}
+
+/* from /css/egh-travel-pages.css */
+:root{--egh-navy:#08284d;--egh-blue:#075cff;--egh-gold:#f2b632;--egh-ink:#13213a;--egh-muted:#667085;--egh-line:#dfe7f1;--egh-soft:#f5f9ff}
+
+/* from /css/egh-final-polish.css */
+.site-body,
+.site-body * {
+    box-sizing: border-box;
+}
+.site-body {
+    max-width: 100%;
+    overflow-x: clip;
+}
+.site-body img {
+    max-width: 100%;
+}
+.site-body :is(
+    button:not(:disabled),
+    .site-button,
+    .egho-submit,
+    .egho-search-tab,
+    .egho-panel-cta,
+    .egho-promo-cta,
+    .egho-app-cta,
+    .egho-journey-cta,
+    .egho-section-link,
+    .egho-btn,
+    .egho-nav a,
+    .egho-nav-more > summary,
+    a.egho-tile
+) {
+    transform-origin: center;
+    transition:
+        transform .18s cubic-bezier(.2,.8,.2,1),
+        box-shadow .18s ease,
+        filter .18s ease,
+        border-color .18s ease,
+        background-color .18s ease,
+        color .18s ease !important;
+}
+@media (max-width: 640px) {
+.egho-shell {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+}
+@media (max-width: 640px) {
+.egho-field input,
+    .egho-field select,
+    .egho-field textarea,
+    .egh-travel-page input,
+    .egh-travel-page select,
+    .egh-travel-page textarea,
+    .egh-travel-page button,
+    .egh-travel-page .egho-btn {
+        max-width: 100%;
+    }
+}
+
+/* Interactive states (not visible to coverage tracking) for the rules above. */
+.site-skip-link:focus { transform: translateY(0); }
+.egho-switch:hover { background: #dceafd; }
+.egho-field input:focus,
+.egho-field select:focus {
+    border-color: var(--egho-blue);
+    outline: 2px solid rgba(18, 86, 160, 0.16);
+}

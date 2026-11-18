@@ -35,7 +35,7 @@ final class HeaderNavigationTest extends TestCase
 
         $this->assertStringContainsString("header.classList.add('sg-nav-tight');", $script);
         $this->assertStringContainsString("visible[index].classList.add('sg-overflowed');", $script, 'items that do not fit go into More instead of hiding the whole menu');
-        $this->assertStringContainsString("document.fonts.addEventListener('loadingdone', fit);", $script, 'the row is re-fitted after Bengali fonts load');
+        $this->assertStringContainsString("document.fonts.addEventListener('loadingdone', schedule);", $script, 'the row is re-fitted after Bengali fonts load');
         $this->assertStringContainsString('@media (max-width: 1179px) {', $siteCss);
     }
 

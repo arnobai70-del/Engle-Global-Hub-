@@ -13,7 +13,7 @@
     --brand-navy-2: #12306B;
     --brand-red: #D7182A;
     --brand-red-700: #B5121F;
-    --whatsapp: #1FAF5A;
+    --whatsapp: #138544; /* white text on it meets 4.5:1 contrast */
     --focus: #F5B400;
     --ink: #1E2A3B;
     --muted: #5B6B82;
@@ -262,7 +262,7 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .v2-team-initial { display: grid; place-items: center; font: 700 2.5rem var(--sg-heading); color: var(--brand-navy); }
 .v2-team strong { color: var(--brand-navy); margin-top: .4rem; }
 .v2-team span { color: var(--muted); font-size: .9rem; }
-.v2-contact-band { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; padding: 2.5rem; border-radius: var(--v2-radius-band); background: var(--brand-red); color: #FFE4E7; }
+.v2-contact-band { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; padding: 2.5rem; border-radius: var(--v2-radius-band); background: var(--brand-red); color: #fff; }
 .v2-contact-band:not(:has(.v2-map)) { grid-template-columns: 1fr; }
 .v2-contact-band h2 { font: 700 2rem/1.2 var(--sg-heading); color: #fff; margin: 0 0 .75rem; }
 .v2-contact-band p { margin: 0 0 .5rem; }
@@ -582,5 +582,9 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .sg-nav-collapsed .sg-mega-card { display: none; }
 .sg-nav-collapsed .sg-mega-col { display: grid; gap: 2px; }
 @media (min-width: 1180px) {
-    .sg-header:not(.sg-nav-collapsed) .sg-mega:not(:has(.sg-mega-tool)) { grid-template-columns: 1fr 1fr; width: min(600px, calc(100vw - 48px)); }
+    .sg-header:not(.sg-nav-collapsed) .sg-mega.sg-mega-no-tools { grid-template-columns: 1fr 1fr; width: min(600px, calc(100vw - 48px)); }
+}
+/* Phones get the smaller hero photo (preloaded with a matching media query). */
+@media (max-width: 760px) {
+    .v2-hero.v2-hero-photo { background: linear-gradient(180deg, rgba(10, 31, 68, .9) 0%, rgba(10, 31, 68, .82) 100%), var(--v2-hero-image-mobile, var(--v2-hero-image)) center / cover no-repeat, var(--brand-navy); }
 }

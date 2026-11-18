@@ -4,6 +4,10 @@
 @section('meta_description', __('Talk to Eagle Global Hub LTD in Gulshan, Dhaka: WhatsApp, call, email or send a message for study in Malaysia and Singapore, visa and travel help.'))
 @section('body_class', 'sg-body-v2')
 
+@push('head')
+    {!! app(\App\Services\SiteSchema::class)->script([app(\App\Services\SiteSchema::class)->localBusiness(['name' => $siteName ?? 'Eagle Global Hub LTD', 'logo' => $siteLogo ?? null, 'email' => data_get($siteContact ?? [], 'email'), 'phone' => data_get($siteContact ?? [], 'phone'), 'address' => data_get($siteContact ?? [], 'address')])]) !!}
+@endpush
+
 @php
     $pageContent = app(\App\Services\Content\PageContent::class);
     $facts = app(\App\Services\SiteFacts::class);
@@ -117,7 +121,7 @@
                 </div>
             </section>
             @push('head')
-            <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $supportFaqs->map(fn ($faq) => ['@type' => 'Question', 'name' => $faq->title, 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq->body ?: $faq->summary]])->values()->all()], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+            {!! app(\App\Services\SiteSchema::class)->script([app(\App\Services\SiteSchema::class)->faqPage($supportFaqs)]) !!}
             @endpush
         @endif
     </div>
