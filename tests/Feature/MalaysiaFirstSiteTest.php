@@ -49,7 +49,7 @@ final class MalaysiaFirstSiteTest extends TestCase
 
         $this->assertStringContainsString('<summary>Student Visa</summary>', $html);
         $this->assertStringNotContainsString('<summary>Study in Singapore</summary>', $html);
-        $this->assertStringContainsString('Ready to study in Malaysia?', $html);
+        $this->assertStringContainsString('data-footer-cta="neutral"', $html, 'About offers both study and travel');
         $footer = substr($html, (int) strpos($html, '<footer'));
         $this->assertLessThan(strpos($footer, '>Study in Singapore<'), strpos($footer, '>Study in Malaysia<'));
     }

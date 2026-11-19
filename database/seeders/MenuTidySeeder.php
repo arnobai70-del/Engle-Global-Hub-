@@ -32,7 +32,9 @@ class MenuTidySeeder extends Seeder
 
         $this->keepVisasUnderVisaServices();
         $this->trimAboutMenu();
+        $this->exploreStartsWithAllDestinations();
         $this->tidyFooter();
+        $this->tidyFooterColumns();
         $this->pointHeaderButtonsToMalaysia();
         $this->putMalaysiaTileFirst();
 
@@ -62,6 +64,54 @@ class MenuTidySeeder extends Seeder
         // Foreigner support is travel help for visitors, so it stays under Travel.
         if ($this->hasActiveChild($travel, 'route:services.show|foreigner-support')) {
             $this->hideIfDefault('header', 'visa-foreigner', 'Foreigner Support', 'route:services.show|foreigner-support', null, 'remove "Foreigner Support" from "'.$visa->label_en.'" (it is under "'.$travel->label_en.'")');
+        }
+    }
+
+    /**
+     * The Explore Bangladesh dropdown starts with "All destinations" (the parent is only a
+     * heading in the dropdown). The first release's sub-item "Explore Bangladesh" is that link.
+     */
+    private function exploreStartsWithAllDestinations(): void
+    {
+        $explore = ExploreBangladeshMenuSeeder::existingItems()->first(fn (MenuItem $item): bool => $item->is_active);
+        if ($explore === null) {
+            return;
+        }
+        $first = (int) MenuItem::query()->where('parent_id', $explore->id)->min('sort_order');
+        if ($first === 0 && MenuItem::query()->where('parent_id', $explore->id)->where('target', '!=', 'route:explore-bangladesh.index')->where('sort_order', 0)->exists()) {
+            // No position is free before an item an admin placed at 0; the admin moves it instead.
+            $this->manual[] = 'Explore Bangladesh menu: drag "All destinations" to the top';
+        }
+        $all = MenuItem::query()->where('parent_id', $explore->id)->where('target', 'route:explore-bangladesh.index')->whereNull('fragment')->orderBy('id')->first();
+
+        if ($all === null) {
+            $key = ExploreBangladeshMenuSeeder::KEY.'-all';
+            MenuItem::query()->create([
+                'location' => 'header', 'parent_id' => $explore->id,
+                'key' => MenuItem::query()->where('location', 'header')->where('key', $key)->exists() ? null : $key,
+                'label_en' => 'All destinations', 'label_bn' => 'সব দর্শনীয় স্থান', 'target' => 'route:explore-bangladesh.index',
+                'visibility' => 'all', 'is_active' => true, 'sort_order' => max(0, $first - 1),
+            ]);
+
+            return;
+        }
+
+        if (! $all->is_active || ! in_array($all->label_en, ['Explore Bangladesh', 'All destinations'], true)) {
+            if ($all->label_en !== 'All destinations') {
+                $this->manual[] = 'Explore Bangladesh menu: the sub-item "'.$all->label_en.'" should be "All destinations", shown first';
+            }
+
+            return;
+        }
+        $changes = [];
+        if ($all->label_en === 'Explore Bangladesh') {
+            $changes = ['label_en' => 'All destinations', 'label_bn' => 'সব দর্শনীয় স্থান'];
+        }
+        if ((int) $all->sort_order > $first || MenuItem::query()->where('parent_id', $explore->id)->whereKeyNot($all->id)->where('sort_order', $all->sort_order)->where('id', '<', $all->id)->exists()) {
+            $changes['sort_order'] = max(0, $first - 1);
+        }
+        if ($changes !== []) {
+            $all->forceFill($changes)->save();
         }
     }
 
@@ -114,6 +164,37 @@ class MenuTidySeeder extends Seeder
             $seededChildren = ['quick-home', 'quick-about', 'quick-contact', 'quick-terms', 'quick-map', 'quick-app', 'quick-search'];
             $onlySeeded = $quick->children()->where('is_active', true)->get()->every(fn (MenuItem $child): bool => in_array($child->key, $seededChildren, true));
             $onlySeeded ? $quick->forceFill(['is_active' => false])->save() : $this->manual[] = 'footer column "Quick Links": its links repeat the Company column';
+        }
+    }
+
+    /**
+     * Explore Bangladesh belongs with the travel services; "More from us" keeps only the other
+     * businesses (Export & Import, Civil & Construction, B2B). Search moves to the footer's bottom bar.
+     */
+    private function tidyFooterColumns(): void
+    {
+        $services = $this->item('footer', 'footer-services', null);
+        $explore = $this->item('footer', 'footer-explore', null);
+        if ($services !== null && $explore !== null && (int) $explore->parent_id !== (int) $services->id) {
+            if ($explore->label_en === 'Explore Bangladesh' && $explore->target === 'route:explore-bangladesh.index') {
+                $explore->forceFill(['parent_id' => $services->id, 'sort_order' => (int) MenuItem::query()->where('parent_id', $services->id)->max('sort_order') + 10])->save();
+            } else {
+                $this->manual[] = 'footer "'.$explore->label_en.'": move it to the "'.$services->label_en.'" column';
+            }
+        }
+
+        foreach ([
+            'footer-search' => ['Search', 'route:search'],
+            'footer-offers' => ['Offers & Promotions', 'route:offers.index'],
+            'footer-reviews' => ['Reviews', 'route:reviews.index'],
+            'footer-forums' => ['Forums', 'route:forums.index'],
+            'footer-inspired' => ['Get Inspired', 'route:inspiration.index'],
+            'footer-restaurants' => ['Restaurants', 'route:restaurants.index'],
+            'footer-rewards' => ['Rewards', 'route:rewards.index'],
+            'footer-map' => ['Map', 'route:map'],
+            'footer-app' => ['Mobile App', 'route:mobile-app'],
+        ] as $key => [$label, $target]) {
+            $this->hideIfDefault('footer', $key, $label, $target, null, 'footer "'.$label.'": remove it from "More from us" (that column is for other businesses)');
         }
     }
 

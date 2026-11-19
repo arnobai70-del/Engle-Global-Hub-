@@ -25,6 +25,7 @@ use App\Services\Integrations\UnavailableMessaging;
 use App\Services\Localization\OverridableTranslationLoader;
 use App\Services\Payments\UnavailablePaymentGateway;
 use App\Services\SettingService;
+use App\Services\SiteFacts;
 use App\Services\Tour\UnavailableTourSearchProvider;
 use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Travel\UnavailableDestinationResolver;
@@ -128,7 +129,9 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $contact = is_array($chrome['siteContact'] ?? null) ? $chrome['siteContact'] : [];
-            $contact['phone'] = filled($contact['phone'] ?? null) ? $contact['phone'] : '01953626481';
+            // One phone source for the whole site: SiteFacts (setting, or the official number).
+            $contact['phone'] = app(SiteFacts::class)->phoneDisplay();
+            $contact['phone_e164'] = app(SiteFacts::class)->phoneE164();
             $contact['email'] = filled($contact['email'] ?? null) ? $contact['email'] : 'info@eagleglobalhub.com';
             $contact['address'] = filled($contact['address'] ?? null)
                 ? $contact['address']

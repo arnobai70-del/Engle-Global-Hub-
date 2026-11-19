@@ -27,7 +27,7 @@ final class ServicePageContentTest extends TestCase
     public function test_footer_band_fits_the_service(): void
     {
         $foreigner = (string) $this->get(route('services.show', 'foreigner-support'))->assertOk()->getContent();
-        $this->assertStringContainsString('Need help with Foreigner Support?', $foreigner);
+        $this->assertStringContainsString('data-footer-cta="travel"', $foreigner);
         $this->assertStringNotContainsString('Ready to study in Malaysia?', $foreigner);
 
         $this->assertStringContainsString('Ready to study in Malaysia?', (string) $this->get(route('services.show', 'student-visa'))->getContent());

@@ -17,10 +17,10 @@ final class EligibilityCheckerTest extends TestCase
 
     public function test_checker_is_hidden_until_admin_adds_an_active_rule(): void
     {
-        $this->get(route('consultancy.malaysia.eligibility'))->assertRedirect(route('home'));
+        $this->get(route('consultancy.malaysia.eligibility'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         EligibilityRule::factory()->create(['is_active' => false]);
-        $this->get(route('consultancy.malaysia.eligibility'))->assertRedirect(route('home'));
+        $this->get(route('consultancy.malaysia.eligibility'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         EligibilityRule::factory()->create();
         $this->get(route('consultancy.malaysia.eligibility'))->assertOk()->assertSee('Eligibility checker');

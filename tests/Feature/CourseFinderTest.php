@@ -30,7 +30,7 @@ final class CourseFinderTest extends TestCase
 
     public function test_finder_is_hidden_until_a_malaysian_course_is_listed(): void
     {
-        $this->get(route('consultancy.malaysia.courses'))->assertRedirect(route('home'));
+        $this->get(route('consultancy.malaysia.courses'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         $this->course('Diploma in Business', 'diploma', 'Business', 18000);
         $this->get(route('consultancy.malaysia.courses'))->assertOk()->assertSee('Diploma in Business')->assertSee('KL Test University');

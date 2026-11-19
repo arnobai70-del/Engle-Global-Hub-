@@ -64,7 +64,7 @@
             <h2 id="privacy-contact">{{ __('Questions about your data') }}</h2>
             <ul>
                 @if(filled(data_get($siteContact, 'email')))<li>{{ __('Email') }}: <a href="mailto:{{ data_get($siteContact, 'email') }}">{{ data_get($siteContact, 'email') }}</a></li>@endif
-                @if($facts->phone())<li>{{ __('Phone') }}: <a href="{{ $facts->telUrl() }}">{{ $facts->phone() }}</a></li>@endif
+                @if($facts->phone())<li>{{ __('Phone') }}: <a href="{{ $facts->telUrl() }}">{{ $facts->phoneDisplay() }}</a></li>@endif
                 @if(filled(data_get($siteContact, 'address')))<li>{{ __('Address') }}: {{ data_get($siteContact, 'address') }}</li>@endif
             </ul>
             <a class="v2-link" href="{{ route('support') }}">{{ __('Contact Us') }}</a>

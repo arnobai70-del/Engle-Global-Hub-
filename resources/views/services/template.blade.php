@@ -3,16 +3,6 @@
 @section('title', $page['title'])
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($page['intro']), 155))
 @section('body_class', 'sg-body-v2')
-{{-- Travel, visa and business pages get a matching footer band; study pages keep "Ready to study in Malaysia?". --}}
-@if(($page['group'] ?? '') !== 'study')
-@section('footer_cta')
-    <div class="sg-footer-cta">
-        <div><h2>{{ __('Need help with :service?', ['service' => $page['title']]) }}</h2><p>{{ __('Tell us what you need. Our team replies with options and a written quote.') }}</p></div>
-        <div class="sg-footer-cta-actions"><a href="#quote-form" class="sg-btn sg-btn-red">{{ __('Get a quote') }}</a>@if($wa = app(\App\Services\SiteFacts::class)->whatsappUrl(__('Hello, I would like a quote for :service.', ['service' => $page['title']])))<a href="{{ $wa }}" class="sg-btn sg-btn-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>@endif</div>
-    </div>
-@endsection
-@endif
-
 @php
     $whatsappUrl = app(\App\Services\SiteFacts::class)->whatsappUrl(__('Hello, I would like help with :service.', ['service' => $page['title']]));
     $parent = in_array($page['group'], ['study'], true)

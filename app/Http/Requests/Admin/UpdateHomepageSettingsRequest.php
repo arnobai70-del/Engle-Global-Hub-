@@ -16,7 +16,8 @@ class UpdateHomepageSettingsRequest extends FormRequest
         return [
             'site_name' => ['required', 'string', 'max:120'],
             'site_tagline' => ['nullable', 'string', 'max:180'],
-            'phone' => ['nullable', 'string', 'max:80'],
+            // International format, for example +8801953626481 (spaces and dashes are allowed).
+            'phone' => ['nullable', 'string', 'max:80', 'regex:/^\+[1-9][0-9\s-]{7,18}$/'],
             'email' => ['nullable', 'email:rfc', 'max:180'],
             'address' => ['nullable', 'string', 'max:255'],
             'hours' => ['nullable', 'string', 'max:120'],
@@ -77,5 +78,11 @@ class UpdateHomepageSettingsRequest extends FormRequest
             'og_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,avif', 'max:8192'],
             'journey_background' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,avif', 'max:8192'],
         ];
+    }
+
+    /** @return array<string, string> */
+    public function messages(): array
+    {
+        return ['phone.regex' => 'Enter the phone in international format, starting with the country code, for example +8801953626481.'];
     }
 }

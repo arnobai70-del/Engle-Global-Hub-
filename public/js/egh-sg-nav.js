@@ -196,55 +196,52 @@
     if (document.readyState === 'complete') { update(); } else { window.addEventListener('load', update); }
 })();
 
-/* Scroll reveal: section headings, cards and steps below the fold fade up as they enter the
-   viewport, siblings slightly staggered. Skipped when the visitor prefers reduced motion. */
+/* Scroll reveal (progressive enhancement): content is never hidden while waiting. Blocks that
+   start below the screen are marked [data-reveal]; when the browser reports one is about to
+   enter (30% before it is visible) it plays a short fade-up animation. If the observer never
+   fires, nothing changes and the content simply stays visible. Off with reduced motion and when printing. */
 (function () {
-    if (!('IntersectionObserver' in window)) return;
+    if (!('IntersectionObserver' in window) || typeof WeakSet !== 'function') return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var selector = [
         '.v2-section .v2-head', '.v2-section .v2-head-center', '.v2-services > *', '.v2-timeline > li',
         '.v2-costs > *', '.v2-guides > *', '.v2-facts > *', '.v2-fact-tiles > *', '.v2-team > *', '.v2-stories > *',
         '.v2-news > *', '.v2-values > *', '.v2-trust li', '.v2-cta-band', '.v2-reqs > *', '.v2-steps-list > li',
-        '.v2-directory > *', '.v2-course', '.v2-contact-card', '.v2-section .v2-card', '.v2-living > *', '.v2-split > *',
+        '.v2-directory > *', '.v2-course', '.v2-contact-card', '.v2-section .v2-card', '.v2-living > *',
         '.sg-section .sg-card', '.sg-steps > *', '.sg-tiles > *'
     ].join(',');
-    // IntersectionObserver reports after the browser's own layout, so nothing here forces a layout:
-    // its first report says which blocks start on screen (left alone) and which start below (hidden, then revealed).
-    var seen = typeof WeakSet === 'function' ? new WeakSet() : null;
-    if (!seen) return;
+    var seen = new WeakSet();
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             var element = entry.target;
             if (!seen.has(element)) {
+                // First report: blocks already on (or near) the screen are left alone.
                 seen.add(element);
-                if (entry.isIntersecting || entry.boundingClientRect.top < 0 || (element.parentElement && element.parentElement.closest('.egh-reveal'))) {
+                if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
                     observer.unobserve(element);
-                    return;
+                } else {
+                    element.setAttribute('data-reveal', '');
                 }
-                var position = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
-                element.style.setProperty('--egh-reveal-delay', (Math.min(position, 3) * 0.06) + 's');
-                element.classList.add('egh-reveal');
                 return;
             }
             if (!entry.isIntersecting) return;
             observer.unobserve(element);
-            element.classList.add('is-visible');
-            // Hand transitions back to the element's own hover styles once it has arrived.
-            setTimeout(function () {
-                element.classList.remove('egh-reveal', 'is-visible');
+            var position = element.parentElement ? Array.prototype.indexOf.call(element.parentElement.children, element) : 0;
+            element.style.setProperty('--egh-reveal-delay', (Math.min(position, 3) * 0.05) + 's');
+            element.classList.add('egh-reveal-in');
+            var finish = function () {
+                element.classList.remove('egh-reveal-in');
+                element.removeAttribute('data-reveal');
                 element.style.removeProperty('--egh-reveal-delay');
-            }, 1400);
+            };
+            element.addEventListener('animationend', finish, { once: true });
+            // Safety net: if the animation never ends (paused tab, print), drop it after 1.5s.
+            window.setTimeout(finish, 1500);
         });
-    // Starts 25% below the screen with no threshold, so a block has faded in before it is in view.
-    }, { rootMargin: '0px 0px 25% 0px', threshold: 0 });
-    // Safety net: nothing may stay hidden (fast scrolling, anchors, printing, screenshots).
-    var revealAll = function () {
-        document.querySelectorAll('.egh-reveal').forEach(function (element) { element.classList.add('is-visible'); });
-    };
-    window.addEventListener('beforeprint', revealAll);
-    window.addEventListener('hashchange', revealAll);
-    window.addEventListener('load', function () { setTimeout(revealAll, 4000); });
-    document.querySelectorAll(selector).forEach(function (element) { observer.observe(element); });
+    }, { rootMargin: '0px 0px 30% 0px', threshold: 0 });
+    document.querySelectorAll(selector).forEach(function (element) {
+        if (!element.parentElement || !element.parentElement.closest('[data-reveal]')) observer.observe(element);
+    });
 })();
 
 /* Cost calculator (Study in Malaysia): live yearly total in MYR and Taka from the amounts

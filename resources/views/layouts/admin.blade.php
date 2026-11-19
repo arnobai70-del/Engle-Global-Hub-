@@ -710,6 +710,19 @@
                         <span>Activity Logs</span>
                     </a>
 
+                    @if(auth()->user()?->hasAnyRole(['admin', 'super-admin']))
+                        <a
+                            href="{{ route('admin.launch-checklist') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.launch-checklist') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 11l3 3 8-8"/>
+                                <path d="M20 12v7H4V5h11"/>
+                            </svg>
+                            <span>Launch checklist</span>
+                        </a>
+                    @endif
+
                     @can('integrations.view')
                         <a
                             href="{{ route('admin.integrations.index') }}"

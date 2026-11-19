@@ -59,7 +59,7 @@ class BusinessModulesTest extends TestCase
     public function test_b2b_partner_registers_waits_for_approval_and_refers_enquiries(): void
     {
         $partnerUser = $this->user('customer', ['email' => 'partner@agency.test']);
-        $this->get(route('b2b.register'))->assertRedirect(route('login'));
+        $this->get(route('b2b.register'))->assertRedirect(route('b2b.info').'#apply');
 
         $this->actingAs($partnerUser)->post(route('b2b.register.store'), [
             'company_name' => 'Partner Agency Ltd', 'name' => 'Partner Person', 'phone' => '+8801711111111', 'consent' => '1',

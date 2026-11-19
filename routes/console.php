@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\ApiToken;
+use App\Services\Admin\LaunchChecklist;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -19,3 +21,7 @@ Schedule::call(fn () => ApiToken::query()->where('expires_at', '<', now())->dele
 Schedule::command('queue:prune-failed --hours=720')->weekly();
 
 Schedule::command('auth:clear-resets')->daily();
+
+// Heartbeat for Admin › Website launch checklist, which warns when the scheduler stops running.
+Schedule::call(fn () => Cache::forever(LaunchChecklist::SCHEDULER_HEARTBEAT, now()->getTimestamp()))
+    ->everyMinute()->name('scheduler-heartbeat');

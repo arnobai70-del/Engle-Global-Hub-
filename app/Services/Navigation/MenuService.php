@@ -79,7 +79,13 @@ class MenuService
         foreach ($nodes as $node) {
             if ($node['children'] !== []) {
                 $children = [];
-                foreach ($node['children'] as $child) {
+                $parentLink = $node['url'] !== null ? strtolower(rtrim($node['url'], '/')) : null;
+                foreach ($node['children'] as $position => $child) {
+                    // The parent's own page may open its dropdown as an explicit first item ("All destinations");
+                    // further down it would only repeat the parent. Links differing only in ?query are distinct.
+                    if ($position > 0 && $parentLink !== null && strtolower(rtrim((string) $child['url'], '/')) === $parentLink) {
+                        continue;
+                    }
                     if ($this->isNewLink($child['url'], $seen)) {
                         $children[] = $child;
                     }

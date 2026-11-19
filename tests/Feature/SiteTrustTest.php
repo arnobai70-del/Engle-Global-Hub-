@@ -89,9 +89,9 @@ final class SiteTrustTest extends TestCase
         $script = (string) file_get_contents(public_path('js/egh-sg-nav.js'));
 
         $this->assertStringContainsString("matchMedia('(prefers-reduced-motion: reduce)').matches) return;", $script, 'no animation with reduced motion');
-        $this->assertStringContainsString("rootMargin: '0px 0px 25% 0px', threshold: 0", $script, 'blocks start fading in before they are on screen');
-        $this->assertStringContainsString("window.addEventListener('beforeprint', revealAll);", $script);
-        $this->assertStringContainsString('setTimeout(revealAll, 4000)', $script, 'safety net after load');
+        $this->assertStringContainsString("rootMargin: '0px 0px 30% 0px', threshold: 0", $script, 'blocks start fading in before they are on screen');
+        $this->assertStringContainsString('window.setTimeout(finish, 1500)', $script, 'safety net if the animation never ends');
+        $this->assertStringContainsString('@media print { .egh-reveal-in { animation: none; } }', (string) file_get_contents(public_path('css/egh-v2.css')), 'printing never shows a half-faded block');
         $this->assertStringNotContainsString('egh-reveal', (string) $this->get(route('home'))->getContent(), 'the server never sends hidden content');
     }
 

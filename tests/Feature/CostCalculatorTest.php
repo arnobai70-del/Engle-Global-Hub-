@@ -16,14 +16,14 @@ final class CostCalculatorTest extends TestCase
 
     public function test_calculator_is_hidden_without_an_exchange_rate_or_any_amount(): void
     {
-        $this->get(route('consultancy.malaysia.cost-calculator'))->assertRedirect(route('home'));
+        $this->get(route('consultancy.malaysia.cost-calculator'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         $this->fact('my_cost_tuition', '20,000');
-        $this->get(route('consultancy.malaysia.cost-calculator'))->assertRedirect(route('home'));
+        $this->get(route('consultancy.malaysia.cost-calculator'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         $this->fact('my_cost_tuition', '');
         $this->fact('my_bdt_rate', '27.5');
-        $this->get(route('consultancy.malaysia.cost-calculator'))->assertRedirect(route('home'));
+        $this->get(route('consultancy.malaysia.cost-calculator'))->assertRedirect(route('consultancy.malaysia').'#apply');
     }
 
     public function test_calculator_converts_admin_amounts_with_the_admin_rate(): void

@@ -17,7 +17,7 @@ final class MobileExperienceTest extends TestCase
         foreach (['home', 'consultancy.singapore', 'about', 'support', 'privacy', 'why-us'] as $page) {
             $html = (string) $this->get(route($page))->assertOk()->getContent();
             $this->assertStringContainsString('class="v2-mobile-bar"', $html, $page);
-            $this->assertStringContainsString('href="tel:01953626481"', $html, $page);
+            $this->assertStringContainsString('href="tel:+8801953626481"', $html, $page);
             $this->assertStringContainsString('class="is-whatsapp" href="https://wa.me/8801953626481', $html, $page);
             $this->assertStringContainsString('class="is-apply" href="'.route('consultancy.malaysia').'#apply"', $html, $page);
         }
