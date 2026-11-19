@@ -8,6 +8,7 @@
     .launch-status.is-green { background: #e7f6ec; color: #13703a; }
     .launch-status.is-amber { background: #fff4dc; color: #8a5a00; }
     .launch-status.is-red { background: #fde8e8; color: #a61b1b; }
+    .launch-status.is-info { background: #eef1f6; color: #3d4a5c; }
     .launch-table td:first-child { width: 8rem; }
     .launch-table td:last-child { width: 5rem; text-align: right; }
 </style>
@@ -32,7 +33,7 @@
         <tbody>
         @foreach($section['items'] as $item)
             <tr data-launch-status="{{ $item['status'] }}">
-                <td><span class="launch-status is-{{ $item['status'] }}">{{ ['green' => 'Ready', 'amber' => 'Fill in', 'red' => 'Fix'][$item['status']] }}</span></td>
+                <td><span class="launch-status is-{{ $item['status'] }}">{{ ['green' => 'Ready', 'amber' => 'Fill in', 'red' => 'Fix', 'info' => 'Info'][$item['status']] }}</span></td>
                 <td><strong>{{ $item['label'] }}</strong><br><span class="stu-muted">{{ $item['detail'] }}</span></td>
                 <td>@if($item['url'])<a class="stu-link" href="{{ $item['url'] }}">Open</a>@endif</td>
             </tr>

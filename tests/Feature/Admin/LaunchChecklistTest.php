@@ -3,8 +3,10 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\EligibilityRule;
+use App\Models\HomepageBlock;
 use App\Models\User;
 use App\Services\Admin\LaunchChecklist;
+use App\Services\NewsTicker;
 use App\Services\SettingService;
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\RolePermissionSeeder;
@@ -124,6 +126,20 @@ class LaunchChecklistTest extends TestCase
         $this->assertStringContainsString('Write the introduction', $japan['detail']);
         $this->assertStringContainsString('official source you have checked', $japan['detail']);
         $this->assertStringContainsString('/admin/study-destinations/', (string) $japan['url']);
+    }
+
+    public function test_the_news_ticker_row_follows_its_settings_and_headlines(): void
+    {
+        $this->assertSame(LaunchChecklist::INFO, $this->items('homepage')['News ticker']['status'], 'off is information only');
+
+        app(SettingService::class)->set('homepage', 'news_enabled', '1', 'string', true);
+        $row = $this->items('homepage')['News ticker'];
+        $this->assertSame(LaunchChecklist::AMBER, $row['status']);
+        $this->assertStringContainsString('Ticker enabled but no active headlines', $row['detail']);
+
+        HomepageBlock::query()->create(['section' => NewsTicker::SECTION, 'title' => 'Headline', 'is_active' => true]);
+        app(NewsTicker::class)->forget();
+        $this->assertSame(LaunchChecklist::GREEN, $this->items('homepage')['News ticker']['status']);
     }
 
     public function test_the_admin_dashboard_links_to_the_checklist_with_counts(): void

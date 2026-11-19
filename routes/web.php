@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\LaunchChecklistController;
 use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\MediaAssetController;
 use App\Http\Controllers\Admin\MenuItemController;
+use App\Http\Controllers\Admin\NewsTickerController;
 use App\Http\Controllers\Admin\PaymentRecordController;
 use App\Http\Controllers\Admin\ReportPageController;
 use App\Http\Controllers\Admin\ReviewModerationController;
@@ -1044,6 +1045,24 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
             Route::patch('/{studyDestination}', [App\Http\Controllers\Admin\StudyDestinationController::class, 'update'])->whereNumber('studyDestination')->name('update');
             Route::patch('/{studyDestination}/status', [App\Http\Controllers\Admin\StudyDestinationController::class, 'status'])->whereNumber('studyDestination')->name('status');
             Route::patch('/{studyDestination}/move', [App\Http\Controllers\Admin\StudyDestinationController::class, 'move'])->whereNumber('studyDestination')->name('move');
+        });
+    });
+
+/*
+ * Website CMS: homepage news ticker headlines and settings.
+ */
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/news-ticker')->name('admin.news-ticker.')
+    ->group(function () {
+        Route::get('/', [NewsTickerController::class, 'index'])->middleware('can:content.view')->name('index');
+        Route::middleware('can:content.manage')->group(function () {
+            Route::get('/create', [NewsTickerController::class, 'create'])->name('create');
+            Route::post('/', [NewsTickerController::class, 'store'])->name('store');
+            Route::patch('/settings', [NewsTickerController::class, 'updateSettings'])->name('settings');
+            Route::get('/{newsItem}/edit', [NewsTickerController::class, 'edit'])->whereNumber('newsItem')->name('edit');
+            Route::patch('/{newsItem}', [NewsTickerController::class, 'update'])->whereNumber('newsItem')->name('update');
+            Route::patch('/{newsItem}/move', [NewsTickerController::class, 'move'])->whereNumber('newsItem')->name('move');
+            Route::delete('/{newsItem}', [NewsTickerController::class, 'destroy'])->whereNumber('newsItem')->name('destroy');
         });
     });
 

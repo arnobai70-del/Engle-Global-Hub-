@@ -12,6 +12,7 @@ use App\Models\TeamMember;
 use App\Services\Content\PageContent;
 use App\Services\Content\PublicPageAvailability;
 use App\Services\Integrations\IntegrationRegistry;
+use App\Services\NewsTicker;
 use App\Services\PhoneNumber;
 use App\Services\SettingService;
 use App\Services\SiteFacts;
@@ -32,6 +33,9 @@ class LaunchChecklist
     public const AMBER = 'amber';
 
     public const RED = 'red';
+
+    /** For information only: nothing to do (for example an optional feature that is switched off). */
+    public const INFO = 'info';
 
     /** Cache key the scheduler writes every minute (routes/console.php). */
     public const SCHEDULER_HEARTBEAT = 'egh.scheduler.last_run';
@@ -60,6 +64,7 @@ class LaunchChecklist
             ['key' => 'explore', 'title' => 'Explore Bangladesh', 'items' => $this->explore()],
             ['key' => 'trust', 'title' => 'Trust and contact', 'items' => $this->trust()],
             ['key' => 'tools', 'title' => 'Planning tools', 'items' => $this->planningTools()],
+            ['key' => 'homepage', 'title' => 'Homepage', 'items' => $this->homepage()],
             ['key' => 'study', 'title' => 'Study destinations', 'items' => $this->studyDestinations()],
             ['key' => 'about', 'title' => 'About page sections', 'items' => $this->about()],
             ['key' => 'system', 'title' => 'System', 'items' => $this->system()],
@@ -68,11 +73,11 @@ class LaunchChecklist
 
     /**
      * @param  list<array{items: list<array{status: string}>}>|null  $sections  Already built sections, to avoid running the checks twice.
-     * @return array{green: int, amber: int, red: int}
+     * @return array{green: int, amber: int, red: int, info: int}
      */
     public function counts(?array $sections = null): array
     {
-        $counts = [self::GREEN => 0, self::AMBER => 0, self::RED => 0];
+        $counts = [self::GREEN => 0, self::AMBER => 0, self::RED => 0, self::INFO => 0];
         foreach ($sections ?? $this->sections() as $section) {
             foreach ($section['items'] as $item) {
                 $counts[$item['status']]++;
@@ -151,6 +156,21 @@ class LaunchChecklist
         return array_map(fn (array $tool): array => $this->availability->isAvailable($tool[0])
             ? $this->item($tool[1], self::GREEN, 'Open to the public.', $this->route($tool[3]))
             : $this->item($tool[1], self::AMBER, 'Hidden from the public until '.$tool[2].' Visitors are sent to Study in Malaysia meanwhile.', $this->route($tool[3])), $tools);
+    }
+
+    /** @return list<array{label: string, status: string, detail: string, url: string|null}> */
+    private function homepage(): array
+    {
+        $ticker = app(NewsTicker::class);
+        $url = $this->route('admin.news-ticker.index');
+        if (! $ticker->isEnabled()) {
+            return [$this->item('News ticker', self::INFO, 'Ticker off. Switch it on in Admin › News ticker when you have headlines to show.', $url)];
+        }
+        $active = count($ticker->active());
+
+        return [$active > 0
+            ? $this->item('News ticker', self::GREEN, $active.' headline(s) showing on the homepage.', $url)
+            : $this->item('News ticker', self::AMBER, 'Ticker enabled but no active headlines, so nothing is shown. Add a headline or switch the ticker off.', $url)];
     }
 
     /**

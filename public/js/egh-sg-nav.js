@@ -293,3 +293,70 @@
     days.forEach(function (day) { day.addEventListener('click', function () { show(day.getAttribute('data-booking-day')); }); });
     show(checked ? checked.value.split(' ')[0] : days[0].getAttribute('data-booking-day'));
 })();
+
+/* Homepage news ticker: constant speed in px/s whatever the length of the headlines. One group
+   is measured and the loop duration set to width ÷ speed; the track (two equal groups) moves by
+   half its width, so the loop is seamless. Short lists are repeated (hidden from screen readers)
+   until a group is wider than the bar, so there is never an empty gap. Pause on hover/focus (CSS)
+   and with the button; no movement with reduced motion (static, scrollable line). */
+(function () {
+    var ticker = document.querySelector('[data-news-ticker]');
+    if (!ticker) return;
+    var viewport = ticker.querySelector('.egho-news-ticker-viewport');
+    var track = ticker.querySelector('.egho-news-ticker-track');
+    var groups = ticker.querySelectorAll('.egho-news-ticker-group');
+    var toggle = ticker.querySelector('[data-news-toggle]');
+    if (!viewport || !track || groups.length !== 2) return;
+    var original = Array.prototype.slice.call(groups[0].children);
+    var motion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    var speed = parseFloat(ticker.getAttribute('data-speed')) || 55;
+
+    function hiddenCopy(item) {
+        var copy = item.cloneNode(true);
+        copy.setAttribute('aria-hidden', 'true');
+        copy.setAttribute('data-news-repeat', '');
+        Array.prototype.forEach.call(copy.querySelectorAll('a'), function (link) { link.setAttribute('tabindex', '-1'); });
+        return copy;
+    }
+
+    function setup() {
+        Array.prototype.forEach.call(ticker.querySelectorAll('[data-news-repeat]'), function (node) { node.remove(); });
+        if (motion && motion.matches) {
+            ticker.classList.remove('is-ready', 'is-paused');
+            if (toggle) toggle.hidden = true;
+            return;
+        }
+        var available = viewport.clientWidth;
+        var width = groups[0].getBoundingClientRect().width;
+        if (!available || !width) return;
+        // Repeat the headlines in both groups until one group is wider than the bar.
+        var rounds = 0;
+        while (width < available && rounds < 20) {
+            original.forEach(function (item) {
+                groups[0].appendChild(hiddenCopy(item));
+                groups[1].appendChild(hiddenCopy(item));
+            });
+            width = groups[0].getBoundingClientRect().width;
+            rounds++;
+        }
+        track.style.setProperty('--egho-news-duration', (width / speed).toFixed(2) + 's');
+        ticker.classList.add('is-ready');
+        if (toggle) toggle.hidden = false;
+    }
+
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            var paused = toggle.getAttribute('aria-pressed') !== 'true';
+            toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+            toggle.setAttribute('aria-label', ticker.getAttribute(paused ? 'data-label-play' : 'data-label-pause'));
+            ticker.classList.toggle('is-paused', paused);
+        });
+    }
+
+    var timer;
+    window.addEventListener('resize', function () { clearTimeout(timer); timer = setTimeout(setup, 150); });
+    if (motion && motion.addEventListener) motion.addEventListener('change', setup);
+    setup();
+    // Web fonts (including the Bangla font) change the text width once they load.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(setup);
+})();

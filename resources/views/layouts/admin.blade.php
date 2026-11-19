@@ -384,6 +384,17 @@
                     </a>
 
                     <a
+                        href="{{ route('admin.news-ticker.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.news-ticker.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 6h16v12H4z"/>
+                            <path d="M8 10h8M8 14h5"/>
+                        </svg>
+                        <span>News ticker</span>
+                    </a>
+
+                    <a
                         href="{{ route('admin.offers.index') }}"
                         class="admin-nav-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}"
                     >

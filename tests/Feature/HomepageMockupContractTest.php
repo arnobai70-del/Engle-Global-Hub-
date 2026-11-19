@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
+use App\Models\HomepageBlock;
+use App\Services\NewsTicker;
 use App\Services\SettingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -94,14 +96,16 @@ final class HomepageMockupContractTest extends TestCase
         $this->assertStringContainsString('Google rating 4.8 ★', $html);
     }
 
-    public function test_news_ticker_shows_only_real_news_and_never_the_default_welcome_text(): void
+    public function test_news_ticker_shows_only_admin_headlines_and_never_the_old_welcome_text(): void
     {
         $settings = app(SettingService::class);
         $settings->set('homepage', 'news_enabled', '1', 'string', true);
         $settings->set('homepage', 'news_text', 'Welcome to Eagle Global Hub LTD — Travel & Visa Services.', 'string', true);
-        $this->assertStringNotContainsString('class="v2-news"', $this->home());
+        $this->assertStringNotContainsString('data-news-ticker', $this->home());
+        $this->assertStringNotContainsString('Welcome to Eagle Global Hub LTD', $this->home());
 
-        $settings->set('homepage', 'news_text', 'January 2027 intake applications are open.', 'string', true);
+        HomepageBlock::query()->create(['section' => NewsTicker::SECTION, 'title' => 'January 2027 intake applications are open.', 'is_active' => true]);
+        app(NewsTicker::class)->forget();
         $this->assertStringContainsString('January 2027 intake applications are open.', $this->home());
     }
 

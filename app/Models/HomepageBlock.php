@@ -21,6 +21,8 @@ class HomepageBlock extends Model
         'meta',
         'sort_order',
         'is_active',
+        'starts_at',
+        'ends_at',
     ];
 
     protected function casts(): array
@@ -29,6 +31,8 @@ class HomepageBlock extends Model
             'meta' => 'array',
             'sort_order' => 'integer',
             'is_active' => 'boolean',
+            'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
         ];
     }
 

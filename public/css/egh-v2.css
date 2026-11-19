@@ -783,3 +783,50 @@ ul.sg-footer-social { list-style: none; margin: 1rem 0 0; padding: 0; flex-wrap:
 @media (max-width: 600px) {
     .v2-services > * { flex-basis: calc((100% - .75rem) / 2); }
 }
+
+/* ---------- Homepage news ticker (Admin › News ticker) ----------
+   A slim bar at the top of the hero band. Static (scrollable) by default; egh-sg-nav.js adds
+   .is-ready and the loop duration (content width ÷ speed) so every headline moves at the same
+   px/s. Paused on hover, on keyboard focus and with the pause button (WCAG 2.2.2). */
+.v2-hero.has-news-ticker { padding-top: 0; }
+.egho-news-ticker { position: relative; z-index: 2; margin: 0 0 28px; border-bottom: 1px solid rgba(255, 255, 255, .14); background: rgba(6, 20, 46, .55); color: #fff; }
+.egho-news-ticker-inner { display: flex; align-items: center; gap: .75rem; min-height: 44px; }
+.egho-news-ticker-label { flex: none; display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .7rem; border-radius: 6px; background: var(--brand-red); color: #fff; font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+.egho-news-ticker-label svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.egho-news-ticker-viewport { position: relative; flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.egho-news-ticker-viewport::-webkit-scrollbar { display: none; }
+.egho-news-ticker-track { display: flex; width: max-content; }
+.egho-news-ticker-group { display: flex; flex: none; align-items: center; margin: 0; padding: 0; list-style: none; }
+.egho-news-ticker-item { display: inline-flex; flex: none; align-items: center; gap: .5rem; min-height: 44px; padding-right: 2.25rem; font-size: .9rem; font-weight: 600; white-space: nowrap; }
+.egho-news-ticker-item::before { content: "•"; color: #FF8A94; font-size: 1.1rem; line-height: 1; }
+.egho-news-ticker-item a, .egho-news-ticker-item > span:not(.egho-news-ticker-badge) { display: inline-flex; align-items: center; min-height: 44px; color: #fff; }
+.egho-news-ticker-item a { text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .45); text-underline-offset: 3px; }
+.egho-news-ticker-item a:hover { text-decoration-color: #fff; }
+.egho-news-ticker-item a:focus-visible, .egho-news-ticker-toggle:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; border-radius: 4px; }
+.egho-news-ticker-badge { flex: none; padding: .1rem .45rem; border: 1px solid rgba(255, 255, 255, .5); border-radius: 999px; font-size: .7rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+.egho-news-ticker-toggle { flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; margin-right: -10px; border: 0; border-radius: 8px; background: transparent; color: #fff; cursor: pointer; }
+.egho-news-ticker-toggle[hidden] { display: none; }
+.egho-news-ticker-toggle:hover { background: rgba(255, 255, 255, .1); }
+.egho-news-ticker-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.egho-news-ticker-toggle .egho-news-icon-play, .egho-news-ticker-toggle[aria-pressed="true"] .egho-news-icon-pause { display: none; }
+.egho-news-ticker-toggle[aria-pressed="true"] .egho-news-icon-play { display: block; fill: currentColor; }
+/* Static line (no JavaScript, reduced motion): only the real list, never the loop copy. */
+.egho-news-ticker:not(.is-ready) [data-news-duplicate] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+    .egho-news-ticker.is-ready .egho-news-ticker-viewport { overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent); }
+    .egho-news-ticker.is-ready .egho-news-ticker-track { animation: egho-news-marquee var(--egho-news-duration, 30s) linear infinite; will-change: transform; }
+    .egho-news-ticker.is-ready:hover .egho-news-ticker-track,
+    .egho-news-ticker.is-ready:focus-within .egho-news-ticker-track,
+    .egho-news-ticker.is-paused .egho-news-ticker-track { animation-play-state: paused; }
+}
+@keyframes egho-news-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+@media (max-width: 760px) {
+    .egho-news-ticker { margin-bottom: 16px; }
+    .egho-news-ticker-inner { gap: .5rem; }
+    .egho-news-ticker-item { font-size: .85rem; padding-right: 1.75rem; }
+}
+/* Narrow phones: the label becomes its icon (the section is still named "Latest updates"). */
+@media (max-width: 420px) {
+    .egho-news-ticker-label { padding: .35rem; }
+    .egho-news-ticker-label-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
