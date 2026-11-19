@@ -44,7 +44,7 @@ class StudyDestination extends Model
     ];
 
     protected $fillable = [
-        'country_id', 'slug', 'name_bn', 'name_in_sentence', 'status', 'published_at',
+        'country_id', 'slug', 'name_bn', 'name_in_sentence', 'name_bn_locative', 'status', 'published_at',
         'hero_title', 'hero_title_bn', 'intro', 'intro_bn', 'hero_media_id', 'hero_alt', 'hero_alt_bn',
         'visa_name', 'visa_name_bn', 'visa_authority', 'visa_authority_bn',
         'processing_time', 'processing_time_bn', 'processing_source_url', 'processing_source_label',
@@ -115,6 +115,22 @@ class StudyDestination extends Model
         }
 
         return $this->name();
+    }
+
+    /**
+     * Replacements for the country sentences on the study pages:
+     * - :country    the name as it reads in a sentence ("the United Kingdom"; Bengali: the plain name);
+     * - :in_country the Bengali place form ("জাপানে"). Without one, "জাপান:", so Bengali
+     *               templates start with it (":in_country পড়াশোনার পরিকল্পনা করুন") and never glue
+     *               a suffix onto a name. English templates use only :country.
+     *
+     * @return array{country: string, in_country: string}
+     */
+    public function sentenceReplacements(): array
+    {
+        $locative = trim((string) $this->name_bn_locative);
+
+        return ['country' => $this->sentenceName(), 'in_country' => $locative !== '' ? $locative : $this->name().':'];
     }
 
     /** A field in the visitor's language, falling back to English. */

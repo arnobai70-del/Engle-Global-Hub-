@@ -50,6 +50,7 @@
     <div class="stu-form-grid">
         <label>URL slug (/study-in-…)<input name="slug" value="{{ $value('slug') }}" maxlength="80" required></label>
         <label>Name in sentences (English, optional)<input name="name_in_sentence" value="{{ $value('name_in_sentence') }}" maxlength="120" placeholder="{{ $destination->country?->name }}"><span class="stu-muted">Only for countries that need "the", for example "the United Kingdom" or "the Netherlands". Used in "Why study in …" and other sentences.</span></label>
+        <label>Bengali name with place ending (locative, optional)<input name="name_bn_locative" lang="bn" value="{{ $value('name_bn_locative') }}" maxlength="120" placeholder="জাপানে"><span class="stu-muted">The form used for "in …" in Bengali sentences, for example বুলগেরিয়া → বুলগেরিয়ায়, জাপান → জাপানে. Used in "… কেন পড়বেন" and "… পড়াশোনার পরিকল্পনা করুন". Empty: the sentence starts with the plain name and a colon (জাপান: …).</span></label>
         <label>Country name in Bengali<input name="name_bn" lang="bn" value="{{ $value('name_bn') }}" maxlength="120"></label>
         <label>Hero title<input name="hero_title" value="{{ $value('hero_title') }}" maxlength="160" placeholder="Study in {{ $destination->country?->name }} from Bangladesh"></label>
         <label>Hero title (Bengali)<input name="hero_title_bn" lang="bn" value="{{ $value('hero_title_bn') }}" maxlength="160"></label>

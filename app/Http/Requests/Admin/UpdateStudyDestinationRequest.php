@@ -38,6 +38,7 @@ class UpdateStudyDestinationRequest extends FormRequest
             'slug' => ['required', 'string', 'max:80', 'regex:/^'.StudyDestination::SLUG_PATTERN.'$/', Rule::unique('study_destinations', 'slug')->ignore($destination)],
             'name_bn' => $text(120),
             'name_in_sentence' => $text(120),
+            'name_bn_locative' => $text(120),
             'hero_title' => $text(160), 'hero_title_bn' => $text(160),
             'intro' => $text(3000), 'intro_bn' => $text(3000),
             'hero_media_id' => ['nullable', 'integer', Rule::exists(MediaAsset::class, 'id')],

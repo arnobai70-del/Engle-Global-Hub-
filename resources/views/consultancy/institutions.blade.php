@@ -4,11 +4,11 @@
     $isMalaysia = ($study['code'] ?? 'SG') === 'MY';
     // Malaysia and Singapore keep their own wording; other destinations use the country name.
     $text = ! in_array($study['code'] ?? 'SG', ['MY', 'SG'], true) ? [
-        'title' => __('Institutions in :country', ['country' => ($study['sentence_name'] ?? $study['name'])]),
-        'description' => __('Institutions in :country verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.', ['country' => ($study['sentence_name'] ?? $study['name'])]),
-        'eyebrow' => __('STUDY IN :COUNTRY', ['country' => mb_strtoupper(($study['sentence_name'] ?? $study['name']))]),
-        'notice' => __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and visa decisions by the authorities of :country.', ['country' => ($study['sentence_name'] ?? $study['name'])]),
-        'study' => __('Study in :country', ['country' => ($study['sentence_name'] ?? $study['name'])]), 'guides' => __(':country Guides', ['country' => $study['name']]),
+        'title' => __('Institutions in :country', ['country' => ($study['sentence_name'] ?? $study['name']), 'in_country' => ($study['in_country'] ?? $study['name'].':')]),
+        'description' => __('Institutions in :country verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.', ['country' => ($study['sentence_name'] ?? $study['name']), 'in_country' => ($study['in_country'] ?? $study['name'].':')]),
+        'eyebrow' => __('STUDY IN :COUNTRY', ['country' => mb_strtoupper(($study['sentence_name'] ?? $study['name'])), 'in_country' => ($study['in_country'] ?? $study['name'].':')]),
+        'notice' => __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and visa decisions by the authorities of :country.', ['country' => ($study['sentence_name'] ?? $study['name']), 'in_country' => ($study['in_country'] ?? $study['name'].':')]),
+        'study' => __('Study in :country', ['country' => ($study['sentence_name'] ?? $study['name']), 'in_country' => ($study['in_country'] ?? $study['name'].':')]), 'guides' => __(':country Guides', ['country' => $study['name']]),
     ] : ($isMalaysia ? [
         'title' => __('Institutions in Malaysia'),
         'description' => __('Malaysian universities and colleges verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.'),

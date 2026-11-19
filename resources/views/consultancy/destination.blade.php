@@ -7,7 +7,9 @@
 @php
     // In sentences: "the United Kingdom" (Admin › Study destinations › Name in sentences), otherwise the plain name.
     $country = $destination->sentenceName();
-    $title = $destination->localized('hero_title') ?? __('Study in :country from Bangladesh', ['country' => $country]);
+    // :country (sentence name) and :in_country (Bengali place form, or "name:" when not set) for every country sentence.
+    $names = $destination->sentenceReplacements();
+    $title = $destination->localized('hero_title') ?? __('Study in :country from Bangladesh', $names);
     $intro = (string) $destination->localized('intro');
     $section = fn (string $key) => $destination->section($key)->filter(fn ($item) => filled($item->title))->values();
     $why = $section('why');
@@ -29,7 +31,7 @@
         ->when($destination->processing_source_url, fn ($list) => $list->push(['url' => $destination->processing_source_url, 'label' => $destination->processing_source_label ?: parse_url($destination->processing_source_url, PHP_URL_HOST)]))
         ->unique('url')->values();
     $tabs = array_filter([
-        'why' => $why->isNotEmpty() || $subjects->isNotEmpty() ? __('Why :country', ['country' => $country]) : null,
+        'why' => $why->isNotEmpty() || $subjects->isNotEmpty() ? __('Why :country', $names) : null,
         'requirements' => $requirements->isNotEmpty() ? __('Requirements') : null,
         'documents' => $documents->isNotEmpty() ? __('Documents') : null,
         'visa' => $steps->isNotEmpty() ? __('Student visa') : null,
@@ -46,13 +48,14 @@
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($intro), 170, '…'))
 @section('body_class', 'sg-body-v2')
 @section('study_country', $country)
+@section('study_in_country', $names['in_country'])
 @if($hero)
 @section('og_image', $hero->url())
 @endif
 
 @push('head')
 {!! $schema->script([
-    $schema->breadcrumbList([[__('Home'), route('home')], [__('Study in :country', ['country' => $country]), $pageUrl]]),
+    $schema->breadcrumbList([[__('Home'), route('home')], [__('Study in :country', $names), $pageUrl]]),
     $schema->faqPage($faqs),
 ]) !!}
 @endpush
@@ -62,7 +65,7 @@
     <section class="v2-sg-hero" aria-labelledby="destination-title">
         <div class="v2-shell v2-sg-hero-grid">
             <div>
-                <nav class="v2-crumbs v2-crumbs-light" aria-label="{{ __('Breadcrumb') }}"><a href="{{ route('home') }}">{{ __('Home') }}</a> / <span aria-current="page">{{ __('Study in :country', ['country' => $country]) }}</span></nav>
+                <nav class="v2-crumbs v2-crumbs-light" aria-label="{{ __('Breadcrumb') }}"><a href="{{ route('home') }}">{{ __('Home') }}</a> / <span aria-current="page">{{ __('Study in :country', $names) }}</span></nav>
                 <h1 id="destination-title">{{ $title }}</h1>
                 <x-content-body :text="$intro" />
                 <ul class="v2-chips">
@@ -82,11 +85,11 @@
     </nav>
 
     @if($why->isNotEmpty() || $subjects->isNotEmpty() || $institutionCount > 0)
-    <section class="v2-section" id="why" aria-label="{{ __('Why :country', ['country' => $country]) }}">
+    <section class="v2-section" id="why" aria-label="{{ __('Why :country', $names) }}">
         <div class="v2-shell v2-split v2-split-top">
             @if($why->isNotEmpty())
             <div data-section="why">
-                <h2 class="v2-h2">{{ __('Why study in :country', ['country' => $country]) }}</h2>
+                <h2 class="v2-h2">{{ __('Why study in :country', $names) }}</h2>
                 <ul class="v2-ticks">@foreach($why as $item)<li><strong>{{ $item->localized('title') }}</strong>@if($item->localized('body')) {{ $item->localized('body') }}@endif</li>@endforeach</ul>
             </div>
             @endif
@@ -146,7 +149,7 @@
             <ol class="v2-pass">
                 @foreach($steps as $item)<li><span>{{ __('Step :number', ['number' => $loop->iteration]) }}</span><strong>{{ $item->localized('title') }}</strong>@if($item->localized('body'))<p>{{ $item->localized('body') }}</p>@endif @include('consultancy.partials.source', ['item' => $item])</li>@endforeach
             </ol>
-            <p class="v2-notice">{{ __('Visa decisions are made by the authorities of :country, and admission by each institution. We help you prepare a complete application; we cannot guarantee approval.', ['country' => $country]) }}</p>
+            <p class="v2-notice">{{ __('Visa decisions are made by the authorities of :country, and admission by each institution. We help you prepare a complete application; we cannot guarantee approval.', $names) }}</p>
         </div>
     </section>
     @endif
@@ -207,7 +210,7 @@
     <section class="v2-section v2-section-navy" aria-label="{{ __('Apply') }}">
         <div class="v2-shell v2-split v2-split-top">
             <div>
-                <h2 class="v2-h2">{{ __('Plan your studies in :country', ['country' => $country]) }}</h2>
+                <h2 class="v2-h2">{{ __('Plan your studies in :country', $names) }}</h2>
                 <p class="v2-lead-light">{{ __('Tell us your results and budget. A consultant checks the entry requirements for your course and explains the visa steps and costs in writing.') }}</p>
             </div>
             <x-site.consultation-form :destination="$study['code']" source="study-destination" anchor="apply" :title="__('Apply for a free consultation')" :qualification="true" />

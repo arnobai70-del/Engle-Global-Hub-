@@ -194,6 +194,62 @@ class StudyDestinationTest extends TestCase
         $this->get(route('study-destinations.show', ['japan', 'lang' => 'bn']))->assertSee('স্টুডেন্ট ভিসা: ধাপে ধাপে');
     }
 
+    public function test_bengali_sentences_use_the_place_form_of_the_name_when_it_is_set(): void
+    {
+        $japan = $this->japanPage();
+        $japan->update(['name_bn_locative' => 'জাপানে']);
+        $this->item($japan, 'why', ['title' => 'Safe cities']);
+
+        $html = (string) $this->get(route('study-destinations.show', ['japan', 'lang' => 'bn']))->assertOk()->getContent();
+        foreach (['<title>জাপানে পড়াশোনা, বাংলাদেশ থেকে', 'জাপানে কেন পড়বেন', 'জাপানে পড়াশোনার পরিকল্পনা করুন', 'জাপানে পড়তে চান?', 'জাপান সরকারের সংশ্লিষ্ট কর্তৃপক্ষ'] as $text) {
+            $this->assertStringContainsString($text, $html, $text);
+        }
+        $this->assertDoesNotMatchRegularExpression('/জাপান-(এ|এর|র|য়)/u', $html);
+
+        $this->get(route('study-destinations.show', ['japan', 'lang' => 'en']))->assertSee('Why study in Japan')->assertDontSee('জাপানে');
+    }
+
+    public function test_without_a_place_form_bengali_sentences_start_with_the_name_and_a_colon(): void
+    {
+        $japan = $this->japanPage();
+        $this->item($japan, 'why', ['title' => 'Safe cities']);
+        $institution = Institution::query()->create(['name' => 'Example Institute Japan', 'country_id' => $this->japan->id, 'status' => Institution::STATUS_ACTIVE]);
+        $institution->forceFill(['is_public' => true])->save();
+
+        $html = (string) $this->get(route('study-destinations.show', ['japan', 'lang' => 'bn']))->assertOk()->getContent();
+        foreach (['জাপান: কেন পড়বেন', 'জাপান: পড়াশোনার পরিকল্পনা করুন', 'জাপান: পড়তে চান?', 'জাপান: পড়াশোনা, বাংলাদেশ থেকে'] as $text) {
+            $this->assertStringContainsString($text, $html, $text);
+        }
+        $this->assertDoesNotMatchRegularExpression('/জাপান-(এ|এর|র|য়)/u', $html);
+
+        $this->get(route('study-destinations.institutions.index', ['japan', 'lang' => 'bn']))->assertOk()
+            ->assertSee('জাপান: বিশ্ববিদ্যালয় ও কলেজ')->assertDontSee('জাপান-এর');
+    }
+
+    public function test_no_study_page_template_glues_an_ending_onto_a_name(): void
+    {
+        $bengali = json_decode((string) file_get_contents(lang_path('bn.json')), true);
+        foreach (['Study in :country from Bangladesh', 'Study in :country', 'Why study in :country', 'Plan your studies in :country', 'Ready to study in :country?', 'STUDY IN :COUNTRY', 'Institutions in :country'] as $key) {
+            $this->assertDoesNotMatchRegularExpression('/:(in_)?country-|:(IN_)?COUNTRY-/i', $bengali[$key], $key);
+        }
+    }
+
+    public function test_the_seeder_fills_the_bengali_place_forms_only_while_they_are_empty(): void
+    {
+        $this->seed(StudyDestinationSeeder::class);
+        $this->seed(StudyDestinationSeeder::class);
+
+        $this->assertSame(
+            ['bulgaria' => 'বুলগেরিয়ায়', 'cyprus' => 'সাইপ্রাসে', 'japan' => 'জাপানে', 'south-korea' => 'দক্ষিণ কোরিয়ায়', 'united-kingdom' => 'যুক্তরাজ্যে'],
+            StudyDestination::query()->orderBy('slug')->pluck('name_bn_locative', 'slug')->all(),
+        );
+
+        $japan = StudyDestination::query()->where('slug', 'japan')->firstOrFail();
+        $japan->update(['name_bn_locative' => 'জাপান দেশে']);
+        $this->seed(StudyDestinationSeeder::class);
+        $this->assertSame('জাপান দেশে', $japan->refresh()->name_bn_locative, 'an admin edit is kept');
+    }
+
     public function test_the_sitemap_lists_only_public_destinations(): void
     {
         $this->japanPage();
