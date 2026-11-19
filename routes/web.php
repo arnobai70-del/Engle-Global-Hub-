@@ -54,6 +54,7 @@ use App\Http\Controllers\Consultancy\MalaysiaStudyController;
 use App\Http\Controllers\Consultancy\SingaporeGuideIndexController;
 use App\Http\Controllers\Consultancy\SingaporeStudyController;
 use App\Http\Controllers\Consultancy\StudentEnquiryController;
+use App\Http\Controllers\Consultancy\StudyDestinationController;
 use App\Http\Controllers\ContentPageController;
 use App\Http\Controllers\ExploreBangladeshController;
 use App\Http\Controllers\FeaturePageController;
@@ -93,6 +94,7 @@ use App\Http\Controllers\Tour\TourSearchController;
 use App\Http\Controllers\TravelServicesController;
 use App\Http\Controllers\Visa\VisaController;
 use App\Http\Controllers\Visa\VisaRequirementController;
+use App\Models\StudyDestination;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
@@ -931,6 +933,21 @@ Route::get('/study-in-singapore/institutions', InstitutionDirectoryController::c
     ->middleware('feature:student-consultancy')
     ->name('consultancy.institutions.index');
 
+/*
+ * Every other study destination (Admin › Study destinations): /study-in-{slug}. Registered after
+ * Malaysia and Singapore, whose own routes always win; a page that is not published and
+ * complete returns 404. Guides and institutions reuse the Malaysia/Singapore controllers.
+ */
+Route::middleware('feature:student-consultancy')
+    ->prefix('study-in-{destination}')->name('study-destinations.')
+    ->where(['destination' => StudyDestination::SLUG_PATTERN])
+    ->group(function (): void {
+        Route::get('/', StudyDestinationController::class)->name('show');
+        Route::get('/guides', SingaporeGuideIndexController::class)->name('guides.index');
+        Route::get('/guides/{slug}', [ContentPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('guides.show');
+        Route::get('/institutions', InstitutionDirectoryController::class)->name('institutions.index');
+    });
+
 Route::get('/travel-services', TravelServicesController::class)->name('travel-services.index');
 Route::get('/services', [ServicePageController::class, 'index'])->name('services.index');
 Route::get('/services/{slug}', [ServicePageController::class, 'show'])->where('slug', '[a-z]+(?:-[a-z]+)*')->name('services.show');
@@ -1011,6 +1028,22 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
                 ->whereNumber('application')->name('update');
             Route::post('/{application}/transitions', [App\Http\Controllers\Admin\StudentApplicationController::class, 'transition'])
                 ->whereNumber('application')->name('transition');
+        });
+    });
+
+/*
+ * Website CMS: study destination pages (/study-in-{slug}). Drafts and incomplete pages are never public.
+ */
+Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consultant|visa-officer|crm-staff|content-editor|seo-manager'])
+    ->prefix('admin/study-destinations')->name('admin.study-destinations.')
+    ->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\StudyDestinationController::class, 'index'])
+            ->middleware('can:content.view')->name('index');
+        Route::middleware('can:content.manage')->group(function () {
+            Route::get('/{studyDestination}/edit', [App\Http\Controllers\Admin\StudyDestinationController::class, 'edit'])->whereNumber('studyDestination')->name('edit');
+            Route::patch('/{studyDestination}', [App\Http\Controllers\Admin\StudyDestinationController::class, 'update'])->whereNumber('studyDestination')->name('update');
+            Route::patch('/{studyDestination}/status', [App\Http\Controllers\Admin\StudyDestinationController::class, 'status'])->whereNumber('studyDestination')->name('status');
+            Route::patch('/{studyDestination}/move', [App\Http\Controllers\Admin\StudyDestinationController::class, 'move'])->whereNumber('studyDestination')->name('move');
         });
     });
 

@@ -71,7 +71,7 @@ class PublicPageAvailability
                 'reviews.index' => Review::query()->where('status', Review::STATUS_APPROVED)->exists(),
                 'rewards.index' => RewardProgram::query()->live()->exists(),
                 'forums.index' => ForumThread::query()->whereHas('category', fn ($query) => $query->where('is_active', true))->exists(),
-                'consultancy.institutions.index' => Institution::query()->publiclyListed()->where(fn ($query) => $query->whereNull('country_id')->orWhereHas('country', fn ($country) => $country->where('iso2', '!=', 'MY')))->exists(),
+                'consultancy.institutions.index' => $this->countries->scopeInstitutions(Institution::query()->publiclyListed(), 'SG')->exists(),
                 'map' => Destination::query()->published()->exists()
                     || ContentEntry::query()->where('status', ContentEntry::STATUS_PUBLISHED)->whereNotNull('latitude')->whereNotNull('longitude')->exists(),
                 'mobile-app' => $this->hasAppStoreLink(),

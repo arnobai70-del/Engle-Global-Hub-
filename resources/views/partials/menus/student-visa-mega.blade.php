@@ -1,20 +1,20 @@
 {{--
     "Student Visa" mega-menu: every study destination switched on in Admin › Services & Destinations,
     the planning tools that are switched on plus the menu item's own extra links, and a consultation card.
-    Malaysia and Singapore open their own pages; other countries open the Student Visa page with that
-    country chosen in the enquiry form. In the burger menu the columns stack into a plain list.
+    Malaysia and Singapore open their own pages, published study destinations their /study-in-{slug} page,
+    and other countries the Student Visa page with that country chosen in the enquiry form (MenuTargets). In the burger menu the columns stack into a plain list.
     @var string $label
     @var list<array{label: string, url: string, current?: bool, new_tab?: bool}> $links  extra links from Admin › Menus
     @var bool $active
 --}}
 @php
     $availability = app(\App\Services\Content\PublicPageAvailability::class);
-    $countryPages = ['MY' => 'consultancy.malaysia', 'SG' => 'consultancy.singapore'];
+    $targets = app(\App\Services\Navigation\MenuTargets::class);
     $countries = rescue(fn () => \App\Http\Requests\Consultancy\StoreStudentEnquiryRequest::destinations(), collect(), false)
         ->map(fn ($country): array => [
             'label' => __($country->name),
-            'url' => isset($countryPages[$country->iso2]) ? route($countryPages[$country->iso2]) : route('services.show', ['slug' => 'student-visa', 'country' => __($country->name)]).'#quote-form',
-            'current' => isset($countryPages[$country->iso2]) && request()->routeIs($countryPages[$country->iso2]),
+            'url' => $url = $targets->studyCountryUrl($country),
+            'current' => ! str_contains($url, '#') && rtrim($url, '/') === rtrim(request()->url(), '/'),
         ]);
     $countryUrls = $countries->pluck('url')->map(fn (string $url): string => rtrim((string) strtok($url, '?#'), '/'))->all();
     // Extra links that do not repeat a country page (for example the old "Study in Malaysia" child).

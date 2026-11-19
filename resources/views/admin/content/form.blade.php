@@ -22,6 +22,9 @@
 <label>Bengali title (needs native review)<input name="title_bn" lang="bn" value="{{ old('title_bn', $entry->title_bn) }}" maxlength="200"></label>
 <label class="stu-full">Bengali summary<textarea name="summary_bn" lang="bn" maxlength="500" rows="2">{{ old('summary_bn', $entry->summary_bn) }}</textarea></label>
 <label class="stu-full">Bengali body<textarea name="body_bn" lang="bn" maxlength="30000" rows="6">{{ old('body_bn', $entry->body_bn) }}</textarea></label>
+@if($type === \App\Enums\ContentType::Guide)
+<label>Study country (which study page lists this guide)<select name="country_id"><option value="">Singapore (default)@if(filled($entry->location) && $entry->country_id === null) — Location "{{ $entry->location }}" matched no country @endif</option>@foreach($studyCountries as $studyCountry)<option value="{{ $studyCountry->id }}" @selected((string) old('country_id', $entry->country_id) === (string) $studyCountry->id)>{{ $studyCountry->name }}</option>@endforeach</select></label>
+@endif
 @if($type->hasLocation() || in_array($type, [\App\Enums\ContentType::CompanyProfile, \App\Enums\ContentType::BusinessService], true))
 <label>Location / address<input name="location" value="{{ old('location', $entry->location) }}" maxlength="200"></label>
 <label>Contact phone<input name="contact_phone" value="{{ old('contact_phone', $entry->contact_phone) }}" maxlength="32"></label>

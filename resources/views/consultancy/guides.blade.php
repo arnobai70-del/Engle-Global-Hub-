@@ -2,7 +2,14 @@
 
 @php
     $isMalaysia = ($study['code'] ?? 'SG') === 'MY';
-    $text = $isMalaysia ? [
+    // Malaysia and Singapore keep their own wording; other destinations use the country name.
+    $text = ! in_array($study['code'] ?? 'SG', ['MY', 'SG'], true) ? [
+        'title' => __(':country Study Guides', ['country' => $study['name']]),
+        'description' => __('Step-by-step guides for Bangladeshi students who want to study in :country: admission, the student visa, documents, costs and living, checked against official sources.', ['country' => $study['name']]),
+        'eyebrow' => __('STUDY IN :COUNTRY', ['country' => mb_strtoupper($study['name'])]),
+        'lead' => __('Step-by-step guides on admission, the student visa, documents, costs and living in :country, checked against official sources.', ['country' => $study['name']]),
+        'study' => __('Study in :country', ['country' => $study['name']]), 'short' => __(':country Guides', ['country' => $study['name']]),
+    ] : ($isMalaysia ? [
         'title' => __('Malaysia Study Guides'),
         'description' => __('Step-by-step Malaysia study guides for Bangladeshi students: the EMGS Student Pass, eVAL, documents, arrival and medical screening, based on official EMGS information.'),
         'eyebrow' => __('MALAYSIA STUDENT CONSULTANCY'),
@@ -14,7 +21,7 @@
         'eyebrow' => __('SINGAPORE STUDENT CONSULTANCY'),
         'lead' => __('Step-by-step guides on admission, the Student\'s Pass, courses, costs and living in Singapore, checked against official sources such as ICA and MOE.'),
         'study' => __('Study in Singapore'), 'short' => __('Singapore Guides'),
-    ];
+    ]);
 @endphp
 @section('title', $text['title'])
 @section('meta_description', $text['description'])
@@ -47,20 +54,20 @@
             </div>
         </section>
 
-        <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <a href="{{ route($study['page']) }}">{{ $text['study'] }}</a> › <span aria-current="page">{{ $text['short'] }}</span></nav>
+        <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <a href="{{ route($study['page'], $study['params'] ?? []) }}">{{ $text['study'] }}</a> › <span aria-current="page">{{ $text['short'] }}</span></nav>
 
         @if($total > 0)
-        <form method="GET" action="{{ route($study['guides']) }}" class="sg-card sg-filter" role="search">
+        <form method="GET" action="{{ route($study['guides'], $study['params'] ?? []) }}" class="sg-card sg-filter" role="search">
             <label class="egho-field sg-filter-grow"><span>{{ __('Search guides') }}</span><input type="search" name="q" value="{{ $filters['q'] }}" maxlength="100" placeholder="{{ __('e.g. Student\'s Pass, tuition grant, polytechnic') }}"></label>
             <label class="egho-field"><span>{{ __('Topic') }}</span><select name="topic"><option value="">{{ __('All topics') }}</option>@foreach($topics as $topicOption)<option value="{{ $topicOption['key'] }}" @selected($filters['topic'] === $topicOption['key'])>{{ $topicOption['label'] }}</option>@endforeach</select></label>
             <button type="submit" class="sg-btn sg-btn-red">{{ __('Search') }}</button>
-            @if($filters['q'] !== '' || $filters['topic'] !== '')<a class="sg-btn sg-btn-outline" href="{{ route($study['guides']) }}">{{ __('Clear') }}</a>@endif
+            @if($filters['q'] !== '' || $filters['topic'] !== '')<a class="sg-btn sg-btn-outline" href="{{ route($study['guides'], $study['params'] ?? []) }}">{{ __('Clear') }}</a>@endif
         </form>
 
         <div class="sg-chips" aria-label="{{ __('Topics') }}">
-            <a href="{{ route($study['guides']) }}" @class(['sg-chip', 'is-active' => $filters['topic'] === ''])>{{ __('All topics') }}</a>
+            <a href="{{ route($study['guides'], $study['params'] ?? []) }}" @class(['sg-chip', 'is-active' => $filters['topic'] === ''])>{{ __('All topics') }}</a>
             @foreach($topics as $topicOption)
-                <a href="{{ route($study['guides'], ['topic' => $topicOption['key']]) }}" @class(['sg-chip', 'is-active' => $filters['topic'] === $topicOption['key']])>{{ $topicOption['label'] }}</a>
+                <a href="{{ route($study['guides'], [...($study['params'] ?? []), 'topic' => $topicOption['key']]) }}" @class(['sg-chip', 'is-active' => $filters['topic'] === $topicOption['key']])>{{ $topicOption['label'] }}</a>
             @endforeach
         </div>
         @endif
@@ -70,7 +77,7 @@
                 <div class="sg-card sg-empty">
                     <h2>{{ __('Guides are on the way') }}</h2>
                     <p>{{ __('Guides are being reviewed against official sources and will be published soon. Ask our consultants in the meantime.') }}</p>
-                    <a class="sg-btn sg-btn-red" href="{{ route($study['page']) }}#apply">{{ __('Request a free consultation') }}</a>
+                    <a class="sg-btn sg-btn-red" href="{{ route($study['page'], $study['params'] ?? []) }}#apply">{{ __('Request a free consultation') }}</a>
                 </div>
             @elseif($results->isEmpty())
                 <div class="sg-card sg-empty"><h2>{{ __('No guides match your search') }}</h2><p>{{ __('Try another word or topic.') }}</p></div>
@@ -90,7 +97,7 @@
 
         <section class="sg-card sg-cta-row">
             <div><h2>{{ __('Need help with your application?') }}</h2><p>{{ __('Our consultants explain the steps and help you prepare. Admission and Student\'s Pass decisions are made by the institution and ICA.') }}</p></div>
-            <div class="sg-cta-actions"><a class="sg-btn sg-btn-red" href="{{ route($study['page']) }}#apply">{{ __('Free Consultation') }}</a><a class="sg-btn sg-btn-outline" href="{{ route($study['institutions']) }}">{{ __('Institutions') }}</a></div>
+            <div class="sg-cta-actions"><a class="sg-btn sg-btn-red" href="{{ route($study['page'], $study['params'] ?? []) }}#apply">{{ __('Free Consultation') }}</a><a class="sg-btn sg-btn-outline" href="{{ route($study['institutions'], $study['params'] ?? []) }}">{{ __('Institutions') }}</a></div>
         </section>
     </div>
 </main>

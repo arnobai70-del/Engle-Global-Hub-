@@ -7,6 +7,7 @@ use App\Models\ServiceEnquiry;
 use App\Models\StudentEnquiry;
 use App\Notifications\NewLeadReceived;
 use App\Services\Consultancy\StudentLeadRecorder;
+use App\Services\Consultancy\StudyCountries;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -62,8 +63,9 @@ class LeadController extends Controller
             'preferred_intake' => ['nullable', 'string', 'max:40'],
             'highest_qualification' => ['nullable', 'string', 'max:120'],
             'message' => ['nullable', 'string', 'max:2000'],
-            'form' => ['nullable', Rule::in(['home', 'malaysia', 'singapore', 'about', 'why-us'])],
-            'destination' => ['nullable', Rule::in(['MY', 'SG'])],
+            'form' => ['nullable', Rule::in(['home', 'malaysia', 'singapore', 'about', 'why-us', 'study-destination'])],
+            // Malaysia, Singapore and every published study destination (/study-in-{slug}).
+            'destination' => ['nullable', Rule::in(['MY', 'SG', ...app(StudyCountries::class)->publicDestinations()->keys()->all()])],
         ], $this->messages());
 
         $lead = $this->studentLead($data, 'Free consultation form ('.($data['form'] ?? 'website').')');

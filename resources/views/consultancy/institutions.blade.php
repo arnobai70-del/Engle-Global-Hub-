@@ -2,7 +2,14 @@
 
 @php
     $isMalaysia = ($study['code'] ?? 'SG') === 'MY';
-    $text = $isMalaysia ? [
+    // Malaysia and Singapore keep their own wording; other destinations use the country name.
+    $text = ! in_array($study['code'] ?? 'SG', ['MY', 'SG'], true) ? [
+        'title' => __('Institutions in :country', ['country' => $study['name']]),
+        'description' => __('Institutions in :country verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.', ['country' => $study['name']]),
+        'eyebrow' => __('STUDY IN :COUNTRY', ['country' => mb_strtoupper($study['name'])]),
+        'notice' => __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and visa decisions by the authorities of :country.', ['country' => $study['name']]),
+        'study' => __('Study in :country', ['country' => $study['name']]), 'guides' => __(':country Guides', ['country' => $study['name']]),
+    ] : ($isMalaysia ? [
         'title' => __('Institutions in Malaysia'),
         'description' => __('Malaysian universities and colleges verified by Eagle Global Hub LTD for students from Bangladesh, with active courses, open intakes and admission guidance.'),
         'eyebrow' => __('MALAYSIA STUDENT CONSULTANCY'),
@@ -14,7 +21,7 @@
         'eyebrow' => __('SINGAPORE STUDENT CONSULTANCY'),
         'notice' => __('Listing an institution here does not mean a partnership or an agency agreement. Admission decisions are made by each institution, and Student\'s Pass decisions by Singapore\'s Immigration & Checkpoints Authority (ICA).'),
         'study' => __('Study in Singapore'), 'guides' => __('Singapore Guides'),
-    ];
+    ]);
 @endphp
 @section('title', $text['title'])
 @section('meta_description', $text['description'])
@@ -32,7 +39,7 @@
             </div>
         </section>
 
-        <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <a href="{{ route($study['page']) }}">{{ $text['study'] }}</a> › <span aria-current="page">{{ __('Institutions') }}</span></nav>
+        <nav aria-label="{{ __('Breadcrumb') }}" class="sg-breadcrumb"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <a href="{{ route($study['page'], $study['params'] ?? []) }}">{{ $text['study'] }}</a> › <span aria-current="page">{{ __('Institutions') }}</span></nav>
 
         <p class="sg-card sg-notice" role="note">{{ $text['notice'] }}</p>
 
@@ -42,7 +49,7 @@
                 <div class="sg-card sg-empty">
                     <h2>{{ __('Institution details are being verified') }}</h2>
                     <p>{{ __('We publish an institution only after checking its details against its official website. Ask our consultants about polytechnics, universities and private institutions in the meantime.') }}</p>
-                    <a class="sg-btn sg-btn-red" href="{{ route($study['page']) }}#apply">{{ __('Request a free consultation') }}</a>
+                    <a class="sg-btn sg-btn-red" href="{{ route($study['page'], $study['params'] ?? []) }}#apply">{{ __('Request a free consultation') }}</a>
                 </div>
             @else
                 <div class="sg-grid sg-grid-2">
@@ -68,7 +75,7 @@
                             @else
                                 <p class="sg-note">{{ __('Courses for this institution have not been added yet.') }}</p>
                             @endif
-                            <a class="sg-btn sg-btn-red sg-btn-sm" href="{{ route($study['page']) }}#apply">{{ __('Ask about this institution') }}</a>
+                            <a class="sg-btn sg-btn-red sg-btn-sm" href="{{ route($study['page'], $study['params'] ?? []) }}#apply">{{ __('Ask about this institution') }}</a>
                         </article>
                     @endforeach
                 </div>
@@ -84,7 +91,7 @@
                     <p>{{ __('Our consultants explain entry requirements, documents and timelines for each institution.') }}</p>
                 @endif
             </div>
-            <div class="sg-cta-actions"><a class="sg-btn sg-btn-red" href="{{ route($study['page']) }}#apply">{{ __('Free Consultation') }}</a><a class="sg-btn sg-btn-outline" href="{{ route($study['guides']) }}">{{ $text['guides'] }}</a></div>
+            <div class="sg-cta-actions"><a class="sg-btn sg-btn-red" href="{{ route($study['page'], $study['params'] ?? []) }}#apply">{{ __('Free Consultation') }}</a><a class="sg-btn sg-btn-outline" href="{{ route($study['guides'], $study['params'] ?? []) }}">{{ $text['guides'] }}</a></div>
         </section>
     </div>
 </main>

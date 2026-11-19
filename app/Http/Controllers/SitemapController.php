@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Destination;
+use App\Models\Institution;
 use App\Models\Offer;
+use App\Services\Consultancy\StudyCountries;
 use App\Services\Content\PublicPageAvailability;
 use App\Services\Feature\FeatureManager;
 use App\Services\Travel\ServiceCatalog;
@@ -63,6 +65,17 @@ class SitemapController extends Controller
             ] as $route => $priority) {
                 if (Route::has($route) && $availability->isAvailable($route)) {
                     $urls[] = ['loc' => route($route), 'priority' => $priority];
+                }
+            }
+            // Study destinations: only published and complete pages, plus their guides and institutions when they have any.
+            $studyCountries = app(StudyCountries::class);
+            foreach ($studyCountries->publicDestinations() as $code => $destination) {
+                $urls[] = ['loc' => route('study-destinations.show', $destination->slug), 'priority' => '0.8'];
+                if ($studyCountries->scopeGuides(ContentEntry::query()->published(ContentType::Guide), $code)->exists()) {
+                    $urls[] = ['loc' => route('study-destinations.guides.index', $destination->slug), 'priority' => '0.6'];
+                }
+                if ($studyCountries->scopeInstitutions(Institution::query()->publiclyListed(), $code)->exists()) {
+                    $urls[] = ['loc' => route('study-destinations.institutions.index', $destination->slug), 'priority' => '0.6'];
                 }
             }
         }

@@ -37,6 +37,7 @@ class MenuTidySeeder extends Seeder
         $this->tidyFooterColumns();
         $this->pointHeaderButtonsToMalaysia();
         $this->putMalaysiaTileFirst();
+        $this->hideHomeItem();
 
         foreach ($this->manual as $line) {
             $this->command?->warn('Menu not changed (edited in admin), change it in Admin › Menus if wanted: '.$line);
@@ -245,6 +246,23 @@ class MenuTidySeeder extends Seeder
             return;
         }
         $this->manual[] = $instruction;
+    }
+
+    /**
+     * The first release's top-level "Home" header link: the logo already links home, so the
+     * seeded default is hidden (not deleted). An edited one is left alone and reported.
+     */
+    private function hideHomeItem(): void
+    {
+        $items = MenuItem::query()->where('location', 'header')->whereNull('parent_id')->where('is_active', true)
+            ->where('target', 'route:home')->whereNull('fragment')->get();
+        foreach ($items as $item) {
+            if ($item->label_en === 'Home' && in_array($item->label_bn, [null, '', 'হোম'], true) && $item->children()->doesntExist()) {
+                $item->forceFill(['is_active' => false])->save();
+            } else {
+                $this->manual[] = 'header "'.$item->label_en.'": the logo already links to the home page; hide this item if it is not needed';
+            }
+        }
     }
 
     private function hasActiveChild(MenuItem $parent, string $target): bool

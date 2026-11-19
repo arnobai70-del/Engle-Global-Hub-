@@ -33,7 +33,7 @@ class PageType
     private const ROUTES = [
         self::NONE => ['home', 'consultancy.malaysia', 'consultancy.singapore'],
         self::EXPLORE => ['explore-bangladesh.*'],
-        self::STUDY => ['consultancy.*', 'appointments.book', 'student.*', 'success-stories.*'],
+        self::STUDY => ['consultancy.*', 'study-destinations.*', 'appointments.book', 'student.*', 'success-stories.*'],
         self::TRAVEL => ['travel-services.*', 'tours.*', 'hotels.*', 'flights.*', 'visa.*', 'work-visa.*', 'service-enquiries.create', 'offers.*'],
     ];
 

@@ -35,13 +35,17 @@ class ContentPageController extends Controller
         ]);
     }
 
-    public function show(Request $request, string $slug): View
+    public function show(Request $request): View
     {
+        // Read by name: /study-in-{destination}/guides/{slug} has two route parameters.
+        $slug = (string) $request->route('slug');
         $routeName = (string) $request->route()?->getName();
-        $type = $routeName === 'consultancy.malaysia.guides.show' ? ContentType::Guide : $this->typeForRoute($routeName);
+        $isGuide = in_array($routeName, ['consultancy.malaysia.guides.show', 'study-destinations.guides.show'], true);
+        $type = $isGuide ? ContentType::Guide : $this->typeForRoute($routeName);
         $query = ContentEntry::query()->published($type)->where('slug', $slug)->with(['cover', 'gallery']);
         if ($type === ContentType::Guide) {
-            app(StudyCountries::class)->scopeGuides($query, $routeName === 'consultancy.malaysia.guides.show' ? 'MY' : 'SG');
+            $countries = app(StudyCountries::class);
+            $countries->scopeGuides($query, $routeName === 'consultancy.malaysia.guides.show' ? 'MY' : $countries->forRoute($request)['code']);
         }
         $entry = $query->firstOrFail();
 
