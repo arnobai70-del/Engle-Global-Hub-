@@ -9,13 +9,14 @@
     $travelWhatsapp = $facts->whatsappUrl('Hello Eagle Global Hub, I would like help with my travel plans.');
     // A study destination page names its own country (@section('study_country')) and has its own form at #apply.
     $studyCountry = trim($__env->yieldContent('study_country'));
+    $studyInCountry = trim($__env->yieldContent('study_in_country')) ?: $studyCountry.':';
     $exploreWhatsapp = $facts->whatsappUrl('Hello Eagle Global Hub, I am planning a trip to Bangladesh and would like help with ...');
 @endphp
 @switch($type)
     @case(\App\Services\Content\PageType::STUDY)
         <div class="sg-footer-cta" data-footer-cta="study">
             @if($studyCountry !== '')
-            <div><h2>{{ __('Ready to study in :country?', ['country' => $studyCountry]) }}</h2><p>{{ __('Talk to our consultants about courses, admission and the student visa.') }}</p></div>
+            <div><h2>{{ __('Ready to study in :country?', ['country' => $studyCountry, 'in_country' => $studyInCountry]) }}</h2><p>{{ __('Talk to our consultants about courses, admission and the student visa.') }}</p></div>
             @else
             <div><h2>{{ __('Ready to study in Malaysia?') }}</h2><p>{{ __('Talk to our consultants about courses, admission and the EMGS Student Pass.') }}</p></div>
             @endif

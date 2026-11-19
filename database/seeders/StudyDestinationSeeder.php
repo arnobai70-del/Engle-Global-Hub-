@@ -44,6 +44,14 @@ class StudyDestinationSeeder extends Seeder
      */
     private const NAMES_IN_SENTENCES = ['GB' => 'the United Kingdom', 'NL' => 'the Netherlands', 'PH' => 'the Philippines', 'US' => 'the United States', 'AE' => 'the UAE'];
 
+    /**
+     * Bengali country names with their place ending (locative), for Bengali sentences. Filled only
+     * while the field is empty; this form cannot be made by a suffix rule.
+     *
+     * @var array<string, string>
+     */
+    private const BENGALI_LOCATIVES = ['BG' => 'বুলগেরিয়ায়', 'GB' => 'যুক্তরাজ্যে', 'JP' => 'জাপানে', 'KR' => 'দক্ষিণ কোরিয়ায়', 'CY' => 'সাইপ্রাসে'];
+
     public function run(): void
     {
         $bengali = json_decode((string) @file_get_contents(lang_path('bn.json')), true) ?: [];
@@ -85,6 +93,14 @@ class StudyDestinationSeeder extends Seeder
                 $name = self::NAMES_IN_SENTENCES[$destination->country?->iso2] ?? null;
                 if ($name !== null) {
                     $destination->forceFill(['name_in_sentence' => $name])->save();
+                }
+            });
+
+        StudyDestination::query()->with('country:id,iso2')->where(fn ($query) => $query->whereNull('name_bn_locative')->orWhere('name_bn_locative', ''))->get()
+            ->each(function (StudyDestination $destination): void {
+                $locative = self::BENGALI_LOCATIVES[$destination->country?->iso2] ?? null;
+                if ($locative !== null) {
+                    $destination->forceFill(['name_bn_locative' => $locative])->save();
                 }
             });
 
