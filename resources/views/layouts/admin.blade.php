@@ -373,6 +373,17 @@
                     </a>
 
                     <a
+                        href="{{ route('admin.study-destinations.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.study-destinations.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M2 9l10-5 10 5-10 5z"/>
+                            <path d="M6 11v5c3 2 9 2 12 0v-5"/>
+                        </svg>
+                        <span>Study destinations</span>
+                    </a>
+
+                    <a
                         href="{{ route('admin.offers.index') }}"
                         class="admin-nav-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}"
                     >

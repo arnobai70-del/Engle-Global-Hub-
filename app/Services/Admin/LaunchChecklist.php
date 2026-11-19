@@ -7,6 +7,7 @@ use App\Models\ContentEntry;
 use App\Models\Destination;
 use App\Models\Institution;
 use App\Models\MediaAsset;
+use App\Models\StudyDestination;
 use App\Models\TeamMember;
 use App\Services\Content\PageContent;
 use App\Services\Content\PublicPageAvailability;
@@ -59,6 +60,7 @@ class LaunchChecklist
             ['key' => 'explore', 'title' => 'Explore Bangladesh', 'items' => $this->explore()],
             ['key' => 'trust', 'title' => 'Trust and contact', 'items' => $this->trust()],
             ['key' => 'tools', 'title' => 'Planning tools', 'items' => $this->planningTools()],
+            ['key' => 'study', 'title' => 'Study destinations', 'items' => $this->studyDestinations()],
             ['key' => 'about', 'title' => 'About page sections', 'items' => $this->about()],
             ['key' => 'system', 'title' => 'System', 'items' => $this->system()],
         ];
@@ -149,6 +151,37 @@ class LaunchChecklist
         return array_map(fn (array $tool): array => $this->availability->isAvailable($tool[0])
             ? $this->item($tool[1], self::GREEN, 'Open to the public.', $this->route($tool[3]))
             : $this->item($tool[1], self::AMBER, 'Hidden from the public until '.$tool[2].' Visitors are sent to Study in Malaysia meanwhile.', $this->route($tool[3])), $tools);
+    }
+
+    /**
+     * One row per study destination (/study-in-{slug}), with what still keeps it hidden, plus guides
+     * that have no study country yet.
+     *
+     * @return list<array{label: string, status: string, detail: string, url: string|null}>
+     */
+    private function studyDestinations(): array
+    {
+        $destinations = $this->safely(fn () => StudyDestination::query()->with(['country', 'items'])->get(), collect());
+        $items = $destinations->map(function (StudyDestination $destination): array {
+            $label = 'Study in '.$destination->country?->name;
+            $url = $this->route('admin.study-destinations.edit', ['studyDestination' => $destination->id]);
+            if ($destination->isPublic()) {
+                return $this->item($label, self::GREEN, 'Public at /study-in-'.$destination->slug.'.', $url);
+            }
+            $missing = $destination->publishBlockers();
+            if ($destination->status !== StudyDestination::STATUS_PUBLISHED) {
+                $missing[] = 'Publish it.';
+            }
+
+            return $this->item($label, self::AMBER, $label.': hidden until these are done: '.implode(' ', $missing).' Until then the menu opens the Student Visa enquiry form.', $url);
+        })->values()->all();
+
+        $unmatched = $this->count(fn (): int => ContentEntry::query()->where('type', ContentType::Guide->value)->whereNull('country_id')->whereNotNull('location')->where('location', '!=', '')->count());
+        if ($unmatched > 0) {
+            $items[] = $this->item('Guides without a study country', self::AMBER, $unmatched.' guide(s) have a Location that is not a country name; choose their study country so they appear under the right destination.', $this->route('admin.content.index', ['type' => ContentType::Guide->value]));
+        }
+
+        return $items;
     }
 
     /** @return list<array{label: string, status: string, detail: string, url: string|null}> */

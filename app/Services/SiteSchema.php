@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ContentEntry;
+use App\Models\StudyDestinationItem;
 use Illuminate\Support\Collection;
 
 /**
@@ -62,11 +63,24 @@ class SiteSchema
      */
     public function faqPage(Collection $faqs): ?array
     {
-        $questions = $faqs->map(fn (ContentEntry $faq): ?array => filled($faq->localized('title')) && filled($answer = $faq->localized('body') ?: $faq->localized('summary'))
+        $questions = $faqs->map(fn (ContentEntry|StudyDestinationItem $faq): ?array => filled($faq->localized('title')) && filled($answer = $faq->localized('body') ?: ($faq instanceof ContentEntry ? $faq->localized('summary') : null))
             ? ['@type' => 'Question', 'name' => (string) $faq->localized('title'), 'acceptedAnswer' => ['@type' => 'Answer', 'text' => trim(strip_tags((string) $answer))]]
             : null)->filter()->values()->all();
 
         return $questions === [] ? null : ['@type' => 'FAQPage', 'mainEntity' => $questions];
+    }
+
+    /**
+     * BreadcrumbList for the trail shown on the page.
+     *
+     * @param  list<array{0: string, 1: string}>  $crumbs  [name, url] from the home page to the current page
+     * @return array<string, mixed>
+     */
+    public function breadcrumbList(array $crumbs): array
+    {
+        return ['@type' => 'BreadcrumbList', 'itemListElement' => array_map(fn (array $crumb, int $index): array => [
+            '@type' => 'ListItem', 'position' => $index + 1, 'name' => $crumb[0], 'item' => $crumb[1],
+        ], $crumbs, array_keys($crumbs))];
     }
 
     /**

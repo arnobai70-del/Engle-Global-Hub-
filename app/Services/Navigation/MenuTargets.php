@@ -2,8 +2,11 @@
 
 namespace App\Services\Navigation;
 
+use App\Models\Country;
 use App\Models\Destination;
 use App\Models\ServiceEnquiry;
+use App\Models\StudyDestination;
+use App\Services\Consultancy\StudyCountries;
 use App\Services\Travel\ServiceCatalog;
 use Illuminate\Support\Facades\Route;
 use Throwable;
@@ -61,7 +64,28 @@ class MenuTargets
         'agent.index' => ['Agent Portal (agents)', null],
     ];
 
-    public function __construct(private ServiceCatalog $catalog) {}
+    /** Study destinations with their own page; every other study country opens the Student Visa enquiry form. */
+    private const STUDY_PAGES = ['MY' => 'consultancy.malaysia', 'SG' => 'consultancy.singapore'];
+
+    public function __construct(private ServiceCatalog $catalog, private StudyCountries $studyCountries) {}
+
+    /**
+     * Where a study country links to: Malaysia and Singapore open their own pages, a published and
+     * complete study destination opens /study-in-{slug}, and any other country the Student Visa
+     * page with that country chosen in the enquiry form. Resolved on every request, so a link
+     * changes by itself when a page is published or unpublished.
+     */
+    public function studyCountryUrl(Country $country): string
+    {
+        if (isset(self::STUDY_PAGES[$country->iso2])) {
+            return route(self::STUDY_PAGES[$country->iso2]);
+        }
+        $destination = $this->studyCountries->publicDestinations()->get($country->iso2);
+
+        return $destination !== null
+            ? route('study-destinations.show', $destination->slug)
+            : route('services.show', ['slug' => 'student-visa', 'country' => __($country->name)]).'#quote-form';
+    }
 
     /**
      * Grouped options for the admin form: [group => [target => label]].
@@ -95,7 +119,16 @@ class MenuTargets
             }
         }
 
-        return ['Pages' => $pages, 'Explore Bangladesh categories' => $explore, 'Service pages' => $services, 'Enquiry forms' => $enquiries];
+        $study = [];
+        try {
+            foreach (StudyDestination::query()->with('country:id,name')->get() as $destination) {
+                $study['route:study-destinations.show|'.$destination->slug] = 'Study in '.$destination->country?->name.' (enquiry form until published)';
+            }
+        } catch (Throwable) {
+            $study = [];
+        }
+
+        return ['Pages' => $pages, 'Study destinations' => $study, 'Explore Bangladesh categories' => $explore, 'Service pages' => $services, 'Enquiry forms' => $enquiries];
     }
 
     public function isAllowed(?string $target): bool
@@ -135,6 +168,11 @@ class MenuTargets
         }
         if ($name === 'services.show' && ($parameter === null || $this->catalog->find($parameter) === null)) {
             return null;
+        }
+        if ($name === 'study-destinations.show') {
+            $destination = StudyDestination::query()->where('slug', (string) $parameter)->with('country')->first();
+
+            return $destination?->country === null ? null : $this->studyCountryUrl($destination->country);
         }
 
         try {

@@ -37,9 +37,9 @@ class SingaporeGuideIndexController extends Controller
         'general' => 'General',
     ];
 
-    public function __invoke(Request $request, StudyCountries $countries, string $country = 'SG'): View
+    public function __invoke(Request $request, StudyCountries $countries): View
     {
-        $study = $countries->get($country);
+        $study = $countries->forRoute($request);
         $guides = $countries->scopeGuides(ContentEntry::query()->published(ContentType::Guide), $study['code'])
             ->where(fn ($query) => $query->whereNull('review_status')->orWhere('review_status', ContentEntry::REVIEW_APPROVED))
             ->get()

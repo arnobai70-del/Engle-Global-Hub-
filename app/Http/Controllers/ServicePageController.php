@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\ContentType;
 use App\Models\ContentEntry;
+use App\Models\StudyDestination;
+use App\Services\Consultancy\StudyCountries;
 use App\Services\Integrations\ProviderStatus;
 use App\Services\Travel\ServicePageData;
 use Illuminate\Http\RedirectResponse;
@@ -25,8 +27,20 @@ class ServicePageController extends Controller
         return redirect()->route('travel-services.index', status: 301);
     }
 
-    public function show(string $slug): View
+    public function show(Request $request, StudyCountries $studyCountries, string $slug): View|RedirectResponse
     {
+        // Old Student Visa links for a study country that now has its own public page move there for good.
+        $country = $request->query('country');
+        if ($slug === 'student-visa' && is_string($country) && trim($country) !== '') {
+            $needle = mb_strtolower(trim($country));
+            $destination = $studyCountries->publicDestinations()->first(fn (StudyDestination $destination): bool => in_array($needle, array_map('mb_strtolower', array_filter([
+                (string) $destination->country->name, (string) $destination->country->iso2, (string) $destination->name_bn, __((string) $destination->country->name, [], 'bn'),
+            ])), true));
+            if ($destination !== null) {
+                return redirect()->route('study-destinations.show', $destination->slug, 301);
+            }
+        }
+
         $page = $this->pages->for($slug) ?? abort(404);
         $cmsEntry = $page['cms'] !== null
             ? ContentEntry::query()->published(ContentType::BusinessService)->where('slug', $page['cms'])->first()

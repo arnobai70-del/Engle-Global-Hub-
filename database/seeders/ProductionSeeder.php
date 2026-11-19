@@ -39,6 +39,7 @@ class ProductionSeeder extends Seeder
             ContentDraftSeeder::class,
             StarterContentSeeder::class,
             MalaysiaGuidesSeeder::class,
+            StudyDestinationSeeder::class,
             MenuSeeder::class,
             ExploreBangladeshMenuSeeder::class,
             MenuTidySeeder::class,

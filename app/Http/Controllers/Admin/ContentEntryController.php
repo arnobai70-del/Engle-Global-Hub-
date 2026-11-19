@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\ContentType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Consultancy\StoreStudentEnquiryRequest;
 use App\Models\ContentEntry;
+use App\Models\Country;
 use App\Models\Destination;
 use App\Models\MediaAsset;
 use App\Services\Content\ContentPublisher;
@@ -127,6 +129,8 @@ class ContentEntryController extends Controller
             'body_bn' => ['nullable', 'string', 'max:30000'],
             'category' => ['nullable', 'string', 'max:100'],
             'location' => ['nullable', 'string', 'max:200'],
+            // A guide's study country (Malaysia, Singapore or a study destination); empty = Singapore.
+            'country_id' => ['nullable', 'integer', Rule::exists(Country::class, 'id')],
             'intake' => ['nullable', 'string', 'max:40'],
             'contact_phone' => ['nullable', 'string', 'regex:/^\+?[0-9\s().-]{7,32}$/'],
             'contact_email' => ['nullable', 'email', 'max:254'],
@@ -181,6 +185,7 @@ class ContentEntryController extends Controller
             'destinations' => Destination::query()->orderBy('name')->get(['id', 'name']),
             'otherEntries' => ContentEntry::query()->whereNotIn('type', [ContentType::Faq->value, ContentType::PageSection->value])->orderBy('title')->get(['id', 'title', 'type']),
             'pageSections' => ContentType::pageSections(),
+            'studyCountries' => rescue(fn () => StoreStudentEnquiryRequest::destinations(), collect(), false),
         ];
     }
 }

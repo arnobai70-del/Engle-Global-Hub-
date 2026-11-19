@@ -6,7 +6,9 @@ use App\Models\EligibilityRule;
 use App\Models\User;
 use App\Services\Admin\LaunchChecklist;
 use App\Services\SettingService;
+use Database\Seeders\CountrySeeder;
 use Database\Seeders\RolePermissionSeeder;
+use Database\Seeders\StudyDestinationSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -110,6 +112,18 @@ class LaunchChecklistTest extends TestCase
 
         app(SettingService::class)->set('contact', 'phone', '+880 1953-626481');
         $this->assertSame(LaunchChecklist::GREEN, $this->items('trust')['Office phone']['status']);
+    }
+
+    public function test_each_study_destination_says_what_keeps_it_hidden(): void
+    {
+        $this->seed([CountrySeeder::class, StudyDestinationSeeder::class]);
+
+        $japan = $this->items('study')['Study in Japan'];
+        $this->assertSame(LaunchChecklist::AMBER, $japan['status']);
+        $this->assertStringContainsString('Study in Japan: hidden until', $japan['detail']);
+        $this->assertStringContainsString('Write the introduction', $japan['detail']);
+        $this->assertStringContainsString('official source you have checked', $japan['detail']);
+        $this->assertStringContainsString('/admin/study-destinations/', (string) $japan['url']);
     }
 
     public function test_the_admin_dashboard_links_to_the_checklist_with_counts(): void

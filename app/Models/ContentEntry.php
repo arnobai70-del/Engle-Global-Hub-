@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContentType;
+use App\Services\Consultancy\StudyCountries;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,7 +40,7 @@ class ContentEntry extends Model
     /** @var list<string> */
     protected $fillable = [
         'type', 'slug', 'title', 'summary', 'body', 'title_bn', 'summary_bn', 'body_bn',
-        'category', 'location', 'intake', 'contact_phone', 'contact_email', 'website_url', 'latitude', 'longitude',
+        'category', 'location', 'country_id', 'intake', 'contact_phone', 'contact_email', 'website_url', 'latitude', 'longitude',
         'cover_media_id', 'source_urls', 'consent_reference', 'consent_recorded_at',
         'related_destination_ids', 'related_entry_ids',
         'seo_title', 'seo_description', 'canonical_url', 'sort_order',
@@ -62,6 +63,12 @@ class ContentEntry extends Model
             'longitude' => 'decimal:7',
             'sort_order' => 'integer',
         ];
+    }
+
+    /** Study country of a guide (Malaysia, Singapore or a study destination). */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
     }
 
     public function cover(): BelongsTo
@@ -112,9 +119,12 @@ class ContentEntry extends Model
 
     public function publicUrl(): ?string
     {
-        $route = $this->type === ContentType::Guide && $this->location === 'Malaysia'
-            ? 'consultancy.malaysia.guides.show'
-            : $this->type->publicRoute();
+        if ($this->type === ContentType::Guide) {
+            $study = app(StudyCountries::class)->forGuide($this);
+
+            return $this->status === self::STATUS_PUBLISHED ? route($study['guide'], [...$study['params'], 'slug' => $this->slug]) : null;
+        }
+        $route = $this->type->publicRoute();
 
         return $route !== null && $this->status === self::STATUS_PUBLISHED ? route($route, $this->slug) : null;
     }

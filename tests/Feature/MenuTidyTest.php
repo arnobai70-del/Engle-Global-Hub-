@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\MenuItem;
+use App\Models\StudyDestination;
+use App\Models\StudyDestinationItem;
 use App\Services\Navigation\MenuService;
 use Database\Seeders\ProductionSeeder;
 use Database\Seeders\RolePermissionSeeder;
@@ -81,6 +83,36 @@ final class MenuTidyTest extends TestCase
         $this->assertSame(1, MenuItem::query()->where('label_en', 'All destinations')->count(), 'created once, not on every run');
         $categories = array_filter(array_column($explore['children'], 'url'), fn (string $url): bool => str_contains($url, '?category='));
         $this->assertNotEmpty($categories, 'category links are not treated as repeats of the Explore page');
+    }
+
+    public function test_the_seeded_home_link_is_hidden_and_study_destinations_are_seeded_once_as_drafts(): void
+    {
+        $this->seedLiveShapedMenus();
+        $before = MenuItem::query()->count();
+
+        $this->seed(ProductionSeeder::class);
+        $this->seed(ProductionSeeder::class);
+
+        $home = MenuItem::query()->where('location', 'header')->where('key', 'home')->firstOrFail();
+        $this->assertFalse((bool) $home->is_active, 'hidden, not deleted');
+        $this->assertNotContains('Home', array_column(app(MenuService::class)->tree('header'), 'label'));
+        $this->assertStringContainsString('>Home</a>', (string) $this->get(route('consultancy.malaysia'))->getContent(), 'breadcrumbs keep Home');
+        $this->assertSame($before + 6, MenuItem::query()->count());
+
+        $this->assertSame(5, StudyDestination::query()->count());
+        $this->assertSame(0, StudyDestination::query()->published()->count(), 'the seeder publishes nothing');
+        $this->assertSame(7, StudyDestinationItem::query()->count());
+        $this->assertSame(StudyDestination::query()->count(), StudyDestination::query()->distinct()->count('country_id'));
+    }
+
+    public function test_an_edited_home_link_is_left_alone(): void
+    {
+        $this->seedLiveShapedMenus();
+        MenuItem::query()->where('location', 'header')->where('key', 'home')->update(['label_en' => 'Start']);
+
+        $this->seed(ProductionSeeder::class);
+
+        $this->assertTrue((bool) MenuItem::query()->where('location', 'header')->where('key', 'home')->value('is_active'));
     }
 
     public function test_footer_items_an_admin_edited_stay_where_they_are(): void

@@ -25,8 +25,7 @@ class SingaporeStudyController extends Controller
     {
         try {
             $courses = Course::query()->where('is_active', true)
-                ->whereIn('institution_id', Institution::query()->publiclyListed()
-                    ->where(fn ($query) => $query->whereNull('country_id')->orWhereHas('country', fn ($country) => $country->where('iso2', '!=', 'MY')))->select('id'))
+                ->whereIn('institution_id', app(StudyCountries::class)->scopeInstitutions(Institution::query()->publiclyListed(), 'SG')->select('id'))
                 ->with(['institution:id,name', 'intakes' => fn ($query) => $query->where('is_open', true)->where('starts_on', '>=', now()->toDateString())->orderBy('starts_on')])
                 ->orderBy('name')->get();
             $guides = app(StudyCountries::class)->scopeGuides(ContentEntry::query()->published(ContentType::Guide), 'SG')->limit(4)->get();
