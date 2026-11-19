@@ -18,15 +18,8 @@
     $studyUrl = route('consultancy.malaysia');
     $whatsappUrl = $facts->whatsappUrl(__('Hello Eagle Global Hub, I would like a free consultation.'));
 
-    // News ticker: only real news written by an admin, never the default welcome line.
-    $newsEnabledValue = data_get($settings, 'news_enabled', true);
-    $newsEnabled = is_bool($newsEnabledValue) ? $newsEnabledValue : ! in_array(strtolower(trim((string) $newsEnabledValue)), ['', '0', 'false', 'off', 'no'], true);
-    $newsText = trim((string) data_get($settings, 'news_text', ''));
-    $showNews = $newsEnabled && $newsText !== '' && ! str_starts_with($newsText, 'Welcome to Eagle Global Hub');
-    $newsLabel = trim((string) data_get($settings, 'news_label', '')) ?: __('Latest News');
-    $newsUrl = trim((string) data_get($settings, 'news_url', ''));
-    $newsLinkLabel = trim((string) data_get($settings, 'news_link_label', '')) ?: __('Learn More');
-    $newsTickerDuration = max(8, min(120, (int) data_get($settings, 'news_ticker_duration', 20)));
+    // News ticker (Admin › News ticker): null unless it is switched on and a headline is showing now.
+    $newsTicker = app(\App\Services\NewsTicker::class)->forHomepage();
     $pageAssetVersion = static fn (string $file): string => ($modifiedAt = @filemtime(public_path($file))) ? '?v='.$modifiedAt : '';
 
     // Hero numbers ("Our numbers", Admin › Business facts): shown only when the owner has entered them.
@@ -89,29 +82,11 @@
 @endpush
 
 @section('content')
-@if($showNews)
-@push('head')<link rel="stylesheet" href="{{ asset('css/egh-news-ticker.css').$pageAssetVersion('css/egh-news-ticker.css') }}">@endpush
-<section class="egho-news-ticker" style="--egho-news-duration: {{ $newsTickerDuration }}s" aria-label="{{ $newsLabel }}">
-    <div class="egho-shell egho-news-ticker-inner">
-        <strong class="egho-news-ticker-label">{{ $newsLabel }}</strong>
-        <div class="egho-news-ticker-viewport">
-            <div class="egho-news-ticker-track">
-                @foreach ([false, true] as $duplicateGroup)
-                    <div class="egho-news-ticker-group" @if($duplicateGroup) aria-hidden="true" @endif>
-                        @for ($tickerRepeat = 0; $tickerRepeat < 4; $tickerRepeat++)
-                            <span @if($duplicateGroup || $tickerRepeat > 0) aria-hidden="true" @endif>{{ $newsText }}</span>
-                        @endfor
-                    </div>
-                @endforeach
-            </div>
-        </div>
-        @if($newsUrl !== '')<a class="egho-news-ticker-link" href="{{ $newsUrl }}">{{ $newsLinkLabel }}</a>@endif
-    </div>
-</section>
-@endif
-
 <main class="v2-home">
-    <section class="v2-hero v2-hero-photo" style="--v2-hero-image: url('{{ asset('images/malaysia/petronas-towers-night.webp') }}'); --v2-hero-image-mobile: url('{{ asset('images/malaysia/petronas-towers-night-mobile.webp') }}')" aria-labelledby="hero-title">
+    <section class="v2-hero v2-hero-photo @if($newsTicker) has-news-ticker @endif" style="--v2-hero-image: url('{{ asset('images/malaysia/petronas-towers-night.webp') }}'); --v2-hero-image-mobile: url('{{ asset('images/malaysia/petronas-towers-night-mobile.webp') }}')" aria-labelledby="hero-title">
+        @if($newsTicker)
+            @include('partials.news-ticker', ['ticker' => $newsTicker])
+        @endif
         <div class="v2-shell v2-hero-grid">
             <div class="v2-hero-copy">
                 <span class="v2-pill v2-pill-light">{{ __('Malaysia student consultancy from Bangladesh') }}</span>

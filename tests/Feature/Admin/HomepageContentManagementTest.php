@@ -41,8 +41,9 @@ class HomepageContentManagementTest extends TestCase
         ];
         $this->actingAs($user)->patch(route('admin.homepage.settings.update'), $payload)->assertRedirect();
         $this->assertDatabaseHas('settings', ['group' => 'seo', 'key' => 'home_meta_title', 'value' => $payload['seo_title']]);
-        $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'news_enabled', 'value' => '1']);
-        $this->assertDatabaseHas('settings', ['group' => 'homepage', 'key' => 'news_text', 'value' => $payload['news_text']]);
+        // The news ticker moved to Admin › News ticker: this form never changes its settings.
+        $this->assertDatabaseMissing('settings', ['group' => 'homepage', 'key' => 'news_text', 'value' => $payload['news_text']]);
+        $this->assertDatabaseMissing('settings', ['group' => 'homepage', 'key' => 'news_enabled']);
     }
 
     public function test_admin_can_control_homepage_section_visibility(): void

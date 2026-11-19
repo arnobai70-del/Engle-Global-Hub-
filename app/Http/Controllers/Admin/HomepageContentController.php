@@ -68,12 +68,6 @@ class HomepageContentController extends Controller
             'tiktok_url' => $data['tiktok_url'] ?? null,
         ]);
         $this->saveGroup('homepage', [
-            'news_enabled' => $request->boolean('news_enabled') ? '1' : '0',
-            'news_label' => $data['news_label'] ?? null,
-            'news_text' => $data['news_text'] ?? null,
-            'news_url' => $data['news_url'] ?? null,
-            'news_link_label' => $data['news_link_label'] ?? null,
-            'news_ticker_duration' => (string) ($data['news_ticker_duration'] ?? 20),
             'destination_autoplay_interval' => (string) ($data['destination_autoplay_interval'] ?? 2200),
             'hero_eyebrow' => $data['hero_eyebrow'] ?? null,
             'hero_title' => $data['hero_title'],
