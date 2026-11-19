@@ -36,6 +36,14 @@ class StudyDestinationSeeder extends Seeder
         'CY' => ['cyprus', [['Civil Registry and Migration Department, Cyprus', 'https://www.moi.gov.cy/moi/crmd/crmd.nsf/']]],
     ];
 
+    /**
+     * English names that need an article inside a sentence. Filled only while the field is empty,
+     * for any study destination of these countries.
+     *
+     * @var array<string, string>
+     */
+    private const NAMES_IN_SENTENCES = ['GB' => 'the United Kingdom', 'NL' => 'the Netherlands', 'PH' => 'the Philippines', 'US' => 'the United States', 'AE' => 'the UAE'];
+
     public function run(): void
     {
         $bengali = json_decode((string) @file_get_contents(lang_path('bn.json')), true) ?: [];
@@ -71,6 +79,14 @@ class StudyDestinationSeeder extends Seeder
                 $destination->forceFill(['sources_seeded_at' => now()])->save();
             }
         }
+
+        StudyDestination::query()->with('country:id,iso2')->where(fn ($query) => $query->whereNull('name_in_sentence')->orWhere('name_in_sentence', ''))->get()
+            ->each(function (StudyDestination $destination): void {
+                $name = self::NAMES_IN_SENTENCES[$destination->country?->iso2] ?? null;
+                if ($name !== null) {
+                    $destination->forceFill(['name_in_sentence' => $name])->save();
+                }
+            });
 
         $this->linkGuidesToCountries($bengali);
     }

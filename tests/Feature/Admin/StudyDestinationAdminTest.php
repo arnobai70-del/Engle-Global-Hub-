@@ -105,6 +105,35 @@ class StudyDestinationAdminTest extends TestCase
         $this->actingAs($editor)->patch(route('admin.study-destinations.update', $this->japan), $payload)->assertSessionHasErrors('items.requirement.0.source_url');
     }
 
+    public function test_any_number_of_rows_up_to_the_limit_is_saved_in_one_request(): void
+    {
+        $editor = $this->user('content-editor');
+        $payload = $this->completePayload();
+        $payload['items']['document'] = array_map(fn (int $i): array => ['title' => 'Document '.$i], range(1, 8));
+
+        $this->actingAs($editor)->get(route('admin.study-destinations.edit', $this->japan))->assertOk()
+            ->assertSee('data-add-row', false)->assertSee('data-row-index="0"', false);
+        $this->actingAs($editor)->patch(route('admin.study-destinations.update', $this->japan), $payload)->assertSessionHasNoErrors();
+        $this->assertSame(8, $this->japan->items()->where('section', 'document')->count());
+        $this->assertSame(['Document 1', 'Document 8'], [$this->japan->section('document')->first()->title, $this->japan->refresh()->section('document')->last()->title]);
+
+        $payload['items']['document'] = array_map(fn (int $i): array => ['title' => 'Document '.$i], range(1, 31));
+        $this->actingAs($editor)->patch(route('admin.study-destinations.update', $this->japan), $payload)->assertSessionHasErrors('items.document');
+        $this->assertSame(8, $this->japan->items()->where('section', 'document')->count());
+    }
+
+    public function test_a_saved_message_is_shown_once(): void
+    {
+        $editor = $this->user('content-editor');
+        $html = (string) $this->actingAs($editor)->followingRedirects()
+            ->patch(route('admin.study-destinations.update', $this->japan), $this->completePayload())->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'role="status">Saved.'), 'the study destination form');
+
+        $html = (string) $this->actingAs($editor)->followingRedirects()
+            ->patch(route('admin.study-destinations.status', $this->japan), ['status' => 'draft'])->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'Unpublished: the menu links'), 'the same page after a status change');
+    }
+
     public function test_reordering_uses_the_existing_student_visa_order(): void
     {
         $editor = $this->user('content-editor');

@@ -49,6 +49,7 @@
     <p>Write plain text. Leave a blank line between paragraphs. Bengali fields are optional; English is shown when a Bengali field is empty.</p>
     <div class="stu-form-grid">
         <label>URL slug (/study-in-…)<input name="slug" value="{{ $value('slug') }}" maxlength="80" required></label>
+        <label>Name in sentences (English, optional)<input name="name_in_sentence" value="{{ $value('name_in_sentence') }}" maxlength="120" placeholder="{{ $destination->country?->name }}"><span class="stu-muted">Only for countries that need "the", for example "the United Kingdom" or "the Netherlands". Used in "Why study in …" and other sentences.</span></label>
         <label>Country name in Bengali<input name="name_bn" lang="bn" value="{{ $value('name_bn') }}" maxlength="120"></label>
         <label>Hero title<input name="hero_title" value="{{ $value('hero_title') }}" maxlength="160" placeholder="Study in {{ $destination->country?->name }} from Bangladesh"></label>
         <label>Hero title (Bengali)<input name="hero_title_bn" lang="bn" value="{{ $value('hero_title_bn') }}" maxlength="160"></label>
@@ -91,9 +92,9 @@
     @php($rows = array_merge(old('items.'.$section) !== null ? array_values(old('items.'.$section)) : $rows, [[], []]))
     <fieldset class="egh-card" data-admin-section="{{ $section }}">
         <legend><h2>{{ $heading }}</h2></legend>
-        <p class="stu-muted">{{ $sectionHelp[$section] }} Empty rows are ignored; two empty rows are added after each save.</p>
+        <p class="stu-muted">{{ $sectionHelp[$section] }} Empty rows are ignored. Use "Add row" for more (up to {{ \App\Http\Requests\Admin\UpdateStudyDestinationRequest::MAX_ROWS }} per section); without JavaScript, two empty rows are added after each save.</p>
         @foreach($rows as $index => $row)
-            <div class="stu-form-grid" data-item-row>
+            <div class="stu-form-grid" data-item-row data-row-index="{{ $index }}">
                 @if(filled($row['id'] ?? null))<input type="hidden" name="items[{{ $section }}][{{ $index }}][id]" value="{{ $row['id'] }}">@endif
                 @foreach($fields as $field)
                     @if($field === 'body')
@@ -118,6 +119,7 @@
             </div>
             @if(! $loop->last)<hr>@endif
         @endforeach
+        <button type="button" class="egh-button secondary" data-add-row data-max-rows="{{ \App\Http\Requests\Admin\UpdateStudyDestinationRequest::MAX_ROWS }}" hidden>Add row</button>
     </fieldset>
 @endforeach
 

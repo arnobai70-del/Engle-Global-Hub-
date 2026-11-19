@@ -1885,8 +1885,6 @@
     "Universities and colleges": "বিশ্ববিদ্যালয় ও কলেজ",
     "See institutions": "প্রতিষ্ঠানগুলো দেখুন",
     ":count institution listed|:count institutions listed": ":countটি প্রতিষ্ঠান তালিকাভুক্ত|:countটি প্রতিষ্ঠান তালিকাভুক্ত",
-    ":visa – what happens": ":visa – কী কী ধাপ",
-    "Student visa – what happens": "স্টুডেন্ট ভিসা – কী কী ধাপ",
     "Decided by": "সিদ্ধান্ত নেয়",
     "Source: :source": "সূত্র: :source",
     "Visa decisions are made by the authorities of :country, and admission by each institution. We help you prepare a complete application; we cannot guarantee approval.": "ভিসার সিদ্ধান্ত নেয় :country-এর কর্তৃপক্ষ, আর ভর্তির সিদ্ধান্ত নেয় প্রতিটি প্রতিষ্ঠান। আমরা সম্পূর্ণ আবেদন তৈরিতে সাহায্য করি; অনুমোদনের নিশ্চয়তা দিতে পারি না।",
@@ -1912,5 +1910,6 @@
     "Latest updates": "সর্বশেষ খবর",
     "Pause headlines": "শিরোনাম থামান",
     "Play headlines": "শিরোনাম চালু করুন",
-    "Latest": "সর্বশেষ"
+    "Latest": "সর্বশেষ",
+    "Student visa: step by step": "স্টুডেন্ট ভিসা: ধাপে ধাপে"
 }

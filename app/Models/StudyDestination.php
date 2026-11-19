@@ -44,7 +44,7 @@ class StudyDestination extends Model
     ];
 
     protected $fillable = [
-        'country_id', 'slug', 'name_bn', 'status', 'published_at',
+        'country_id', 'slug', 'name_bn', 'name_in_sentence', 'status', 'published_at',
         'hero_title', 'hero_title_bn', 'intro', 'intro_bn', 'hero_media_id', 'hero_alt', 'hero_alt_bn',
         'visa_name', 'visa_name_bn', 'visa_authority', 'visa_authority_bn',
         'processing_time', 'processing_time_bn', 'processing_source_url', 'processing_source_label',
@@ -102,6 +102,19 @@ class StudyDestination extends Model
         $name = (string) $this->country?->name;
 
         return app()->getLocale() === 'bn' && filled($this->name_bn) ? (string) $this->name_bn : __($name);
+    }
+
+    /**
+     * The country inside a sentence: "Why study in the United Kingdom". English uses the optional
+     * name_in_sentence (for countries that need "the"), otherwise the plain name; Bengali uses name().
+     */
+    public function sentenceName(): string
+    {
+        if (app()->getLocale() !== 'bn' && filled($this->name_in_sentence)) {
+            return trim((string) $this->name_in_sentence);
+        }
+
+        return $this->name();
     }
 
     /** A field in the visitor's language, falling back to English. */

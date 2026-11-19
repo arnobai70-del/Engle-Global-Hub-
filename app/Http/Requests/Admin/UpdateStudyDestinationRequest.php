@@ -9,6 +9,9 @@ use Illuminate\Validation\Rule;
 
 class UpdateStudyDestinationRequest extends FormRequest
 {
+    /** Rows per section that one save accepts (documents, steps, FAQ …). */
+    public const MAX_ROWS = 30;
+
     public function authorize(): bool
     {
         return $this->user()?->can('content.manage') ?? false;
@@ -34,6 +37,7 @@ class UpdateStudyDestinationRequest extends FormRequest
         return [
             'slug' => ['required', 'string', 'max:80', 'regex:/^'.StudyDestination::SLUG_PATTERN.'$/', Rule::unique('study_destinations', 'slug')->ignore($destination)],
             'name_bn' => $text(120),
+            'name_in_sentence' => $text(120),
             'hero_title' => $text(160), 'hero_title_bn' => $text(160),
             'intro' => $text(3000), 'intro_bn' => $text(3000),
             'hero_media_id' => ['nullable', 'integer', Rule::exists(MediaAsset::class, 'id')],
@@ -47,7 +51,7 @@ class UpdateStudyDestinationRequest extends FormRequest
             'bdt_rate_checked_on' => ['nullable', 'date', 'before_or_equal:today'],
             'intakes' => $text(200), 'intakes_bn' => $text(200),
             'items' => ['nullable', 'array'],
-            'items.*' => ['array', 'max:40'],
+            'items.*' => ['array', 'max:'.self::MAX_ROWS],
             'items.*.*.id' => ['nullable', 'integer'],
             'items.*.*.title' => $text(300), 'items.*.*.title_bn' => $text(300),
             'items.*.*.body' => $text(3000), 'items.*.*.body_bn' => $text(3000),
@@ -67,6 +71,7 @@ class UpdateStudyDestinationRequest extends FormRequest
             'items.*.*.source_url.url' => 'Every source must be an https link.',
             'processing_source_url.url' => 'The processing time source must be an https link.',
             'bdt_rate.required_with' => 'Enter the rate together with the date you checked it.',
+            'items.*.max' => 'Up to '.self::MAX_ROWS.' rows per section.',
         ];
     }
 }

@@ -85,7 +85,7 @@ class StudyCountries
     public function forDestination(StudyDestination $destination): array
     {
         return [
-            'code' => (string) $destination->country->iso2, 'name' => $destination->name(), 'location' => (string) $destination->country->name,
+            'code' => (string) $destination->country->iso2, 'name' => $destination->name(), 'sentence_name' => $destination->sentenceName(), 'location' => (string) $destination->country->name,
             'page' => 'study-destinations.show', 'guides' => 'study-destinations.guides.index',
             'guide' => 'study-destinations.guides.show', 'institutions' => 'study-destinations.institutions.index',
             'authority' => (string) $destination->localized('visa_authority'), 'pass' => (string) ($destination->localized('visa_name') ?? __('Student visa')),

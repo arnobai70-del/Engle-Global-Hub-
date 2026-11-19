@@ -151,6 +151,49 @@ class StudyDestinationTest extends TestCase
         $this->assertStringContainsString('@media (max-width: 1100px) { [data-section="visa"] .v2-pass { grid-template-columns: repeat(2, minmax(0, 1fr)); } }', $css);
     }
 
+    public function test_sentences_use_the_name_in_sentences_and_fall_back_to_the_plain_name(): void
+    {
+        $uk = StudyDestination::factory()->forCountry(Country::query()->where('iso2', 'GB')->firstOrFail())->publishedAndComplete()
+            ->create(['name_in_sentence' => 'the United Kingdom', 'name_bn' => 'যুক্তরাজ্য']);
+        $this->item($uk, 'why', ['title' => 'Well-known universities', 'body' => 'Many programmes.']);
+
+        $html = (string) $this->get(route('study-destinations.show', 'united-kingdom'))->assertOk()->getContent();
+        foreach (['Why study in the United Kingdom', 'Plan your studies in the United Kingdom', '<title>Study in the United Kingdom from Bangladesh', 'Ready to study in the United Kingdom?', 'authorities of the United Kingdom'] as $text) {
+            $this->assertStringContainsString($text, $html, $text);
+        }
+        $this->assertStringNotContainsString('in United Kingdom', $html);
+
+        $this->get(route('study-destinations.show', ['united-kingdom', 'lang' => 'bn']))->assertOk()->assertSee('যুক্তরাজ্য')->assertDontSee('the United Kingdom');
+
+        $japan = $this->japanPage();
+        $this->item($japan, 'why', ['title' => 'Safe cities']);
+        $this->get(route('study-destinations.show', ['japan', 'lang' => 'en']))->assertSee('Why study in Japan')->assertSee('Plan your studies in Japan');
+    }
+
+    public function test_the_seeder_fills_the_name_in_sentences_only_while_it_is_empty(): void
+    {
+        $this->seed(StudyDestinationSeeder::class);
+        $uk = StudyDestination::query()->where('slug', 'united-kingdom')->firstOrFail();
+        $this->assertSame('the United Kingdom', $uk->name_in_sentence);
+        $this->assertNull(StudyDestination::query()->where('slug', 'japan')->value('name_in_sentence'));
+
+        $uk->update(['name_in_sentence' => 'the UK']);
+        $this->seed(StudyDestinationSeeder::class);
+        $this->assertSame('the UK', $uk->refresh()->name_in_sentence, 'an admin edit is kept');
+    }
+
+    public function test_the_visa_section_has_a_short_fixed_heading_with_the_visa_name_underneath(): void
+    {
+        $this->japanPage()->update(['visa_name' => 'Student visa or entry permit, then temporary residence permit']);
+
+        $html = (string) $this->get(route('study-destinations.show', 'japan'))->assertOk()->getContent();
+        $this->assertStringContainsString('<h2 id="visa-title" class="v2-h2">Student visa: step by step</h2>', $html);
+        $this->assertStringContainsString('data-visa-name>Student visa or entry permit, then temporary residence permit</p>', $html);
+        $this->assertStringNotContainsString('what happens', $html);
+
+        $this->get(route('study-destinations.show', ['japan', 'lang' => 'bn']))->assertSee('স্টুডেন্ট ভিসা: ধাপে ধাপে');
+    }
+
     public function test_the_sitemap_lists_only_public_destinations(): void
     {
         $this->japanPage();
