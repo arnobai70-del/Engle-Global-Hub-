@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\HomepageBlock;
 use App\Services\NewsTicker;
+use App\Services\SettingService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +20,7 @@ class HomepageSettingsSeeder extends Seeder
             ['homepage', 'news_enabled', '0'],
             ['homepage', 'news_label', 'Latest'],
             ['homepage', 'news_speed', 'normal'],
+            ['homepage', 'news_label_bn', 'সর্বশেষ খবর'],
             ['homepage', 'hero_eyebrow', 'EXPLORE · BOOK · TRAVEL · GROW'],
             ['homepage', 'hero_title', 'Travel the World with'],
             ['homepage', 'hero_accent', 'Eagle Global Hub'],
@@ -63,6 +65,12 @@ class HomepageSettingsSeeder extends Seeder
                 'created_at' => $now, 'updated_at' => $now,
             ]);
         }
+
+        // The Bengali ticker label: also filled when the row exists but is still empty.
+        DB::table('settings')->where('group', 'homepage')->where('key', 'news_label_bn')
+            ->where(fn ($query) => $query->whereNull('value')->orWhere('value', ''))
+            ->update(['value' => 'সর্বশেষ খবর', 'updated_at' => now()]);
+        app(SettingService::class)->forget('homepage', 'news_label_bn');
 
         $this->carryOverOneLineNews();
     }

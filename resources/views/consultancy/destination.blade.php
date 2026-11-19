@@ -5,7 +5,8 @@
     every section comes from Admin › Study destinations and is left out while it has no content.
 --}}
 @php
-    $country = $destination->name();
+    // In sentences: "the United Kingdom" (Admin › Study destinations › Name in sentences), otherwise the plain name.
+    $country = $destination->sentenceName();
     $title = $destination->localized('hero_title') ?? __('Study in :country from Bangladesh', ['country' => $country]);
     $intro = (string) $destination->localized('intro');
     $section = fn (string $key) => $destination->section($key)->filter(fn ($item) => filled($item->title))->values();
@@ -133,7 +134,9 @@
     @if($steps->isNotEmpty())
     <section class="v2-section" id="visa" aria-labelledby="visa-title" data-section="visa">
         <div class="v2-shell">
-            <h2 id="visa-title" class="v2-h2">{{ $visaName ? __(':visa – what happens', ['visa' => $visaName]) : __('Student visa – what happens') }}</h2>
+            {{-- A fixed, short heading; the admin's visa name (which can be long) goes underneath. --}}
+            <h2 id="visa-title" class="v2-h2">{{ __('Student visa: step by step') }}</h2>
+            @if($visaName)<p class="v2-pill v2-pill-enquiry v2-visa-name" data-visa-name>{{ $visaName }}</p>@endif
             @if($authority || $processing)
                 <dl class="v2-reqs">
                     @if($authority)<div><dt>{{ __('Decided by') }}</dt><dd>{{ $authority }}</dd></div>@endif

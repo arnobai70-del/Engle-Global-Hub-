@@ -152,6 +152,30 @@ class NewsTickerAdminTest extends TestCase
         $this->get(route('home'))->assertDontSee('data-news-ticker', false);
     }
 
+    public function test_the_settings_saved_message_is_shown_once(): void
+    {
+        $html = (string) $this->actingAs($this->user('admin'))->followingRedirects()
+            ->patch(route('admin.news-ticker.settings'), ['news_speed' => 'normal'])->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'Ticker settings saved.'));
+    }
+
+    public function test_the_bengali_label_is_seeded_only_while_it_is_empty(): void
+    {
+        $this->seed(HomepageSettingsSeeder::class);
+        $this->seed(HomepageSettingsSeeder::class);
+        $this->assertSame('সর্বশেষ খবর', DB::table('settings')->where('group', 'homepage')->where('key', 'news_label_bn')->value('value'));
+        $this->assertSame(1, DB::table('settings')->where('group', 'homepage')->where('key', 'news_label_bn')->count());
+
+        app(SettingService::class)->set('homepage', 'news_label_bn', 'নতুন খবর', 'string', true);
+        $this->seed(HomepageSettingsSeeder::class);
+        $this->assertSame('নতুন খবর', app(SettingService::class)->get('homepage', 'news_label_bn'), 'an admin label is kept');
+
+        app(SettingService::class)->set('homepage', 'news_label_bn', '', 'string', true);
+        $this->seed(HomepageSettingsSeeder::class);
+        $this->assertSame('সর্বশেষ খবর', app(SettingService::class)->get('homepage', 'news_label_bn'), 'an empty label is filled');
+    }
+
     public function test_a_real_one_line_headline_is_carried_over_once_and_an_admin_choice_is_kept(): void
     {
         $settings = app(SettingService::class);

@@ -813,10 +813,12 @@
             id="admin-main"
             class="@yield('page-class', 'admin-page')"
         >
+            {{-- One flash message per page: skipped when the page already shows the same message itself. --}}
             @if (
                 session('status')
                 && ! request()->routeIs('admin.settings.*')
                 && ! request()->routeIs('admin.features.*')
+                && ! str_contains($__env->yieldContent('content'), e(session('status')))
             )
                 <div class="egh-alert" role="status">
                     {{ session('status') }}
@@ -888,6 +890,70 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.key === 'Escape') {
             setOpen(false);
         }
+    });
+});
+
+// Repeatable form rows ([data-admin-section] with [data-item-row] rows and an [data-add-row] button):
+// "Add row" copies the last row empty and gives it the next index (items[section][N][field]).
+// Without JavaScript the button stays hidden and the form keeps its spare empty rows.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-admin-section]').forEach(function (section) {
+        const button = section.querySelector('[data-add-row]');
+        if (!button) {
+            return;
+        }
+        const maxRows = parseInt(button.getAttribute('data-max-rows') || '30', 10);
+        const rows = function () {
+            return section.querySelectorAll('[data-item-row]');
+        };
+        const update = function () {
+            button.disabled = rows().length >= maxRows;
+        };
+
+        button.hidden = false;
+        update();
+        button.addEventListener('click', function () {
+            const all = rows();
+            const last = all[all.length - 1];
+            if (!last || all.length >= maxRows) {
+                return;
+            }
+            let next = 0;
+            all.forEach(function (row) {
+                next = Math.max(next, parseInt(row.getAttribute('data-row-index') || '0', 10) + 1);
+            });
+
+            const copy = last.cloneNode(true);
+            copy.setAttribute('data-row-index', String(next));
+            // A new row: no saved id, no "remove" box, no warnings about the copied row.
+            copy.querySelectorAll('input[type="hidden"][name$="[id]"], [data-missing-source]').forEach(function (node) {
+                node.remove();
+            });
+            copy.querySelectorAll('input[name$="[remove]"]').forEach(function (input) {
+                const label = input.closest('label');
+                (label || input).remove();
+            });
+            copy.querySelectorAll('input, textarea, select').forEach(function (field) {
+                const name = field.getAttribute('name');
+                if (name) {
+                    field.setAttribute('name', name.replace(/^(items\[[^\]]+\])\[\d+\]/, '$1[' + next + ']'));
+                }
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    field.checked = false;
+                } else if (field.tagName === 'SELECT') {
+                    field.selectedIndex = 0;
+                } else {
+                    field.value = '';
+                }
+            });
+
+            last.after(document.createElement('hr'), copy);
+            update();
+            const first = copy.querySelector('input:not([type="hidden"]), textarea');
+            if (first) {
+                first.focus();
+            }
+        });
     });
 });
 </script>

@@ -5,10 +5,10 @@
     // Malaysia and Singapore keep their own wording; other destinations use the country name.
     $text = ! in_array($study['code'] ?? 'SG', ['MY', 'SG'], true) ? [
         'title' => __(':country Study Guides', ['country' => $study['name']]),
-        'description' => __('Step-by-step guides for Bangladeshi students who want to study in :country: admission, the student visa, documents, costs and living, checked against official sources.', ['country' => $study['name']]),
-        'eyebrow' => __('STUDY IN :COUNTRY', ['country' => mb_strtoupper($study['name'])]),
-        'lead' => __('Step-by-step guides on admission, the student visa, documents, costs and living in :country, checked against official sources.', ['country' => $study['name']]),
-        'study' => __('Study in :country', ['country' => $study['name']]), 'short' => __(':country Guides', ['country' => $study['name']]),
+        'description' => __('Step-by-step guides for Bangladeshi students who want to study in :country: admission, the student visa, documents, costs and living, checked against official sources.', ['country' => ($study['sentence_name'] ?? $study['name'])]),
+        'eyebrow' => __('STUDY IN :COUNTRY', ['country' => mb_strtoupper(($study['sentence_name'] ?? $study['name']))]),
+        'lead' => __('Step-by-step guides on admission, the student visa, documents, costs and living in :country, checked against official sources.', ['country' => ($study['sentence_name'] ?? $study['name'])]),
+        'study' => __('Study in :country', ['country' => ($study['sentence_name'] ?? $study['name'])]), 'short' => __(':country Guides', ['country' => $study['name']]),
     ] : ($isMalaysia ? [
         'title' => __('Malaysia Study Guides'),
         'description' => __('Step-by-step Malaysia study guides for Bangladeshi students: the EMGS Student Pass, eVAL, documents, arrival and medical screening, based on official EMGS information.'),
