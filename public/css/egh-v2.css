@@ -334,6 +334,14 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .v2-pass span { color: var(--brand-red); font-weight: 700; font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; }
 .v2-pass strong { color: var(--brand-navy); font: 600 1.08rem var(--sg-heading); }
 .v2-pass p { margin: 0; color: var(--muted); font-size: .95rem; }
+/* Step cards never overflow: the card and its text may shrink to the column, long words and
+   source labels wrap, and the card grows in height instead. */
+.v2-pass > li { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.v2-pass > li > * { min-width: 0; overflow-wrap: break-word; }
+.v2-pass .v2-source { white-space: normal; overflow-wrap: anywhere; }
+/* Study destination visa steps: 4 columns only from 1101px (each card about 250px or wider), 2 below, 1 on phones. */
+@media (max-width: 1100px) { [data-section="visa"] .v2-pass { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { [data-section="visa"] .v2-pass { grid-template-columns: 1fr; } }
 .v2-guides { margin-top: 2rem; }
 .v2-guides h3 { font: 600 1.2rem var(--sg-heading); color: var(--brand-navy); }
 .v2-guides ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .5rem; }

@@ -142,6 +142,15 @@ class StudyDestinationTest extends TestCase
         $this->get(route('services.show', ['slug' => 'student-visa', 'country' => 'Malaysia']))->assertOk();
     }
 
+    public function test_visa_step_cards_wrap_long_text_instead_of_overflowing(): void
+    {
+        $css = (string) file_get_contents(public_path('css/egh-v2.css'));
+
+        $this->assertStringContainsString('.v2-pass > li { min-width: 0; grid-template-columns: minmax(0, 1fr); }', $css);
+        $this->assertStringContainsString('.v2-pass .v2-source { white-space: normal; overflow-wrap: anywhere; }', $css);
+        $this->assertStringContainsString('@media (max-width: 1100px) { [data-section="visa"] .v2-pass { grid-template-columns: repeat(2, minmax(0, 1fr)); } }', $css);
+    }
+
     public function test_the_sitemap_lists_only_public_destinations(): void
     {
         $this->japanPage();
