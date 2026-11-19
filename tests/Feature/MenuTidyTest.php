@@ -61,6 +61,54 @@ final class MenuTidyTest extends TestCase
         $this->assertSame(1, substr_count((string) strstr($header, '<details class="sg-dd sg-dd-mega"'), '>Free Consultation</a>'), 'one Free Consultation under Student Visa');
     }
 
+    public function test_footer_columns_and_the_explore_menu_are_tidied_on_live_shaped_menus(): void
+    {
+        $this->seedLiveShapedMenus();
+
+        $this->seed(ProductionSeeder::class);
+        $this->seed(ProductionSeeder::class);
+        $menu = app(MenuService::class);
+
+        $footer = $menu->tree('footer');
+        $this->assertContains('Explore Bangladesh', $this->children($footer, 'Our Services'));
+        $this->assertSame(['Export & Import', 'Civil & Construction Work', 'Become a partner (B2B)'], $this->children($footer, 'More from us'));
+        $this->assertFalse((bool) MenuItem::query()->where('key', 'footer-search')->value('is_active'), 'hidden, not deleted');
+        $this->assertStringContainsString('href="'.route('search').'"', (string) strstr((string) $this->get(route('home'))->getContent(), '<footer'), 'Search moves to the bottom bar');
+
+        $explore = collect($menu->tree('header'))->firstWhere('label', 'Explore Bangladesh');
+        $this->assertSame('All destinations', $explore['children'][0]['label']);
+        $this->assertSame(route('explore-bangladesh.index'), $explore['children'][0]['url']);
+        $this->assertSame(1, MenuItem::query()->where('label_en', 'All destinations')->count(), 'created once, not on every run');
+        $categories = array_filter(array_column($explore['children'], 'url'), fn (string $url): bool => str_contains($url, '?category='));
+        $this->assertNotEmpty($categories, 'category links are not treated as repeats of the Explore page');
+    }
+
+    public function test_footer_items_an_admin_edited_stay_where_they_are(): void
+    {
+        $this->seedLiveShapedMenus();
+        MenuItem::query()->where('key', 'footer-search')->update(['label_en' => 'Search the site']);
+        MenuItem::query()->where('key', 'footer-explore')->update(['label_en' => 'Visit Bangladesh']);
+        $explore = MenuItem::query()->where('key', 'footer-explore')->first();
+
+        $this->seed(ProductionSeeder::class);
+
+        $this->assertTrue((bool) MenuItem::query()->where('key', 'footer-search')->value('is_active'));
+        $this->assertSame($explore->parent_id, MenuItem::query()->where('key', 'footer-explore')->value('parent_id'));
+    }
+
+    public function test_a_child_repeating_its_parent_link_is_kept_only_as_the_first_item(): void
+    {
+        $item = static fn (array $attributes): MenuItem => MenuItem::query()->create(array_merge(['location' => 'header', 'visibility' => 'all', 'is_active' => true], $attributes));
+        $explore = $item(['label_en' => 'Explore', 'target' => 'route:explore-bangladesh.index', 'sort_order' => 1]);
+        $item(['parent_id' => $explore->id, 'label_en' => 'All destinations', 'target' => 'route:explore-bangladesh.index', 'sort_order' => 1]);
+        $item(['parent_id' => $explore->id, 'label_en' => 'Beaches', 'target' => 'route:explore-bangladesh.index|category=beach', 'sort_order' => 2]);
+        $item(['parent_id' => $explore->id, 'label_en' => 'Explore again', 'target' => 'route:explore-bangladesh.index', 'sort_order' => 3]);
+
+        $tree = app(MenuService::class)->tree('header');
+
+        $this->assertSame(['All destinations', 'Beaches'], array_column($tree[0]['children'], 'label'));
+    }
+
     public function test_items_an_admin_edited_are_left_alone(): void
     {
         $this->seedLiveShapedMenus();

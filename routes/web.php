@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\IntegrationController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguagePageController;
+use App\Http\Controllers\Admin\LaunchChecklistController;
 use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\MediaAssetController;
 use App\Http\Controllers\Admin\MenuItemController;
@@ -117,6 +118,8 @@ Route::redirect('/contact', '/support', 301)->name('contact');
 
 Route::view('/b2b', 'public.b2b')
     ->name('b2b.info');
+// Guests are sent to the public partner page; signed-in users see the application form.
+Route::get('/b2b/register', [PartnerRegistrationController::class, 'create'])->name('b2b.register');
 
 /*
  * Work visa pages.
@@ -1109,6 +1112,10 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
         Route::get('/reviews', [ReviewModerationController::class, 'index'])->middleware('can:content.view')->name('reviews.index');
     });
 
+Route::get('/admin/launch-checklist', LaunchChecklistController::class)
+    ->middleware(['auth', 'verified', 'role:admin|super-admin'])
+    ->name('admin.launch-checklist');
+
 Route::get('/admin/integrations', [IntegrationController::class, 'index'])
     ->middleware(['auth', 'verified', 'role:admin|super-admin', 'permission:integrations.view'])
     ->name('admin.integrations.index');
@@ -1221,7 +1228,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/forums/{category}/{thread}', [ForumController::class, 'storeReply'])->where(['category' => '[a-z0-9-]+', 'thread' => '[a-z0-9-]+'])->middleware('throttle:6,1')->name('forums.replies.store');
     Route::post('/forum-posts/{post}/report', [ForumController::class, 'report'])->whereNumber('post')->middleware('throttle:10,1')->name('forums.posts.report');
 
-    Route::get('/b2b/register', [PartnerRegistrationController::class, 'create'])->name('b2b.register');
     Route::post('/b2b/register', [PartnerRegistrationController::class, 'store'])->middleware('throttle:3,10')->name('b2b.register.store');
     Route::get('/agent/service-referrals/create', [AgentPortalController::class, 'createServiceReferral'])->name('agent.service-referrals.create');
     Route::post('/agent/service-referrals', [AgentPortalController::class, 'storeServiceReferral'])->middleware('throttle:20,1')->name('agent.service-referrals.store');

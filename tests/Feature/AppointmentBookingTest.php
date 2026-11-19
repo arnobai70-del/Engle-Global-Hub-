@@ -28,10 +28,10 @@ final class AppointmentBookingTest extends TestCase
 
     public function test_booking_is_hidden_until_admin_sets_all_opening_hours(): void
     {
-        $this->get(route('appointments.book'))->assertRedirect(route('home'));
+        $this->get(route('appointments.book'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         $this->hours(['days' => '2', 'start' => '10:00', 'end' => '12:00', 'slot_minutes' => '30', 'days_ahead' => '7', 'modes' => '']);
-        $this->get(route('appointments.book'))->assertRedirect(route('home'));
+        $this->get(route('appointments.book'))->assertRedirect(route('consultancy.malaysia').'#apply');
 
         $this->hours(['modes' => 'office,phone']);
         $this->get(route('appointments.book'))->assertOk()->assertSee('Book a free consultation');

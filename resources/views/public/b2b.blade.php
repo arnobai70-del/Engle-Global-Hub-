@@ -26,14 +26,35 @@
                     <h1>{{ __('Become a B2B partner') }}</h1>
                     <p>{{ __('Agents and travel businesses can refer students and travel clients to Eagle Global Hub. Our team handles the consultation, documents and follow-up, and you can track every referral online.') }}</p>
                     <div class="v2-actions">
-                        <a class="v2-btn v2-btn-red" href="{{ $applyUrl }}">{{ __('Apply as partner') }}</a>
+                        <a class="v2-btn v2-btn-red" href="{{ $applyUrl }}">{{ __('Register as partner') }}</a>
                         @if($whatsappUrl)<a class="v2-btn v2-btn-wa" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer">{{ __('Ask on WhatsApp') }}</a>@endif
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <section class="v2-section">
+    <section class="v2-section v2-section-white" aria-labelledby="b2b-who-title">
+        <div class="v2-shell v2-split v2-split-top">
+            <div>
+                <h2 id="b2b-who-title" class="v2-h2">{{ __('Who it is for') }}</h2>
+                <ul class="v2-ticks">
+                    <li>{{ __('Education agents and student counsellors') }}</li>
+                    <li>{{ __('Travel agencies and ticketing offices') }}</li>
+                    <li>{{ __('Schools, coaching centres and community organisations that advise students') }}</li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="v2-h2">{{ __('What you get') }}</h2>
+                <ul class="v2-ticks">
+                    <li>{{ __('Our consultants handle the consultation, documents and follow-up for your clients') }}</li>
+                    <li>{{ __('Study in Malaysia and Singapore, visas, air tickets, hotels and tours in one place') }}</li>
+                    <li>{{ __('Each referral tracked in your Agent Portal') }}</li>
+                    <li>{{ __('One contact person at our Gulshan office') }}</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="v2-section" id="apply">
         <div class="v2-shell">
             <h2 class="v2-h2">{{ __('How it works') }}</h2>
             <ol class="v2-steps-list">
@@ -42,6 +63,7 @@
                 @endforeach
             </ol>
             <p class="v2-notice">{{ __('Approval is not automatic. Partner terms, including any commission, are agreed with you in writing.') }}</p>
+            <div class="v2-actions"><a class="v2-btn v2-btn-red" href="{{ $applyUrl }}">{{ __('Register as partner') }}</a>@if($whatsappUrl)<a class="v2-btn v2-btn-wa" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer">{{ __('Ask on WhatsApp') }}</a>@endif</div>
         </div>
     </section>
 </main>

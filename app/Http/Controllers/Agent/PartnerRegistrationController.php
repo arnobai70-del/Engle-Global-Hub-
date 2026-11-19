@@ -16,8 +16,15 @@ use Illuminate\View\View;
  */
 class PartnerRegistrationController extends Controller
 {
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
+        if ($request->user() === null) {
+            return redirect()->to(route('b2b.info').'#apply');
+        }
+        if ($request->user()->hasVerifiedEmail() === false) {
+            return redirect()->route('verification.notice');
+        }
+
         return view('agent.register', [
             'existing' => Agent::query()->where('email', strtolower($request->user()->email))->first(),
         ]);

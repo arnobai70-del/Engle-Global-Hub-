@@ -14,6 +14,14 @@ return [
     |
     */
 
+    /*
+     * Travelpayouts Drive (affiliate) tag. Loaded only in production; set
+     * TRAVELPAYOUTS_DRIVE_SCRIPT to an empty value to switch it off.
+     */
+    'travelpayouts' => [
+        'drive_script' => env('TRAVELPAYOUTS_DRIVE_SCRIPT', 'https://tpembars.com/NTk1NTQ0.js?t=595544'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

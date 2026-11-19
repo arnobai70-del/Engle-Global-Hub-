@@ -79,7 +79,7 @@
     $address = data_get($siteContact, 'address');
     $directionsUrl = filled($address) ? 'https://www.google.com/maps/search/?api=1&query='.urlencode((string) $address) : null;
     $schema = app(\App\Services\SiteSchema::class);
-    $schemaContact = ['name' => $siteName ?? 'Eagle Global Hub LTD', 'logo' => $siteLogo ?? null, 'email' => data_get($siteContact, 'email'), 'phone' => data_get($siteContact, 'phone'), 'address' => $address];
+    $schemaContact = ['name' => $siteName ?? 'Eagle Global Hub LTD', 'logo' => $siteLogo ?? null, 'email' => data_get($siteContact, 'email'), 'phone' => data_get($siteContact, 'phone_e164'), 'address' => $address];
 @endphp
 
 @push('head')
@@ -143,10 +143,11 @@
     <section class="v2-section" aria-labelledby="services-title">
         <div class="v2-shell">
             <div class="v2-head">
-                <div><span class="v2-eyebrow">{{ __('What we do') }}</span><h2 id="services-title" class="v2-h2">{{ __('Everything you need to study abroad') }}</h2></div>
+                <div><span class="v2-eyebrow">{{ __('What we do') }}</span><h2 id="services-title" class="v2-h2">{{ __('Study abroad, visas and travel from one team') }}</h2></div>
                 <a class="v2-link" href="{{ route('travel-services.index') }}">{{ __('All services') }} →</a>
             </div>
-            <div class="v2-services">
+            @php($serviceColumns = count($services) % 4 === 0 || count($services) === 7 ? 4 : 3)
+            <div class="v2-services v2-services-{{ $serviceColumns }}" data-cards="{{ count($services) }}">
                 @foreach($services as $service)
                     @php([$serviceBody, $serviceCta] = [$service['body'], $service['cta']])
                     <a class="v2-service-card" href="{{ $service['url'] }}" @if($service['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
@@ -252,7 +253,7 @@
                     @if(filled($address))<p>{{ $address }}</p>@endif
                     @if($facts->get('office_hours'))<p>{{ $facts->get('office_hours') }}</p>@endif
                     <div class="v2-actions">
-                        @if($facts->phone())<a class="v2-btn v2-btn-white" href="{{ $facts->telUrl() }}">{{ __('Call :phone', ['phone' => $facts->phone()]) }}</a>@endif
+                        @if($facts->phone())<a class="v2-btn v2-btn-white" href="{{ $facts->telUrl() }}">{{ __('Call :phone', ['phone' => $facts->phoneDisplay()]) }}</a>@endif
                         @if($whatsappUrl)<a class="v2-btn v2-btn-navy" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer">{{ __('WhatsApp us') }}</a>@endif
                         @if(! $facts->mapEmbedUrl() && $directionsUrl)<a class="v2-btn v2-btn-ghost-light" href="{{ $directionsUrl }}" target="_blank" rel="noopener noreferrer">{{ __('Get directions') }}</a>@endif
                     </div>

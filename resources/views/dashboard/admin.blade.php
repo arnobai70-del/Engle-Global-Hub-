@@ -54,6 +54,20 @@
         </div>
 
         <div class="eghad-grid eghad-grid-featured">
+            @if($currentAdmin?->hasAnyRole(['admin', 'super-admin']))
+                @php($launchCounts = app(\App\Services\Admin\LaunchChecklist::class)->counts())
+                <a class="eghad-card eghad-card-featured" href="{{ route('admin.launch-checklist') }}" data-launch-badge>
+                    <span class="eghad-card-icon {{ $launchCounts['red'] > 0 ? 'eghad-icon-amber' : '' }}" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7H4V5h11"/></svg>
+                    </span>
+                    <span class="eghad-card-copy">
+                        <strong>Website launch checklist</strong>
+                        <small>{{ $launchCounts['red'] }} to fix · {{ $launchCounts['amber'] }} to fill in · {{ $launchCounts['green'] }} ready</small>
+                    </span>
+                    <span class="eghad-card-arrow" aria-hidden="true">→</span>
+                </a>
+            @endif
+
             @can('settings.view')
                 <a class="eghad-card eghad-card-featured" href="{{ route('admin.homepage.index') }}">
                     <span class="eghad-card-icon eghad-icon-amber" aria-hidden="true">

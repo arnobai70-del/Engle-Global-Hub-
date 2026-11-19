@@ -46,7 +46,7 @@
                 @endif
                 @if($facts->phone())
                     <a class="v2-contact-card" href="{{ $facts->telUrl() }}">
-                        <span>{{ __('Call') }}</span><strong>{{ $facts->phone() }}</strong>@if($hours)<small>{{ $hours }}</small>@endif
+                        <span>{{ __('Call') }}</span><strong>{{ $facts->phoneDisplay() }}</strong>@if($hours)<small>{{ $hours }}</small>@endif
                     </a>
                 @endif
                 @if(filled($email))

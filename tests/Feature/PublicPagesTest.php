@@ -28,11 +28,11 @@ class PublicPagesTest extends TestCase
         $this->get(route('support'))
             ->assertOk()
             ->assertSee('info@eagleglobalhub.com')
-            ->assertSee('01953626481')
+            ->assertSee('+880 1953-626481')
+            ->assertSee('href="tel:+8801953626481"', false)
             ->assertSee('Mysha Chowdhury Tower')
             ->assertSee('Pragati Sharani')
             ->assertDontSee('support@')
-            ->assertDontSee('+880')
             ->assertDontSee('registration number');
     }
 

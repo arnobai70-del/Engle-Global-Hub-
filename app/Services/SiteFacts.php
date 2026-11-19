@@ -14,6 +14,9 @@ class SiteFacts
 {
     public const GROUP = 'facts';
 
+    /** Official office number, used only while Admin › Homepage › Contact phone is empty. */
+    public const OFFICIAL_PHONE = '+8801953626481';
+
     /**
      * Editable fields: key => [label, help, max length, section].
      *
@@ -104,6 +107,10 @@ class SiteFacts
         return $this->get('fee_'.str_replace('-', '_', $slug));
     }
 
+    /**
+     * The office phone number (Admin › Homepage › Contact) as stored, or the official number
+     * when the setting is empty. Every phone shown on the site comes from here.
+     */
     public function phone(): ?string
     {
         try {
@@ -112,7 +119,19 @@ class SiteFacts
             $phone = '';
         }
 
-        return $phone === '' ? null : $phone;
+        return $phone === '' ? self::OFFICIAL_PHONE : $phone;
+    }
+
+    /** For display, for example +880 1953-626481. */
+    public function phoneDisplay(): ?string
+    {
+        return $this->phone() === null ? null : PhoneNumber::display($this->phone());
+    }
+
+    /** E.164, for example +8801953626481 (schema, tel: links). */
+    public function phoneE164(): ?string
+    {
+        return PhoneNumber::e164($this->phone());
     }
 
     public function whatsappNumber(): ?string
@@ -126,12 +145,9 @@ class SiteFacts
      */
     public function whatsappUrl(?string $message = null): ?string
     {
-        $digits = preg_replace('/\D+/', '', (string) $this->whatsappNumber());
-        if ($digits === null || strlen($digits) < 8) {
+        $digits = PhoneNumber::whatsappDigits($this->whatsappNumber());
+        if ($digits === null) {
             return null;
-        }
-        if (str_starts_with($digits, '01') && strlen($digits) === 11) {
-            $digits = '88'.$digits;
         }
 
         return 'https://wa.me/'.$digits.($message !== null && $message !== '' ? '?text='.rawurlencode($message) : '');
@@ -139,9 +155,9 @@ class SiteFacts
 
     public function telUrl(): ?string
     {
-        $phone = $this->phone();
+        $phone = $this->phoneE164();
 
-        return $phone === null ? null : 'tel:'.preg_replace('/[^0-9+]/', '', $phone);
+        return $phone === null ? null : 'tel:'.$phone;
     }
 
     /**

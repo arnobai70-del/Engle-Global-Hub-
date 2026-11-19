@@ -406,7 +406,6 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 /* ---------- Mobile tap targets: at least 44px (DESIGN_BRIEF.md, WCAG 2.5.5) ---------- */
 @media (max-width: 760px) {
     .sg-topbar-contact a, .sg-locale a, .egho-switch { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; }
-    .sg-dd-menu a, .sg-dd-menu button, .sg-nav .sg-nav-link, .sg-dd > summary { display: flex; align-items: center; min-height: 48px; }
     .sg-nav-actions .sg-btn, .sg-btn-sm, .sg-btn { min-height: 48px; }
     .sg-footer li a, .sg-footer-bottom a, .sg-footer-social a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
     .sg-footer-main ul { gap: 0; }
@@ -417,6 +416,23 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
     .egho-check-row, .egho-check-row label { min-height: 44px; display: inline-flex; align-items: center; gap: .5rem; }
     .egho-check-row input[type="checkbox"] { width: 22px; height: 22px; }
     .egho-auth-submit, .egho-auth-form button[type="submit"] { min-height: 48px; }
+}
+/* The mobile menu panel is used up to 1179px (tablets too), so its links keep touch-sized rows. */
+@media (max-width: 1179px) {
+    .sg-dd-menu a, .sg-dd-menu button, .sg-nav .sg-nav-link, .sg-dd > summary { display: flex; align-items: center; min-height: 48px; }
+}
+/* Touch screens wider than a phone (tablets, touch laptops): the same 44px targets in the top bar, footer and breadcrumbs. */
+@media (pointer: coarse) {
+    .sg-topbar-contact a, .sg-locale a, .egho-switch { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; }
+    .sg-footer li a, .sg-footer-bottom a, .sg-footer-social a, .sg-footer-contact a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+    .sg-footer-main ul { gap: 0; }
+    .v2-crumbs a, .sg-crumbs a, .sg-breadcrumb a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; }
+    .sg-dd > summary, .sg-dd-menu a, .sg-dd-menu button { min-height: 44px; }
+    .sg-dd-menu a { display: flex; align-items: center; }
+    .sg-btn, .sg-btn-sm { min-height: 44px; }
+    .sg-nav .sg-nav-link { display: inline-flex; align-items: center; min-height: 44px; }
+    .sg-icon-btn { min-width: 44px; min-height: 44px; }
+    .sg-body .sg-topbar .sg-locale a.egho-switch { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 .4rem; }
 }
 @media (max-width: 760px) {
     .sg-body .sg-topbar .sg-locale a.egho-switch { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 .4rem; }
@@ -511,12 +527,8 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
     .v2-timeline > li .v2-step-no { transition: transform .25s ease, background-color .25s ease; }
     .v2-timeline > li:hover .v2-step-no { transform: scale(1.12); }
 
-    /* Scroll reveal: egh-sg-nav.js tags blocks below the fold and fades each one up as it scrolls into view. */
-    .egh-reveal { opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s cubic-bezier(.2, .7, .2, 1); transition-delay: var(--egh-reveal-delay, 0s); }
-    .egh-reveal.is-visible { opacity: 1; transform: none; }
 }
 
-@media print { .egh-reveal { opacity: 1 !important; transform: none !important; } }
 
 /* Footer: the original logo is dark on transparent, so it sits on a white tile to stay legible on navy. */
 .sg-brand-light .sg-brand-logo { width: 58px; padding: 6px; background: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); box-sizing: border-box; }
@@ -686,7 +698,7 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 .v2-explore-plan .v2-ticks { margin: 1rem 0 1.5rem; }
 .v2-explore-checks { border: 0; margin: 0 0 1rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr)); gap: .25rem .75rem; }
 .v2-explore-checks legend { font-weight: 600; color: var(--brand-navy); margin-bottom: .5rem; padding: 0; }
-.v2-explore-checks .v2-check { margin: 0; min-height: 40px; align-items: center; }
+.v2-explore-checks .v2-check { margin: 0; min-height: 44px; align-items: center; }
 .v2-explore-detail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 2rem; align-items: start; }
 .v2-explore-text { font-size: 1.02rem; line-height: 1.7; color: var(--ink); overflow-wrap: anywhere; }
 .v2-explore-text h2 { margin: 1.75rem 0 .5rem; }
@@ -739,3 +751,29 @@ ul.sg-footer-social { list-style: none; margin: 1rem 0 0; padding: 0; flex-wrap:
 .v2-partners img { height: 48px; width: auto; max-width: 160px; object-fit: contain; filter: grayscale(1); opacity: .85; transition: filter .2s ease, opacity .2s ease; }
 .v2-partners li:hover img { filter: none; opacity: 1; }
 .v2-field-hint { display: block; margin-top: .3rem; color: var(--muted); font-size: .82rem; font-weight: 400; }
+
+/* ---------- Scroll reveal (progressive enhancement) ----------
+   Content is always visible. egh-sg-nav.js adds .egh-reveal-in to a block that started below
+   the screen, just before it enters the screen; the only hidden moment is this short animation.
+   Without JavaScript, or with reduced motion, nothing is animated. */
+@keyframes egh-reveal-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+    .egh-reveal-in { animation: egh-reveal-in .45s cubic-bezier(.2, .7, .2, 1) var(--egh-reveal-delay, 0s) both; }
+}
+@media print { .egh-reveal-in { animation: none; } }
+
+/* Homepage services: balanced rows for any number of admin tiles; a short last row is centred, never a gap at the end. */
+@media (min-width: 1101px) {
+    .v2-services { display: flex; flex-wrap: wrap; justify-content: center; }
+    .v2-services > * { flex: 0 0 calc((100% - 2 * 1.25rem) / 3); }
+}
+@media (min-width: 1280px) {
+    .v2-services.v2-services-4 > * { flex-basis: calc((100% - 3 * 1.25rem) / 4); }
+}
+@media (max-width: 1100px) {
+    .v2-services { display: flex; flex-wrap: wrap; justify-content: center; }
+    .v2-services > * { flex: 0 0 calc((100% - 1.25rem) / 2); }
+}
+@media (max-width: 600px) {
+    .v2-services > * { flex-basis: calc((100% - .75rem) / 2); }
+}

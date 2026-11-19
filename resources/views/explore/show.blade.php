@@ -49,13 +49,6 @@
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
 @endpush
 
-@section('footer_cta')
-    <div class="sg-footer-cta">
-        <div><h2>{{ __('Planning a trip to Bangladesh?') }}</h2><p>{{ __('Talk to our travel team about hotels, transport, guides and tours.') }}</p></div>
-        <div class="sg-footer-cta-actions"><a href="#plan-trip" class="sg-btn sg-btn-red">{{ __('Plan my trip') }}</a>@if($tripWhatsapp)<a href="{{ $tripWhatsapp }}" class="sg-btn sg-btn-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>@endif</div>
-    </div>
-@endsection
-
 @section('content')
 <main>
     <section class="v2-explore-hero {{ $cover ? 'has-photo' : '' }}" @if($cover) style="--explore-hero: url('{{ $cover }}')" @endif aria-labelledby="destination-title">

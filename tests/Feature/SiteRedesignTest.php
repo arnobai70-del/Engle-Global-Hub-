@@ -98,7 +98,7 @@ class SiteRedesignTest extends TestCase
 
         $this->assertStringContainsString('@media (prefers-reduced-motion: no-preference) {', $v2Css);
         $this->assertStringContainsString("matchMedia('(prefers-reduced-motion: reduce)').matches) return;", $script, 'scroll reveal is skipped for reduced motion');
-        $this->assertStringContainsString('@media print { .egh-reveal { opacity: 1 !important;', $v2Css, 'printed pages never hide unrevealed blocks');
+        $this->assertStringContainsString('@media print { .egh-reveal-in { animation: none; } }', $v2Css, 'printed pages never show a half-faded block');
     }
 
     public function test_footer_logo_sits_on_a_white_tile_so_it_is_visible_on_navy(): void

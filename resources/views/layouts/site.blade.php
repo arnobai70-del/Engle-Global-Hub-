@@ -19,13 +19,13 @@
         $routeName=(string) request()->route()?->getName();
         $leanPage=request()->routeIs('home','consultancy.malaysia','consultancy.singapore','consultancy.malaysia.guides.index','consultancy.guides.index','about','why-us','support','services.show','explore-bangladesh.index','explore-bangladesh.show','consultancy.malaysia.eligibility','consultancy.malaysia.courses','consultancy.malaysia.cost-calculator','appointments.book');
         $flightsUrl=auth()->check()?(auth()->user()->can('flights.search')?route('flights.index'):route('dashboard')):route('login');
-        $phoneHref=data_get($siteContact,'phone')?'tel:'.preg_replace('/[^+0-9]/','',data_get($siteContact,'phone')):null;
+        $phoneHref=app(\App\Services\SiteFacts::class)->telUrl();
     @endphp
     <title>{{ $fullTitle }}</title><meta name="description" content="{{ $pageDescription }}"><meta name="robots" content="{{ $robots }}"><link rel="canonical" href="{{ $canonical }}">@if($hreflangBase)<link rel="alternate" hreflang="en" href="{{ $hreflangBase }}"><link rel="alternate" hreflang="bn" href="{{ $hreflangBase }}?lang=bn"><link rel="alternate" hreflang="x-default" href="{{ $hreflangBase }}">@endif
     <meta property="og:type" content="website"><meta property="og:site_name" content="{{ $siteName }}"><meta property="og:title" content="{{ $ogTitle ?: $fullTitle }}"><meta property="og:description" content="{{ $ogDescription ?: $pageDescription }}"><meta property="og:url" content="{{ $canonical }}">@if($ogImage)<meta property="og:image" content="{{ $ogImage }}">@endif
     <meta name="twitter:card" content="{{ $twitterCard }}"><meta name="twitter:title" content="{{ $ogTitle ?: $fullTitle }}"><meta name="twitter:description" content="{{ $ogDescription ?: $pageDescription }}">@if($ogImage)<meta name="twitter:image" content="{{ $ogImage }}">@endif
     <link rel="icon" type="image/png" href="{{ $siteLogo }}">
-    {!! app(\App\Services\SiteSchema::class)->script([app(\App\Services\SiteSchema::class)->organization(['name' => $siteName, 'logo' => $siteLogo, 'email' => data_get($siteContact, 'email'), 'phone' => data_get($siteContact, 'phone'), 'social' => $siteSocial])]) !!}
+    {!! app(\App\Services\SiteSchema::class)->script([app(\App\Services\SiteSchema::class)->organization(['name' => $siteName, 'logo' => $siteLogo, 'email' => data_get($siteContact, 'email'), 'phone' => data_get($siteContact, 'phone_e164'), 'social' => $siteSocial])]) !!}
     {{-- Lean marketing pages skip app.css/app.js and the older stylesheets; egh-site-base.css carries the few rules they use. --}}
     @if($leanPage)
     <link rel="stylesheet" href="{{ $themeCss('css/egh-site-base.css') }}">
@@ -39,16 +39,22 @@
     <link rel="stylesheet" href="{{ $themeCss('css/egh-sg.css') }}">
     <link rel="stylesheet" href="{{ $themeCss('css/egh-v2.css') }}">
     @include('partials.analytics.meta-pixel-head')
-    {{-- Travelpayouts Drive: provider-supplied project tag, included once on public site pages. --}}
-    <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
-    (function () {
-        var script = document.createElement("script");
-        script.async = 1;
-        script.setAttribute("data-cmp-ab", "2");
-        script.src = 'https://tpembars.com/NTk1NTQ0.js?t=595544';
-        document.head.appendChild(script);
-    })();
+    {{-- Travelpayouts Drive: provider-supplied tag, production only (config services.travelpayouts.drive_script).
+         Added after the page has loaded and isolated, so a failure in it can never break the site's own scripts. --}}
+    @if(app()->environment('production') && filled($travelpayoutsScript = config('services.travelpayouts.drive_script')) && str_starts_with((string) $travelpayoutsScript, 'https://'))
+    <script data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
+    window.addEventListener('load', function () {
+        try {
+            var script = document.createElement('script');
+            script.async = true;
+            script.setAttribute('data-cmp-ab', '2');
+            script.src = @json($travelpayoutsScript, JSON_UNESCAPED_SLASHES);
+            script.onerror = function () {};
+            document.head.appendChild(script);
+        } catch (error) {}
+    });
     </script>
+    @endif
 </head>
 <body class="site-body sg-body @yield('body_class')" data-route="{{ $routeName }}" data-sending-label="{{ __('Sending…') }}">
 @include('partials.analytics.meta-pixel-noscript')
@@ -160,17 +166,9 @@
 <div id="main-content">@yield('content')</div>
 <footer class="sg-footer v2-footer">
     <div class="sg-shell">
-        @unless(request()->routeIs('home', 'consultancy.malaysia', 'consultancy.singapore'))
-        {{-- Pages can replace this band with @section('footer_cta') (Explore Bangladesh uses a travel CTA). --}}
-        @hasSection('footer_cta')
-        @yield('footer_cta')
-        @else
-        <div class="sg-footer-cta">
-            <div><h2>{{ __('Ready to study in Malaysia?') }}</h2><p>{{ __('Talk to our consultants about courses, admission and the EMGS Student Pass.') }}</p></div>
-            <div class="sg-footer-cta-actions"><a href="{{ $consultationUrl }}" class="sg-btn sg-btn-red">{{ __('Free Consultation') }}</a>@if($whatsappUrl)<a href="{{ $whatsappUrl }}" class="sg-btn sg-btn-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>@endif</div>
-        </div>
-        @endif
-        @endunless
+        {{-- One footer band per page type (App\Services\Content\PageType); a view may set @section('page_type'). --}}
+        @php($pageType = in_array($t = trim($__env->yieldContent('page_type')), \App\Services\Content\PageType::ALL, true) ? $t : app(\App\Services\Content\PageType::class)->for(request()))
+        @include('partials.footer-cta', ['type' => $pageType])
         <div class="sg-footer-main">
             <div class="sg-footer-about">
                 <a href="{{ route('home') }}" class="sg-brand sg-brand-light"><img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" loading="lazy" decoding="async"><span class="sg-brand-copy"><strong>{{ $siteName }}</strong></span></a>
@@ -215,7 +213,7 @@
             @endif
         </div>
         @php($credentials = $facts->credentials())
-        <div class="sg-footer-bottom"><small>&copy; {{ now()->year }} {{ $siteName }}@if($credentials['trade_licence']) · {{ __('Trade licence :number', ['number' => $credentials['trade_licence']]) }}@endif @if($credentials['registration']) · {{ __('Registration :number', ['number' => $credentials['registration']]) }}@endif @if($credentials['maps_url']) · <a href="{{ $credentials['maps_url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Find us on Google Maps') }}</a>@endif @if($credentials['reviews_url']) · <a href="{{ $credentials['reviews_url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Google reviews') }}</a>@endif</small><small><a href="{{ route('privacy') }}">{{ __('Privacy Policy') }}</a> · <a href="{{ route('terms') }}">{{ __('Terms & Conditions') }}</a></small></div>
+        <div class="sg-footer-bottom"><small>&copy; {{ now()->year }} {{ $siteName }}@if($credentials['trade_licence']) · {{ __('Trade licence :number', ['number' => $credentials['trade_licence']]) }}@endif @if($credentials['registration']) · {{ __('Registration :number', ['number' => $credentials['registration']]) }}@endif @if($credentials['maps_url']) · <a href="{{ $credentials['maps_url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Find us on Google Maps') }}</a>@endif @if($credentials['reviews_url']) · <a href="{{ $credentials['reviews_url'] }}" target="_blank" rel="noopener noreferrer">{{ __('Google reviews') }}</a>@endif</small><small>@if(\Illuminate\Support\Facades\Route::has('search'))<a href="{{ route('search') }}">{{ __('Search') }}</a> · @endif<a href="{{ route('privacy') }}">{{ __('Privacy Policy') }}</a> · <a href="{{ route('terms') }}">{{ __('Terms & Conditions') }}</a></small></div>
     </div>
 </footer>
 <script src="{{ $themeCss('js/egh-sg-nav.js') }}" defer></script>

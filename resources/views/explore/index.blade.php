@@ -4,7 +4,7 @@
     $storage = \Illuminate\Support\Facades\Storage::disk('public');
     $facts = app(\App\Services\SiteFacts::class);
     $tripWhatsapp = $facts->whatsappUrl('Hello Eagle Global Hub, I am planning a trip to Bangladesh and would like help with ...');
-    $phone = $facts->phone();
+    $phone = $facts->phoneDisplay();
     $categoryTitle = $category !== null ? __(\App\Models\Destination::CATEGORIES[$category]) : null;
     $heroImage = $heroDestination ? $storage->url($heroDestination->cover_image_path) : null;
 @endphp
@@ -52,13 +52,6 @@
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
     @endif
 @endpush
-
-@section('footer_cta')
-    <div class="sg-footer-cta">
-        <div><h2>{{ __('Planning a trip to Bangladesh?') }}</h2><p>{{ __('Talk to our travel team about hotels, transport, guides and tours.') }}</p></div>
-        <div class="sg-footer-cta-actions"><a href="{{ route('explore-bangladesh.index') }}#plan-trip" class="sg-btn sg-btn-red">{{ __('Plan my trip') }}</a>@if($tripWhatsapp)<a href="{{ $tripWhatsapp }}" class="sg-btn sg-btn-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>@endif</div>
-    </div>
-@endsection
 
 @section('content')
 <main>
@@ -149,7 +142,7 @@
                 </ul>
                 <div class="v2-actions">
                     @if($tripWhatsapp)<a class="v2-btn v2-btn-wa" href="{{ $tripWhatsapp }}" target="_blank" rel="noopener noreferrer">{{ __('Chat on WhatsApp') }}</a>@endif
-                    @if($phone)<a class="v2-btn v2-btn-outline" href="tel:{{ preg_replace('/[^+0-9]/', '', $phone) }}">{{ __('Call :phone', ['phone' => $phone]) }}</a>@endif
+                    @if($phone)<a class="v2-btn v2-btn-outline" href="{{ $facts->telUrl() }}">{{ __('Call :phone', ['phone' => $phone]) }}</a>@endif
                 </div>
             </div>
             @include('partials.explore.trip-form', ['title' => __('Plan my trip'), 'selected' => []])

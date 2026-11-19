@@ -56,7 +56,7 @@ final class ExploreBangladeshSectionTest extends TestCase
         $this->assertStringNotContainsString('images/malaysia/', (string) strstr($html, '<main>'), 'no Malaysia photo on Explore pages');
         $this->assertSame(1, substr_count($html, '<h1'));
 
-        $this->assertStringContainsString('Ready to study in Malaysia?', (string) $this->get(route('about'))->getContent());
+        $this->assertStringContainsString('Ready to study in Malaysia?', (string) $this->get(route('services.show', 'student-visa'))->getContent());
     }
 
     public function test_show_page_404s_for_drafts_and_other_countries(): void
