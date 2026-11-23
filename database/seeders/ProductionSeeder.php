@@ -15,7 +15,8 @@ use Spatie\Permission\PermissionRegistrar;
  * - role permissions are merged (permissions granted on the live site are kept);
  * - countries are inserted only when missing (live names and on/off switches are kept);
  * - settings, team members, destinations and content are only created when missing,
- *   always unpublished, and are never published.
+ *   always unpublished, and are never published;
+ * - the starter superadmin and admin logins are created only when missing (LoginAccountSeeder).
  *
  * Deliberately NOT run here: DatabaseSeeder (creates a local test user),
  * HomepageContentSeeder, CountrySeeder and CitySeeder (they overwrite live edits).
@@ -43,6 +44,7 @@ class ProductionSeeder extends Seeder
             MenuSeeder::class,
             ExploreBangladeshMenuSeeder::class,
             MenuTidySeeder::class,
+            LoginAccountSeeder::class,
         ]);
     }
 
