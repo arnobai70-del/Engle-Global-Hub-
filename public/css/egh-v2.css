@@ -397,8 +397,8 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 @media (max-width: 900px) { .v2-values { grid-template-columns: 1fr; } .v2-about-hero h1 { font-size: 1.875rem; } .v2-about-photo { height: 220px; } }
 
 /* Header logo: larger, as in the brief. */
-.sg-header .sg-brand-logo { width: 60px; }
-@media (max-width: 640px) { .sg-header .sg-brand-logo { width: 48px; } }
+.sg-header .sg-brand-logo { height: 60px; max-width: 170px; }
+@media (max-width: 640px) { .sg-header .sg-brand-logo { height: 48px; max-width: 130px; } }
 .v2-estimate { display: grid; gap: .75rem; justify-items: start; padding: 2rem; border-radius: var(--v2-radius-card); background: #F1F4FA; border: 1px solid var(--line); }
 .v2-estimate strong { font: 600 1.25rem var(--sg-heading); color: var(--brand-navy); }
 .v2-estimate p { margin: 0; color: var(--muted); }
@@ -480,7 +480,7 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 /* Laptop widths: drop the tagline and tighten spacing so every menu item fits in one row. */
 @media (min-width: 1180px) and (max-width: 1365px) {
     .sg-header .sg-brand-copy small { display: none; }
-    .sg-header .sg-brand-logo { width: 48px; }
+    .sg-header .sg-brand-logo { height: 48px; max-width: 140px; }
     .sg-header .sg-brand-copy strong { font-size: 1.22rem; }
     .sg-header-inner { gap: .5rem; }
     .sg-nav-link, .sg-dd > summary { padding: .5rem .36rem; font-size: .88rem; }
@@ -547,11 +547,11 @@ html[lang="bn"] { --sg-heading: "Hind Siliguri", "Poppins", system-ui, sans-seri
 
 
 /* Footer: the original logo is dark on transparent, so it sits on a white tile to stay legible on navy. */
-.sg-brand-light .sg-brand-logo { width: 58px; padding: 6px; background: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); box-sizing: border-box; }
+.sg-brand-light .sg-brand-logo { height: 58px; max-width: 180px; padding: 6px; object-position: center; background: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); box-sizing: border-box; }
 
 /* Tighter header for long menus (egh-sg-nav.js adds .sg-nav-tight before falling back to the burger). */
 .sg-nav-tight .sg-brand-copy small { display: none; }
-.sg-header.sg-nav-tight .sg-brand-logo { width: 44px; }
+.sg-header.sg-nav-tight .sg-brand-logo { height: 44px; max-width: 120px; }
 .sg-nav-tight .sg-brand-copy strong { font-size: 1.12rem; }
 .sg-nav-tight .sg-header-inner { gap: .4rem; }
 .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-nav-link, .sg-header.sg-nav-tight:not(.sg-nav-collapsed) .sg-nav > .sg-dd > summary { padding: .5rem .3rem; font-size: .86rem; }

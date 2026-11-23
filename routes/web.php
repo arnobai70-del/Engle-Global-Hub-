@@ -81,6 +81,7 @@ use App\Http\Controllers\Hotel\HotelSearchController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\PublicFileController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\SearchController;
@@ -118,6 +119,11 @@ Route::view('/privacy', 'public.privacy')
     ->name('privacy');
 
 Route::redirect('/contact', '/support', 301)->name('contact');
+
+// Uploaded public files (logo, photos) for servers without a public/storage link.
+Route::get('/uploads/{path}', PublicFileController::class)
+    ->where('path', '.*')
+    ->name('public-files.show');
 
 Route::view('/b2b', 'public.b2b')
     ->name('b2b.info');

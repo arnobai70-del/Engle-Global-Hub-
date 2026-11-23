@@ -87,7 +87,7 @@
     <div class="sg-header">
         <div class="sg-shell sg-header-inner">
             <a href="{{ route('home') }}" class="sg-brand" aria-label="{{ $siteName }} home">
-                <img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241">
+                <img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" onerror="this.onerror=null;this.src='{{ asset('images/eagle-global-hub-logo.png') }}'">
                 <span class="sg-brand-copy"><strong>{{ $brandName }}</strong><small>{{ $headerTagline }}</small></span>
             </a>
             <button type="button" class="sg-burger" aria-controls="sg-primary-nav" aria-expanded="false" data-sg-burger><span class="sg-visually-hidden">{{ __('Menu') }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -171,7 +171,7 @@
         @include('partials.footer-cta', ['type' => $pageType])
         <div class="sg-footer-main">
             <div class="sg-footer-about">
-                <a href="{{ route('home') }}" class="sg-brand sg-brand-light"><img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" loading="lazy" decoding="async"><span class="sg-brand-copy"><strong>{{ $siteName }}</strong></span></a>
+                <a href="{{ route('home') }}" class="sg-brand sg-brand-light"><img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('images/eagle-global-hub-logo.png') }}'"><span class="sg-brand-copy"><strong>{{ $siteName }}</strong></span></a>
                 <p>{{ filled($siteFooterDescription ?? null) ? __($siteFooterDescription) : __('Malaysia and Singapore student consultancy, visa and travel support from Dhaka.') }}</p>
                 <ul class="sg-footer-contact">@if(data_get($siteContact,'address'))<li>{{ data_get($siteContact,'address') }}</li>@endif @if($phoneHref)<li><a href="{{ $phoneHref }}">{{ data_get($siteContact,'phone') }}</a></li>@endif @if(data_get($siteContact,'email'))<li><a href="mailto:{{ data_get($siteContact,'email') }}">{{ data_get($siteContact,'email') }}</a></li>@endif</ul>
                 @include('partials.trust.social-links', ['links' => $siteSocial])

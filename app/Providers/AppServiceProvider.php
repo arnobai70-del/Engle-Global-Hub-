@@ -83,6 +83,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->servePublicUploadsWithoutStorageLink();
+
         Auth::viaRequest('egh-api-token', function (Request $request): ?User {
             $plain = $request->bearerToken();
             if (! is_string($plain) || $plain === '') {
@@ -205,5 +207,21 @@ class AppServiceProvider extends ServiceProvider
 
             return $app->make($dependencyClass);
         });
+    }
+
+    /**
+     * Uploaded public files normally load through the public/storage link. When
+     * that link is missing (a fresh server, or a host without symlinks), point
+     * their URLs at the /uploads route instead so the logo and photos still show.
+     */
+    private function servePublicUploadsWithoutStorageLink(): void
+    {
+        $linkTarget = realpath(public_path('storage'));
+
+        if ($linkTarget !== false && $linkTarget === realpath(storage_path('app/public'))) {
+            return;
+        }
+
+        config(['filesystems.disks.public.url' => rtrim((string) config('app.url'), '/').'/uploads']);
     }
 }
