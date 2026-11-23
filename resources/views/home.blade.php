@@ -89,7 +89,6 @@
         @endif
         <div class="v2-shell v2-hero-grid">
             <div class="v2-hero-copy">
-                <span class="v2-pill v2-pill-light">{{ __('Malaysia student consultancy from Bangladesh') }}</span>
                 <h1 id="hero-title">{{ __('Study in Malaysia, with a team that walks every step with you.') }}</h1>
                 <p>{{ __('University and college choice, admission documents, your EMGS Student Pass, air ticket and housing — one office in Gulshan, one consultant from start to arrival. Singapore too.') }}</p>
                 <div class="v2-actions">
