@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Services\PhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateHomepageSettingsRequest extends FormRequest
@@ -9,6 +10,19 @@ class UpdateHomepageSettingsRequest extends FormRequest
     public function authorize(): bool
     {
         return $this->user()?->can('settings.manage') ?? false;
+    }
+
+    /**
+     * A local Bangladeshi number (01953626481, the seeded default) becomes
+     * +8801953626481, so the form can be saved without retyping the phone.
+     */
+    protected function prepareForValidation(): void
+    {
+        $phone = trim((string) $this->input('phone'));
+
+        if ($phone !== '') {
+            $this->merge(['phone' => PhoneNumber::e164($phone) ?? $phone]);
+        }
     }
 
     public function rules(): array

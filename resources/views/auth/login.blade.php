@@ -8,7 +8,7 @@
     <div class="egho-auth-head">
         <span class="egho-eyebrow">{{ __('WELCOME BACK') }}</span>
         <h2>{{ __('Login') }}</h2>
-        <p>{{ __('Sign in to continue to your Eagle Global Hub LTD account.') }}</p>
+        <p>{{ app(\App\Services\SiteFacts::class)->withCompanyName(__('Sign in to continue to your Eagle Global Hub LTD account.')) }}</p>
     </div>
 
     <form method="POST" action="{{ route('login.store') }}" class="egho-auth-form">

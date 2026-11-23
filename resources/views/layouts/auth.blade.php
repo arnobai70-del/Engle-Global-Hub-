@@ -4,25 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ __(html_entity_decode(trim($__env->yieldContent('title', 'Eagle Global Hub LTD')), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}</title>
+    @php $siteFacts = app(\App\Services\SiteFacts::class); @endphp
+    <title>{{ $siteFacts->withCompanyName(__(html_entity_decode(trim($__env->yieldContent('title', 'Eagle Global Hub LTD')), ENT_QUOTES | ENT_HTML5, 'UTF-8'))) }}</title>
 
     <meta
         name="description"
-        content="Secure account access for Eagle Global Hub LTD flight and travel services."
+        content="{{ $siteFacts->withCompanyName('Secure account access for Eagle Global Hub LTD flight and travel services.') }}"
     >
 
     {{-- Account pages are not search results: keep them out of the index but let crawlers follow links.
          Only pages without secrets in the URL get a canonical (never the password-reset token page). --}}
     @php
-        $authTitle = __(html_entity_decode(trim($__env->yieldContent('title', 'Eagle Global Hub LTD')), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $authTitle = $siteFacts->withCompanyName(__(html_entity_decode(trim($__env->yieldContent('title', 'Eagle Global Hub LTD')), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
         $authCanonical = request()->routeIs('login', 'register', 'password.request') ? request()->url() : null;
     @endphp
     <meta name="robots" content="noindex,follow">
     @if($authCanonical)<link rel="canonical" href="{{ $authCanonical }}">@endif
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Eagle Global Hub LTD">
+    <meta property="og:site_name" content="{{ $siteFacts->companyName() }}">
     <meta property="og:title" content="{{ $authTitle }}">
-    <meta property="og:description" content="Secure account access for Eagle Global Hub LTD flight and travel services.">
+    <meta property="og:description" content="{{ $siteFacts->withCompanyName('Secure account access for Eagle Global Hub LTD flight and travel services.') }}">
     @if($authCanonical)<meta property="og:url" content="{{ $authCanonical }}">@endif
 
     @php
@@ -80,17 +81,17 @@
 
             <div class="egho-auth-visual-top">
 
-                <a href="{{ route('home') }}" class="egho-auth-brand" aria-label="{{ __('Eagle Global Hub LTD home') }}">
+                <a href="{{ route('home') }}" class="egho-auth-brand" aria-label="{{ $siteFacts->withCompanyName(__('Eagle Global Hub LTD home')) }}">
                     <img
                         src="{{ $officialLogo }}"
-                        alt="{{ __('Eagle Global Hub LTD logo') }}"
+                        alt="{{ $siteFacts->withCompanyName(__('Eagle Global Hub LTD logo')) }}"
                         class="egho-auth-brand-logo"
                         onerror="this.onerror=null;this.src='{{ asset('images/eagle-global-hub-logo.png') }}'"
                         width="240"
                         height="241"
                     >
                     <span class="egho-auth-brand-copy">
-                        <strong>{{ __('Eagle Global Hub LTD') }}</strong>
+                        <strong>{{ $siteFacts->companyName() }}</strong>
                         <small>{{ __('Travel & Visa Services') }}</small>
                     </span>
                 </a>
@@ -108,11 +109,11 @@
                 </span>
 
                 <h1>
-                    {{ __(html_entity_decode(trim($__env->yieldContent('hero-title', 'Your journey starts with secure account access.')), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}
+                    {{ $siteFacts->withCompanyName(__(html_entity_decode(trim($__env->yieldContent('hero-title', 'Your journey starts with secure account access.')), ENT_QUOTES | ENT_HTML5, 'UTF-8'))) }}
                 </h1>
 
                 <p>
-                    {{ __(html_entity_decode(trim($__env->yieldContent('hero-description', 'Search, review and manage your flight journey from one verified account.')), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}
+                    {{ $siteFacts->withCompanyName(__(html_entity_decode(trim($__env->yieldContent('hero-description', 'Search, review and manage your flight journey from one verified account.')), ENT_QUOTES | ENT_HTML5, 'UTF-8'))) }}
                 </p>
 
                 <ul class="egho-auth-points">
@@ -146,7 +147,7 @@
             </div>
 
             <small class="egho-auth-visual-foot">
-                {{ __('Eagle Global Hub LTD') }}
+                {{ $siteFacts->companyName() }}
             </small>
 
         </section>
@@ -176,7 +177,7 @@
 
                 <div class="egho-auth-meta">
                     <span>{{ __('Secure account access') }}</span>
-                    <a href="{{ route('home') }}">{{ __('Eagle Global Hub LTD') }}</a>
+                    <a href="{{ route('home') }}">{{ $siteFacts->companyName() }}</a>
                 </div>
 
             </div>
