@@ -13,7 +13,6 @@
             $routeName=$service['page_route_name']??$service['route_name']??null;
             return is_string($routeName)&&\Illuminate\Support\Facades\Route::has($routeName)?$routeName:null;
         };
-        $brandName=trim(preg_replace('/\s+LTD\.?$/i','',$siteName));
         $branding=rescue(fn()=>app(\App\Services\SettingService::class)->group('branding'),[],false);$headerTagline=app()->getLocale()==='bn'&&filled($branding['header_tagline_bn']??null)?$branding['header_tagline_bn']:(filled($branding['header_tagline']??null)?$branding['header_tagline']:__('Your Gateway to Study in Malaysia'));$siteLogo=$siteLogo??asset('images/eagle-global-hub-logo.png');
         $currentLocale=app()->getLocale();
         $routeName=(string) request()->route()?->getName();
@@ -88,7 +87,7 @@
         <div class="sg-shell sg-header-inner">
             <a href="{{ route('home') }}" class="sg-brand" aria-label="{{ $siteName }} home">
                 <img class="sg-brand-logo" src="{{ $siteLogo }}" alt="{{ $siteName }} logo" width="240" height="241" onerror="this.onerror=null;this.src='{{ asset('images/eagle-global-hub-logo.png') }}'">
-                <span class="sg-brand-copy"><strong>{{ $brandName }}</strong><small>{{ $headerTagline }}</small></span>
+                <span class="sg-brand-copy"><strong>{{ $siteName }}</strong><small>{{ $headerTagline }}</small></span>
             </a>
             <button type="button" class="sg-burger" aria-controls="sg-primary-nav" aria-expanded="false" data-sg-burger><span class="sg-visually-hidden">{{ __('Menu') }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
             <nav class="sg-nav" id="sg-primary-nav" aria-label="Primary navigation" data-sg-nav>
