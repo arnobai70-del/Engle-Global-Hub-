@@ -22,6 +22,7 @@ final class MalaysiaFirstSiteTest extends TestCase
         $this->assertStringContainsString('<title>Study in Malaysia from Bangladesh | Eagle Global Hub</title>', $html);
         $this->assertStringContainsString('Your Gateway to Study in Malaysia', $html);
         $this->assertStringContainsString('Study in Malaysia, with a team that walks every step with you.', $html);
+        $this->assertStringNotContainsString('Malaysia student consultancy from Bangladesh', $html);
         $this->assertStringContainsString('From first call to landing in Malaysia', $html);
         $this->assertStringContainsString('14 working days (EMGS charter)', $html);
         $this->assertStringContainsString('name="destination" value="MY"', $html);
