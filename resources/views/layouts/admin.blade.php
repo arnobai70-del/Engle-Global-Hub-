@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Admin') | Eagle Global Hub LTD</title>
+    @php $adminCompanyName = app(\App\Services\SiteFacts::class)->companyName(); @endphp
+    <title>@yield('title', 'Admin') | {{ $adminCompanyName }}</title>
 
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
 
@@ -212,7 +213,7 @@
             </div>
 
             <div class="admin-brand-copy">
-                <strong>Eagle Global Hub</strong>
+                <strong>{{ $adminCompanyName }}</strong>
                 <span>Admin Panel</span>
             </div>
         </div>
@@ -830,7 +831,7 @@
 
         <footer class="admin-footer">
             <span>
-                &copy; {{ date('Y') }} Eagle Global Hub LTD. All rights reserved.
+                &copy; {{ date('Y') }} {{ $adminCompanyName }}. All rights reserved.
             </span>
 
             <span>

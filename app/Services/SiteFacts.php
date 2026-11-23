@@ -17,6 +17,9 @@ class SiteFacts
     /** Official office number, used only while Admin › Homepage › Contact phone is empty. */
     public const OFFICIAL_PHONE = '+8801953626481';
 
+    /** Company name used until Admin › Homepage › Site name is changed. */
+    public const DEFAULT_COMPANY_NAME = 'Eagle Global Hub LTD';
+
     /**
      * Editable fields: key => [label, help, max length, section].
      *
@@ -244,5 +247,26 @@ class SiteFacts
     public function forget(): void
     {
         request()->attributes->remove('egh.site_facts');
+    }
+
+    /**
+     * The company name from Admin › Homepage › Site name. While it is still the
+     * default, the translated default is returned (Bengali pages keep their name).
+     */
+    public function companyName(): string
+    {
+        try {
+            $name = trim((string) $this->settings->get('general', 'site_name'));
+        } catch (Throwable) {
+            $name = '';
+        }
+
+        return $name === '' || $name === self::DEFAULT_COMPANY_NAME ? __(self::DEFAULT_COMPANY_NAME) : $name;
+    }
+
+    /** Replaces the default company name (English or translated) inside a text with the current one. */
+    public function withCompanyName(string $text): string
+    {
+        return str_replace([self::DEFAULT_COMPANY_NAME, __(self::DEFAULT_COMPANY_NAME)], $this->companyName(), $text);
     }
 }

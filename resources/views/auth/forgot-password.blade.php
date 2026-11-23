@@ -16,7 +16,7 @@
         <h2>{{ __('Forgot Password') }}</h2>
 
         <p>
-            {{ __('Enter the email address associated with your Eagle Global Hub LTD account.') }}
+            {{ app(\App\Services\SiteFacts::class)->withCompanyName(__('Enter the email address associated with your Eagle Global Hub LTD account.')) }}
         </p>
     </div>
 

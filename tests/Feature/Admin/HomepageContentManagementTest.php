@@ -46,6 +46,52 @@ class HomepageContentManagementTest extends TestCase
         $this->assertDatabaseMissing('settings', ['group' => 'homepage', 'key' => 'news_enabled']);
     }
 
+    public function test_renaming_the_site_saves_with_the_seeded_local_phone_and_shows_the_new_name_everywhere(): void
+    {
+        $user = $this->superAdmin();
+
+        $this->actingAs($user)->from(route('admin.homepage.index'))->patch(route('admin.homepage.settings.update'), [
+            'site_name' => 'Renamed Company LTD',
+            'phone' => '01953626481',
+            'hero_title' => 'Study in Malaysia',
+            'seo_title' => 'Study in Malaysia from Bangladesh',
+            'seo_description' => 'Malaysia student consultancy.',
+        ])->assertSessionHasNoErrors()->assertRedirect(route('admin.homepage.index'));
+
+        $this->assertDatabaseHas('settings', ['group' => 'general', 'key' => 'site_name', 'value' => 'Renamed Company LTD']);
+        $this->assertDatabaseHas('settings', ['group' => 'contact', 'key' => 'phone', 'value' => '+8801953626481']);
+
+        $this->get(route('home'))->assertSee('Renamed Company');
+        $this->get(route('admin.homepage.index'))->assertSee('Homepage Content | Renamed Company LTD', false)->assertSee('<strong>Renamed Company LTD</strong>', false);
+
+        auth()->logout();
+        $this->get(route('login'))->assertSee('<title>Login | Renamed Company LTD</title>', false)->assertDontSee('Eagle Global Hub');
+        $this->get(route('login', ['lang' => 'bn']))->assertSee('Renamed Company LTD')->assertDontSee('ঈগল গ্লোবাল হাব');
+    }
+
+    public function test_admin_without_settings_manage_sees_a_read_only_page_instead_of_a_save_that_fails(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $this->actingAs($admin)->get(route('admin.homepage.index'))
+            ->assertOk()
+            ->assertSee('You can view this page but not change it')
+            ->assertSee('<fieldset class="home-lock" disabled', false)
+            ->assertDontSee('+ Add new content block');
+
+        $this->actingAs($this->superAdmin())->get(route('admin.homepage.index'))
+            ->assertDontSee('You can view this page but not change it')
+            ->assertDontSee('<fieldset class="home-lock" disabled', false)
+            ->assertSee('Save Settings');
+    }
+
+    public function test_bengali_login_keeps_the_translated_default_name(): void
+    {
+        $this->get(route('login', ['lang' => 'bn']))->assertSee('ঈগল গ্লোবাল হাব লিমিটেড');
+    }
+
     public function test_admin_can_control_homepage_section_visibility(): void
     {
         $user = $this->superAdmin();

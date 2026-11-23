@@ -24,7 +24,7 @@
 .home-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:19px;padding-top:15px;border-top:1px solid #eef2f7}
 .home-btn{border:0;border-radius:10px;padding:11px 18px;min-height:42px;background:var(--home-primary);color:#fff;font-weight:800;cursor:pointer}
 .home-btn:hover{background:#1745b3}.home-btn.danger{background:#b42318}
-.home-status{padding:12px;border-radius:10px;background:#ecfdf3;color:#067647}.home-errors{padding:12px;border-radius:10px;background:#fef3f2;color:#b42318}
+.home-lock{border:0;padding:0;margin:0;min-width:0}.home-lock:disabled .home-actions{display:none}.home-readonly{padding:12px;border-radius:10px;background:#fffaeb;color:#93370d}.home-status{padding:12px;border-radius:10px;background:#ecfdf3;color:#067647}.home-errors{padding:12px;border-radius:10px;background:#fef3f2;color:#b42318}
 .home-block{margin-top:10px;border:1px solid #e4eaf3;border-radius:11px;overflow:hidden}
 .home-block summary{padding:13px 15px;background:#f8fafc;cursor:pointer;font-size:13px;font-weight:800}
 .home-block[open] summary{background:#edf4ff;color:#1b4cb6}.home-block>div{padding:17px}
@@ -54,6 +54,8 @@
 @section('content')
 <div class="home-admin">
 <header class="home-workspace-header"><div><h1>Homepage Workspace</h1><p>Manage website content in organized sections. Edit real data, not mockups.</p></div><a class="home-visit" href="{{ route('home') }}" target="_blank" rel="noopener">View live homepage ↗</a></header>
+@php $canManageHomepage = auth()->user()?->can('settings.manage') ?? false; @endphp
+@unless($canManageHomepage)<div class="home-readonly" role="note">You can view this page but not change it: saving needs the <strong>settings.manage</strong> permission. Ask a super admin to make the change, or to grant it in Admin › Roles &amp; Permissions.</div>@endunless
 @if(session('status'))<div class="home-status" role="status">{{ session('status') }}</div>@endif
 @if($errors->any())<div class="home-errors" role="alert"><strong>Please fix these fields.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
 
@@ -73,7 +75,7 @@
 <button type="button" class="home-tab" data-home-tab="content" aria-selected="false">Hero & Sections</button>
 <button type="button" class="home-tab" data-home-tab="seo" aria-selected="false">SEO & Social Sharing</button>
 </div>
-<form method="POST" action="{{ route('admin.homepage.settings.update') }}" enctype="multipart/form-data">@csrf @method('PATCH')
+<form method="POST" action="{{ route('admin.homepage.settings.update') }}" enctype="multipart/form-data">@csrf @method('PATCH')<fieldset class="home-lock" @disabled(! $canManageHomepage)>
 <div class="home-grid">
 <div class="home-field"><label>Site name</label><input name="site_name" required value="{{ old('site_name',$general['site_name']??'Eagle Global Hub LTD') }}"></div>
 <div class="home-field"><label>Tagline</label><input name="site_tagline" value="{{ old('site_tagline',$general['site_tagline']??'') }}"></div>
@@ -106,15 +108,15 @@
 <div class="home-field wide"><label>Meta title</label><input name="seo_title" maxlength="70" required value="{{ old('seo_title',$seo['home_meta_title']??'') }}"></div><div class="home-field wide"><label>Meta description</label><textarea name="seo_description" maxlength="180" required>{{ old('seo_description',$seo['home_meta_description']??'') }}</textarea></div>
 <div class="home-field"><label>Canonical URL</label><input type="url" name="canonical_url" value="{{ old('canonical_url',$seo['home_canonical_url']??'') }}"></div><div class="home-field"><label>Robots meta</label><input name="robots" value="{{ old('robots',$seo['home_robots']??'index,follow') }}"></div>
 <div class="home-field"><label>Open Graph title</label><input name="og_title" value="{{ old('og_title',$seo['home_og_title']??'') }}"></div><div class="home-field"><label>Open Graph image</label><input type="file" name="og_image" accept="image/jpeg,image/png,image/webp,image/avif"></div><div class="home-field wide"><label>Open Graph description</label><textarea name="og_description">{{ old('og_description',$seo['home_og_description']??'') }}</textarea></div><div class="home-field"><label>Twitter card</label><select name="twitter_card"><option value="summary_large_image">Large image</option><option value="summary">Summary</option></select></div>
-</div><div class="home-actions"><button class="home-btn">Save Settings</button></div></form></section>
+</div><div class="home-actions"><button class="home-btn">Save Settings</button></div></fieldset></form></section>
 
 <section class="home-card" id="homepage-blocks"><h2>Content Block Manager</h2><p>Browse and edit a category without scrolling through every block.</p>
 <div class="home-toolbar">
 <label for="home-block-filter">Content category<select id="home-block-filter"><option value="all">All categories</option>@foreach($sections as $sectionKey=>$sectionLabel)<option value="{{ $sectionKey }}" @selected($loop->first)>{{ $sectionLabel }} ({{ ($blocks[$sectionKey]??collect())->count() }})</option>@endforeach</select></label>
 <label for="home-block-search">Search block title<input type="search" id="home-block-search" placeholder="e.g. Dubai, Flights, Visa..." autocomplete="off"></label>
 </div><p class="home-help" id="home-filter-count" aria-live="polite"></p>
-<details class="home-block"><summary>+ Add new content block</summary><div><form method="POST" action="{{ route('admin.homepage.blocks.store') }}" enctype="multipart/form-data">@csrf @include('admin.homepage.partials.block-form',['block'=>null])<div class="home-actions"><button class="home-btn">Add Block</button></div></form></div></details>
-@foreach($sections as $sectionKey=>$sectionLabel)<div class="home-section" data-block-section="{{ $sectionKey }}"><h3>{{ $sectionLabel }} <span class="home-block-count">({{ ($blocks[$sectionKey]??collect())->count() }})</span></h3>@forelse($blocks[$sectionKey]??collect() as $block)<details class="home-block" data-block-title="{{ Str::lower($block->title ?: $block->key) }}"><summary><span>{{ $block->title ?: $block->key }}</span><span class="home-pill {{ $block->is_active ? '' : 'is-hidden' }}">{{ $block->is_active?'Published':'Hidden' }}</span></summary><div><form method="POST" action="{{ route('admin.homepage.blocks.update',$block) }}" enctype="multipart/form-data">@csrf @method('PATCH') @include('admin.homepage.partials.block-form',['block'=>$block])<div class="home-actions"><button class="home-btn">Save</button></div></form><form method="POST" action="{{ route('admin.homepage.blocks.destroy',$block) }}" onsubmit="return confirm('Delete this block?')">@csrf @method('DELETE')<div class="home-actions"><button class="home-btn danger">Delete</button></div></form></div></details>@empty<p>No records yet.</p>@endforelse</div>@endforeach
+@if($canManageHomepage)<details class="home-block"><summary>+ Add new content block</summary><div><form method="POST" action="{{ route('admin.homepage.blocks.store') }}" enctype="multipart/form-data">@csrf @include('admin.homepage.partials.block-form',['block'=>null])<div class="home-actions"><button class="home-btn">Add Block</button></div></form></div></details>@endif
+@foreach($sections as $sectionKey=>$sectionLabel)<div class="home-section" data-block-section="{{ $sectionKey }}"><h3>{{ $sectionLabel }} <span class="home-block-count">({{ ($blocks[$sectionKey]??collect())->count() }})</span></h3>@forelse($blocks[$sectionKey]??collect() as $block)<details class="home-block" data-block-title="{{ Str::lower($block->title ?: $block->key) }}"><summary><span>{{ $block->title ?: $block->key }}</span><span class="home-pill {{ $block->is_active ? '' : 'is-hidden' }}">{{ $block->is_active?'Published':'Hidden' }}</span></summary><div><form method="POST" action="{{ route('admin.homepage.blocks.update',$block) }}" enctype="multipart/form-data">@csrf @method('PATCH')<fieldset class="home-lock" @disabled(! $canManageHomepage)> @include('admin.homepage.partials.block-form',['block'=>$block])<div class="home-actions"><button class="home-btn">Save</button></div></fieldset></form>@if($canManageHomepage)<form method="POST" action="{{ route('admin.homepage.blocks.destroy',$block) }}" onsubmit="return confirm('Delete this block?')">@csrf @method('DELETE')<div class="home-actions"><button class="home-btn danger">Delete</button></div></form>@endif</div></details>@empty<p>No records yet.</p>@endforelse</div>@endforeach
 </section>
 <section class="home-card" id="homepage-newsletter"><h2>Newsletter Subscribers</h2><p>{{ number_format($newsletterCount) }} subscriber(s).</p>@foreach($recentSubscribers as $subscriber)<span style="display:inline-block;margin:5px;padding:6px 10px;background:#f1f5f9;border-radius:999px">{{ $subscriber->email }}</span>@endforeach</section>
 </div></div></div>

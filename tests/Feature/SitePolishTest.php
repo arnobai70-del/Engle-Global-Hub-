@@ -94,15 +94,18 @@ class SitePolishTest extends TestCase
         $this->assertDatabaseHas('settings', ['group' => 'contact', 'key' => 'phone', 'value' => '01715127464']);
     }
 
-    public function test_the_settings_form_only_accepts_an_international_phone_number(): void
+    public function test_the_settings_form_stores_the_phone_in_international_format(): void
     {
         $this->seed(RolePermissionSeeder::class);
         $admin = User::factory()->create(['email_verified_at' => now()]);
         $admin->assignRole('super-admin');
         $payload = ['site_name' => 'Eagle Global Hub', 'hero_title' => 'Study and travel', 'seo_title' => 'Eagle Global Hub', 'seo_description' => 'Study abroad and travel.'];
 
-        $this->actingAs($admin)->patch(route('admin.homepage.settings.update'), [...$payload, 'phone' => '01715127464'])
+        $this->actingAs($admin)->patch(route('admin.homepage.settings.update'), [...$payload, 'phone' => '12345'])
             ->assertSessionHasErrors('phone');
+        $this->actingAs($admin)->patch(route('admin.homepage.settings.update'), [...$payload, 'phone' => '01715127464'])
+            ->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('settings', ['group' => 'contact', 'key' => 'phone', 'value' => '+8801715127464']);
         $this->actingAs($admin)->patch(route('admin.homepage.settings.update'), [...$payload, 'phone' => '+880 1715-127464'])
             ->assertSessionHasNoErrors();
     }

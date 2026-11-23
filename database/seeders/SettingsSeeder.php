@@ -36,7 +36,7 @@ class SettingsSeeder extends Seeder
             [
                 'group' => 'contact',
                 'key' => 'phone',
-                'value' => '01953626481',
+                'value' => '+8801953626481',
                 'type' => 'string',
                 'is_public' => true,
                 'created_at' => $now,
