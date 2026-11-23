@@ -27,6 +27,13 @@ class SiteLogoTest extends TestCase
         $this->assertSame('PNG-BYTES', $response->streamedContent());
     }
 
+    public function test_header_shows_the_full_company_name_like_the_footer(): void
+    {
+        $html = (string) $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertSame(2, substr_count($html, 'sg-brand-copy"><strong>Eagle Global Hub LTD</strong>'), 'header and footer');
+    }
+
     public function test_uploads_route_serves_nothing_hidden_missing_or_outside_the_public_disk(): void
     {
         Storage::fake('public');

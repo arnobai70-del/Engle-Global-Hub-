@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ asset('css/egh-sg.css') }}">
 </head>
 <body class="sg-body">
-    <header class="sg-site-header"><div class="sg-header"><div class="sg-shell sg-header-inner"><a href="{{ url('/') }}" class="sg-brand"><img class="sg-brand-logo" src="{{ asset('images/eagle-global-hub-logo.png') }}" alt="Eagle Global Hub LTD logo" width="240" height="241"><span class="sg-brand-copy"><strong>Eagle Global Hub</strong></span></a></div></div></header>
+    <header class="sg-site-header"><div class="sg-header"><div class="sg-shell sg-header-inner"><a href="{{ url('/') }}" class="sg-brand"><img class="sg-brand-logo" src="{{ asset('images/eagle-global-hub-logo.png') }}" alt="Eagle Global Hub LTD logo" width="240" height="241"><span class="sg-brand-copy"><strong>Eagle Global Hub LTD</strong></span></a></div></div></header>
     <main class="egho-page sg-error-page"><div class="sg-shell">
         <section class="sg-card sg-error-card" role="alert" aria-labelledby="error-title">
             <span class="sg-error-code">{{ $code }}</span>
