@@ -14,6 +14,7 @@
     $companyFacts = array_values(array_filter([
         ['label' => __('Registered as'), 'value' => $siteName ?? 'Eagle Global Hub LTD'],
         $facts->get('trade_licence_no') ? ['label' => __('Trade licence'), 'value' => $facts->get('trade_licence_no')] : null,
+        $facts->get('trade_licence_no') && $facts->get('trade_licence_valid_until') ? ['label' => __('Trade licence valid until'), 'value' => $facts->get('trade_licence_valid_until')] : null,
         filled(data_get($siteContact, 'address')) ? ['label' => __('Office'), 'value' => __('Gulshan, Dhaka')] : null,
         $founded ? ['label' => __('Founded'), 'value' => $founded] : null,
     ]));
