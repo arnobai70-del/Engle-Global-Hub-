@@ -80,6 +80,7 @@ final class SiteTrustTest extends TestCase
         $about = (string) $this->get(route('about'))->assertOk()->getContent();
         $this->assertStringNotContainsString('2026-10-26', $about);
         $this->assertStringNotContainsString('2027-06-30', $about);
+        $this->assertStringNotContainsString('Registered and accountable', $about);
 
         $this->facts([
             'company_registration_no' => 'C-215102/2026',
