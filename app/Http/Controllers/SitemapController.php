@@ -6,6 +6,7 @@ use App\Enums\ContentType;
 use App\Models\ContentEntry;
 use App\Models\Destination;
 use App\Models\Institution;
+use App\Models\LegalDocument;
 use App\Models\Offer;
 use App\Services\Consultancy\StudyCountries;
 use App\Services\Content\PublicPageAvailability;
@@ -38,6 +39,11 @@ class SitemapController extends Controller
                     'priority' => $page['priority'],
                 ];
             }
+        }
+
+        // Do not index unpublished or unverified company documents.
+        if (LegalDocument::query()->publiclyVisible()->exists()) {
+            $urls[] = ['loc' => route('legal-documents.index'), 'priority' => '0.4'];
         }
 
         $urls[] = ['loc' => route('travel-services.index'), 'priority' => '0.7'];
