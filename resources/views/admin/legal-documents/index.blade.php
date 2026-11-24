@@ -35,7 +35,7 @@
                 <td>{{ ucfirst($document->publication_status) }}</td>
                 <td>{{ $document->expires_at?->format('Y-m-d') ?? 'Not stated' }}@if($document->expires_at && $document->expires_at->isBefore(today()))<strong>Expired</strong>@elseif($document->expires_at && $document->expires_at->lte(today()->addDays(30)))<strong>Renewal due soon</strong>@endif</td>
                 <td>
-                    <p><a href="{{ route('admin.legal-documents.original', $document) }}">Download original (private)</a></p>
+                    @role('super-admin')<p><a href="{{ route('admin.legal-documents.original', $document) }}">Download original (owner-only)</a></p>@endrole
                     @if($document->public_copy_path)<p><a href="{{ route('admin.legal-documents.redacted', $document) }}">Review redacted copy (private)</a></p>@endif
                     <form method="POST" action="{{ route('admin.legal-documents.update', $document) }}" enctype="multipart/form-data">
                         @csrf @method('PATCH')
