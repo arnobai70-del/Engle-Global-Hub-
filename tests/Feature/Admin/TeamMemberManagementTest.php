@@ -84,6 +84,39 @@ class TeamMemberManagementTest extends TestCase
         $this->assertDatabaseCount('team_members', 0);
     }
 
+    public function test_published_team_member_without_photo_uses_initial_and_drafts_remain_hidden(): void
+    {
+        TeamMember::query()->create([
+            'name' => 'Approved Consultant',
+            'role_title' => 'Advisor',
+            'sort_order' => 1,
+            'is_published' => true,
+        ]);
+        TeamMember::query()->create([
+            'name' => 'Unverified Consultant',
+            'role_title' => 'Draft Advisor',
+            'sort_order' => 2,
+            'is_published' => false,
+        ]);
+
+        $this->get(route('about'))->assertOk()
+            ->assertSee('Our team')
+            ->assertSee('Approved Consultant')
+            ->assertSee('v2-team-initial')
+            ->assertDontSee('Unverified Consultant');
+    }
+
+    public function test_photo_selection_preview_script_is_in_admin_rendered_page(): void
+    {
+        $admin = $this->user('admin');
+        $this->actingAs($admin)->get(route('admin.team-members.create'))
+            ->assertOk()
+            ->assertSee('team-photo-input')
+            ->assertSee('team-selected-photo-preview')
+            ->assertSee('URL.createObjectURL')
+            ->assertSee('New photo preview (not saved yet)');
+    }
+
     public function test_team_member_validation_rejects_duplicates_and_non_images(): void
     {
         $admin = $this->user('admin');
