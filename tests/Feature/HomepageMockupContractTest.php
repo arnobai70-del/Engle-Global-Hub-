@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 /**
  * The homepage follows DESIGN_BRIEF.md (Main mockup): hero with consultation form,
- * trust strip, six services, how it works, clear costs, stories, FAQ, contact band.
+ * trust strip, admin-controlled services, how it works, clear costs, stories, FAQ, contact band.
  */
 final class HomepageMockupContractTest extends TestCase
 {
@@ -62,14 +62,15 @@ final class HomepageMockupContractTest extends TestCase
         ], $this->home());
     }
 
-    public function test_homepage_lists_six_services_each_ending_with_an_action(): void
+    public function test_homepage_lists_five_default_services_with_actions_and_no_singapore_tile(): void
     {
         $html = $this->home();
 
-        $this->assertSame(6, substr_count($html, 'class="v2-service-card"'));
-        foreach (['Study in Malaysia', 'Student Pass (EMGS)', 'Study in Singapore', 'Visa services', 'Air tickets', 'Housing &amp; arrival'] as $service) {
+        $this->assertSame(5, substr_count($html, 'class="v2-service-card"'));
+        foreach (['Study in Malaysia', 'Student Pass (EMGS)', 'Visa services', 'Air tickets', 'Housing &amp; arrival'] as $service) {
             $this->assertStringContainsString('<h3>'.$service.'</h3>', $html);
         }
+        $this->assertStringNotContainsString('<h3>Study in Singapore</h3>', $html);
         foreach (['Get a fare quote', 'Ask about housing', 'Ask about a visa'] as $action) {
             $this->assertStringContainsString($action, $html);
         }
