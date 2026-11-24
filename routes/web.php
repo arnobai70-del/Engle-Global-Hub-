@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\Admin\LegalDocumentController as AdminLegalDocumentController;
+use App\Http\Controllers\LegalDocumentController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AffiliateController;
 use App\Http\Controllers\Admin\AgentController;
@@ -117,6 +119,26 @@ Route::view('/why-us', 'public.why-us')
 
 Route::view('/privacy', 'public.privacy')
     ->name('privacy');
+
+Route::get('/legal-documents', [LegalDocumentController::class, 'index'])
+    ->name('legal-documents.index');
+Route::get('/legal-documents/{legalDocument}/redacted', [LegalDocumentController::class, 'download'])
+    ->whereNumber('legalDocument')->name('legal-documents.download');
+
+Route::middleware(['auth', 'verified', 'role:admin|super-admin', 'can:content.manage'])
+    ->prefix('admin/legal-documents')->name('admin.legal-documents.')
+    ->group(function () {
+        Route::get('/', [AdminLegalDocumentController::class, 'index'])->name('index');
+        Route::post('/', [AdminLegalDocumentController::class, 'store'])->name('store');
+        Route::patch('/{document}', [AdminLegalDocumentController::class, 'update'])->whereNumber('document')->name('update');
+        Route::get('/{document}/original', [AdminLegalDocumentController::class, 'original'])->whereNumber('document')->name('original');
+        Route::get('/{document}/redacted', [AdminLegalDocumentController::class, 'redacted'])->whereNumber('document')->name('redacted');
+        Route::middleware('role:super-admin')->group(function () {
+            Route::post('/{document}/approve', [AdminLegalDocumentController::class, 'approve'])->whereNumber('document')->name('approve');
+            Route::post('/{document}/publish', [AdminLegalDocumentController::class, 'publish'])->whereNumber('document')->name('publish');
+            Route::post('/{document}/unpublish', [AdminLegalDocumentController::class, 'unpublish'])->whereNumber('document')->name('unpublish');
+        });
+    });
 
 Route::redirect('/contact', '/support', 301)->name('contact');
 
