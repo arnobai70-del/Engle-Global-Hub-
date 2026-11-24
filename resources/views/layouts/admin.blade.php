@@ -436,12 +436,14 @@
                         </a>
                     @endcan
 
+                    @role('admin|super-admin')
                     @can('content.manage')
                         <a href="{{ route('admin.legal-documents.index') }}" class="admin-nav-link {{ request()->routeIs('admin.legal-documents.*') ? 'active' : '' }}">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l4 4v16H6zM9 11h7M9 15h7"/></svg>
                             <span>Legal Documents</span>
                         </a>
                     @endcan
+                    @endrole
 
                     @can('content.approve')
                         <a
