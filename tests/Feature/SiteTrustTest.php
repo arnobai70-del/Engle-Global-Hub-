@@ -70,6 +70,31 @@ final class SiteTrustTest extends TestCase
         $this->assertStringNotContainsString('aria-label="Facebook"', $footer, 'empty networks stay hidden');
     }
 
+    public function test_verified_company_dates_are_editable_and_only_visible_with_the_matching_number(): void
+    {
+        $this->facts([
+            'incorporation_date' => '2026-10-26',
+            'trade_licence_valid_until' => '2027-06-30',
+        ]);
+
+        $about = (string) $this->get(route('about'))->assertOk()->getContent();
+        $this->assertStringNotContainsString('2026-10-26', $about);
+        $this->assertStringNotContainsString('2027-06-30', $about);
+
+        $this->facts([
+            'company_registration_no' => 'C-215102/2026',
+            'trade_licence_no' => 'TRAD/DNCC/027606/2026',
+        ]);
+
+        $this->get(route('about'))->assertOk()
+            ->assertSee('C-215102/2026')
+            ->assertSee('TRAD/DNCC/027606/2026')
+            ->assertSee('Incorporated on')
+            ->assertSee('2026-10-26')
+            ->assertSee('Trade licence valid until')
+            ->assertSee('2027-06-30');
+    }
+
     public function test_partner_logo_strip_shows_only_public_institutions_with_a_logo(): void
     {
         $malaysia = Country::query()->create(['name' => 'Malaysia', 'iso2' => 'MY', 'iso3' => 'MYS', 'is_active' => true]);
