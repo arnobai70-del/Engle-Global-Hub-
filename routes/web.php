@@ -1122,6 +1122,7 @@ Route::middleware(['auth', 'verified', 'role:super-admin|admin|admission-consult
         Route::middleware('permission:master-data.manage')->group(function () {
             Route::post('/', [ServiceDestinationController::class, 'store'])->name('store');
             Route::patch('/{serviceDestination}', [ServiceDestinationController::class, 'update'])->whereNumber('serviceDestination')->name('update');
+            Route::patch('/{serviceDestination}/homepage', [ServiceDestinationController::class, 'homepage'])->whereNumber('serviceDestination')->name('homepage');
             Route::delete('/{serviceDestination}', [ServiceDestinationController::class, 'destroy'])->whereNumber('serviceDestination')->name('destroy');
         });
     });
