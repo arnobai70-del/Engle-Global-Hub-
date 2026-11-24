@@ -210,8 +210,8 @@ class SiteFacts
         return [
             'trade_licence' => $this->get('trade_licence_no'),
             'registration' => $this->get('company_registration_no'),
-            'trade_licence_valid_until' => $this->get('trade_licence_valid_until'),
-            'incorporation_date' => $this->get('incorporation_date'),
+            'trade_licence_valid_until' => $this->get('trade_licence_no') ? $this->get('trade_licence_valid_until') : null,
+            'incorporation_date' => $this->get('company_registration_no') ? $this->get('incorporation_date') : null,
             'memberships' => array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $this->get('memberships')) ?: []))),
             'maps_url' => $https('google_maps_url'),
             'reviews_url' => $https('google_reviews_url'),
