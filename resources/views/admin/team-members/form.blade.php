@@ -31,7 +31,7 @@
 <form method="POST" action="{{ route('admin.team-members.destroy', $member) }}" class="admin-danger-zone" onsubmit="return confirm('Delete this team member?')">@csrf @method('DELETE')<button class="egh-button danger">Delete</button></form>
 @endif
 </div>
-@push('scripts')
+@section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('team-photo-input');
@@ -57,5 +57,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { once: true });
 });
 </script>
-@endpush
+@endsection
 @endsection
