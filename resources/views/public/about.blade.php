@@ -54,6 +54,14 @@
         </div>
     </section>
 
+    @if($hasLegalDocuments)
+        <section class="v2-section-tight">
+            <div class="v2-shell">
+                <a class="v2-btn v2-btn-outline" href="{{ route('legal-documents.index') }}">{{ __('Company Credentials') }}</a>
+            </div>
+        </section>
+    @endif
+
     <section class="v2-section" aria-labelledby="values-title">
         <div class="v2-shell">
             <h2 id="values-title" class="v2-h2">{{ __('How we work') }}</h2>
