@@ -30,17 +30,17 @@ final class EmptyPageRedirectAndTeamTest extends TestCase
         $this->get(route('mobile-app'))->assertOk();
     }
 
-    public function test_team_section_is_hidden_without_photos_and_shows_only_members_with_a_photo(): void
+    public function test_homepage_requires_team_photos_but_about_shows_published_members_with_initial_fallback(): void
     {
         $withoutPhoto = TeamMember::query()->create(['name' => 'No Photo Person', 'role_title' => 'Consultant', 'is_published' => true]);
 
         $this->get(route('home'))->assertOk()->assertDontSee('Real people, real office')->assertDontSee('No Photo Person');
-        $this->get(route('about'))->assertOk()->assertDontSee('Our team')->assertDontSee('No Photo Person');
+        $this->get(route('about'))->assertOk()->assertSee('Our team')->assertSee('No Photo Person')->assertSee('v2-team-initial');
 
         $withPhoto = TeamMember::query()->create(['name' => 'Photo Person', 'role_title' => 'Managing Director', 'is_published' => true]);
         DB::table('team_members')->where('id', $withPhoto->id)->update(['photo_path' => 'team/photo-person.webp']);
 
         $this->get(route('home'))->assertSee('Real people, real office')->assertSee('Photo Person')->assertDontSee('No Photo Person');
-        $this->get(route('about'))->assertSee('Photo Person')->assertDontSee($withoutPhoto->name);
+        $this->get(route('about'))->assertSee('Photo Person')->assertSee($withoutPhoto->name);
     }
 }
