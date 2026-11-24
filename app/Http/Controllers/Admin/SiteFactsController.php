@@ -36,6 +36,8 @@ class SiteFactsController extends Controller
             $rules[$key] = ['nullable', 'string', 'max:30'];
         }
         $rules['founded_year'][] = 'regex:/^(19|20)\d{2}$/';
+        $rules['trade_licence_valid_until'][] = 'date_format:Y-m-d';
+        $rules['incorporation_date'][] = 'date_format:Y-m-d';
         $rules['students_guided'][] = 'regex:/^\d+$/';
         $rules['partner_institutions'][] = 'regex:/^\d+$/';
         $rules['google_rating'][] = 'regex:/^[1-5](\.\d)?$/';

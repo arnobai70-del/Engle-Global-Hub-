@@ -33,6 +33,8 @@ class SiteFacts
         'office_photo_url' => ['Office photo (https link)', 'A photo of your reception or signboard, for the contact page.', 300, 'Contact'],
 
         'trade_licence_no' => ['Trade licence number', 'Shown in the trust strip, About page and footer.', 60, 'Company'],
+        'trade_licence_valid_until' => ['Trade licence valid until (YYYY-MM-DD)', 'Enter the expiry date shown on the latest DNCC trade licence; leave blank until verified.', 10, 'Company'],
+        'incorporation_date' => ['RJSC incorporation date (YYYY-MM-DD)', 'Enter the date from the Certificate of Incorporation; this is not a service licence.', 10, 'Company'],
         'company_registration_no' => ['Company registration number (RJSC)', 'Shown on the About page and in the footer.', 60, 'Company'],
         'memberships' => ['Association memberships', 'One per line, for example: ATAB member no. 1234. Only memberships you can prove.', 400, 'Company'],
         'founded_year' => ['Year founded', 'For example: 2019.', 4, 'Company'],
@@ -208,6 +210,8 @@ class SiteFacts
         return [
             'trade_licence' => $this->get('trade_licence_no'),
             'registration' => $this->get('company_registration_no'),
+            'trade_licence_valid_until' => $this->get('trade_licence_no') ? $this->get('trade_licence_valid_until') : null,
+            'incorporation_date' => $this->get('company_registration_no') ? $this->get('incorporation_date') : null,
             'memberships' => array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $this->get('memberships')) ?: []))),
             'maps_url' => $https('google_maps_url'),
             'reviews_url' => $https('google_reviews_url'),
