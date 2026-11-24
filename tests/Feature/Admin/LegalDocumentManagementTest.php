@@ -62,7 +62,8 @@ class LegalDocumentManagementTest extends TestCase
         $this->get(route('legal-documents.index'))->assertOk()->assertDontSee('Registered company certificate');
         $this->get(route('legal-documents.download', $document))->assertNotFound();
         $this->actingAs($customer)->get(route('admin.legal-documents.original', $document))->assertForbidden();
-        $this->actingAs($admin)->get(route('admin.legal-documents.original', $document))->assertOk();
+        $this->actingAs($admin)->get(route('admin.legal-documents.original', $document))->assertForbidden();
+        $this->actingAs($this->actor('super-admin'))->get(route('admin.legal-documents.original', $document))->assertOk();
     }
 
     public function test_owner_approves_then_publishes_separately(): void
