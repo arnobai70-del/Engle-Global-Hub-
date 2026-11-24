@@ -15,6 +15,7 @@ Applies to the Contabo server (see `docs/DEPLOYMENT.md` §1). Paths assume the r
 | Database | MySQL/MariaDB (engine to confirm) | Personal data: students, users, payments |
 | Student documents | `storage/app/private/student-documents` | **Highly sensitive** (passports, transcripts) |
 | Payment receipts | `storage/app/private/payment-receipts` | Sensitive |
+| Legal documents (original and redacted review copies) | `storage/app/private/legal-documents` | **Highly sensitive** (directors' NIDs, TINs, addresses, signatures) |
 | Public uploads | `storage/app/public`: media library, team photos, destination images, content covers | Public |
 | `.env` | `shared/.env` | **Secret**: contains APP_KEY and passwords. Store it separately (password manager or secret store), never next to the data backups |
 
