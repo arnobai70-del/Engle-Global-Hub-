@@ -29,7 +29,11 @@ return new class extends Migration
             })->update(['is_active' => false, 'updated_at' => now()]);
 
         // Japan is already part of CountrySeeder and StudyDestinationSeeder.
-        // Backfill only if a live database was never seeded, preserving edits.
+        // Only backfill existing installations; fresh databases are populated by
+        // their normal seeders after migrations (avoid changing seeded order).
+        if (DB::table('countries')->doesntExist() && DB::table('service_destinations')->doesntExist()) {
+            return;
+        }
         $japanId = DB::table('countries')->where('iso2', 'JP')->value('id');
         if ($japanId === null) {
             $japanId = DB::table('countries')->insertGetId([
