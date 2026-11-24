@@ -43,7 +43,7 @@ class MenuSeeder extends Seeder
                 'icon' => $item['icon'] ?? null,
                 'feature' => $item['feature'] ?? null,
                 'visibility' => $item['visibility'] ?? 'all',
-                'is_active' => true,
+                'is_active' => $location !== 'home_tiles' || $item['key'] !== 'tile-singapore',
                 'sort_order' => ($position + 1) * 10,
             ],
         );
