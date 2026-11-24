@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LegalDocumentController extends Controller
 {
@@ -59,6 +58,15 @@ class LegalDocumentController extends Controller
     {
         $data = $request->validate($this->rules(false));
         $newCopyPath = null;
+
+        if ($request->hasFile('redacted_pdf')) {
+            if (hash_file('sha256', $request->file('redacted_pdf')->getRealPath()) === $document->private_sha256) {
+                return back()->withErrors(['redacted_pdf' => 'The public copy cannot be identical to the private original.']);
+            }
+            if ($request->boolean('remove_redacted_copy')) {
+                return back()->withErrors(['redacted_pdf' => 'Choose either upload or remove, not both.']);
+            }
+        }
 
         if ($request->hasFile('redacted_pdf')) {
             $newCopyPath = $request->file('redacted_pdf')->store('redacted', config('legal-documents.disk'));
