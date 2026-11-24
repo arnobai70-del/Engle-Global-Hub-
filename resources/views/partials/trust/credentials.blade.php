@@ -4,6 +4,8 @@
     <dl>
         @if($credentials['trade_licence'])<div><dt>{{ __('Trade licence') }}</dt><dd>{{ $credentials['trade_licence'] }}</dd></div>@endif
         @if($credentials['registration'])<div><dt>{{ __('Company registration') }}</dt><dd>{{ $credentials['registration'] }}</dd></div>@endif
+        @if(($credentials['incorporation_date'] ?? null) && $credentials['registration'])<div><dt>{{ __('Incorporated on') }}</dt><dd>{{ $credentials['incorporation_date'] }}</dd></div>@endif
+        @if(($credentials['trade_licence_valid_until'] ?? null) && $credentials['trade_licence'])<div><dt>{{ __('Trade licence valid until') }}</dt><dd>{{ $credentials['trade_licence_valid_until'] }}</dd></div>@endif
         @if($credentials['memberships'] !== [])<div><dt>{{ __('Memberships') }}</dt><dd><ul>@foreach($credentials['memberships'] as $membership)<li>{{ $membership }}</li>@endforeach</ul></dd></div>@endif
     </dl>
     @if($credentials['maps_url'] || $credentials['reviews_url'])
