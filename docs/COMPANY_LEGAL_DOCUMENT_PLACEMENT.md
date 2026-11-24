@@ -45,6 +45,18 @@ Do not upload the unredacted PDFs to GitHub, public media library, publicly reac
 - The official documents list **Sharmeen Akter Rosy** and **Md. Shoaib Akter**, while older seeded team drafts may spell names or titles differently. Verify the exact owner-approved public presentation instead of automatically changing records.
 - Terms & Conditions and Privacy Policy remain separate legal notices; official documents are **not** substitutes for either. Do not alter those notices without legal review.
 
+## Admin Legal Documents workflow (implemented in PR #53)
+
+- Navigate to **Admin → Legal Documents** (`/admin/legal-documents`).
+- An admin or super-admin with `content.manage` may upload one PDF at a time (max 8 MB) into `storage/app/private/legal-documents/originals`. Originals are never put on the public disk and cannot be replaced through the form.
+- Only the **super-admin** can download an unredacted original, review the official source, mark it verified and approved, and separately publish it. Approval **does not publish**.
+- A separately prepared, truly redacted PDF may be uploaded for public viewing. It is initially private and requires the owner to inspect **visual content, embedded text, attachments, metadata, and QR codes** and tick a confirmation before approval. The application rejects a byte-for-byte copy of the original, but cannot automatically prove that a changed PDF is actually safe.
+- Only approved/published/current metadata is shown at `/legal-documents`. The separate redacted-copy download route returns 404 for unpublished, unapproved or expired items, and **never** streams the private original.
+- Editing any document resets verification, approval and publication. Unpublishing immediately revokes public access, and old URLs cannot retrieve private copies.
+- Expiry dates are displayed in the Admin listing; an expiry within 30 days displays a renewal warning, and expired records leave the public listing automatically. There is **no scheduled email/SMS expiry notification yet**.
+- A new renewal is uploaded as a **new record**, keeping the older private record for audit/retention. Identical original PDF bytes are rejected to avoid duplicate uploads.
+- Legacy **Admin → Business facts & numbers** fields remain owner-managed and are separate from this document approval workflow; do not assume they have passed the document-verification gate.
+
 ## Publication process
 
 1. Confirm document authenticity and date against issuer verification options.
