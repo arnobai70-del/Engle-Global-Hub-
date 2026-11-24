@@ -5,7 +5,6 @@ namespace App\Services\Content;
 use App\Enums\BusinessService;
 use App\Models\MenuItem;
 use App\Models\ServiceDestination;
-use App\Services\Consultancy\StudyCountries;
 use App\Services\Navigation\MenuService;
 use App\Services\Navigation\MenuTargets;
 use Illuminate\Support\Collection;
@@ -80,7 +79,7 @@ class HomepageServiceCards
                 }
 
                 $url = $this->targets->studyCountryUrl($country);
-                $title = __('Study in :country', ['country' => __($country->name)]);
+                $title = __('Study options: :country', ['country' => __($country->name)]);
                 $link = $this->normalisedLink($url);
                 $name = $this->normalisedTitle($title);
                 if (isset($seenLinks[$link]) || isset($seenTitles[$name])) {
