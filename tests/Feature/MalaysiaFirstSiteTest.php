@@ -26,7 +26,8 @@ final class MalaysiaFirstSiteTest extends TestCase
         $this->assertStringContainsString('From first call to landing in Malaysia', $html);
         $this->assertStringContainsString('14 working days (EMGS charter)', $html);
         $this->assertStringContainsString('name="destination" value="MY"', $html);
-        $this->assertLessThan(strpos($html, '<h3>Study in Singapore</h3>'), strpos($html, '<h3>Study in Malaysia</h3>'), 'Malaysia comes before Singapore in the services');
+        $this->assertLessThan(strpos($html, '<h3>Student Pass (EMGS)</h3>'), strpos($html, '<h3>Study in Malaysia</h3>'), 'Malaysia leads the homepage services');
+        $this->assertStringNotContainsString('<h3>Study in Singapore</h3>', $html, 'Singapore stays in admin and its own route, not the default homepage cards');
     }
 
     public function test_header_menu_follows_the_requested_order_and_points_the_cta_to_malaysia(): void
