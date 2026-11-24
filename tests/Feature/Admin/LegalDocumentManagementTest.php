@@ -88,6 +88,7 @@ class LegalDocumentManagementTest extends TestCase
         $this->actingAs($owner)->post(route('admin.legal-documents.publish', $document))->assertRedirect();
 
         $this->get(route('legal-documents.index'))->assertOk()->assertSee('Registered company certificate');
+        $this->get(route('legal-documents.index', ['lang' => 'bn']))->assertOk()->assertSee('কোম্পানির নিবন্ধন ও লাইসেন্স');
         $this->get(route('about'))->assertOk()->assertSee(route('legal-documents.index'));
         $this->get(route('legal-documents.download', $document))->assertNotFound();
         $this->assertDatabaseHas('activity_logs', ['action' => 'legal_document.published', 'subject_id' => $document->id]);
