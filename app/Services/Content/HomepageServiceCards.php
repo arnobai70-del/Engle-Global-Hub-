@@ -2,10 +2,13 @@
 
 namespace App\Services\Content;
 
+use App\Enums\BusinessService;
 use App\Models\MenuItem;
+use App\Models\ServiceDestination;
 use App\Services\Navigation\MenuService;
 use App\Services\Navigation\MenuTargets;
 use Illuminate\Support\Collection;
+use Throwable;
 
 /**
  * The homepage service cards. Titles, icons and links come from Admin › Menus
@@ -55,6 +58,48 @@ class HomepageServiceCards
                 'body' => $card['description'] ?? $builtInBody,
                 'cta' => $cta,
             ];
+        }
+
+        // Admin › Services & Destinations: optional, automatically generated study
+        // country cards. The linked page uses the existing published destination
+        // when complete; otherwise it safely opens the Student Visa enquiry form.
+        // Country cards are never invented for inactive or unselected countries.
+        try {
+            $countries = ServiceDestination::query()
+                ->with('country')
+                ->where('service', BusinessService::StudentVisa->value)
+                ->where('is_active', true)
+                ->where('show_on_homepage', true)
+                ->orderBy('sort_order')->orderBy('id')->get();
+
+            foreach ($countries as $destination) {
+                $country = $destination->country;
+                if ($country === null || ! $country->is_active) {
+                    continue;
+                }
+
+                $url = $this->targets->studyCountryUrl($country);
+                $title = __('Study options: :country', ['country' => __($country->name)]);
+                $link = $this->normalisedLink($url);
+                $name = $this->normalisedTitle($title);
+                if (isset($seenLinks[$link]) || isset($seenTitles[$name])) {
+                    continue;
+                }
+
+                $seenLinks[$link] = true;
+                $seenTitles[$name] = true;
+                $unique[] = [
+                    'key' => 'study-country-'.strtolower($country->iso2),
+                    'title' => $title,
+                    'url' => $url,
+                    'icon' => 'cap',
+                    'new_tab' => false,
+                    'body' => __('Course, admission and student visa guidance for :country. Ask us about current requirements.', ['country' => __($country->name)]),
+                    'cta' => __('Explore options'),
+                ];
+            }
+        } catch (Throwable) {
+            // The homepage still works during a rolling release before migration.
         }
 
         return $unique;
@@ -143,7 +188,6 @@ class HomepageServiceCards
         return [
             ['key' => 'tile-malaysia', 'title' => __('Study in Malaysia'), 'url' => $studyUrl, 'icon' => 'cap', 'new_tab' => false, 'description' => null],
             ['key' => 'tile-student-pass-my', 'title' => __('Student Pass (EMGS)'), 'url' => $studyUrl.'#student-pass', 'icon' => 'id', 'new_tab' => false, 'description' => null],
-            ['key' => 'tile-singapore', 'title' => __('Study in Singapore'), 'url' => route('consultancy.singapore'), 'icon' => 'globe', 'new_tab' => false, 'description' => null],
             ['key' => 'tile-visa', 'title' => __('Visa services'), 'url' => route('services.show', 'tourist-visa'), 'icon' => 'passport', 'new_tab' => false, 'description' => null],
             ['key' => 'tile-flights', 'title' => __('Air tickets'), 'url' => route('services.show', 'air-ticket'), 'icon' => 'plane', 'new_tab' => false, 'description' => null],
             ['key' => 'tile-housing', 'title' => __('Housing & arrival'), 'url' => route('hotels.index'), 'icon' => 'bed', 'new_tab' => false, 'description' => null],

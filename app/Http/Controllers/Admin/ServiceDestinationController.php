@@ -6,10 +6,12 @@ use App\Enums\BusinessService;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\ServiceDestination;
+use App\Models\StudyDestination;
 use App\Services\ActivityRecorder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ServiceDestinationController extends Controller
@@ -42,8 +44,15 @@ class ServiceDestinationController extends Controller
 
         $destination = ServiceDestination::query()->create([
             ...$data,
+            // New Student Visa countries can show an enquiry card immediately,
+            // while the study-country page remains a draft until verified.
+            'show_on_homepage' => $data['service'] === BusinessService::StudentVisa->value,
             'sort_order' => (int) ServiceDestination::query()->where('service', $data['service'])->max('sort_order') + 1,
         ]);
+
+        if ($data['service'] === BusinessService::StudentVisa->value) {
+            $this->ensureDraftStudyPage(Country::query()->findOrFail($data['country_id']));
+        }
         $this->activity->record($request->user(), 'service_destination.added', $destination, $data);
 
         return redirect()->route('admin.service-destinations.index')->with('status', 'Destination added.');
@@ -60,6 +69,51 @@ class ServiceDestinationController extends Controller
         $this->activity->record($request->user(), 'service_destination.updated', $serviceDestination, ['active' => (bool) $data['is_active']]);
 
         return redirect()->route('admin.service-destinations.index')->with('status', 'Destination updated.');
+    }
+
+    public function homepage(Request $request, ServiceDestination $serviceDestination): RedirectResponse
+    {
+        abort_unless($serviceDestination->service === BusinessService::StudentVisa, 404);
+        $data = $request->validate(['show_on_homepage' => ['required', 'boolean']]);
+
+        if ((bool) $data['show_on_homepage'] && ! $serviceDestination->is_active) {
+            return back()->withErrors(['show_on_homepage' => 'Activate this destination first.']);
+        }
+
+        $serviceDestination->update(['show_on_homepage' => (bool) $data['show_on_homepage']]);
+        if ($serviceDestination->show_on_homepage) {
+            $this->ensureDraftStudyPage($serviceDestination->country);
+        }
+        $this->activity->record($request->user(), 'service_destination.homepage', $serviceDestination, [
+            'visible' => $serviceDestination->show_on_homepage,
+        ]);
+
+        return back()->with('status', 'Homepage country card setting saved.');
+    }
+
+    /**
+     * The same full study-country CMS template for every country (except the
+     * legacy Malaysia / Singapore pages). Never publish an empty draft.
+     */
+    private function ensureDraftStudyPage(Country $country): void
+    {
+        if (in_array($country->iso2, ['MY', 'SG'], true)
+            || StudyDestination::query()->where('country_id', $country->id)->exists()) {
+            return;
+        }
+
+        $base = Str::slug($country->name);
+        if ($base === '' || strlen($base) > 70) {
+            $base = strtolower($country->iso2);
+        }
+        $slug = StudyDestination::query()->where('slug', $base)->exists()
+            ? substr($base, 0, 70).'-'.strtolower($country->iso2)
+            : $base;
+
+        StudyDestination::query()->firstOrCreate(
+            ['country_id' => $country->id],
+            ['slug' => $slug, 'status' => StudyDestination::STATUS_DRAFT]
+        );
     }
 
     public function destroy(Request $request, ServiceDestination $serviceDestination): RedirectResponse

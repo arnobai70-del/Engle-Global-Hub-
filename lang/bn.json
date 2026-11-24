@@ -1920,5 +1920,8 @@
     "Issued": "ইস্যুর তারিখ",
     "Valid until": "মেয়াদ",
     "Download approved redacted copy": "অনুমোদিত সংবেদনশীল তথ্য অপসারিত কপি ডাউনলোড",
-    "Company documents are being reviewed for public release.": "কোম্পানির ডকুমেন্টগুলো প্রকাশের আগে যাচাই করা হচ্ছে।"
+    "Company documents are being reviewed for public release.": "কোম্পানির ডকুমেন্টগুলো প্রকাশের আগে যাচাই করা হচ্ছে।",
+    "Study options: :country": "পড়াশোনার সুযোগ: :country",
+    "Course, admission and student visa guidance for :country. Ask us about current requirements.": ":country-এ কোর্স, ভর্তি ও স্টুডেন্ট ভিসার পরামর্শ। বর্তমান নিয়ম জানতে যোগাযোগ করুন।",
+    "Explore options": "বিস্তারিত জানুন"
 }
