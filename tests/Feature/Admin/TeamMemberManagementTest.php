@@ -63,6 +63,13 @@ class TeamMemberManagementTest extends TestCase
         $this->assertFalse($member->is_published);
         Storage::disk('public')->assertExists($member->photo_path);
 
+        $photoUrl = Storage::disk('public')->url($member->photo_path);
+        $this->actingAs($admin)->get(route('admin.team-members.index'))
+            ->assertOk()->assertSee($photoUrl)->assertSee('Photo of New Consultant');
+        $this->actingAs($admin)->get(route('admin.team-members.edit', $member))
+            ->assertOk()->assertSee('Current photo')->assertSee($photoUrl)
+            ->assertSee('Current photo of New Consultant');
+
         $this->actingAs($admin)->patch(route('admin.team-members.update', $member), [
             'name' => 'New Consultant', 'role_title' => 'Admission Consultant', 'sort_order' => 2,
             'is_published' => '1', 'remove_photo' => '1',
